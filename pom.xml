@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.jpmml</groupId>
+	<artifactId>jpmml</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<organization>
+		<name>University of Tartu</name>
+		<url>http://www.ut.ee/en</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>New BSD License</name>
+			<url>http://www.opensource.org/licenses/bsd-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>villu.ruusmann</id>
+			<name>Villu Ruusmann</name>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>pmml</module>
+		<module>pmml-manager</module>
+		<module>xjc</module>
+	</modules>
+
+	<scm>
+		<connection>scm:svn:http://jpmml.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://jpmml.googlecode.com/svn/trunk/</developerConnection>
+		<url>http://code.google.com/p/jpmml/source/browse/</url>
+	</scm>
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/jpmml/issues/list</url>
+	</issueManagement>
+	<distributionManagement>
+		<repository>
+			<id>jpmml.googlecode.com</id>
+			<uniqueVersion>true</uniqueVersion>
+			<url>svn:https://jpmml.googlecode.com/svn/maven</url>
+		</repository>
+	</distributionManagement>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-manager</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>xjc</artifactId>
+				<version>1.0-SNAPSHOT</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.4</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>jdk_1.5</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<jdk>1.5</jdk>
+			</activation>
+
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+						<version>2.1</version>
+					</dependency>
+
+					<dependency>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jsr173_api</artifactId>
+						<version>1.0</version>
+					</dependency>
+
+					<dependency>
+						<groupId>com.sun.xml.bind</groupId>
+						<artifactId>jaxb-impl</artifactId>
+						<version>2.1.10</version>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+
+			<repositories>
+				<repository>
+					<id>m2repo.epseelon.org</id>
+					<url>http://m2repo.epseelon.org</url>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
+</project>
