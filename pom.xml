@@ -78,6 +78,14 @@
 	</dependencyManagement>
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.jvnet.wagon-svn</groupId>
+				<artifactId>wagon-svn</artifactId>
+				<version>1.9</version>
+			</extension>
+		</extensions>
+
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -104,7 +112,6 @@
 						<artifactId>jaxb-api</artifactId>
 						<version>2.1</version>
 					</dependency>
-
 					<dependency>
 						<groupId>javax.xml.bind</groupId>
 						<artifactId>jsr173_api</artifactId>
