@@ -23,6 +23,9 @@ public class NamespaceURIFilter extends XMLFilterImpl {
 	public void initDefaultMappings(){
 		setMapping(PMML_3_0, PMML_3_2);
 		setMapping(PMML_3_1, PMML_3_2);
+
+		// Missing XML namespace declaration
+		setMapping("", PMML_3_2);
 	}
 
 	public void setMapping(String fromNsURI, String toNsURI){
