@@ -27,6 +27,7 @@
 	</developers>
 
 	<modules>
+		<module>example</module>
 		<module>pmml</module>
 		<module>pmml-manager</module>
 		<module>xjc</module>
