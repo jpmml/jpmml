@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-public class TreeModelManager extends PMMLModelManager<TreeModel> {
+public class TreeModelManager extends ModelManager<TreeModel> {
 
 	private TreeModel treeModel = null;
 
@@ -32,7 +32,7 @@ public class TreeModelManager extends PMMLModelManager<TreeModel> {
 	public TreeModel getOrCreateModel(){
 
 		if(this.treeModel == null){
-			List<PMMLModel> content = getPmml().getContent();
+			List<Model> content = getPmml().getContent();
 
 			this.treeModel = find(content, TreeModel.class);
 			if(this.treeModel == null){
@@ -57,7 +57,7 @@ public class TreeModelManager extends PMMLModelManager<TreeModel> {
 				treeModel.setNode(this.node);
 			}
 
-			List<PMMLPredicate> content = this.node.getContent();
+			List<Predicate> content = this.node.getContent();
 			if(content.isEmpty()){
 				content.add(new True());
 			}
@@ -67,11 +67,11 @@ public class TreeModelManager extends PMMLModelManager<TreeModel> {
 	}
 
 
-	public Node addNode(PMMLPredicate predicate){
+	public Node addNode(Predicate predicate){
 		return addNode(getOrCreateNode(), predicate);
 	}
 
-	public Node addNode(Node parentNode, PMMLPredicate predicate){
+	public Node addNode(Node parentNode, Predicate predicate){
 		Node node = new Node();
 		node.getContent().add(predicate);
 
@@ -116,7 +116,7 @@ public class TreeModelManager extends PMMLModelManager<TreeModel> {
 	}
 
 	private Boolean evaluateNode(Node node, Map<FieldName, ?> parameters){
-		List<PMMLPredicate> predicates = node.getContent();
+		List<Predicate> predicates = node.getContent();
 
 		if(predicates.size() != 1){
 			throw new EvaluationException();
@@ -125,7 +125,7 @@ public class TreeModelManager extends PMMLModelManager<TreeModel> {
 		return evaluatePredicate(predicates.get(0), parameters);
 	}
 
-	private Boolean evaluatePredicate(PMMLPredicate predicate, Map<FieldName, ?> parameters){
+	private Boolean evaluatePredicate(Predicate predicate, Map<FieldName, ?> parameters){
 
 		if(predicate instanceof SimplePredicate){
 			return evaluateSimplePredicate((SimplePredicate)predicate, parameters);
@@ -189,7 +189,7 @@ public class TreeModelManager extends PMMLModelManager<TreeModel> {
 	}
 
 	private Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, Map<FieldName, ?> parameters){
-		List<PMMLPredicate> predicates = compoundPredicate.getContent();
+		List<Predicate> predicates = compoundPredicate.getContent();
 
 		Boolean result = evaluatePredicate(predicates.get(0), parameters);
 
@@ -205,7 +205,7 @@ public class TreeModelManager extends PMMLModelManager<TreeModel> {
 				break;
 		}
 
-		for(PMMLPredicate predicate : predicates.subList(1, predicates.size())){
+		for(Predicate predicate : predicates.subList(1, predicates.size())){
 			Boolean value = evaluatePredicate(predicate, parameters);
 
 			switch(compoundPredicate.getBooleanOperator()){

@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-public class RegressionModelManager extends PMMLModelManager<RegressionModel> {
+public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	private RegressionModel regressionModel = null;
 
@@ -85,7 +85,7 @@ public class RegressionModelManager extends PMMLModelManager<RegressionModel> {
 	public RegressionModel getOrCreateModel(){
 
 		if(this.regressionModel == null){
-			List<PMMLModel> content = getPmml().getContent();
+			List<Model> content = getPmml().getContent();
 
 			this.regressionModel = find(content, RegressionModel.class);
 			if(this.regressionModel == null){

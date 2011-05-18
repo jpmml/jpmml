@@ -7,5 +7,5 @@ import javax.xml.bind.annotation.*;
 
 @XmlTransient
 abstract
-public class PMMLExpression extends PMMLObject {
+public class Expression extends PMMLObject {
 }

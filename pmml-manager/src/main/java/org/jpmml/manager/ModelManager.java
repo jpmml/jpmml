@@ -8,12 +8,12 @@ import java.util.*;
 import org.dmg.pmml.*;
 
 abstract
-public class PMMLModelManager<M extends PMMLModel> extends PMMLManager {
+public class ModelManager<M extends Model> extends PMMLManager {
 
-	public PMMLModelManager(){
+	public ModelManager(){
 	}
 
-	public PMMLModelManager(PMML pmml){
+	public ModelManager(PMML pmml){
 		super(pmml);
 	}
 
@@ -90,16 +90,16 @@ public class PMMLModelManager<M extends PMMLModel> extends PMMLManager {
 	}
 
 	static
-	public List<PMMLModelManager<? extends PMMLModel>> getModelManagers(PMML pmml){
+	public List<ModelManager<? extends Model>> getModelManagers(PMML pmml){
 		return getModelManagers(pmml, new ModelManagerFactory());
 	}
 
 	static
-	public List<PMMLModelManager<? extends PMMLModel>> getModelManagers(PMML pmml, ModelManagerFactory factory){
-		List<PMMLModelManager<? extends PMMLModel>> result = new ArrayList<PMMLModelManager<? extends PMMLModel>>();
+	public List<ModelManager<? extends Model>> getModelManagers(PMML pmml, ModelManagerFactory factory){
+		List<ModelManager<? extends Model>> result = new ArrayList<ModelManager<? extends Model>>();
 
-		List<PMMLModel> models = pmml.getContent();
-		for(PMMLModel model : models){
+		List<Model> models = pmml.getContent();
+		for(Model model : models){
 			result.add(factory.getModelManager(pmml, model));
 		}
 

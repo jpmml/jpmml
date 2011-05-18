@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.*;
 
 @XmlTransient
 abstract
-public class PMMLModel extends PMMLObject {
+public class Model extends PMMLObject {
 
 	abstract
 	public String getModelName();

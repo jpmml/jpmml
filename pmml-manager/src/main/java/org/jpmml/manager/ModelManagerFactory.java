@@ -7,7 +7,7 @@ import org.dmg.pmml.*;
 
 public class ModelManagerFactory {
 
-	public PMMLModelManager<? extends PMMLModel> getModelManager(PMML pmml, PMMLModel model){
+	public ModelManager<? extends Model> getModelManager(PMML pmml, Model model){
 
 		if(model instanceof RegressionModel){
 			return new RegressionModelManager(pmml, (RegressionModel)model);

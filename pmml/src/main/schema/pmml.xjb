@@ -28,7 +28,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='Aggregate']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLExpression"
+				name="org.dmg.pmml.Expression"
 			/>
 		</jaxb:bindings>
 
@@ -40,13 +40,13 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='Apply']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLExpression"
+				name="org.dmg.pmml.Expression"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='AssociationModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
@@ -64,7 +64,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='ClusteringModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
@@ -82,7 +82,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='CompoundPredicate']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLPredicate"
+				name="org.dmg.pmml.Predicate"
 			/>
 		</jaxb:bindings>
 
@@ -94,7 +94,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='CompoundRule']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLRule"
+				name="org.dmg.pmml.Rule"
 			/>
 		</jaxb:bindings>
 
@@ -106,7 +106,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='Constant']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLExpression"
+				name="org.dmg.pmml.Expression"
 			/>
 		</jaxb:bindings>
 
@@ -133,25 +133,25 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='Discretize']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLExpression"
+				name="org.dmg.pmml.Expression"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='False']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLPredicate"
+				name="org.dmg.pmml.Predicate"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='FieldRef']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLExpression"
+				name="org.dmg.pmml.Expression"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='GeneralRegressionModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
@@ -181,7 +181,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='MapValues']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLExpression"
+				name="org.dmg.pmml.Expression"
 			/>
 		</jaxb:bindings>
 
@@ -193,31 +193,31 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='MiningModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='NaiveBayesModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='NeuralNetwork']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='NormContinuous']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLExpression"
+				name="org.dmg.pmml.Expression"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='NormDiscrete']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLExpression"
+				name="org.dmg.pmml.Expression"
 			/>
 		</jaxb:bindings>
 
@@ -241,7 +241,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='RegressionModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
@@ -259,19 +259,19 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='RuleSetModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='SequenceModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='SimplePredicate']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLPredicate"
+				name="org.dmg.pmml.Predicate"
 			/>
 		</jaxb:bindings>
 
@@ -283,13 +283,13 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='SimpleRule']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLRule"
+				name="org.dmg.pmml.Rule"
 			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='SimpleSetPredicate']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLPredicate"
+				name="org.dmg.pmml.Predicate"
 			/>
 		</jaxb:bindings>
 
@@ -301,7 +301,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='SupportVectorMachineModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
@@ -313,7 +313,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='TextModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
@@ -343,7 +343,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='TreeModel']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLModel"
+				name="org.dmg.pmml.Model"
 			/>
 		</jaxb:bindings>
 
@@ -355,7 +355,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='True']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.PMMLPredicate"
+				name="org.dmg.pmml.Predicate"
 			/>
 		</jaxb:bindings>
 

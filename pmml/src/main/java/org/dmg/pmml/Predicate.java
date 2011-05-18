@@ -7,5 +7,5 @@ import javax.xml.bind.annotation.*;
 
 @XmlTransient
 abstract
-public class PMMLRule extends PMMLObject {
+public class Predicate extends PMMLObject {
 }
