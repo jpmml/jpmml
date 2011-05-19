@@ -82,17 +82,37 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 	@Override
 	public String evaluate(Map<FieldName, ?> parameters){
-		Node root = getOrCreateNode();
+		Node node = scoreModel(parameters);
 
-		Node result = findTrueChild(root, parameters);
-		if(result == null){
-			throw new EvaluationException();
+		if(node != null){
+			return node.getScore();
 		}
 
-		return result.getScore();
+		return null;
 	}
 
-	private Node findTrueChild(Node node, Map<FieldName, ?> parameters){
+	public Node scoreModel(Map<FieldName, ?> parameters){
+		Node root = getOrCreateNode();
+
+		Result result = findTrueChild(root, root, parameters); // XXX
+		if(result.getLastTrueNode() != null && result.getTrueNode() != null && !(result.getLastTrueNode()).equals(result.getTrueNode())){
+			return result.getTrueNode();
+		} else
+
+		{
+			NoTrueChildStrategyType noTrueChildStrategy = getOrCreateModel().getNoTrueChildStrategy();
+			switch(noTrueChildStrategy){
+				case RETURN_NULL_PREDICTION:
+					return null;
+				case RETURN_LAST_PREDICTION:
+					return result.getLastTrueNode();
+				default:
+					throw new EvaluationException();
+			}
+		}
+	}
+
+	private Result findTrueChild(Node lastNode, Node node, Map<FieldName, ?> parameters){
 		Boolean value = evaluateNode(node, parameters);
 
 		if(value == null){
@@ -101,17 +121,20 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 		if(value.booleanValue()){
 			List<Node> children = node.getNodes();
-			for(Node child : children){
-				Node result = findTrueChild(child, parameters);
 
-				if(result != null){
-					return result;
+			for(Node child : children){
+				Result childResult = findTrueChild(node, child, parameters);
+
+				if(childResult.getTrueNode() != null){
+					return childResult;
 				}
 			}
 
-			return node;
-		} else {
-			return null;
+			return new Result(lastNode, node);
+		} else
+
+		{
+			return new Result(lastNode, null);
 		}
 	}
 
@@ -308,6 +331,28 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 		{
 			return Boolean.valueOf(left.booleanValue() ^ right.booleanValue());
+		}
+	}
+
+	static
+	private class Result {
+
+		private Node lastTrueNode = null;
+
+		private Node trueNode = null;
+
+
+		public Result(Node lastTrueNode, Node trueNode){
+			this.lastTrueNode = lastTrueNode;
+			this.trueNode = trueNode;
+		}
+
+		public Node getLastTrueNode(){
+			return this.lastTrueNode;
+		}
+
+		public Node getTrueNode(){
+			return this.trueNode;
 		}
 	}
 }

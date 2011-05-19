@@ -74,12 +74,12 @@ public class ModelManager<M extends Model> extends PMMLManager {
 	}
 
 	static
-	Object getParameterValue(Map<FieldName, ?> parameters, FieldName name){
+	protected Object getParameterValue(Map<FieldName, ?> parameters, FieldName name){
 		return getParameterValue(parameters, name, false);
 	}
 
 	static
-	Object getParameterValue(Map<FieldName, ?> parameters, FieldName name, boolean nullable){
+	protected Object getParameterValue(Map<FieldName, ?> parameters, FieldName name, boolean nullable){
 		Object value = parameters.get(name);
 
 		if(value == null && !nullable){
