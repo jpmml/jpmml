@@ -88,21 +88,4 @@ public class ModelManager<M extends Model> extends PMMLManager {
 
 		return value;
 	}
-
-	static
-	public List<ModelManager<? extends Model>> getModelManagers(PMML pmml){
-		return getModelManagers(pmml, new ModelManagerFactory());
-	}
-
-	static
-	public List<ModelManager<? extends Model>> getModelManagers(PMML pmml, ModelManagerFactory factory){
-		List<ModelManager<? extends Model>> result = new ArrayList<ModelManager<? extends Model>>();
-
-		List<Model> models = pmml.getContent();
-		for(Model model : models){
-			result.add(factory.getModelManager(pmml, model));
-		}
-
-		return result;
-	}
 }

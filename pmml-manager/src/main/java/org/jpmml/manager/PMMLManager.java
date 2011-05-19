@@ -7,7 +7,6 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-abstract
 public class PMMLManager {
 
 	private PMML pmml = null;
@@ -57,6 +56,47 @@ public class PMMLManager {
 
 	public DataDictionary getDataDictionary(){
 		return getPmml().getDataDictionary();
+	}
+
+	public List<Model> getModels(){
+		return getPmml().getContent();
+	}
+
+	/**
+	 * @param modelName The name of the Model to be selected. If <code>null</code>, the first model is selected.
+	 *
+	 * @see Model#getModelName()
+	 */
+	public Model getModel(String modelName){
+		List<Model> models = getModels();
+
+		if(modelName != null){
+
+			for(Model model : models){
+
+				if(modelName.equals(model.getModelName())){
+					return model;
+				}
+			}
+
+			return null;
+		} // End if
+
+		if(models.size() > 0){
+			return models.get(0);
+		}
+
+		return null;
+	}
+
+	public ModelManager<? extends Model> getModelManager(String modelName){
+		return getModelManager(modelName, ModelManagerFactory.getInstance());
+	}
+
+	public ModelManager<? extends Model> getModelManager(String modelName, ModelManagerFactory modelManagerFactory){
+		Model model = getModel(modelName);
+
+		return modelManagerFactory.getModelManager(getPmml(), model);
 	}
 
 	@SuppressWarnings (

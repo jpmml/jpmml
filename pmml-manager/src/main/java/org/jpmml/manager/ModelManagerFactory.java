@@ -7,6 +7,9 @@ import org.dmg.pmml.*;
 
 public class ModelManagerFactory {
 
+	protected ModelManagerFactory(){
+	}
+
 	public ModelManager<? extends Model> getModelManager(PMML pmml, Model model){
 
 		if(model instanceof RegressionModel){
@@ -18,5 +21,10 @@ public class ModelManagerFactory {
 		}
 
 		throw new IllegalArgumentException();
+	}
+
+	static
+	public ModelManagerFactory getInstance(){
+		return new ModelManagerFactory();
 	}
 }
