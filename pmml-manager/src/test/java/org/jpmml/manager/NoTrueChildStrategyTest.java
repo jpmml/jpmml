@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2011 University of Tartu
+ */
 package org.jpmml.manager;
 
 import java.util.*;
@@ -32,20 +35,6 @@ public class NoTrueChildStrategyTest {
 
 		assertNotNull(n1);
 		assertEquals("N1", n1.getId());
-
-		Node t1 = treeModelManager.scoreModel(prepareParameters(1));
-
-		assertNotNull(t1);
-		assertEquals("T1", t1.getId());
-	}
-
-	@Test
-	public void defaultPrediction(){
-		TreeModelManager treeModelManager = prepareModel(null);
-
-		Node node = treeModelManager.scoreModel(prepareParameters(0));
-
-		assertNull(node);
 
 		Node t1 = treeModelManager.scoreModel(prepareParameters(1));
 
