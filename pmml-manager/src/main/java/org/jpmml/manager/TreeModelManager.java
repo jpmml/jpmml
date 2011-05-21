@@ -65,14 +65,27 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 		return this.node;
 	}
 
-
+	/**
+	 * Adds a new Node to the root Node.
+	 *
+	 * @return The newly added Node
+	 *
+	 * @see #getOrCreateNode()
+	 */
 	public Node addNode(Predicate predicate){
 		return addNode(getOrCreateNode(), predicate);
 	}
 
+	/**
+	 * Adds a new Node to the specified Node.
+	 *
+	 * @return The newly added Node
+	 */
 	public Node addNode(Node parentNode, Predicate predicate){
 		Node node = new Node();
-		node.getContent().add(predicate);
+
+		List<Predicate> content = node.getContent();
+		content.add(predicate);
 
 		parentNode.getNodes().add(node);
 
