@@ -93,9 +93,10 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	public Node scoreModel(Map<FieldName, ?> parameters){
 		Node root = getOrCreateNode();
 
-		Result result = findTrueChild(root, root, parameters); // XXX
-		if(result.getLastTrueNode() != null && result.getTrueNode() != null && !(result.getLastTrueNode()).equals(result.getTrueNode())){
-			return result.getTrueNode();
+		Prediction prediction = findTrueChild(root, root, parameters); // XXX
+
+		if(prediction.getLastTrueNode() != null && prediction.getTrueNode() != null && !(prediction.getLastTrueNode()).equals(prediction.getTrueNode())){
+			return prediction.getTrueNode();
 		} else
 
 		{
@@ -104,14 +105,14 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 				case RETURN_NULL_PREDICTION:
 					return null;
 				case RETURN_LAST_PREDICTION:
-					return result.getLastTrueNode();
+					return prediction.getLastTrueNode();
 				default:
 					throw new EvaluationException();
 			}
 		}
 	}
 
-	private Result findTrueChild(Node lastNode, Node node, Map<FieldName, ?> parameters){
+	private Prediction findTrueChild(Node lastNode, Node node, Map<FieldName, ?> parameters){
 		Boolean value = evaluateNode(node, parameters);
 
 		if(value == null){
@@ -122,18 +123,18 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 			List<Node> children = node.getNodes();
 
 			for(Node child : children){
-				Result childResult = findTrueChild(node, child, parameters);
+				Prediction childPrediction = findTrueChild(node, child, parameters);
 
-				if(childResult.getTrueNode() != null){
-					return childResult;
+				if(childPrediction.getTrueNode() != null){
+					return childPrediction;
 				}
 			}
 
-			return new Result(lastNode, node);
+			return new Prediction(lastNode, node);
 		} else
 
 		{
-			return new Result(lastNode, null);
+			return new Prediction(lastNode, null);
 		}
 	}
 
@@ -264,14 +265,14 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	}
 
 	static
-	private class Result {
+	private class Prediction {
 
 		private Node lastTrueNode = null;
 
 		private Node trueNode = null;
 
 
-		public Result(Node lastTrueNode, Node trueNode){
+		public Prediction(Node lastTrueNode, Node trueNode){
 			this.lastTrueNode = lastTrueNode;
 			this.trueNode = trueNode;
 		}
