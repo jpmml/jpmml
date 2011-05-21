@@ -79,15 +79,51 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 		return node;
 	}
 
+	public ScoreDistribution getOrAddScoreDistribution(Node node, String value){
+		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
+
+		for(ScoreDistribution scoreDistribution : scoreDistributions){
+
+			if((scoreDistribution.getValue()).equals(value)){
+				return scoreDistribution;
+			}
+		}
+
+		ScoreDistribution scoreDistribution = new ScoreDistribution(value, 0);
+		scoreDistributions.add(scoreDistribution);
+
+		return scoreDistribution;
+	}
+
 	@Override
 	public String evaluate(Map<FieldName, ?> parameters){
 		Node node = scoreModel(parameters);
 
 		if(node != null){
-			return node.getScore();
+			String score = node.getScore();
+			if(score != null){
+				return score;
+			}
+
+			return computeScore(node);
 		}
 
 		return null;
+	}
+
+	private String computeScore(Node node){
+		ScoreDistribution result = null;
+
+		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
+
+		for(ScoreDistribution scoreDistribution : scoreDistributions){
+
+			if(result == null || result.getRecordCount() < scoreDistribution.getRecordCount()){
+				result = scoreDistribution;
+			}
+		}
+
+		return result != null ? result.getValue() : null;
 	}
 
 	public Node scoreModel(Map<FieldName, ?> parameters){
