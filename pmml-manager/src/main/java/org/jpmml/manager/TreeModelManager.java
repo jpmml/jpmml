@@ -3,7 +3,6 @@
  */
 package org.jpmml.manager;
 
-import java.math.*;
 import java.util.*;
 
 import org.dmg.pmml.*;
@@ -193,17 +192,17 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 		switch(simplePredicate.getOperator()){
 			case EQUAL:
-				return Boolean.valueOf(compare(fieldValue, value) == 0);
+				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) == 0);
 			case NOT_EQUAL:
-				return Boolean.valueOf(compare(fieldValue, value) != 0);
+				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) != 0);
 			case LESS_THAN:
-				return Boolean.valueOf(compare(fieldValue, value) < 0);
+				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) < 0);
 			case LESS_OR_EQUAL:
-				return Boolean.valueOf(compare(fieldValue, value) <= 0);
+				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) <= 0);
 			case GREATER_THAN:
-				return Boolean.valueOf(compare(fieldValue, value) > 0);
+				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) > 0);
 			case GREATER_OR_EQUAL:
-				return Boolean.valueOf(compare(fieldValue, value) >= 0);
+				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) >= 0);
 			default:
 				break;
 		}
@@ -233,13 +232,13 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 			switch(compoundPredicate.getBooleanOperator()){
 				case AND:
-					result = binaryAnd(result, value);
+					result = PredicateUtil.binaryAnd(result, value);
 					break;
 				case OR:
-					result = binaryOr(result, value);
+					result = PredicateUtil.binaryOr(result, value);
 					break;
 				case XOR:
-					result = binaryXor(result, value);
+					result = PredicateUtil.binaryXor(result, value);
 					break;
 				case SURROGATE:
 					if(value != null){
@@ -262,76 +261,6 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 	private Boolean evaluateFalsePredicate(False falsePredicate){
 		return Boolean.FALSE;
-	}
-
-	static
-	public int compare(Object left, String right){
-
-		if(left instanceof Number){
-			return (new BigDecimal(String.valueOf(left))).compareTo(new BigDecimal(right));
-		} else
-
-		{
-			return (String.valueOf(left)).compareTo(right);
-		}
-	}
-
-	static
-	public Boolean binaryAnd(Boolean left, Boolean right){
-
-		if(left == null){
-
-			if(right == null || right.booleanValue()){
-				return null;
-			} else {
-				return Boolean.FALSE;
-			}
-		} else
-
-		if(right == null){
-
-			if(left == null || left.booleanValue()){
-				return null;
-			} else {
-				return Boolean.FALSE;
-			}
-		} else
-
-		{
-			return Boolean.valueOf(left.booleanValue() & right.booleanValue());
-		}
-	}
-
-	static
-	public Boolean binaryOr(Boolean left, Boolean right){
-
-		if(left != null && left.booleanValue()){
-			return Boolean.TRUE;
-		} else
-
-		if(right != null && right.booleanValue()){
-			return Boolean.TRUE;
-		} else
-
-		if(left == null || right == null){
-			return null;
-		} else
-
-		{
-			return Boolean.valueOf(left.booleanValue() | right.booleanValue());
-		}
-	}
-
-	static
-	public Boolean binaryXor(Boolean left, Boolean right){
-
-		if(left == null || right == null){
-			return null;
-		} else
-
-		{
-			return Boolean.valueOf(left.booleanValue() ^ right.booleanValue());
-		}
 	}
 
 	static
