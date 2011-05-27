@@ -26,11 +26,9 @@ public class ModelManager<M extends Model> extends PMMLManager {
 	abstract
 	public Object evaluate(Map<FieldName, ?> parameters);
 
-	public FieldName addField(FieldName name, String displayName, OpTypeType opType, DataTypeType dataType, FieldUsageTypeType fieldUsageType){
+	public void addField(FieldName name, String displayName, OpTypeType opType, DataTypeType dataType, FieldUsageTypeType fieldUsageType){
 		addDataField(name, displayName, opType, dataType);
 		addMiningField(name, fieldUsageType);
-
-		return name;
 	}
 
 	public List<FieldName> getFields(FieldUsageTypeType fieldUsageType){
