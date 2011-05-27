@@ -19,6 +19,9 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	public RegressionModelManager(PMML pmml){
 		super(pmml);
+
+		List<Model> content = pmml.getContent();
+		this.regressionModel = find(content, RegressionModel.class);
 	}
 
 	public RegressionModelManager(PMML pmml, RegressionModel regressionModel){
@@ -27,14 +30,38 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		this.regressionModel = regressionModel;
 	}
 
+	@Override
+	public RegressionModel getModel(){
+
+		if(this.regressionModel == null){
+			throw new IllegalStateException();
+		}
+
+		return this.regressionModel;
+	}
+
+	public RegressionModel createModel(MiningFunctionType miningFunction){
+
+		if(this.regressionModel != null){
+			throw new IllegalStateException();
+		}
+
+		this.regressionModel = new RegressionModel(new MiningSchema(), miningFunction);
+
+		List<Model> content = getPmml().getContent();
+		content.add(this.regressionModel);
+
+		return this.regressionModel;
+	}
+
 	public FieldName getTarget(){
-		RegressionModel regressionModel = getOrCreateModel();
+		RegressionModel regressionModel = getModel();
 
 		return regressionModel.getTargetFieldName();
 	}
 
 	public RegressionModel setTarget(FieldName name){
-		RegressionModel regressionModel = getOrCreateModel();
+		RegressionModel regressionModel = getModel();
 		regressionModel.setTargetFieldName(name);
 
 		return regressionModel;
@@ -81,27 +108,10 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		return numericPredictor;
 	}
 
-	@Override
-	public RegressionModel getOrCreateModel(){
-
-		if(this.regressionModel == null){
-			List<Model> content = getPmml().getContent();
-
-			this.regressionModel = find(content, RegressionModel.class);
-			if(this.regressionModel == null){
-				this.regressionModel = new RegressionModel(new MiningSchema(), MiningFunctionType.REGRESSION);
-
-				content.add(this.regressionModel);
-			}
-		}
-
-		return this.regressionModel;
-	}
-
 	public RegressionTable getOrCreateRegressionTable(){
 
 		if(this.regressionTable == null){
-			RegressionModel regressionModel = getOrCreateModel();
+			RegressionModel regressionModel = getModel();
 
 			List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
 			if(regressionTables.isEmpty()){

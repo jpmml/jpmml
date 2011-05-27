@@ -19,6 +19,9 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 	public TreeModelManager(PMML pmml){
 		super(pmml);
+
+		List<Model> content = pmml.getContent();
+		this.treeModel = find(content, TreeModel.class);
 	}
 
 	public TreeModelManager(PMML pmml, TreeModel treeModel){
@@ -28,26 +31,36 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	}
 
 	@Override
-	public TreeModel getOrCreateModel(){
+	public TreeModel getModel(){
 
 		if(this.treeModel == null){
-			List<Model> content = getPmml().getContent();
-
-			this.treeModel = find(content, TreeModel.class);
-			if(this.treeModel == null){
-				this.treeModel = new TreeModel(new MiningSchema(), new Node(), MiningFunctionType.CLASSIFICATION);
-
-				content.add(this.treeModel);
-			}
+			throw new IllegalStateException();
 		}
 
 		return this.treeModel;
 	}
 
+	public TreeModel createModel(MiningFunctionType miningFunction){
+
+		if(this.treeModel != null){
+			throw new IllegalStateException();
+		}
+
+		this.treeModel = new TreeModel(new MiningSchema(), new Node(), miningFunction);
+
+		List<Model> content = getPmml().getContent();
+		content.add(this.treeModel);
+
+		return this.treeModel;
+	}
+
+	/**
+	 * @return The root Node. Its predicate is the constant TRUE.
+	 */
 	public Node getOrCreateNode(){
 
 		if(this.node == null){
-			TreeModel treeModel = getOrCreateModel();
+			TreeModel treeModel = getModel();
 
 			this.node = treeModel.getNode();
 			if(this.node == null){
@@ -149,7 +162,7 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 		} else
 
 		{
-			NoTrueChildStrategyType noTrueChildStrategy = getOrCreateModel().getNoTrueChildStrategy();
+			NoTrueChildStrategyType noTrueChildStrategy = getModel().getNoTrueChildStrategy();
 			switch(noTrueChildStrategy){
 				case RETURN_NULL_PREDICTION:
 					return null;

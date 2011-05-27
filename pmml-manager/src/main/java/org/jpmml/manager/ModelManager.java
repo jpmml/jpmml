@@ -18,7 +18,7 @@ public class ModelManager<M extends Model> extends PMMLManager {
 	}
 
 	abstract
-	public M getOrCreateModel();
+	public M getModel();
 
 	/**
 	 * @throws EvaluationException If the evaluation failed.
@@ -70,7 +70,7 @@ public class ModelManager<M extends Model> extends PMMLManager {
 	}
 
 	public MiningSchema getMiningSchema(){
-		return getOrCreateModel().getMiningSchema();
+		return getModel().getMiningSchema();
 	}
 
 	static
