@@ -33,12 +33,12 @@ public class CopyExample {
 	}
 
 	static
-	private void copyPmml(File srcFile, File destFile) throws Exception {
+	public void copyPmml(File srcFile, File destFile) throws Exception {
 		writePmml(readPmml(srcFile), destFile);
 	}
 
 	static
-	private PMML readPmml(File file) throws Exception {
+	public PMML readPmml(File file) throws Exception {
 		InputStream is = new FileInputStream(file);
 
 		try {
@@ -61,7 +61,7 @@ public class CopyExample {
 	}
 
 	static
-	private void writePmml(PMML pmml, File file) throws Exception {
+	public void writePmml(PMML pmml, File file) throws Exception {
 		OutputStream os = new FileOutputStream(file);
 
 		try {
