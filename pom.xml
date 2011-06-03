@@ -27,6 +27,7 @@
 	</developers>
 
 	<modules>
+		<module>bundle</module>
 		<module>example</module>
 		<module>pmml</module>
 		<module>pmml-manager</module>
