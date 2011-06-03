@@ -18,9 +18,13 @@ public class ModelManagerFactory {
 
 		if(model instanceof TreeModel){
 			return new TreeModelManager(pmml, (TreeModel)model);
+		} else
+			
+		if(model instanceof NeuralNetwork){
+			return new NeuralNetworkManager(pmml, (NeuralNetwork)model);
 		}
 
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Unsupported model type: "+model.getClass().getName());
 	}
 
 	static
