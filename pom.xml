@@ -24,6 +24,10 @@
 			<id>villu.ruusmann</id>
 			<name>Villu Ruusmann</name>
 		</developer>
+		<developer>
+			<id>sulev.sild</id>
+			<name>Sulev Sild</name>
+		</developer>
 	</developers>
 
 	<modules>
