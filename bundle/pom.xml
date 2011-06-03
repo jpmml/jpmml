@@ -15,7 +15,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml</artifactId>
+			<artifactId>pmml-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>

@@ -9,7 +9,7 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml</artifactId>
+	<artifactId>pmml-core</artifactId>
 
 	<dependencies>
 		<dependency>

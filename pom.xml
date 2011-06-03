@@ -29,7 +29,7 @@
 	<modules>
 		<module>bundle</module>
 		<module>example</module>
-		<module>pmml</module>
+		<module>pmml-core</module>
 		<module>pmml-manager</module>
 		<module>xjc</module>
 	</modules>
@@ -55,7 +55,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.jpmml</groupId>
-				<artifactId>pmml</artifactId>
+				<artifactId>pmml-core</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
