@@ -10,11 +10,11 @@ import org.jpmml.manager.EvaluationException;
 public class NormalizationUtil {
 	
 	static
-	public double normalize(NormContinuous norm, Double value) {
+	public double normalize(NormContinuous norm, Number number) {
 		String fieldName = norm.getField().getValue();
 		
 		// handle missing values
-		if (value == null) {
+		if (number == null) {
 			Double missing = norm.getMapMissingTo();
 			if (missing == null) {
 				throw new EvaluationException("Can't map missing value for "+fieldName);
@@ -23,6 +23,7 @@ public class NormalizationUtil {
 			}
 		}
 		
+		double value = number.doubleValue();
 		LinearNorm rangeStart = norm.getLinearNorms().get(0);
 		LinearNorm rangeEnd = norm.getLinearNorms().get(norm.getLinearNorms().size()-1);
 		
