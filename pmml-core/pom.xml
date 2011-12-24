@@ -18,15 +18,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.2</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.jvnet.jaxb2_commons</groupId>
 			<artifactId>jaxb2-basics-runtime</artifactId>
-			<version>0.5.2</version>
+			<version>0.6.3</version>
 		</dependency>
 	</dependencies>
 
@@ -86,15 +80,15 @@
 				</configuration>
 				<dependencies>
 					<dependency>
-						<groupId>org.jpmml</groupId>
-						<artifactId>xjc</artifactId>
-						<version>1.0-SNAPSHOT</version>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics</artifactId>
+						<version>0.6.3</version>
 					</dependency>
 
 					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-basics</artifactId>
-						<version>0.5.2</version>
+						<groupId>org.jpmml</groupId>
+						<artifactId>xjc</artifactId>
+						<version>1.0-SNAPSHOT</version>
 					</dependency>
 				</dependencies>
 			</plugin>
