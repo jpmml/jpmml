@@ -11,9 +11,14 @@ import com.sun.tools.xjc.model.*;
 import com.sun.tools.xjc.outline.*;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.*;
 
+import org.jvnet.jaxb2_commons.plugin.*;
+
 import org.xml.sax.*;
 
-public class SuperClassPlugin extends Plugin {
+public class SuperClassPlugin extends AbstractParameterizablePlugin {
+
+	private String defaultName = null;
+
 
 	@Override
 	public String getOptionName(){
@@ -39,22 +44,32 @@ public class SuperClassPlugin extends Plugin {
 	public void postProcessModel(Model model, ErrorHandler errorHandler){
 		super.postProcessModel(model, errorHandler);
 
+		CClassRef defaultSuperClass = null;
+
+		String defaultName = getDefaultName();
+		if(defaultName != null){
+			defaultSuperClass = new CClassRef(model, null, createBIClass(defaultName), null);
+		}
+
 		Collection<CClassInfo> classInfos = (model.beans()).values();
 		for(CClassInfo classInfo : classInfos){
 			CPluginCustomization customization = classInfo.getCustomizations().find(JAVA_URI, "superClass");
-			if(customization == null){
-				continue;
+
+			if(customization != null){
+				String name = customization.element.getAttribute("name");
+				if(name != null){
+					CClassRef superClass = new CClassRef(model, null, createBIClass(name), null);
+					classInfo.setBaseClass(superClass);
+				}
+
+				customization.markAsAcknowledged();
+			} else
+
+			{
+				if(defaultSuperClass != null){
+					classInfo.setBaseClass(defaultSuperClass);
+				}
 			}
-
-			String name = customization.element.getAttribute("name");
-			if(name == null){
-				continue;
-			}
-
-			CClassRef superClass = new CClassRef(model, null, createBIClass(name), null);
-			classInfo.setBaseClass(superClass);
-
-			customization.markAsAcknowledged();
 		}
 	}
 
@@ -100,6 +115,14 @@ public class SuperClassPlugin extends Plugin {
 
 	private boolean isSuperClassPluginCustomization(CPluginCustomization pluginCustomization){
 		return isCustomizationTagName(pluginCustomization.element.getNamespaceURI(), pluginCustomization.element.getLocalName());
+	}
+
+	public String getDefaultName(){
+		return this.defaultName;
+	}
+
+	public void setDefaultName(String defaultName){
+		this.defaultName = defaultName;
 	}
 
 	static

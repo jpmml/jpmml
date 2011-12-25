@@ -7,10 +7,6 @@ Copyright (c) 2009 University of Tartu
 	<jaxb:bindings schemaLocation="pmml.xsd" node="/xsd:schema">
 
 		<jaxb:globalBindings>
-			<xjc:superClass
-				name="org.dmg.pmml.PMMLObject"
-			/>
-
 			<xjc:simple/>
 		</jaxb:globalBindings>
 
