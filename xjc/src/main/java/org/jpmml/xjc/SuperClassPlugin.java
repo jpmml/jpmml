@@ -3,6 +3,7 @@
  */
 package org.jpmml.xjc;
 
+import java.lang.reflect.*;
 import java.util.*;
 
 import com.sun.tools.xjc.*;
@@ -59,7 +60,46 @@ public class SuperClassPlugin extends Plugin {
 
 	@Override
 	public boolean run(Outline outline, Options options, ErrorHandler errorHandler){
+		Model model = outline.getModel();
+
+		try {
+			Field customizationsField = (Model.class).getDeclaredField("customizations");
+			if(!customizationsField.isAccessible()){
+				customizationsField.setAccessible(true);
+			}
+
+			CCustomizations customizations = (CCustomizations)customizationsField.get(model);
+
+			Field nextField = (CCustomizations.class).getDeclaredField("next");
+			if(!nextField.isAccessible()){
+				nextField.setAccessible(true);
+			}
+
+			while(customizations != null){
+				Collection<CPluginCustomization> pluginCustomizations = customizations;
+				for(CPluginCustomization pluginCustomization : pluginCustomizations){
+
+					if(!isSuperClassPluginCustomization(pluginCustomization)){
+						continue;
+					}
+
+					// XXX: Log a warning
+					if(!pluginCustomization.isAcknowledged()){
+						pluginCustomization.markAsAcknowledged();
+					}
+				}
+
+				customizations = (CCustomizations)nextField.get(customizations);
+			}
+		} catch(Exception e){
+			throw new RuntimeException(e);
+		}
+
 		return true;
+	}
+
+	private boolean isSuperClassPluginCustomization(CPluginCustomization pluginCustomization){
+		return isCustomizationTagName(pluginCustomization.element.getNamespaceURI(), pluginCustomization.element.getLocalName());
 	}
 
 	static
