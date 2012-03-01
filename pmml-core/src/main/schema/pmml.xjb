@@ -2,7 +2,7 @@
 <!--
 Copyright (c) 2009 University of Tartu
 -->
-<jaxb:bindings targetNamespace="http://java.sun.com/xml/ns/jaxb" xmlns:java="http://java.sun.com/java" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" jaxb:extensionBindingPrefixes="java xjc" jaxb:version="2.0">
+<jaxb:bindings targetNamespace="http://java.sun.com/xml/ns/jaxb" xmlns:annox="http://annox.dev.java.net" xmlns:java="http://java.sun.com/java" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" jaxb:extensionBindingPrefixes="annox java xjc" jaxb:version="2.0">
 
 	<jaxb:bindings schemaLocation="pmml.xsd" node="/xsd:schema">
 
@@ -104,6 +104,12 @@ Copyright (c) 2009 University of Tartu
 			<java:superClass
 				name="org.dmg.pmml.Expression"
 			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='Constraints']/xsd:complexType">
+			<annox:annotate>
+				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_3_1"/>
+			</annox:annotate>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='DataField']/xsd:complexType/xsd:attribute[@name='isCyclic']/xsd:simpleType">
@@ -361,6 +367,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='VectorFields']/xsd:complexType">
+			<annox:annotate>
+				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_3_1"/>
+			</annox:annotate>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:simpleType[@name='ACTIVATION-FUNCTION']">
 			<jaxb:typesafeEnumClass
 				name="ActivationFunctionType"
@@ -377,6 +389,9 @@ Copyright (c) 2009 University of Tartu
 			<jaxb:typesafeEnumClass
 				name="CumulativeLinkFunctionType"
 			/>
+			<annox:annotate>
+				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_3_2"/>
+			</annox:annotate>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:simpleType[@name='DATATYPE']">
@@ -419,12 +434,18 @@ Copyright (c) 2009 University of Tartu
 			<jaxb:typesafeEnumClass
 				name="InvalidValueTreatmentMethodType"
 			/>
+			<annox:annotate>
+				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_3_1"/>
+			</annox:annotate>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:simpleType[@name='LINK-FUNCTION']">
 			<jaxb:typesafeEnumClass
 				name="LinkFunctionType"
 			/>
+			<annox:annotate>
+				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_3_1"/>
+			</annox:annotate>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:simpleType[@name='MINING-FUNCTION']">
@@ -437,6 +458,9 @@ Copyright (c) 2009 University of Tartu
 			<jaxb:typesafeEnumClass
 				name="MissingValueStrategyType"
 			/>
+			<annox:annotate>
+				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_3_1"/>
+			</annox:annotate>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:simpleType[@name='MISSING-VALUE-TREATMENT-METHOD']">
@@ -455,6 +479,9 @@ Copyright (c) 2009 University of Tartu
 			<jaxb:typesafeEnumClass
 				name="NoTrueChildStrategyType"
 			/>
+			<annox:annotate>
+				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_3_1"/>
+			</annox:annotate>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:simpleType[@name='OPTYPE']">

@@ -21,6 +21,10 @@
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-manager</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-schema</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -36,7 +40,7 @@
 						<Bundle-Name>JPMML</Bundle-Name>
 						<Embed-Dependency>*;scope=compile|runtime;inline=true</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
-						<Export-Package>org.dmg.pmml.*,org.jpmml.*</Export-Package>
+						<Export-Package>org.dmg.pmml.*;-split-package:=merge-first,org.jpmml.*</Export-Package>
 						<Import-Package>*</Import-Package>
 					</instructions>
 				</configuration>

@@ -14,6 +14,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-schema</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jpmml</groupId>
 			<artifactId>xjc</artifactId>
 		</dependency>
 
@@ -68,6 +73,7 @@
 				<configuration>
 					<args>
 						<arg>-no-header</arg>
+						<arg>-Xannotate</arg>
 						<arg>-Xequals</arg>
 						<arg>-XhashCode</arg>
 						<arg>-Xpmml</arg>
@@ -81,15 +87,26 @@
 				</configuration>
 				<dependencies>
 					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-basics</artifactId>
-						<version>0.6.3</version>
+						<groupId>org.jpmml</groupId>
+						<artifactId>pmml-schema</artifactId>
+						<version>1.0-SNAPSHOT</version>
 					</dependency>
 
 					<dependency>
 						<groupId>org.jpmml</groupId>
 						<artifactId>xjc</artifactId>
 						<version>1.0-SNAPSHOT</version>
+					</dependency>
+
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics</artifactId>
+						<version>0.6.3</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics-annotate</artifactId>
+						<version>0.6.3</version>
 					</dependency>
 				</dependencies>
 			</plugin>
