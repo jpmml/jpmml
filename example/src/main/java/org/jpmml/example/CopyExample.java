@@ -8,8 +8,6 @@ import java.io.*;
 import javax.xml.bind.*;
 import javax.xml.transform.sax.*;
 
-import org.jpmml.manager.*;
-
 import org.dmg.pmml.*;
 
 import org.xml.sax.*;
@@ -46,12 +44,7 @@ public class CopyExample {
 
 			XMLReader reader = XMLReaderFactory.createXMLReader();
 
-			NamespaceURIFilter filteredReader = new NamespaceURIFilter();
-			filteredReader.initDefaultMappings();
-
-			filteredReader.setParent(reader);
-
-			SAXSource filteredSource = new SAXSource(filteredReader, source);
+			SAXSource filteredSource = new SAXSource(new ImportFilter(reader), source);
 
 			Unmarshaller unmarshaller = getJAXBContext().createUnmarshaller();
 			return (PMML)unmarshaller.unmarshal(filteredSource);

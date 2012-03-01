@@ -11,18 +11,32 @@ public enum Version {
 	PMML_4_1("http://www.dmg.org/PMML-4_1"),
 	;
 
-	private String uri = null;
+	private String namespaceUri = null;
 
 
-	private Version(String uri){
-		setURI(uri);
+	private Version(String namespaceUri){
+		setNamespaceURI(namespaceUri);
 	}
 
-	public String getURI(){
-		return this.uri;
+	public String getNamespaceURI(){
+		return this.namespaceUri;
 	}
 
-	private void setURI(String uri){
-		this.uri = uri;
+	private void setNamespaceURI(String namespaceUri){
+		this.namespaceUri = namespaceUri;
+	}
+
+	static
+	public Version forNamespaceURI(String namespaceURI){
+		Version[] versions = Version.values();
+
+		for(Version version : versions){
+
+			if((version.getNamespaceURI()).equals(namespaceURI)){
+				return version;
+			}
+		}
+
+		throw new IllegalArgumentException(namespaceURI);
 	}
 }
