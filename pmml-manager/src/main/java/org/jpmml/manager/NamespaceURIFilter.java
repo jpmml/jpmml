@@ -23,12 +23,13 @@ public class NamespaceURIFilter extends XMLFilterImpl {
 	}
 
 	public void initDefaultMappings(){
-		setMapping(Version.PMML_3_0.getURI(), Version.PMML_4_0.getURI());
-		setMapping(Version.PMML_3_1.getURI(), Version.PMML_4_0.getURI());
-		setMapping(Version.PMML_3_2.getURI(), Version.PMML_4_0.getURI());
+		setMapping(Version.PMML_3_0.getURI(), Version.PMML_4_1.getURI());
+		setMapping(Version.PMML_3_1.getURI(), Version.PMML_4_1.getURI());
+		setMapping(Version.PMML_3_2.getURI(), Version.PMML_4_1.getURI());
+		setMapping(Version.PMML_4_0.getURI(), Version.PMML_4_1.getURI());
 
 		// Missing XML namespace declaration
-		setMapping("", Version.PMML_4_0.getURI());
+		setMapping("", Version.PMML_4_1.getURI());
 	}
 
 	public void setMapping(String fromNsURI, String toNsURI){

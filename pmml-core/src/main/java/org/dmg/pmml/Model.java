@@ -34,6 +34,12 @@ public class Model extends PMMLObject {
 	public void setLocalTransformations(LocalTransformations localTransformations);
 
 	abstract
+	public boolean isIsScorable();
+
+	abstract
+	public void setIsScorable(Boolean isScorable);
+
+	abstract
 	public ModelStats getModelStats();
 
 	abstract
