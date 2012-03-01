@@ -7,6 +7,7 @@ public enum Version {
 	PMML_3_0("http://www.dmg.org/PMML-3_0"),
 	PMML_3_1("http://www.dmg.org/PMML-3_1"),
 	PMML_3_2("http://www.dmg.org/PMML-3_2"),
+	PMML_4_0("http://www.dmg.org/PMML-4_0"),
 	;
 
 	private String uri = null;

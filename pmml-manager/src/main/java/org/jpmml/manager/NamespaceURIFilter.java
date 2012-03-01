@@ -5,6 +5,8 @@ package org.jpmml.manager;
 
 import java.util.*;
 
+import org.dmg.pmml.*;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
@@ -21,11 +23,12 @@ public class NamespaceURIFilter extends XMLFilterImpl {
 	}
 
 	public void initDefaultMappings(){
-		setMapping(PMML_3_0, PMML_3_2);
-		setMapping(PMML_3_1, PMML_3_2);
+		setMapping(Version.PMML_3_0.getURI(), Version.PMML_4_0.getURI());
+		setMapping(Version.PMML_3_1.getURI(), Version.PMML_4_0.getURI());
+		setMapping(Version.PMML_3_2.getURI(), Version.PMML_4_0.getURI());
 
 		// Missing XML namespace declaration
-		setMapping("", PMML_3_2);
+		setMapping("", Version.PMML_4_0.getURI());
 	}
 
 	public void setMapping(String fromNsURI, String toNsURI){
@@ -51,8 +54,4 @@ public class NamespaceURIFilter extends XMLFilterImpl {
 
 		return (toNsURI != null ? toNsURI : fromNsURI);
 	}
-
-	public static final String PMML_3_0 = "http://www.dmg.org/PMML-3_0";
-	public static final String PMML_3_1 = "http://www.dmg.org/PMML-3_1";
-	public static final String PMML_3_2 = "http://www.dmg.org/PMML-3_2";
 }
