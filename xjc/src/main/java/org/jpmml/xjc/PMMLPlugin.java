@@ -63,6 +63,11 @@ public class PMMLPlugin extends Plugin {
 				if(propertyInfo.isCollection() && (propertyInfo.getName(false)).equals("arraies")){
 					propertyInfo.setName(true, "Arrays");
 					propertyInfo.setName(false, "arrays");
+				} // End if
+
+				if((propertyInfo.getName(false)).equals("isScorable")){
+					propertyInfo.setName(true, "Scorable");
+					propertyInfo.setName(false, "scorable");
 				}
 			}
 
