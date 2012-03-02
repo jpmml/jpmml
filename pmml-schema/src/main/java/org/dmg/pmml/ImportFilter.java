@@ -29,7 +29,7 @@ public class ImportFilter extends XMLFilterImpl {
 		Version version = forNamespaceURI(namespaceURI);
 
 		if((version).compareTo(Version.PMML_3_0) >= 0 && (version).compareTo(Version.PMML_4_1) <= 0){
-			return Version.PMML_4_1.getNamespaceURI();
+			return ImportFilter.version.getNamespaceURI();
 		}
 
 		return namespaceURI;
@@ -52,10 +52,11 @@ public class ImportFilter extends XMLFilterImpl {
 	private Version forNamespaceURI(String namespaceURI){
 
 		if(("").equals(namespaceURI)){
-			return Version.PMML_4_1;
+			return ImportFilter.version;
 		}
 
 		return Version.forNamespaceURI(namespaceURI);
 	}
 
+	private static final Version version = Version.PMML_4_1;
 }

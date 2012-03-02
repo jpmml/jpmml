@@ -7,8 +7,10 @@ import java.io.*;
 
 import javax.xml.bind.*;
 import javax.xml.transform.sax.*;
+import javax.xml.transform.stream.*;
 
 import org.dmg.pmml.*;
+import org.dmg.pmml.ObjectFactory;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -58,10 +60,12 @@ public class CopyExample {
 		OutputStream os = new FileOutputStream(file);
 
 		try {
+			StreamResult result = new StreamResult(os);
+
 			Marshaller marshaller = getJAXBContext().createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-			marshaller.marshal(pmml, os);
+			marshaller.marshal(pmml, result);
 		} finally {
 			os.close();
 		}
