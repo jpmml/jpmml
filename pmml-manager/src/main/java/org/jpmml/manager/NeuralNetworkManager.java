@@ -25,6 +25,10 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		super(pmml);
 
 		this.neuralNetwork = neuralNetwork;
+
+		if(this.neuralNetwork != null){
+			this.neuronCount = getNeuronCount();
+		}
 	}
 
 	@Override
@@ -60,8 +64,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		DerivedField derivedField = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
 		derivedField.setExpression(normContinuous);
 
-		String id = String.valueOf(this.neuronCount++);
-		NeuralInput neuralInput = new NeuralInput(derivedField, id);
+		NeuralInput neuralInput = new NeuralInput(derivedField, nextId());
 
 		getNeuralInputs().add(neuralInput);
 
@@ -82,9 +85,21 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		return neuralLayer;
 	}
 
+	public int getNeuronCount(){
+		int count = 0;
+
+		count += (getNeuralInputs()).size();
+
+		List<NeuralLayer> neuralLayers = getNeuralLayers();
+		for(NeuralLayer neuralLayer : neuralLayers){
+			count += (neuralLayer.getNeurons()).size();
+		}
+
+		return count;
+	}
+
 	public Neuron addNeuron(NeuralLayer neuralLayer, Double bias) {
-		String id = String.valueOf(this.neuronCount++);
-		Neuron neuron = new Neuron(id);
+		Neuron neuron = new Neuron(nextId());
 		neuron.setBias(bias);
 
 		neuralLayer.getNeurons().add(neuron);
@@ -128,6 +143,10 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		getOrCreateNeuralOutputs().add(output);
 
 		return output;
+	}
+
+	private String nextId(){
+		return String.valueOf(this.neuronCount++);
 	}
 
 	/**
