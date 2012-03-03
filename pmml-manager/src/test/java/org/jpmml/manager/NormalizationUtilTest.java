@@ -56,10 +56,10 @@ public class NormalizationUtilTest {
 
 	@Test
 	public void testDenormalize() {
-		assertEquals(0.010, NormalizationUtil.denormalize(0.0, norm), 1e-5);
-		assertEquals(0.300, NormalizationUtil.denormalize(0.047247, norm), 1e-5);
-		assertEquals(7.123, NormalizationUtil.denormalize(0.741838, norm), 1e-5);
-		assertEquals(11.44, NormalizationUtil.denormalize(1.0, norm), 1e-5);
+		assertEquals(0.010, NormalizationUtil.denormalize(norm, 0.0), 1e-5);
+		assertEquals(0.300, NormalizationUtil.denormalize(norm, 0.047247), 1e-5);
+		assertEquals(7.123, NormalizationUtil.denormalize(norm, 0.741838), 1e-5);
+		assertEquals(11.44, NormalizationUtil.denormalize(norm, 1.0), 1e-5);
 	}
 
 }

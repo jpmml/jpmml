@@ -3,18 +3,13 @@
  */
 package org.jpmml.manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.dmg.pmml.*;
-import org.jpmml.manager.EvaluationException;
-import org.jpmml.manager.ModelManager;
 
 public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 
-	private NeuralNetwork model;
+	private NeuralNetwork neuralNetwork = null;
 
 	private int neuronCount = 0;
 
@@ -26,17 +21,17 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		this(pmml, find(pmml.getContent(), NeuralNetwork.class));
 	}
 
-	public NeuralNetworkManager(PMML pmml, NeuralNetwork model) {
+	public NeuralNetworkManager(PMML pmml, NeuralNetwork neuralNetwork) {
 		super(pmml);
 
-		this.model = model;
+		this.neuralNetwork = neuralNetwork;
 	}
 
 	@Override
 	public NeuralNetwork getModel() {
-		ensureNotNull(this.model);
+		ensureNotNull(this.neuralNetwork);
 
-		return this.model;
+		return this.neuralNetwork;
 	}
 
 	/**
@@ -45,49 +40,55 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 	 * @see #getModel()
 	 */
 	public NeuralNetwork createModel(MiningFunctionType miningFunction, ActivationFunctionType activationFunction) {
-		ensureNull(this.model);
+		ensureNull(this.neuralNetwork);
 
-		this.model = new NeuralNetwork(new MiningSchema(), new NeuralInputs(), miningFunction, activationFunction);
+		this.neuralNetwork = new NeuralNetwork(new MiningSchema(), new NeuralInputs(), miningFunction, activationFunction);
 
 		List<Model> content = getPmml().getContent();
-		content.add(this.model);
+		content.add(this.neuralNetwork);
 
-		return this.model;
+		return this.neuralNetwork;
 	}
 
 	public List<NeuralInput> getNeuralInputs() {
-		NeuralNetwork model = getModel();
+		NeuralNetwork neuralNetwork = getModel();
 
-		return model.getNeuralInputs().getNeuralInputs();
+		return neuralNetwork.getNeuralInputs().getNeuralInputs();
 	}
 
-	public NeuralInput addNeuralInput(NormContinuous norm) {
-		DerivedField df = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
-		df.setExpression(norm);
-		String id = String.valueOf(this.neuronCount++);
-		NeuralInput input = new NeuralInput(df, id);
+	public NeuralInput addNeuralInput(NormContinuous normContinuous) {
+		DerivedField derivedField = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
+		derivedField.setExpression(normContinuous);
 
-		getNeuralInputs().add(input);
-		return input;
+		String id = String.valueOf(this.neuronCount++);
+		NeuralInput neuralInput = new NeuralInput(derivedField, id);
+
+		getNeuralInputs().add(neuralInput);
+
+		return neuralInput;
 	}
 
 	public List<NeuralLayer> getNeuralLayers(){
-		NeuralNetwork model = getModel();
+		NeuralNetwork neuralNetwork = getModel();
 
-		return model.getNeuralLayers();
+		return neuralNetwork.getNeuralLayers();
 	}
 
 	public NeuralLayer addNeuralLayer() {
-		NeuralLayer layer = new NeuralLayer();
-		getNeuralLayers().add(layer);
-		return layer;
+		NeuralLayer neuralLayer = new NeuralLayer();
+
+		getNeuralLayers().add(neuralLayer);
+
+		return neuralLayer;
 	}
 
-	public Neuron addNeuron(NeuralLayer layer, double bias) {
+	public Neuron addNeuron(NeuralLayer neuralLayer, Double bias) {
 		String id = String.valueOf(this.neuronCount++);
 		Neuron neuron = new Neuron(id);
 		neuron.setBias(bias);
-		layer.getNeurons().add(neuron);
+
+		neuralLayer.getNeurons().add(neuron);
+
 		return neuron;
 	}
 
@@ -100,85 +101,106 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 	}
 
 	public List<NeuralOutput> getOrCreateNeuralOutputs() {
-		NeuralNetwork model = getModel();
+		NeuralNetwork neuralNetwork = getModel();
 
-		NeuralOutputs neuralOutputs = model.getNeuralOutputs();
+		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		if(neuralOutputs == null){
 			neuralOutputs = new NeuralOutputs();
 
-			model.setNeuralOutputs(neuralOutputs);
+			neuralNetwork.setNeuralOutputs(neuralOutputs);
 		}
 
 		return neuralOutputs.getNeuralOutputs();
 	}
 
-	public NeuralOutput addNeuralOutput(Neuron neuron, NormContinuous norm) {
-		DerivedField df = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
-		df.setExpression(norm);
-		NeuralOutput output = new NeuralOutput(df, neuron.getId());
+	public NeuralOutput addNeuralOutput(Neuron neuron, NormContinuous normCountinuous) {
+		DerivedField derivedField = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
+		derivedField.setExpression(normCountinuous);
+
+		NeuralOutput output = new NeuralOutput(derivedField, neuron.getId());
+
 		getOrCreateNeuralOutputs().add(output);
+
 		return output;
 	}
 
+	/**
+	 * @see #evaluateRegression(Map)
+	 * @see #evaluateClassification(Map)
+	 */
 	@Override
-	public HashMap<FieldName,String> evaluate(Map<FieldName, ?> params) {
-		HashMap<FieldName,String> result = new HashMap<FieldName, String>();
-		if (getModel().getFunctionName().equals(MiningFunctionType.REGRESSION)) {
-			HashMap<FieldName, Double> r = evaluateRegression(params);
-			for (FieldName field: r.keySet()) {
-				result.put(field, r.get(field).toString());
-			}
-		} else if (getModel().getFunctionName().equals(MiningFunctionType.CLASSIFICATION)) {
-			HashMap<FieldName, Map<String, Double>> r = evaluateClassification(params);
-			for (FieldName field: r.keySet()) {
-				result.put(field, r.get(field).toString());
-			}
-		} else {
-			throw new UnsupportedOperationException();
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters) {
+		NeuralNetwork neuralNetwork = getModel();
+
+		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
+		switch(miningFunction){
+			case REGRESSION:
+				return evaluateRegression(parameters);
+			case CLASSIFICATION:
+				return evaluateClassification(parameters);
+			default:
+				break;
 		}
-		return result;
+
+		throw new EvaluationException();
 	}
 
-	public HashMap<FieldName,Double> evaluateRegression(Map<FieldName, ?> params) {
-		HashMap<String, Double> neuronOutputs = evaluateRaw(params);
-		HashMap<FieldName,Double> result = new HashMap<FieldName, Double>();
+	public Map<FieldName, Double> evaluateRegression(Map<FieldName, ?> parameters) {
+		Map<FieldName, Double> result = new HashMap<FieldName, Double>();
+
+		Map<String, Double> neuronOutputs = evaluateRaw(parameters);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
-		for (NeuralOutput out: neuralOutputs) {
-			String id = out.getOutputNeuron();
+		for (NeuralOutput neuralOutput : neuralOutputs) {
+			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = out.getDerivedField().getExpression();
+			Expression expression = (neuralOutput.getDerivedField()).getExpression();
 			if (expression instanceof NormContinuous) {
 				NormContinuous normContinuous = (NormContinuous)expression;
 
 				FieldName field = normContinuous.getField();
-				double value = NormalizationUtil.denormalize(neuronOutputs.get(id), normContinuous);
+				Double value = NormalizationUtil.denormalize(normContinuous, neuronOutputs.get(id));
+
 				result.put(field, value);
+			} else
+
+			{
+				throw new EvaluationException();
 			}
 		}
 
 		return result;
 	}
 
-	public HashMap<FieldName,Map<String,Double>> evaluateClassification(Map<FieldName, ?> params) {
-		HashMap<String, Double> neuronOutputs = evaluateRaw(params);
-		HashMap<FieldName, Map<String,Double>> result = new HashMap<FieldName, Map<String,Double>>();
+	public Map<FieldName, Map<String, Double>> evaluateClassification(Map<FieldName, ?> parameters) {
+		Map<FieldName, Map<String,Double>> result = new HashMap<FieldName, Map<String, Double>>();
+
+		Map<String, Double> neuronOutputs = evaluateRaw(parameters);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
-		for (NeuralOutput out: neuralOutputs) {
-			String id = out.getOutputNeuron();
+		for (NeuralOutput neuralOutput: neuralOutputs) {
+			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = out.getDerivedField().getExpression();
+			Expression expression = (neuralOutput.getDerivedField()).getExpression();
 			if (expression instanceof NormDiscrete) {
-				NormDiscrete norm = (NormDiscrete)expression;
+				NormDiscrete normDiscrete = (NormDiscrete)expression;
 
-				if (!result.containsKey(norm.getField())) {
-					result.put(norm.getField(), new HashMap<String, Double>());
+				FieldName field = normDiscrete.getField();
+
+				Map<String, Double> valuesMap = result.get(field);
+				if(valuesMap == null){
+					valuesMap = new HashMap<String, Double>();
+
+					result.put(field, valuesMap);
 				}
-				Map<String, Double> vmap = result.get(norm.getField());
-				vmap.put(norm.getValue(), neuronOutputs.get(id));
-			} else {
-				throw new UnsupportedOperationException();
+
+				Double value = neuronOutputs.get(id);
+
+				valuesMap.put(normDiscrete.getValue(), value);
+			} else
+
+			{
+				throw new EvaluationException();
 			}
 		}
 
@@ -188,40 +210,49 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 	/**
 	 * Evaluate neural network.
 	 *
-	 * @param params - mapping between input data fields and their values
-	 * @return mapping between neuron ids and their outputs
+	 * @param parameters Mapping between input data fields and their values
+	 *
+	 * @return Mapping between Neuron ids and their outputs
 	 */
-	public HashMap<String,Double> evaluateRaw(Map<FieldName, ?> params) {
-		HashMap<String, Double> neuronOutputs = new HashMap<String, Double>();
+	public Map<String, Double> evaluateRaw(Map<FieldName, ?> parameters) {
+		Map<String, Double> result = new HashMap<String, Double>();
 
-		List<NeuralInput> inputs = getNeuralInputs();
-		for (NeuralInput inp: inputs) {
-			String neuronId = inp.getId();
+		List<NeuralInput> neuralInputs = getNeuralInputs();
+		for (NeuralInput neuralInput: neuralInputs) {
+			Double value = evaluateDerivedField(neuralInput.getDerivedField(), parameters);
 
-			double value = evaluateDerivedField(inp.getDerivedField(), params);
-			neuronOutputs.put(neuronId, value);
+			result.put(neuralInput.getId(), value);
 		}
 
-		for (NeuralLayer layer: getNeuralLayers()) {
-			for (Neuron neuron: layer.getNeurons()) {
-				double Z = neuron.getBias();
-				for (Connection con: neuron.getCons()) {
-					double inp = neuronOutputs.get(con.getFrom());
-					Z += inp*con.getWeight();
+		List<NeuralLayer> neuralLayers = getNeuralLayers();
+		for (NeuralLayer neuralLayer: neuralLayers) {
+			List<Neuron> neurons = neuralLayer.getNeurons();
+
+			for (Neuron neuron : neurons) {
+				double z = neuron.getBias();
+
+				List<Connection> connections = neuron.getCons();
+				for (Connection connection : connections) {
+					double input = result.get(connection.getFrom());
+
+					z += input * connection.getWeight();
 				}
-				double output = activation(Z, layer);
-				neuronOutputs.put(neuron.getId(), output);
+
+				double output = activation(z, neuralLayer);
+
+				result.put(neuron.getId(), output);
 			}
-			normalizeNeuronOutputs(layer, neuronOutputs);
+
+			normalizeNeuronOutputs(neuralLayer, result);
 		}
 
-		return neuronOutputs;
+		return result;
 	}
 
-	private void normalizeNeuronOutputs(NeuralLayer layer, Map<String, Double> neuronOutputs) {
+	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Map<String, Double> neuronOutputs) {
 		NeuralNetwork model = getModel();
 
-		NnNormalizationMethodType normalizationMethod = layer.getNormalizationMethod();
+		NnNormalizationMethodType normalizationMethod = neuralLayer.getNormalizationMethod();
 		if (normalizationMethod == null) {
 			normalizationMethod = model.getNormalizationMethod();
 		} // End if
@@ -231,13 +262,20 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		} else
 
 		if (normalizationMethod == NnNormalizationMethodType.SOFTMAX) {
+			List<Neuron> neurons = neuralLayer.getNeurons();
+
 			double sum = 0.0;
-			for (Neuron neuron: layer.getNeurons()) {
-				sum += Math.exp(neuronOutputs.get(neuron.getId()));
+
+			for (Neuron neuron : neurons) {
+				double output = neuronOutputs.get(neuron.getId());
+
+				sum += Math.exp(output);
 			}
-			for (Neuron neuron: layer.getNeurons()) {
-				double o = neuronOutputs.get(neuron.getId());
-				neuronOutputs.put(neuron.getId(), Math.exp(o)/sum);
+
+			for (Neuron neuron : neurons) {
+				double output = neuronOutputs.get(neuron.getId());
+
+				neuronOutputs.put(neuron.getId(), Math.exp(output) / sum);
 			}
 		} else
 
@@ -246,13 +284,16 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		}
 	}
 
-	private double evaluateDerivedField(DerivedField df, Map<FieldName,?> parameters) {
+	private double evaluateDerivedField(DerivedField derivedField, Map<FieldName,?> parameters) {
 
-		if (!df.getDataType().equals(DataTypeType.DOUBLE) && !df.getOptype().equals(OpTypeType.CONTINUOUS)) {
+		if (!(derivedField.getDataType()).equals(DataTypeType.DOUBLE) && !(derivedField.getOptype()).equals(OpTypeType.CONTINUOUS)) {
 			throw new UnsupportedOperationException();
 		}
 
-		Expression expression = df.getExpression();
+		return evaluateExpression(derivedField.getExpression(), parameters);
+	}
+
+	private double evaluateExpression(Expression expression, Map<FieldName, ?> parameters){
 
 		if (expression instanceof FieldRef) {
 			FieldRef fieldRef = (FieldRef)expression;
@@ -261,26 +302,35 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 
 			// check refs to derived fields in local and global transformation dictionaries
 			List<DerivedField> derivedFields = new ArrayList<DerivedField>();
-			if (getModel().getLocalTransformations() != null) {
-				derivedFields.addAll(getModel().getLocalTransformations().getDerivedFields());
+
+			LocalTransformations localTransformations = getModel().getLocalTransformations();
+			if (localTransformations != null) {
+				derivedFields.addAll(localTransformations.getDerivedFields());
 			}
-			if (getPmml().getTransformationDictionary() != null) {
-				derivedFields.addAll(getPmml().getTransformationDictionary().getDerivedFields());
+
+			TransformationDictionary transformationDictionary = getPmml().getTransformationDictionary();
+			if (transformationDictionary != null) {
+				derivedFields.addAll(transformationDictionary.getDerivedFields());
 			}
-			for (DerivedField i: derivedFields) {
-				if (i.getName().equals(field)) {
-					return evaluateDerivedField(i, parameters);
+
+			for (DerivedField derivedField : derivedFields) {
+
+				if ((derivedField.getName()).equals(field)) {
+					return evaluateDerivedField(derivedField, parameters);
 				}
 			}
 
 			// refs to a data field in the data dictionary
-			for (DataField i: getDataDictionary().getDataFields()) {
-				if (i.getName().equals(field)) {
+			List<DataField> dataFields = getDataDictionary().getDataFields();
+
+			for (DataField dataField : dataFields) {
+
+				if ((dataField.getName()).equals(field)) {
 					return ((Number) parameters.get(field)).doubleValue();
 				}
 			}
 
-			throw new EvaluationException("Can't handle FieldRef: "+field.getValue());
+			throw new EvaluationException("Can't handle FieldRef: " + field.getValue());
 		} else
 
 		if (expression instanceof NormContinuous) {
