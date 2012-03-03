@@ -11,7 +11,7 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 	private TreeModel treeModel = null;
 
-	private Node node = null;
+	private Node root = null;
 
 
 	public TreeModelManager(){
@@ -51,27 +51,27 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	}
 
 	/**
-	 * @return The root Node. Its predicate is the constant TRUE.
+	 * @return The root Node
 	 */
-	public Node getOrCreateNode(){
+	public Node getOrCreateRoot(){
 
-		if(this.node == null){
+		if(this.root == null){
 			TreeModel treeModel = getModel();
 
-			this.node = treeModel.getNode();
-			if(this.node == null){
-				this.node = new Node();
+			this.root = treeModel.getNode();
+			if(this.root == null){
+				this.root = new Node();
 
-				treeModel.setNode(this.node);
+				treeModel.setNode(this.root);
 			}
 
-			Predicate predicate = this.node.getPredicate();
+			Predicate predicate = this.root.getPredicate();
 			if(predicate == null){
-				this.node.setPredicate(new True());
+				this.root.setPredicate(new True());
 			}
 		}
 
-		return this.node;
+		return this.root;
 	}
 
 	/**
@@ -79,10 +79,10 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	 *
 	 * @return The newly added Node
 	 *
-	 * @see #getOrCreateNode()
+	 * @see #getOrCreateRoot()
 	 */
 	public Node addNode(Predicate predicate){
-		return addNode(getOrCreateNode(), predicate);
+		return addNode(getOrCreateRoot(), predicate);
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	}
 
 	public Node scoreModel(Map<FieldName, ?> parameters){
-		Node root = getOrCreateNode();
+		Node root = getOrCreateRoot();
 
 		Prediction prediction = findTrueChild(root, root, parameters); // XXX
 

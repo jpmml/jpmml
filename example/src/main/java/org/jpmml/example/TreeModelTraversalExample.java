@@ -32,7 +32,7 @@ public class TreeModelTraversalExample {
 	private void traverse(PMML pmml){
 		TreeModelManager treeModelManager = new TreeModelManager(pmml);
 
-		traverse(treeModelManager.getOrCreateNode(), "");
+		traverse(treeModelManager.getOrCreateRoot(), "");
 	}
 
 	static
@@ -44,15 +44,13 @@ public class TreeModelTraversalExample {
 
 		System.out.println(indent + "if(" + format(predicate) + "){");
 
-		String nestedIndent = indent + "\t";
-
 		List<Node> children = node.getNodes();
 		for(Node child : children){
-			traverse(child, nestedIndent);
+			traverse(child, indent + "\t");
 		}
 
 		if(node.getScore() != null){
-			System.out.println(nestedIndent + "return (" + node.getScore() + ");");
+			System.out.println(indent + "\t" + "return (" + node.getScore() + ");");
 		}
 
 		System.out.println(indent + "}");

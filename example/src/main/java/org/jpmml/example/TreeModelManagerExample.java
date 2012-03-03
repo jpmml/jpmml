@@ -70,7 +70,7 @@ public class TreeModelManagerExample {
 		whatIdoDataValues.add(new Value("may play"));
 		whatIdoDataValues.add(new Value("no play"));
 
-		Node n1 = treeModelManager.getOrCreateNode();
+		Node n1 = treeModelManager.getOrCreateRoot();
 		n1.setId("1");
 		n1.setScore("will play");
 
