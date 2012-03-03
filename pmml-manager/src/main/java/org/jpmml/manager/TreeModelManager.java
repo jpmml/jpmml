@@ -32,19 +32,18 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 	@Override
 	public TreeModel getModel(){
-
-		if(this.treeModel == null){
-			throw new IllegalStateException();
-		}
+		ensureNotNull(this.treeModel);
 
 		return this.treeModel;
 	}
 
+	/**
+	 * @throws ModelManagerException If the Model already exists
+	 *
+	 * @see #getModel()
+	 */
 	public TreeModel createModel(MiningFunctionType miningFunction){
-
-		if(this.treeModel != null){
-			throw new IllegalStateException();
-		}
+		ensureNull(this.treeModel);
 
 		this.treeModel = new TreeModel(new MiningSchema(), new Node(), miningFunction);
 

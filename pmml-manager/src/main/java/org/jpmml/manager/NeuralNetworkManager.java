@@ -34,16 +34,18 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 
 	@Override
 	public NeuralNetwork getModel() {
-		if(this.model == null){
-			throw new IllegalStateException();
-		}
+		ensureNotNull(this.model);
+
 		return this.model;
 	}
 
+	/**
+	 * @throws ModelManagerException If the Model already exists
+	 *
+	 * @see #getModel()
+	 */
 	public NeuralNetwork createModel(MiningFunctionType miningFunction, ActivationFunctionType activationFunction) {
-		if(this.model != null){
-			throw new IllegalStateException();
-		}
+		ensureNull(this.model);
 
 		this.model = new NeuralNetwork(new MiningSchema(), new NeuralInputs(), miningFunction, activationFunction);
 

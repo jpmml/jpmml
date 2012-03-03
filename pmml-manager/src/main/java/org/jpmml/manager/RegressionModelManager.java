@@ -32,19 +32,18 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	@Override
 	public RegressionModel getModel(){
-
-		if(this.regressionModel == null){
-			throw new IllegalStateException();
-		}
+		ensureNotNull(this.regressionModel);
 
 		return this.regressionModel;
 	}
 
+	/**
+	 * @throws ModelManagerException If the Model already exists
+	 *
+	 * @see #getModel()
+	 */
 	public RegressionModel createModel(MiningFunctionType miningFunction){
-
-		if(this.regressionModel != null){
-			throw new IllegalStateException();
-		}
+		ensureNull(this.regressionModel);
 
 		this.regressionModel = new RegressionModel(new MiningSchema(), miningFunction);
 

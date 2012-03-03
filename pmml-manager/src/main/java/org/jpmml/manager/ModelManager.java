@@ -17,6 +17,9 @@ public class ModelManager<M extends Model> extends PMMLManager {
 		super(pmml);
 	}
 
+	/**
+	 * @throws ModelManagerException If the Model does not exist
+	 */
 	abstract
 	public M getModel();
 
@@ -69,6 +72,22 @@ public class ModelManager<M extends Model> extends PMMLManager {
 
 	public MiningSchema getMiningSchema(){
 		return getModel().getMiningSchema();
+	}
+
+	static
+	protected void ensureNull(Object object) throws ModelManagerException {
+
+		if(object != null){
+			throw new ModelManagerException();
+		}
+	}
+
+	static
+	protected void ensureNotNull(Object object) throws ModelManagerException {
+
+		if(object == null){
+			throw new ModelManagerException();
+		}
 	}
 
 	static
