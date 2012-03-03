@@ -15,20 +15,20 @@ import org.jpmml.manager.ModelManager;
 public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 
 	private NeuralNetwork model;
+
 	private int neuronCount = 0;
+
 
 	public NeuralNetworkManager() {
 	}
 
 	public NeuralNetworkManager(PMML pmml) {
-		super(pmml);
-
-		List<Model> content = pmml.getContent();
-		this.model = find(content, NeuralNetwork.class);
+		this(pmml, find(pmml.getContent(), NeuralNetwork.class));
 	}
 
 	public NeuralNetworkManager(PMML pmml, NeuralNetwork model) {
 		super(pmml);
+
 		this.model = model;
 	}
 

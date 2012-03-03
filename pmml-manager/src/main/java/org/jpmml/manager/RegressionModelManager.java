@@ -18,10 +18,7 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 	}
 
 	public RegressionModelManager(PMML pmml){
-		super(pmml);
-
-		List<Model> content = pmml.getContent();
-		this.regressionModel = find(content, RegressionModel.class);
+		this(pmml, find(pmml.getContent(), RegressionModel.class));
 	}
 
 	public RegressionModelManager(PMML pmml, RegressionModel regressionModel){

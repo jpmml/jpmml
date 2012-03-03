@@ -18,10 +18,7 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	}
 
 	public TreeModelManager(PMML pmml){
-		super(pmml);
-
-		List<Model> content = pmml.getContent();
-		this.treeModel = find(content, TreeModel.class);
+		this(pmml, find(pmml.getContent(), TreeModel.class));
 	}
 
 	public TreeModelManager(PMML pmml, TreeModel treeModel){
