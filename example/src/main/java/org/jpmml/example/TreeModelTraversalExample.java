@@ -37,17 +37,10 @@ public class TreeModelTraversalExample {
 
 	static
 	private void traverse(Node node, String indent){
-		List<Predicate> predicates = node.getContent();
-
-		if(predicates.size() < 1){
-			throw new IllegalArgumentException("No predicate");
-		} else
-
-		if(predicates.size() > 1){
-			throw new IllegalArgumentException("Too many predicates");
+		Predicate predicate = node.getPredicate();
+		if(predicate == null){
+			throw new IllegalArgumentException("Missing predicate");
 		}
-
-		Predicate predicate = predicates.get(0);
 
 		System.out.println(indent + "if(" + format(predicate) + "){");
 

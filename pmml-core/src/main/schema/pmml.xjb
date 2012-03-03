@@ -6,10 +6,6 @@ Copyright (c) 2009 University of Tartu
 
 	<jaxb:bindings schemaLocation="pmml.xsd" node="/xsd:schema">
 
-		<jaxb:globalBindings>
-			<xjc:simple/>
-		</jaxb:globalBindings>
-
 		<jaxb:schemaBindings>
 			<jaxb:package
 				name="org.dmg.pmml"
@@ -797,6 +793,30 @@ Copyright (c) 2009 University of Tartu
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_0"/>
 			</annox:annotate>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:group[@name='EmbeddedModel']">
+			<jaxb:property
+				name="embeddedModel"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:group[@name='EXPRESSION']">
+			<jaxb:property
+				name="expression"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:group[@name='MODEL-ELEMENT']">
+			<jaxb:property
+				name="model"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:group[@name='PREDICATE']">
+			<jaxb:property
+				name="predicate"
+			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:simpleType[@name='ACTIVATION-FUNCTION']">

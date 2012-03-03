@@ -55,7 +55,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 
 	public NeuralInput addNeuralInput(NormContinuous norm) {
 		DerivedField df = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
-		df.setNormContinuous(norm);
+		df.setExpression(norm);
 		String id = String.valueOf(this.neuronCount++);
 		NeuralInput input = new NeuralInput(df, id);
 
@@ -91,7 +91,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 
 	public NeuralOutput addNeuralOutput(Neuron neuron, NormContinuous norm) {
 		DerivedField df = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
-		df.setNormContinuous(norm);
+		df.setExpression(norm);
 		NeuralOutput output = new NeuralOutput(df, neuron.getId());
 		getOrCreateNeuralOutputs().add(output);
 		return output;
@@ -131,10 +131,12 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			for (NeuralOutput out: neuralOutputs.getNeuralOutputs()) {
 				String id = out.getOutputNeuron();
 
-				if (out.getDerivedField().getNormContinuous() != null) {
-					NormContinuous norm = out.getDerivedField().getNormContinuous();
-					FieldName field = norm.getField();
-					double value = NormalizationUtil.denormalize(neuronOutputs.get(id), norm);
+				Expression expression = out.getDerivedField().getExpression();
+				if (expression instanceof NormContinuous) {
+					NormContinuous normContinuous = (NormContinuous)expression;
+
+					FieldName field = normContinuous.getField();
+					double value = NormalizationUtil.denormalize(neuronOutputs.get(id), normContinuous);
 					result.put(field, value);
 				}
 			}
@@ -150,8 +152,9 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			for (NeuralOutput out: neuralOutputs.getNeuralOutputs()) {
 				String id = out.getOutputNeuron();
 
-				if (out.getDerivedField().getNormDiscrete() != null) {
-					NormDiscrete norm = out.getDerivedField().getNormDiscrete();
+				Expression expression = out.getDerivedField().getExpression();
+				if (expression instanceof NormDiscrete) {
+					NormDiscrete norm = (NormDiscrete)expression;
 
 					if (!result.containsKey(norm.getField())) {
 						result.put(norm.getField(), new HashMap<String, Double>());
@@ -229,9 +232,12 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			throw new UnsupportedOperationException();
 		}
 
-		// handle FieldRefs
-		if (df.getFieldRef() != null) {
-			FieldName field = df.getFieldRef().getField();
+		Expression expression = df.getExpression();
+
+		if (expression instanceof FieldRef) {
+			FieldRef fieldRef = (FieldRef)expression;
+
+			FieldName field = fieldRef.getField();
 
 			// check refs to derived fields in local and global transformation dictionaries
 			List<DerivedField> derivedFields = new ArrayList<DerivedField>();
@@ -255,20 +261,22 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			}
 
 			throw new EvaluationException("Can't handle FieldRef: "+field.getValue());
-		}
+		} else
 
-		// handle the normalization of continuous data fields
-		if (df.getNormContinuous() != null) {
-			FieldName field = df.getNormContinuous().getField();
-			double v = NormalizationUtil.normalize(df.getNormContinuous(), (Number) parameters.get(field));
+		if (expression instanceof NormContinuous) {
+			NormContinuous normContinuous = (NormContinuous)expression;
+
+			FieldName field = normContinuous.getField();
+			double v = NormalizationUtil.normalize(normContinuous, (Number) parameters.get(field));
 			return v;
-		}
+		} else
 
-		// handle the normalization of discrete data fields
-		if (df.getNormDiscrete() != null) {
-			FieldName field = df.getNormDiscrete().getField();
+		if (expression instanceof NormDiscrete) {
+			NormDiscrete normDiscrete = (NormDiscrete)expression;
+
+			FieldName field = normDiscrete.getField();
 			Object value = parameters.get(field);
-			return df.getNormDiscrete().getValue().equals(value) ? 1.0 : 0.0;
+			return normDiscrete.getValue().equals(value) ? 1.0 : 0.0;
 		}
 
 		throw new EvaluationException("Can't evaluate DerivedField");

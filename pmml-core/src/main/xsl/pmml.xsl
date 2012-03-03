@@ -10,7 +10,18 @@ Copyright (c) 2009 University of Tartu
 		</xsl:copy>
 	</xsl:template>
 
+	<!-- 
+	Model types have one Extension list in the beginning and another Extension list in the end, which is too complex for the XJC to handle.
+	-->
 	<xsl:template match="xsd:element[@ref='Extension'][position() &gt; 1 and position() = last()]">
+		<xsl:call-template name="extension-comment"/>
+	</xsl:template>
+
+	<xsl:template match="xsd:group[@name='EmbeddedModel']/xsd:sequence/xsd:element[@ref='Extension']">
+		<xsl:call-template name="extension-comment"/>
+	</xsl:template>
+
+	<xsl:template name="extension-comment">
 		<xsl:comment> &lt;xs:element ref=&quot;Extension&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt; </xsl:comment>
 	</xsl:template>
 </xsl:stylesheet>

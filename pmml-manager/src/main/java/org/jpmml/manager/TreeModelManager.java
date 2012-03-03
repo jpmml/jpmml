@@ -69,9 +69,9 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 				treeModel.setNode(this.node);
 			}
 
-			List<Predicate> content = this.node.getContent();
-			if(content.isEmpty()){
-				content.add(new True());
+			Predicate predicate = this.node.getPredicate();
+			if(predicate == null){
+				this.node.setPredicate(new True());
 			}
 		}
 
@@ -96,9 +96,7 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	 */
 	public Node addNode(Node parentNode, Predicate predicate){
 		Node node = new Node();
-
-		List<Predicate> content = node.getContent();
-		content.add(predicate);
+		node.setPredicate(predicate);
 
 		parentNode.getNodes().add(node);
 
@@ -201,13 +199,12 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	}
 
 	private Boolean evaluateNode(Node node, Map<FieldName, ?> parameters){
-		List<Predicate> predicates = node.getContent();
-
-		if(predicates.size() != 1){
+		Predicate predicate = node.getPredicate();
+		if(predicate == null){
 			throw new EvaluationException();
 		}
 
-		return evaluatePredicate(predicates.get(0), parameters);
+		return evaluatePredicate(predicate, parameters);
 	}
 
 	private Boolean evaluatePredicate(Predicate predicate, Map<FieldName, ?> parameters){
