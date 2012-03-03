@@ -122,8 +122,25 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		return this.regressionTable;
 	}
 
+	/**
+	 * @see #evaluateRegression(Map)
+	 */
 	@Override
 	public Double evaluate(Map<FieldName, ?> parameters){
+		RegressionModel regressionModel = getModel();
+
+		MiningFunctionType miningFunction = regressionModel.getFunctionName();
+		switch(miningFunction){
+			case REGRESSION:
+				return evaluateRegression(parameters);
+			default:
+				break;
+		}
+
+		throw new EvaluationException();
+	}
+
+	public Double evaluateRegression(Map<FieldName, ?> parameters){
 		double result = 0D;
 
 		result += evaluateIntercept();
