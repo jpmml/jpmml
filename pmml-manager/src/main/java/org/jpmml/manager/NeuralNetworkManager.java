@@ -92,12 +92,18 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		return neuron;
 	}
 
+	static
 	public void addConnection(NeuralInput from, Neuron to, double weight) {
-		to.getCons().add(new Connection(from.getId(), weight));
+		Connection connection = new Connection(from.getId(), weight);
+
+		(to.getConnections()).add(connection);
 	}
 
+	static
 	public void addConnection(Neuron from, Neuron to, double weight) {
-		to.getCons().add(new Connection(from.getId(), weight));
+		Connection connection = new Connection(from.getId(), weight);
+
+		(to.getConnections()).add(connection);
 	}
 
 	public List<NeuralOutput> getOrCreateNeuralOutputs() {
@@ -231,7 +237,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			for (Neuron neuron : neurons) {
 				double z = neuron.getBias();
 
-				List<Connection> connections = neuron.getCons();
+				List<Connection> connections = neuron.getConnections();
 				for (Connection connection : connections) {
 					double input = result.get(connection.getFrom());
 

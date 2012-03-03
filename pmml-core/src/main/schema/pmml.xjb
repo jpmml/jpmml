@@ -483,6 +483,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='Neuron']/xsd:complexType/xsd:sequence/xsd:element[@ref='Con']">
+			<jaxb:property
+				name="connection"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='NormContinuous']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Expression"
