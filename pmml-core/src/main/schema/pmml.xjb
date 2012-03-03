@@ -583,9 +583,6 @@ Copyright (c) 2009 University of Tartu
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='Scorecard']/xsd:complexType">
-			<jaxb:class
-				name="ScorecardModel"
-			/>
 			<java:superClass
 				name="org.dmg.pmml.Model"
 			/>
