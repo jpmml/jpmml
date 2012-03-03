@@ -8,11 +8,11 @@ import org.dmg.pmml.NormContinuous;
 import org.jpmml.manager.EvaluationException;
 
 public class NormalizationUtil {
-	
+
 	static
 	public double normalize(NormContinuous norm, Number number) {
 		String fieldName = norm.getField().getValue();
-		
+
 		// handle missing values
 		if (number == null) {
 			Double missing = norm.getMapMissingTo();
@@ -22,11 +22,11 @@ public class NormalizationUtil {
 				return missing;
 			}
 		}
-		
+
 		double value = number.doubleValue();
 		LinearNorm rangeStart = norm.getLinearNorms().get(0);
 		LinearNorm rangeEnd = norm.getLinearNorms().get(norm.getLinearNorms().size()-1);
-		
+
 		// select proper interval for normalization
 		if (rangeStart.getOrig() <= value && value <= rangeEnd.getOrig()) {
 			for (int i=1; i<norm.getLinearNorms().size()-1; ++i) {
@@ -57,11 +57,11 @@ public class NormalizationUtil {
 				break;
 			}
 		}
-		
+
 		double origRange = rangeEnd.getOrig() - rangeStart.getOrig();
 		double normRange = rangeEnd.getNorm() - rangeStart.getNorm();
 		value = rangeStart.getNorm() + (value-rangeStart.getOrig())/origRange * normRange;
-		
+
 		return value;
 	}
 
