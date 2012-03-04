@@ -48,7 +48,7 @@ public class EvaluationExample {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 		try {
-			List<FieldName> names = modelManager.getFields(FieldUsageTypeType.ACTIVE);
+			List<FieldName> names = modelManager.getFields(FieldUsageType.ACTIVE);
 			System.out.println("Model input " + names.size() + " parameter(s):");
 
 			for(int i = 0; i < names.size(); i++){

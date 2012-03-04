@@ -53,14 +53,14 @@ public class RattleVerificationExample {
 
 		ModelManager<?> modelManager = pmmlManager.getModelManager(null);
 
-		List<FieldName> names = modelManager.getFields(FieldUsageTypeType.ACTIVE);
+		List<FieldName> names = modelManager.getFields(FieldUsageType.ACTIVE);
 
 		Map<FieldName, DataField> nameDataFields = new LinkedHashMap<FieldName, DataField>();
 		for(FieldName name : names){
 			nameDataFields.put(name, modelManager.getDataField(name));
 		}
 
-		List<FieldName> scoreNames = modelManager.getFields(FieldUsageTypeType.PREDICTED);
+		List<FieldName> scoreNames = modelManager.getFields(FieldUsageType.PREDICTED);
 		if(scoreNames.size() != 1){
 			throw new IllegalArgumentException();
 		}

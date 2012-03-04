@@ -30,7 +30,7 @@ public class ParameterUtil {
 
 	static
 	public Object parse(DataField dataField, String string){
-		DataTypeType dataType = dataField.getDataType();
+		DataType dataType = dataField.getDataType();
 
 		switch(dataType){
 			case STRING:

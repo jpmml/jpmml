@@ -50,7 +50,7 @@ public class NoTrueChildStrategyTest {
 		treeModel.setNoTrueChildStrategy(noTrueChildStrategy);
 
 		FieldName prob1 = new FieldName("prob1");
-		treeModelManager.addField(prob1, null, OpTypeType.CONTINUOUS, DataTypeType.DOUBLE, FieldUsageTypeType.ACTIVE);
+		treeModelManager.addField(prob1, null, OpType.CONTINUOUS, DataType.DOUBLE, FieldUsageType.ACTIVE);
 
 		Node n1 = treeModelManager.getOrCreateRoot();
 		n1.setId("N1");

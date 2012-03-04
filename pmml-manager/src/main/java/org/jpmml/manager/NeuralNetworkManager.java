@@ -61,7 +61,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 	}
 
 	public NeuralInput addNeuralInput(NormContinuous normContinuous) {
-		DerivedField derivedField = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
+		DerivedField derivedField = new DerivedField(OpType.CONTINUOUS, DataType.DOUBLE);
 		derivedField.setExpression(normContinuous);
 
 		NeuralInput neuralInput = new NeuralInput(derivedField, nextId());
@@ -135,7 +135,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 	}
 
 	public NeuralOutput addNeuralOutput(Neuron neuron, NormContinuous normCountinuous) {
-		DerivedField derivedField = new DerivedField(OpTypeType.CONTINUOUS, DataTypeType.DOUBLE);
+		DerivedField derivedField = new DerivedField(OpType.CONTINUOUS, DataType.DOUBLE);
 		derivedField.setExpression(normCountinuous);
 
 		NeuralOutput output = new NeuralOutput(derivedField, neuron.getId());
@@ -311,7 +311,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 
 	private double evaluateDerivedField(DerivedField derivedField, Map<FieldName,?> parameters) {
 
-		if (!(derivedField.getDataType()).equals(DataTypeType.DOUBLE) && !(derivedField.getOptype()).equals(OpTypeType.CONTINUOUS)) {
+		if (!(derivedField.getDataType()).equals(DataType.DOUBLE) && !(derivedField.getOptype()).equals(OpType.CONTINUOUS)) {
 			throw new UnsupportedOperationException();
 		}
 

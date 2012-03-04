@@ -36,13 +36,13 @@ public class TreeModelManagerExample {
 		treeModel.setModelName("golfing");
 
 		FieldName temperature = new FieldName("temperature");
-		treeModelManager.addField(temperature, null, OpTypeType.CONTINUOUS, DataTypeType.DOUBLE, null);
+		treeModelManager.addField(temperature, null, OpType.CONTINUOUS, DataType.DOUBLE, null);
 
 		FieldName humidity = new FieldName("humidity");
-		treeModelManager.addField(humidity, null, OpTypeType.CONTINUOUS, DataTypeType.DOUBLE, null);
+		treeModelManager.addField(humidity, null, OpType.CONTINUOUS, DataType.DOUBLE, null);
 
 		FieldName windy = new FieldName("windy");
-		treeModelManager.addField(windy, null, OpTypeType.CATEGORICAL, DataTypeType.STRING, null);
+		treeModelManager.addField(windy, null, OpType.CATEGORICAL, DataType.STRING, null);
 
 		DataField windyData = treeModelManager.getDataField(windy);
 
@@ -51,7 +51,7 @@ public class TreeModelManagerExample {
 		windyDataValues.add(new Value("false"));
 
 		FieldName outlook = new FieldName("outlook");
-		treeModelManager.addField(outlook, null, OpTypeType.CATEGORICAL, DataTypeType.STRING, null);
+		treeModelManager.addField(outlook, null, OpType.CATEGORICAL, DataType.STRING, null);
 
 		DataField outlookData = treeModelManager.getDataField(outlook);
 
@@ -61,7 +61,7 @@ public class TreeModelManagerExample {
 		outlookDataValues.add(new Value("rain"));
 
 		FieldName whatIdo = new FieldName("whatIdo");
-		treeModelManager.addField(whatIdo, null, OpTypeType.CATEGORICAL, DataTypeType.STRING, FieldUsageTypeType.PREDICTED);
+		treeModelManager.addField(whatIdo, null, OpType.CATEGORICAL, DataType.STRING, FieldUsageType.PREDICTED);
 
 		DataField whatIdoData = treeModelManager.getDataField(whatIdo);
 

@@ -32,7 +32,7 @@ public class PMMLManager {
 		return null;
 	}
 
-	public DataField addDataField(FieldName name, String displayName, OpTypeType opType, DataTypeType dataType){
+	public DataField addDataField(FieldName name, String displayName, OpType opType, DataType dataType){
 		DataField dataField = new DataField(name, opType, dataType);
 		dataField.setDisplayName(displayName);
 

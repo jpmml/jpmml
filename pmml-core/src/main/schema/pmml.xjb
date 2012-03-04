@@ -872,7 +872,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:simpleType[@name='DATATYPE']">
 			<jaxb:typesafeEnumClass
-				name="DataTypeType"
+				name="DataType"
 			/>
 		</jaxb:bindings>
 
@@ -896,7 +896,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:simpleType[@name='FIELD-USAGE-TYPE']">
 			<jaxb:typesafeEnumClass
-				name="FieldUsageTypeType"
+				name="FieldUsageType"
 			/>
 		</jaxb:bindings>
 
@@ -980,7 +980,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:simpleType[@name='OPTYPE']">
 			<jaxb:typesafeEnumClass
-				name="OpTypeType"
+				name="OpType"
 			/>
 		</jaxb:bindings>
 
@@ -1037,7 +1037,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:simpleType[@name='TIME-EXCEPTION-TYPE']">
 			<jaxb:typesafeEnumClass
-				name="TimeExceptionTypeType"
+				name="TimeExceptionType"
 			/>
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_0"/>
