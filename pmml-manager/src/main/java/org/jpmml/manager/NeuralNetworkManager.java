@@ -351,7 +351,9 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			for (DataField dataField : dataFields) {
 
 				if ((dataField.getName()).equals(field)) {
-					return ((Number) parameters.get(field)).doubleValue();
+					Number value = (Number)ParameterUtil.getValue(parameters, field);
+
+					return value.doubleValue();
 				}
 			}
 
@@ -362,16 +364,18 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			NormContinuous normContinuous = (NormContinuous)expression;
 
 			FieldName field = normContinuous.getField();
-			double v = NormalizationUtil.normalize(normContinuous, (Number) parameters.get(field));
-			return v;
+			Number value = (Number)ParameterUtil.getValue(parameters, field);
+
+			return NormalizationUtil.normalize(normContinuous, value.doubleValue());
 		} else
 
 		if (expression instanceof NormDiscrete) {
 			NormDiscrete normDiscrete = (NormDiscrete)expression;
 
 			FieldName field = normDiscrete.getField();
-			Object value = parameters.get(field);
-			return normDiscrete.getValue().equals(value) ? 1.0 : 0.0;
+			Object value = ParameterUtil.getValue(parameters, field);
+
+			return (normDiscrete.getValue()).equals(value) ? 1.0 : 0.0;
 		}
 
 		throw new EvaluationException("Can't evaluate DerivedField");

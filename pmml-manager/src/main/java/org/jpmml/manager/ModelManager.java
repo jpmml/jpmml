@@ -89,20 +89,4 @@ public class ModelManager<M extends Model> extends PMMLManager {
 			throw new ModelManagerException();
 		}
 	}
-
-	static
-	protected Object getParameterValue(Map<FieldName, ?> parameters, FieldName name){
-		return getParameterValue(parameters, name, false);
-	}
-
-	static
-	protected Object getParameterValue(Map<FieldName, ?> parameters, FieldName name, boolean nullable){
-		Object value = parameters.get(name);
-
-		if(value == null && !nullable){
-			throw new EvaluationException("Missing parameter " + name.getValue());
-		}
-
-		return value;
-	}
 }

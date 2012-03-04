@@ -83,14 +83,14 @@ public class RattleVerificationExample {
 					continue;
 				}
 
-				parameters.put(name, EvaluationExample.parse(dataField.getDataType(), bodyRow.get(j)));
+				parameters.put(name, ParameterUtil.parse(dataField, bodyRow.get(j)));
 			}
 
 			Object result = modelManager.evaluate(parameters);
 
 			List<String> scoreBodyRow = scoreTable.get(i);
 
-			Object scoreResult = EvaluationExample.parse(scoreDataField.getDataType(), scoreBodyRow.get(1));
+			Object scoreResult = ParameterUtil.parse(scoreDataField, scoreBodyRow.get(1));
 
 			boolean equal = checkEquality(result, scoreResult, 6);
 			if(!equal){

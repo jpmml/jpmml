@@ -41,36 +41,36 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, Map<FieldName, ?> parameters){
-		Object fieldValue = ModelManager.getParameterValue(parameters, simplePredicate.getField(), true);
+		Object value = ParameterUtil.getValue(parameters, simplePredicate.getField(), true);
 
 		switch(simplePredicate.getOperator()){
 			case IS_MISSING:
-				return Boolean.valueOf(fieldValue == null);
+				return Boolean.valueOf(value == null);
 			case IS_NOT_MISSING:
-				return Boolean.valueOf(fieldValue != null);
+				return Boolean.valueOf(value != null);
 			default:
 				break;
 		}
 
-		if(fieldValue == null){
+		if(value == null){
 			return null;
 		}
 
-		String value = simplePredicate.getValue();
+		String refValue = simplePredicate.getValue();
 
 		switch(simplePredicate.getOperator()){
 			case EQUAL:
-				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) == 0);
+				return Boolean.valueOf(PredicateUtil.compare(value, refValue) == 0);
 			case NOT_EQUAL:
-				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) != 0);
+				return Boolean.valueOf(PredicateUtil.compare(value, refValue) != 0);
 			case LESS_THAN:
-				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) < 0);
+				return Boolean.valueOf(PredicateUtil.compare(value, refValue) < 0);
 			case LESS_OR_EQUAL:
-				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) <= 0);
+				return Boolean.valueOf(PredicateUtil.compare(value, refValue) <= 0);
 			case GREATER_THAN:
-				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) > 0);
+				return Boolean.valueOf(PredicateUtil.compare(value, refValue) > 0);
 			case GREATER_OR_EQUAL:
-				return Boolean.valueOf(PredicateUtil.compare(fieldValue, value) >= 0);
+				return Boolean.valueOf(PredicateUtil.compare(value, refValue) >= 0);
 			default:
 				break;
 		}

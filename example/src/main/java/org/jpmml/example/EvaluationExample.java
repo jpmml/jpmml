@@ -62,29 +62,12 @@ public class EvaluationExample {
 					throw new EOFException();
 				}
 
-				parameters.put(name, parse(dataField.getDataType(), input));
+				parameters.put(name, ParameterUtil.parse(dataField, input));
 			}
 		} finally {
 			reader.close();
 		}
 
 		return parameters;
-	}
-
-	static
-	public Object parse(DataTypeType dataType, String string){
-
-		switch(dataType){
-			case STRING:
-				return string;
-			case INTEGER:
-				return new Integer(string);
-			case FLOAT:
-				return new Float(string);
-			case DOUBLE:
-				return new Double(string);
-			default:
-				throw new IllegalArgumentException();
-		}
 	}
 }

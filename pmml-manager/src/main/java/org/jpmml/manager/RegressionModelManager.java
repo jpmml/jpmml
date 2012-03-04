@@ -155,7 +155,6 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	private double evaluateIntercept(){
 		Double intercept = getIntercept();
-
 		if(intercept == null){
 			throw new EvaluationException("Missing intercept");
 		}
@@ -164,8 +163,8 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 	}
 
 	private double evaluateNumericPredictor(NumericPredictor numericPredictor, Map<FieldName, ?> parameters){
-		Double fieldValue = (Double)getParameterValue(parameters, numericPredictor.getName());
+		Number value = (Number)ParameterUtil.getValue(parameters, numericPredictor.getName());
 
-		return numericPredictor.getCoefficient() * fieldValue.doubleValue();
+		return numericPredictor.getCoefficient() * value.doubleValue();
 	}
 }
