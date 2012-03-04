@@ -34,9 +34,11 @@ public class PredicateUtil {
 
 		if(predicate instanceof False){
 			return evaluateFalsePredicate((False)predicate);
-		}
+		} else
 
-		throw new EvaluationException();
+		{
+			throw new UnsupportedFeatureException(predicate);
+		}
 	}
 
 	static
@@ -58,7 +60,8 @@ public class PredicateUtil {
 
 		String refValue = simplePredicate.getValue();
 
-		switch(simplePredicate.getOperator()){
+		SimplePredicate.Operator operator = simplePredicate.getOperator();
+		switch(operator){
 			case EQUAL:
 				return Boolean.valueOf(PredicateUtil.compare(value, refValue) == 0);
 			case NOT_EQUAL:
@@ -72,10 +75,8 @@ public class PredicateUtil {
 			case GREATER_OR_EQUAL:
 				return Boolean.valueOf(PredicateUtil.compare(value, refValue) >= 0);
 			default:
-				break;
+				throw new UnsupportedFeatureException(operator);
 		}
-
-		throw new EvaluationException();
 	}
 
 	static
@@ -122,7 +123,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, Map<FieldName, ?> parameters){
-		throw new EvaluationException();
+		throw new UnsupportedFeatureException();
 	}
 
 	static

@@ -163,7 +163,7 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 				case RETURN_LAST_PREDICTION:
 					return prediction.getLastTrueNode();
 				default:
-					throw new EvaluationException();
+					throw new UnsupportedFeatureException(noTrueChildStrategy);
 			}
 		}
 	}

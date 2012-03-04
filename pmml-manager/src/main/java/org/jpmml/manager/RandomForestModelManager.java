@@ -46,10 +46,8 @@ public class RandomForestModelManager extends SegmentationModelManager {
 			case REGRESSION:
 				return evaluateRegression(parameters);
 			default:
-				break;
+				throw new UnsupportedFeatureException(miningFunction);
 		}
-
-		throw new EvaluationException();
 	}
 
 	public Double evaluateRegression(Map<FieldName, ?> parameters){
@@ -102,10 +100,8 @@ public class RandomForestModelManager extends SegmentationModelManager {
 			case WEIGHTED_AVERAGE:
 				return (weightedSum / count); // XXX
 			default:
-				break;
+				throw new UnsupportedFeatureException(multipleModelMethod);
 		}
-
-		throw new EvaluationException();
 	}
 
 	static

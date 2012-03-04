@@ -164,10 +164,8 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			case CLASSIFICATION:
 				return evaluateClassification(parameters);
 			default:
-				break;
+				throw new UnsupportedFeatureException(miningFunction);
 		}
-
-		throw new EvaluationException();
 	}
 
 	public Map<FieldName, Double> evaluateRegression(Map<FieldName, ?> parameters) {
@@ -190,7 +188,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			} else
 
 			{
-				throw new EvaluationException();
+				throw new UnsupportedFeatureException(expression);
 			}
 		}
 
@@ -225,7 +223,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			} else
 
 			{
-				throw new EvaluationException();
+				throw new UnsupportedFeatureException(expression);
 			}
 		}
 
@@ -305,14 +303,14 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		} else
 
 		{
-			throw new UnsupportedOperationException("Unsupported normalization method: " + normalizationMethod);
+			throw new UnsupportedFeatureException(normalizationMethod);
 		}
 	}
 
 	private double evaluateDerivedField(DerivedField derivedField, Map<FieldName,?> parameters) {
 
 		if (!(derivedField.getDataType()).equals(DataType.DOUBLE) && !(derivedField.getOptype()).equals(OpType.CONTINUOUS)) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedFeatureException(derivedField);
 		}
 
 		return evaluateExpression(derivedField.getExpression(), parameters);
@@ -357,7 +355,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 				}
 			}
 
-			throw new EvaluationException("Can't handle FieldRef: " + field.getValue());
+			throw new EvaluationException();
 		} else
 
 		if (expression instanceof NormContinuous) {
@@ -376,9 +374,11 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			Object value = ParameterUtil.getValue(parameters, field);
 
 			return (normDiscrete.getValue()).equals(value) ? 1.0 : 0.0;
-		}
+		} else
 
-		throw new EvaluationException("Can't evaluate DerivedField");
+		{
+			throw new UnsupportedFeatureException(expression);
+		}
 	}
 
 	private double activation(double z, NeuralLayer layer) {
@@ -419,7 +419,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 			case ARCTAN:
 				return Math.atan(z);
 			default:
-				throw new EvaluationException("Unsupported activation function: " + activationFunction);
+				throw new UnsupportedFeatureException(activationFunction);
 		}
 	}
 }

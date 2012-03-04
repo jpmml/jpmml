@@ -134,16 +134,14 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 			case REGRESSION:
 				return evaluateRegression(parameters);
 			default:
-				break;
+				throw new UnsupportedFeatureException(miningFunction);
 		}
-
-		throw new EvaluationException();
 	}
 
 	public Double evaluateRegression(Map<FieldName, ?> parameters){
 		double result = 0D;
 
-		result += evaluateIntercept();
+		result += getIntercept();
 
 		List<NumericPredictor> numericPredictors = getNumericPrecictors();
 		for(NumericPredictor numericPredictor : numericPredictors){
@@ -151,15 +149,6 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		}
 
 		return Double.valueOf(result);
-	}
-
-	private double evaluateIntercept(){
-		Double intercept = getIntercept();
-		if(intercept == null){
-			throw new EvaluationException("Missing intercept");
-		}
-
-		return intercept.doubleValue();
 	}
 
 	private double evaluateNumericPredictor(NumericPredictor numericPredictor, Map<FieldName, ?> parameters){
