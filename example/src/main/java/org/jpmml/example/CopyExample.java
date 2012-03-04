@@ -6,14 +6,14 @@ package org.jpmml.example;
 import java.io.*;
 
 import javax.xml.bind.*;
-import javax.xml.transform.sax.*;
+import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 
+import org.jpmml.manager.*;
+
 import org.dmg.pmml.*;
-import org.dmg.pmml.ObjectFactory;
 
 import org.xml.sax.*;
-import org.xml.sax.helpers.*;
 
 public class CopyExample {
 
@@ -42,14 +42,10 @@ public class CopyExample {
 		InputStream is = new FileInputStream(file);
 
 		try {
-			InputSource source = new InputSource(is);
-
-			XMLReader reader = XMLReaderFactory.createXMLReader();
-
-			SAXSource filteredSource = new SAXSource(new ImportFilter(reader), source);
+			Source source = IOUtil.createImportSource(new InputSource(is));
 
 			Unmarshaller unmarshaller = getJAXBContext().createUnmarshaller();
-			return (PMML)unmarshaller.unmarshal(filteredSource);
+			return (PMML)unmarshaller.unmarshal(source);
 		} finally {
 			is.close();
 		}
@@ -60,7 +56,7 @@ public class CopyExample {
 		OutputStream os = new FileOutputStream(file);
 
 		try {
-			StreamResult result = new StreamResult(os);
+			Result result = new StreamResult(os);
 
 			Marshaller marshaller = getJAXBContext().createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
