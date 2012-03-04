@@ -3,6 +3,8 @@
  */
 package org.jpmml.manager;
 
+import java.util.*;
+
 import org.dmg.pmml.*;
 
 public class ModelManagerFactory {
@@ -19,12 +21,20 @@ public class ModelManagerFactory {
 		if(model instanceof TreeModel){
 			return new TreeModelManager(pmml, (TreeModel)model);
 		} else
-			
+
 		if(model instanceof NeuralNetwork){
 			return new NeuralNetworkManager(pmml, (NeuralNetwork)model);
+		} else
+
+		if(model instanceof MiningModel){
+			MiningModel miningModel = (MiningModel)model;
+
+			if(RandomForestModelManager.isRandomForest(miningModel)){
+				return new RandomForestModelManager(pmml, miningModel);
+			}
 		}
 
-		throw new IllegalArgumentException("Unsupported model type: "+model.getClass().getName());
+		throw new IllegalArgumentException("Unsupported model type: " + model.getClass().getName());
 	}
 
 	static

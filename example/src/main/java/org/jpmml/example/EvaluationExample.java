@@ -72,7 +72,7 @@ public class EvaluationExample {
 	}
 
 	static
-	private Object parse(DataTypeType dataType, String string){
+	public Object parse(DataTypeType dataType, String string){
 
 		switch(dataType){
 			case STRING:
