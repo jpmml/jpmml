@@ -16,7 +16,7 @@ public class TreeModelTraversalExample {
 	public void main(String... args) throws Exception {
 
 		if(args.length != 1){
-			System.out.println("Usage: java " + TreeModelTraversalExample.class + " <Input file>");
+			System.out.println("Usage: java " + TreeModelTraversalExample.class + " <PMML file>");
 
 			System.exit(-1);
 		}
@@ -32,11 +32,11 @@ public class TreeModelTraversalExample {
 	private void traverse(PMML pmml){
 		TreeModelManager treeModelManager = new TreeModelManager(pmml);
 
-		traverse(treeModelManager.getOrCreateRoot(), "");
+		format(treeModelManager.getOrCreateRoot(), "");
 	}
 
 	static
-	private void traverse(Node node, String indent){
+	public void format(Node node, String indent){
 		Predicate predicate = node.getPredicate();
 		if(predicate == null){
 			throw new IllegalArgumentException("Missing predicate");
@@ -46,11 +46,11 @@ public class TreeModelTraversalExample {
 
 		List<Node> children = node.getNodes();
 		for(Node child : children){
-			traverse(child, indent + "\t");
+			format(child, indent + "\t");
 		}
 
 		if(node.getScore() != null){
-			System.out.println(indent + "\t" + "return (" + node.getScore() + ");");
+			System.out.println(indent + "\t" + "return \"" + node.getScore() + "\";");
 		}
 
 		System.out.println(indent + "}");
