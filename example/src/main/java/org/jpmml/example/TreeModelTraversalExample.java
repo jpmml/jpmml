@@ -21,9 +21,9 @@ public class TreeModelTraversalExample {
 			System.exit(-1);
 		}
 
-		File file = new File(args[0]);
+		File pmmlFile = new File(args[0]);
 
-		PMML pmml = CopyExample.readPmml(file);
+		PMML pmml = IOUtil.unmarshal(pmmlFile);
 
 		traverse(pmml);
 	}

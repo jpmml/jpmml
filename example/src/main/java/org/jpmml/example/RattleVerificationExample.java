@@ -32,7 +32,7 @@ public class RattleVerificationExample {
 
 		File pmmlFile = new File(args[0]);
 
-		PMML pmml = CopyExample.readPmml(pmmlFile);
+		PMML pmml = IOUtil.unmarshal(pmmlFile);
 
 		File trainingFile = new File(args[1]);
 		File trainingResultsFile = new File(args[2]);

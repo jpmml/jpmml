@@ -23,7 +23,7 @@ public class EvaluationExample {
 
 		File pmmlFile = new File(args[0]);
 
-		PMML pmml = CopyExample.readPmml(pmmlFile);
+		PMML pmml = IOUtil.unmarshal(pmmlFile);
 
 		evaluate(pmml);
 	}
