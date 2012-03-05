@@ -12,6 +12,10 @@
 	<artifactId>bundle</artifactId>
 	<packaging>bundle</packaging>
 
+	<properties>
+		<build.classifier></build.classifier>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jpmml</groupId>
@@ -28,6 +32,8 @@
 	</dependencies>
 
 	<build>
+		<finalName>jpmml-${project.artifactId}-${project.version}</finalName>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
@@ -35,6 +41,7 @@
 				<version>2.2.0</version>
 				<extensions>true</extensions>
 				<configuration>
+					<classifier>${build.classifier}</classifier>
 					<instructions>
 						<Bundle-DocURL>http://www.jpmml.org</Bundle-DocURL>
 						<Bundle-Name>JPMML</Bundle-Name>
@@ -47,4 +54,18 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>jdk_1.5</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<jdk>1.5</jdk>
+			</activation>
+
+			<properties>
+				<build.classifier>jdk15</build.classifier>
+			</properties>
+		</profile>
+	</profiles>
 </project>
