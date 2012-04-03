@@ -13,7 +13,7 @@ public class PMMLManager {
 
 
 	public PMMLManager(){
-		this(new PMML(new Header(), new DataDictionary(), "3.2"));
+		this(new PMML(new Header(), new DataDictionary(), "4.1"));
 	}
 
 	public PMMLManager(PMML pmml){
