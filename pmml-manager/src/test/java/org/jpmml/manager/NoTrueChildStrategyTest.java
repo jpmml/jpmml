@@ -46,7 +46,7 @@ public class NoTrueChildStrategyTest {
 	private TreeModelManager prepareModel(NoTrueChildStrategyType noTrueChildStrategy){
 		TreeModelManager treeModelManager = new TreeModelManager();
 
-		TreeModel treeModel = treeModelManager.createModel(MiningFunctionType.CLASSIFICATION);
+		TreeModel treeModel = treeModelManager.createClassificationModel();
 		treeModel.setNoTrueChildStrategy(noTrueChildStrategy);
 
 		FieldName prob1 = new FieldName("prob1");

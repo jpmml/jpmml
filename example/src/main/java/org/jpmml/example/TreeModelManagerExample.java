@@ -32,7 +32,7 @@ public class TreeModelManagerExample {
 	private TreeModelManager createGolfingModel(){
 		TreeModelManager treeModelManager = new TreeModelManager();
 
-		TreeModel treeModel = treeModelManager.createModel(MiningFunctionType.CLASSIFICATION);
+		TreeModel treeModel = treeModelManager.createClassificationModel();
 		treeModel.setModelName("golfing");
 
 		FieldName temperature = new FieldName("temperature");

@@ -34,6 +34,10 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		return this.regressionModel;
 	}
 
+	public RegressionModel createRegressionModel(){
+		return createModel(MiningFunctionType.REGRESSION);
+	}
+
 	/**
 	 * @throws ModelManagerException If the Model already exists
 	 *

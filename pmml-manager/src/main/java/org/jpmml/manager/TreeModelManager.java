@@ -34,6 +34,10 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 		return this.treeModel;
 	}
 
+	public TreeModel createClassificationModel(){
+		return createModel(MiningFunctionType.CLASSIFICATION);
+	}
+
 	/**
 	 * @throws ModelManagerException If the Model already exists
 	 *
