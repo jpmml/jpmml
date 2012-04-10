@@ -6,6 +6,8 @@ package org.jpmml.evaluator;
 import java.math.*;
 import java.util.*;
 
+import org.jpmml.manager.*;
+
 import org.dmg.pmml.*;
 
 public class PredicateUtil {
@@ -22,10 +24,6 @@ public class PredicateUtil {
 
 		if(predicate instanceof CompoundPredicate){
 			return evaluateCompoundPredicate((CompoundPredicate)predicate, parameters);
-		} else
-
-		if(predicate instanceof SimpleSetPredicate){
-			return evaluateSimpleSetPredicate((SimpleSetPredicate)predicate, parameters);
 		} else
 
 		if(predicate instanceof True){
@@ -119,11 +117,6 @@ public class PredicateUtil {
 		}
 
 		return result;
-	}
-
-	static
-	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, Map<FieldName, ?> parameters){
-		throw new UnsupportedFeatureException();
 	}
 
 	static

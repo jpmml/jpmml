@@ -34,7 +34,7 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 			}
 		}
 
-		throw new IllegalArgumentException("Unsupported model type: " + model.getClass().getName());
+		throw new UnsupportedFeatureException(model);
 	}
 
 	static
