@@ -34,28 +34,28 @@ public class EvaluationExample {
 		PMMLManager pmmlManager = new PMMLManager(pmml);
 
 		// Load the default model
-		ModelManager<?> modelManager = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
-		Map<FieldName, ?> parameters = readParameters(modelManager);
+		Map<FieldName, ?> parameters = readParameters(evaluator);
 
-		Object result = ((Evaluator)modelManager).evaluate(parameters);
+		Object result = evaluator.evaluate(parameters);
 		System.out.println("Model output: " + result);
 	}
 
 	static
-	public Map<FieldName, ?> readParameters(ModelManager<?> modelManager) throws IOException {
+	public Map<FieldName, ?> readParameters(Evaluator evaluator) throws IOException {
 		Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 		try {
-			List<FieldName> names = modelManager.getFields(FieldUsageType.ACTIVE);
+			List<FieldName> names = evaluator.getActiveFields();
 			System.out.println("Model input " + names.size() + " parameter(s):");
 
 			for(int i = 0; i < names.size(); i++){
 				FieldName name = names.get(i);
 
-				DataField dataField = modelManager.getDataField(name);
+				DataField dataField = evaluator.getDataField(name);
 				System.out.print("#" + (i + 1) + " (displayName=" + dataField.getDisplayName() + ", dataType=" + dataField.getDataType()+ "): ");
 
 				String input = reader.readLine();

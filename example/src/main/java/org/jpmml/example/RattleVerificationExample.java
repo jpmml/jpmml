@@ -52,22 +52,22 @@ public class RattleVerificationExample {
 	public void score(PMML pmml, List<List<String>> table, List<List<String>> scoreTable) throws Exception {
 		PMMLManager pmmlManager = new PMMLManager(pmml);
 
-		ModelManager<?> modelManager = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
-		List<FieldName> names = modelManager.getFields(FieldUsageType.ACTIVE);
+		List<FieldName> names = evaluator.getActiveFields();
 
 		Map<FieldName, DataField> nameDataFields = new LinkedHashMap<FieldName, DataField>();
 		for(FieldName name : names){
-			nameDataFields.put(name, modelManager.getDataField(name));
+			nameDataFields.put(name, evaluator.getDataField(name));
 		}
 
-		List<FieldName> scoreNames = modelManager.getFields(FieldUsageType.PREDICTED);
+		List<FieldName> scoreNames = evaluator.getPredictedFields();
 		if(scoreNames.size() != 1){
 			throw new IllegalArgumentException();
 		}
 
 		FieldName scoreName = scoreNames.get(0);
-		DataField scoreDataField = modelManager.getDataField(scoreName);
+		DataField scoreDataField = evaluator.getDataField(scoreName);
 
 		List<String> headerRow = table.get(0);
 
@@ -87,7 +87,7 @@ public class RattleVerificationExample {
 				parameters.put(name, ParameterUtil.parse(dataField, bodyRow.get(j)));
 			}
 
-			Object result = ((Evaluator)modelManager).evaluate(parameters);
+			Object result = evaluator.evaluate(parameters);
 
 			List<String> scoreBodyRow = scoreTable.get(i);
 

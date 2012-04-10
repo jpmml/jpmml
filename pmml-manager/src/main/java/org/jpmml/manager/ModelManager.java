@@ -28,6 +28,14 @@ public class ModelManager<M extends Model> extends PMMLManager {
 		addMiningField(name, fieldUsageType);
 	}
 
+	public List<FieldName> getActiveFields(){
+		return getFields(FieldUsageType.ACTIVE);
+	}
+
+	public List<FieldName> getPredictedFields(){
+		return getFields(FieldUsageType.PREDICTED);
+	}
+
 	public List<FieldName> getFields(FieldUsageType fieldUsageType){
 		List<FieldName> result = new ArrayList<FieldName>();
 
