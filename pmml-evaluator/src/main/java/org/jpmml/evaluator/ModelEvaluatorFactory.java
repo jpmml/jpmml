@@ -1,7 +1,9 @@
 /*
  * Copyright (c) 2012 University of Tartu
  */
-package org.jpmml.manager;
+package org.jpmml.evaluator;
+
+import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 

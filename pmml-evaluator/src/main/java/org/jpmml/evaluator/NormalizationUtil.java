@@ -1,13 +1,11 @@
 /*
  * Copyright (c) 2011 University of Tartu
  */
-package org.jpmml.manager;
+package org.jpmml.evaluator;
 
 import java.util.*;
 
 import org.dmg.pmml.*;
-
-import org.jpmml.manager.EvaluationException;
 
 public class NormalizationUtil {
 

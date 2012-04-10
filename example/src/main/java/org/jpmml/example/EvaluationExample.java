@@ -6,6 +6,7 @@ package org.jpmml.example;
 import java.io.*;
 import java.util.*;
 
+import org.jpmml.evaluator.*;
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;

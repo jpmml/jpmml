@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009 University of Tartu
  */
-package org.jpmml.manager;
+package org.jpmml.evaluator;
 
 import java.math.*;
 

@@ -9,7 +9,7 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>example</artifactId>
+	<artifactId>pmml-evaluator</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -18,29 +18,19 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-manager</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-shade-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<outputFile>${project.build.directory}/${project.artifactId}-all-${project.version}.jar</outputFile>
-				</configuration>
+				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

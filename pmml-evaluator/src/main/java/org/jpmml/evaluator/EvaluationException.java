@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2010 University of Tartu
  */
-package org.jpmml.manager;
+package org.jpmml.evaluator;
 
 public class EvaluationException extends RuntimeException {
 

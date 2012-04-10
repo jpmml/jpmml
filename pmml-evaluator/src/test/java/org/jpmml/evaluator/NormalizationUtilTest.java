@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2011 University of Tartu
  */
-package org.jpmml.manager;
-
-import static org.junit.Assert.*;
+package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
 
 public class NormalizationUtilTest {
 

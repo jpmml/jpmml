@@ -7,6 +7,7 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
+import org.jpmml.evaluator.*;
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
