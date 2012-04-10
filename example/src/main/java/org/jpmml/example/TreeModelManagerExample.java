@@ -14,7 +14,7 @@ public class TreeModelManagerExample {
 
 	static
 	public void main(String... args) throws Exception {
-		TreeModelManager treeModelManager = createGolfingModel();
+		TreeModelEvaluator treeModelManager = createGolfingModel();
 
 		Map<FieldName, Object> parameters = new HashMap<FieldName, Object>();
 		parameters.put(new FieldName("temperature"), new BigDecimal("75"));
@@ -29,7 +29,7 @@ public class TreeModelManagerExample {
 	}
 
 	static
-	private TreeModelManager createGolfingModel(){
+	private TreeModelEvaluator createGolfingModel(){
 		TreeModelManager treeModelManager = new TreeModelManager();
 
 		TreeModel treeModel = treeModelManager.createClassificationModel();
@@ -148,7 +148,7 @@ public class TreeModelManagerExample {
 		n9.setId("9");
 		n9.setScore("no play");
 
-		return treeModelManager;
+		return new TreeModelEvaluator(treeModelManager);
 	}
 
 	static

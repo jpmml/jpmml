@@ -23,12 +23,6 @@ public class ModelManager<M extends Model> extends PMMLManager {
 	abstract
 	public M getModel();
 
-	/**
-	 * @throws EvaluationException If the evaluation failed.
-	 */
-	abstract
-	public Object evaluate(Map<FieldName, ?> parameters);
-
 	public void addField(FieldName name, String displayName, OpType opType, DataType dataType, FieldUsageType fieldUsageType){
 		addDataField(name, displayName, opType, dataType);
 		addMiningField(name, fieldUsageType);

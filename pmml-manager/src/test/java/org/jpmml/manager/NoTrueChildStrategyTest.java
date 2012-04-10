@@ -15,7 +15,7 @@ public class NoTrueChildStrategyTest {
 
 	@Test
 	public void returnNullPrediction(){
-		TreeModelManager treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_NULL_PREDICTION);
+		TreeModelEvaluator treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_NULL_PREDICTION);
 
 		Node node = treeModelManager.scoreModel(prepareParameters(0));
 
@@ -29,7 +29,7 @@ public class NoTrueChildStrategyTest {
 
 	@Test
 	public void returnLastPrediction(){
-		TreeModelManager treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_LAST_PREDICTION);
+		TreeModelEvaluator treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_LAST_PREDICTION);
 
 		Node n1 = treeModelManager.scoreModel(prepareParameters(0));
 
@@ -43,7 +43,7 @@ public class NoTrueChildStrategyTest {
 	}
 
 	static
-	private TreeModelManager prepareModel(NoTrueChildStrategyType noTrueChildStrategy){
+	private TreeModelEvaluator prepareModel(NoTrueChildStrategyType noTrueChildStrategy){
 		TreeModelManager treeModelManager = new TreeModelManager();
 
 		TreeModel treeModel = treeModelManager.createClassificationModel();
@@ -63,7 +63,7 @@ public class NoTrueChildStrategyTest {
 		t1.setId("T1");
 		t1.setScore("1");
 
-		return treeModelManager;
+		return new TreeModelEvaluator(treeModelManager);
 	}
 
 	static

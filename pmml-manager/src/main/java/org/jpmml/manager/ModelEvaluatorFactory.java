@@ -1,33 +1,34 @@
 /*
- * Copyright (c) 2010 University of Tartu
+ * Copyright (c) 2012 University of Tartu
  */
 package org.jpmml.manager;
 
 import org.dmg.pmml.*;
 
-public class ModelManagerFactory {
+public class ModelEvaluatorFactory extends ModelManagerFactory {
 
-	protected ModelManagerFactory(){
+	protected ModelEvaluatorFactory(){
 	}
 
+	@Override
 	public ModelManager<? extends Model> getModelManager(PMML pmml, Model model){
 
 		if(model instanceof RegressionModel){
-			return new RegressionModelManager(pmml, (RegressionModel)model);
+			return new RegressionModelEvaluator(pmml, (RegressionModel)model);
 		} else
 
 		if(model instanceof TreeModel){
-			return new TreeModelManager(pmml, (TreeModel)model);
+			return new TreeModelEvaluator(pmml, (TreeModel)model);
 		} else
 
 		if(model instanceof NeuralNetwork){
-			return new NeuralNetworkManager(pmml, (NeuralNetwork)model);
+			return new NeuralNetworkEvaluator(pmml, (NeuralNetwork)model);
 		} else
 
 		if(model instanceof MiningModel){
 
 			if(RandomForestModelManager.isRandomForest((MiningModel)model)){
-				return new RandomForestModelManager(pmml, (MiningModel)model);
+				return new RandomForestModelEvaluator(pmml, (MiningModel)model);
 			}
 		}
 
@@ -35,7 +36,7 @@ public class ModelManagerFactory {
 	}
 
 	static
-	public ModelManagerFactory getInstance(){
-		return new ModelManagerFactory();
+	public ModelEvaluatorFactory getInstance(){
+		return new ModelEvaluatorFactory();
 	}
 }

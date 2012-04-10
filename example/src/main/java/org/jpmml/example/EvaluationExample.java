@@ -33,11 +33,11 @@ public class EvaluationExample {
 		PMMLManager pmmlManager = new PMMLManager(pmml);
 
 		// Load the default model
-		ModelManager<?> modelManager = pmmlManager.getModelManager(null);
+		ModelManager<?> modelManager = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
 		Map<FieldName, ?> parameters = readParameters(modelManager);
 
-		Object result = modelManager.evaluate(parameters);
+		Object result = ((Evaluator)modelManager).evaluate(parameters);
 		System.out.println("Model output: " + result);
 	}
 

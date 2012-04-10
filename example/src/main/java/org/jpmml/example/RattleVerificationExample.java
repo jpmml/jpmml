@@ -51,7 +51,7 @@ public class RattleVerificationExample {
 	public void score(PMML pmml, List<List<String>> table, List<List<String>> scoreTable) throws Exception {
 		PMMLManager pmmlManager = new PMMLManager(pmml);
 
-		ModelManager<?> modelManager = pmmlManager.getModelManager(null);
+		ModelManager<?> modelManager = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
 		List<FieldName> names = modelManager.getFields(FieldUsageType.ACTIVE);
 
@@ -86,7 +86,7 @@ public class RattleVerificationExample {
 				parameters.put(name, ParameterUtil.parse(dataField, bodyRow.get(j)));
 			}
 
-			Object result = modelManager.evaluate(parameters);
+			Object result = ((Evaluator)modelManager).evaluate(parameters);
 
 			List<String> scoreBodyRow = scoreTable.get(i);
 

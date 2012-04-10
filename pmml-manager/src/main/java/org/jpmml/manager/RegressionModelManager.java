@@ -125,39 +125,4 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 		return this.regressionTable;
 	}
-
-	/**
-	 * @see #evaluateRegression(Map)
-	 */
-	@Override
-	public Double evaluate(Map<FieldName, ?> parameters){
-		RegressionModel regressionModel = getModel();
-
-		MiningFunctionType miningFunction = regressionModel.getFunctionName();
-		switch(miningFunction){
-			case REGRESSION:
-				return evaluateRegression(parameters);
-			default:
-				throw new UnsupportedFeatureException(miningFunction);
-		}
-	}
-
-	public Double evaluateRegression(Map<FieldName, ?> parameters){
-		double result = 0D;
-
-		result += getIntercept();
-
-		List<NumericPredictor> numericPredictors = getNumericPrecictors();
-		for(NumericPredictor numericPredictor : numericPredictors){
-			result += evaluateNumericPredictor(numericPredictor, parameters);
-		}
-
-		return Double.valueOf(result);
-	}
-
-	private double evaluateNumericPredictor(NumericPredictor numericPredictor, Map<FieldName, ?> parameters){
-		Number value = (Number)ParameterUtil.getValue(parameters, numericPredictor.getName());
-
-		return numericPredictor.getCoefficient() * value.doubleValue();
-	}
 }
