@@ -19,6 +19,6 @@ public class UnsupportedFeatureException extends ModelManagerException {
 	}
 
 	public UnsupportedFeatureException(Enum<?> attribute){
-		this((attribute.getClass()).getName());
+		this((attribute.getClass()).getName() + "#" + attribute.name());
 	}
 }
