@@ -9,28 +9,7 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-public interface Evaluator {
-
-	/**
-	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
-	 *
-	 * @see ModelManager#getActiveFields()
-	 */
-	List<FieldName> getActiveFields();
-
-	/**
-	 * Gets the dependent (ie. output) field(s) of a {@link Model} from its {@link MiningSchema}.
-	 *
-	 * @see ModelManager#getPredictedFields()
-	 */
-	List<FieldName> getPredictedFields();
-
-	/**
-	 * Gets the data definition of a field from the {@link DataDictionary}.
-	 *
-	 * @see PMMLManager#getDataField(FieldName)
-	 */
-	DataField getDataField(FieldName fieldName);
+public interface Evaluator extends Consumer {
 
 	/**
 	 * @throws EvaluationException If the evaluation failed.
