@@ -7,16 +7,16 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-public class RandomForestModelManager extends SegmentationModelManager {
+public class RandomForestManager extends SegmentationModelManager {
 
-	public RandomForestModelManager(){
+	public RandomForestManager(){
 	}
 
-	public RandomForestModelManager(PMML pmml){
+	public RandomForestManager(PMML pmml){
 		super(pmml);
 	}
 
-	public RandomForestModelManager(PMML pmml, MiningModel miningModel){
+	public RandomForestManager(PMML pmml, MiningModel miningModel){
 		super(pmml, miningModel);
 	}
 

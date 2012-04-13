@@ -10,13 +10,13 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-public class RandomForestModelTraversalExample {
+public class RandomForestTraversalExample {
 
 	static
 	public void main(String... args) throws Exception {
 
 		if(args.length != 1){
-			System.out.println("Usage: java " + RandomForestModelTraversalExample.class.getName() + " <PMML file>");
+			System.out.println("Usage: java " + RandomForestTraversalExample.class.getName() + " <PMML file>");
 
 			System.exit(-1);
 		}
@@ -30,7 +30,7 @@ public class RandomForestModelTraversalExample {
 
 	static
 	private void traverse(PMML pmml){
-		RandomForestModelManager randomForestModelManager = new RandomForestModelManager(pmml);
+		RandomForestManager randomForestModelManager = new RandomForestManager(pmml);
 
 		List<Segment> segments = randomForestModelManager.getSegments();
 		for(Segment segment : segments){

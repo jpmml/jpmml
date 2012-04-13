@@ -26,8 +26,8 @@ public class ModelManagerFactory {
 
 		if(model instanceof MiningModel){
 
-			if(RandomForestModelManager.isRandomForest((MiningModel)model)){
-				return new RandomForestModelManager(pmml, (MiningModel)model);
+			if(RandomForestManager.isRandomForest((MiningModel)model)){
+				return new RandomForestManager(pmml, (MiningModel)model);
 			}
 		}
 

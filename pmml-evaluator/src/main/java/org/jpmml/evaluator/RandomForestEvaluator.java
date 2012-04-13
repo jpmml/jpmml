@@ -9,17 +9,17 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-public class RandomForestModelEvaluator extends RandomForestModelManager implements Evaluator {
+public class RandomForestEvaluator extends RandomForestManager implements Evaluator {
 
-	public RandomForestModelEvaluator(PMML pmml){
+	public RandomForestEvaluator(PMML pmml){
 		super(pmml);
 	}
 
-	public RandomForestModelEvaluator(PMML pmml, MiningModel miningModel){
+	public RandomForestEvaluator(PMML pmml, MiningModel miningModel){
 		super(pmml, miningModel);
 	}
 
-	public RandomForestModelEvaluator(RandomForestModelManager parent){
+	public RandomForestEvaluator(RandomForestManager parent){
 		this(parent.getPmml(), parent.getModel());
 	}
 
