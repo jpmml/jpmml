@@ -10,6 +10,11 @@ import org.dmg.pmml.*;
 public interface Consumer {
 
 	/**
+	 * Returns a short description of the underlying {@link Model}
+	 */
+	String getSummary();
+
+	/**
 	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
 	 *
 	 * @see ModelManager#getActiveFields()

@@ -31,6 +31,10 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 		}
 	}
 
+	public String getSummary(){
+		return "Neural network";
+	}
+
 	@Override
 	public NeuralNetwork getModel() {
 		ensureNotNull(this.neuralNetwork);

@@ -27,6 +27,10 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		this.regressionModel = regressionModel;
 	}
 
+	public String getSummary(){
+		return "Regression";
+	}
+
 	@Override
 	public RegressionModel getModel(){
 		ensureNotNull(this.regressionModel);

@@ -27,6 +27,10 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 		this.treeModel = treeModel;
 	}
 
+	public String getSummary(){
+		return "Tree";
+	}
+
 	@Override
 	public TreeModel getModel(){
 		ensureNotNull(this.treeModel);

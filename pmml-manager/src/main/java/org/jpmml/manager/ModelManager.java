@@ -8,7 +8,7 @@ import java.util.*;
 import org.dmg.pmml.*;
 
 abstract
-public class ModelManager<M extends Model> extends PMMLManager {
+public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 
 	public ModelManager(){
 	}

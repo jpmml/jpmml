@@ -20,6 +20,10 @@ public class RandomForestModelManager extends SegmentationModelManager {
 		super(pmml, miningModel);
 	}
 
+	public String getSummary(){
+		return "Random forest";
+	}
+
 	public Segment addSegment(TreeModel treeModel){
 		return addSegment(new True(), treeModel);
 	}
