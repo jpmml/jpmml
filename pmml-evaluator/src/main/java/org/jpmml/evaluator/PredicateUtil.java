@@ -26,6 +26,10 @@ public class PredicateUtil {
 			return evaluateCompoundPredicate((CompoundPredicate)predicate, parameters);
 		} else
 
+		if(predicate instanceof SimpleSetPredicate){
+			return evaluateSimpleSetPredicate((SimpleSetPredicate)predicate, parameters);
+		} else
+
 		if(predicate instanceof True){
 			return evaluateTruePredicate((True)predicate);
 		} else
@@ -117,6 +121,23 @@ public class PredicateUtil {
 		}
 
 		return result;
+	}
+
+	static
+	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, Map<FieldName, ?> parameters){
+		Object value = ParameterUtil.getValue(parameters, simpleSetPredicate.getField());
+
+		ArrayType array = simpleSetPredicate.getArray();
+
+		SimpleSetPredicate.BooleanOperator operator = simpleSetPredicate.getBooleanOperator();
+		switch(operator){
+			case IS_IN:
+				return ArrayUtil.isIn(array, value);
+			case IS_NOT_IN:
+				return ArrayUtil.isNotIn(array, value);
+			default:
+				throw new UnsupportedFeatureException(operator);
+		}
 	}
 
 	static
