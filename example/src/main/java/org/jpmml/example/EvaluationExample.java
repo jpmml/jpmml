@@ -39,6 +39,7 @@ public class EvaluationExample {
 		Map<FieldName, ?> parameters = readParameters(evaluator);
 
 		Object result = evaluator.evaluate(parameters);
+
 		System.out.println("Model output: " + result);
 	}
 
