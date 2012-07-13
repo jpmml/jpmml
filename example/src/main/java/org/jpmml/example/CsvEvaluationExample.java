@@ -40,7 +40,14 @@ public class CsvEvaluationExample {
 		BufferedReader reader = new BufferedReader(new FileReader(csvFile));
 
 		try {
-			List<String> header = parseHeader(reader.readLine());
+			String headerLine = reader.readLine();
+			if(isEmpty(headerLine)){
+				return;
+			}
+
+			String separator = getSeparator(headerLine);
+
+			List<String> header = parseLine(headerLine, separator);
 
 			Map<FieldName, DataField> dataFields = new LinkedHashMap<FieldName, DataField>();
 
@@ -53,10 +60,12 @@ public class CsvEvaluationExample {
 			}
 
 			while(true){
-				List<String> body = parseBody(reader.readLine());
-				if(body == null){
+				String bodyLine = reader.readLine();
+				if(isEmpty(bodyLine)){
 					break;
 				}
+
+				List<String> body = parseLine(bodyLine, separator);
 
 				Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
 
@@ -78,22 +87,29 @@ public class CsvEvaluationExample {
 	}
 
 	static
-	private List<String> parseHeader(String line){
-		String[] cells = line.split(";");
-
-		return Arrays.asList(cells);
+	private boolean isEmpty(String line){
+		return line == null || (line).equals("");
 	}
 
 	static
-	private List<String> parseBody(String line){
+	private String getSeparator(String line){
 
-		if(line == null){
-			return null;
+		if((line.split(";")).length > 1){
+			return ";";
+		} else
+
+		if((line.split(",")).length > 1){
+			return ",";
 		}
 
+		return ";";
+	}
+
+	static
+	private List<String> parseLine(String line, String separator){
 		List<String> result = new ArrayList<String>();
 
-		String[] cells = line.split(";");
+		String[] cells = line.split(separator);
 		for(String cell : cells){
 			result.add(cell.replace(',', '.'));
 		}
