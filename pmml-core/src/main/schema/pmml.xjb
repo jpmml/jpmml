@@ -382,6 +382,9 @@ Copyright (c) 2009 University of Tartu
 			<jaxb:class
 				name="IntSparseArray"
 			/>
+			<java:superClass
+				name="org.dmg.pmml.SparseArray"
+			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='Interval']/xsd:complexType/xsd:attribute[@name='closure']/xsd:simpleType">
@@ -543,6 +546,9 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='REAL-SparseArray']">
 			<jaxb:class
 				name="RealSparseArray"
+			/>
+			<java:superClass
+				name="org.dmg.pmml.SparseArray"
 			/>
 		</jaxb:bindings>
 
