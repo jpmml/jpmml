@@ -51,10 +51,16 @@ public class CsvEvaluationExample {
 
 			Map<FieldName, DataField> dataFields = new LinkedHashMap<FieldName, DataField>();
 
+			header:
 			for(int i = 0; i < header.size(); i++){
 				FieldName name = new FieldName(header.get(i));
 
 				DataField dataField = evaluator.getDataField(name);
+				if(dataField == null){
+					System.err.println("Ignoring column: " + name.getValue());
+
+					continue header;
+				}
 
 				dataFields.put(name, dataField);
 			}
@@ -69,10 +75,14 @@ public class CsvEvaluationExample {
 
 				Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
 
+				body:
 				for(int i = 0; i < header.size(); i++){
 					FieldName name = new FieldName(header.get(i));
 
 					DataField dataField = dataFields.get(name);
+					if(dataField == null){
+						continue body;
+					}
 
 					parameters.put(name, ParameterUtil.parse(dataField, body.get(i)));
 				}
