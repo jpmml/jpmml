@@ -16,8 +16,8 @@ public class CsvEvaluationExample {
 	static
 	public void main(String[] args) throws Exception {
 
-		if(args.length != 2){
-			System.err.println("Usage: java " + CsvEvaluationExample.class.getName() + " <PMML file> <CSV file>");
+		if(args.length < 2 || args.length > 3){
+			System.err.println("Usage: java " + CsvEvaluationExample.class.getName() + " <PMML file> <CSV input file> <CSV output file>?");
 
 			System.exit(-1);
 		}
@@ -26,18 +26,21 @@ public class CsvEvaluationExample {
 
 		PMML pmml = IOUtil.unmarshal(pmmlFile);
 
-		File csvFile = new File(args[1]);
+		File inputFile = new File(args[1]);
+		File outputFile = (args.length > 2 ? new File(args[2]) : null);
 
-		evaluate(pmml, csvFile);
+		evaluate(pmml, inputFile, outputFile);
 	}
 
 	static
-	private void evaluate(PMML pmml, File csvFile) throws Exception {
+	private void evaluate(PMML pmml, File inputFile, File outputFile) throws Exception {
 		PMMLManager pmmlManager = new PMMLManager(pmml);
 
 		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
-		BufferedReader reader = new BufferedReader(new FileReader(csvFile));
+		List<String> lines = new ArrayList<String>();
+
+		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 
 		try {
 			String headerLine = reader.readLine();
@@ -46,6 +49,8 @@ public class CsvEvaluationExample {
 			}
 
 			String separator = getSeparator(headerLine);
+
+			lines.add(headerLine + separator + "JPMML");
 
 			List<String> header = parseLine(headerLine, separator);
 
@@ -90,9 +95,28 @@ public class CsvEvaluationExample {
 				Object result = evaluator.evaluate(parameters);
 
 				System.out.println("Model output: " + result);
+
+				lines.add(bodyLine + separator + result);
 			}
 		} finally {
 			reader.close();
+		}
+
+		if(outputFile == null){
+			return;
+		}
+
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+
+		try {
+
+			for(String line : lines){
+				writer.write(line + "\n");
+			}
+
+			writer.flush();
+		} finally {
+			writer.close();
 		}
 	}
 
