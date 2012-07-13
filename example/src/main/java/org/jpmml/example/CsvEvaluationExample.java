@@ -42,16 +42,30 @@ public class CsvEvaluationExample {
 		try {
 			List<String> header = parseHeader(reader.readLine());
 
+			Map<FieldName, DataField> dataFields = new LinkedHashMap<FieldName, DataField>();
+
+			for(int i = 0; i < header.size(); i++){
+				FieldName name = new FieldName(header.get(i));
+
+				DataField dataField = evaluator.getDataField(name);
+
+				dataFields.put(name, dataField);
+			}
+
 			while(true){
 				List<String> body = parseBody(reader.readLine());
 				if(body == null){
 					break;
 				}
 
-				Map<FieldName, String> parameters = new LinkedHashMap<FieldName, String>();
+				Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
 
 				for(int i = 0; i < header.size(); i++){
-					parameters.put(new FieldName(header.get(i)), body.get(i));
+					FieldName name = new FieldName(header.get(i));
+
+					DataField dataField = dataFields.get(name);
+
+					parameters.put(name, ParameterUtil.parse(dataField, body.get(i)));
 				}
 
 				Object result = evaluator.evaluate(parameters);
