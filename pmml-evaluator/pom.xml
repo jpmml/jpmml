@@ -10,6 +10,10 @@
 
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
+	<packaging>jar</packaging>
+
+	<name>JPMML evaluator</name>
+	<description>JPMML high-level evaluation API</description>
 
 	<dependencies>
 		<dependency>

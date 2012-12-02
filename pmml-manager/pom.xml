@@ -10,6 +10,10 @@
 
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-manager</artifactId>
+	<packaging>jar</packaging>
+
+	<name>JPMML manager</name>
+	<description>JPMML middle-level manager API</description>
 
 	<dependencies>
 		<dependency>

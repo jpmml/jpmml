@@ -12,6 +12,9 @@
 	<artifactId>bundle</artifactId>
 	<packaging>bundle</packaging>
 
+	<name>JPMML OSGi bundle</name>
+	<description>JPMML OSGi bundle</description>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jpmml</groupId>

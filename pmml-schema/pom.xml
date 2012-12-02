@@ -10,6 +10,10 @@
 
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
+	<packaging>jar</packaging>
+
+	<name>JPMML schema</name>
+	<description>JPMML schema annotations for class model</description>
 
 	<dependencies>
 		<dependency>

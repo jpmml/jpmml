@@ -7,6 +7,10 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<name>JPMML</name>
+	<description>Java API for managing and evaluating models in Predictive Model Markup Language (PMML)</description>
+	<url>http://www.jpmml.org</url>
+
 	<organization>
 		<name>University of Tartu</name>
 		<url>http://www.ut.ee/en</url>
@@ -49,13 +53,6 @@
 		<system>Google Code</system>
 		<url>http://code.google.com/p/jpmml/issues/list</url>
 	</issueManagement>
-	<distributionManagement>
-		<repository>
-			<id>jpmml.googlecode.com</id>
-			<uniqueVersion>true</uniqueVersion>
-			<url>svn:https://jpmml.googlecode.com/svn/maven</url>
-		</repository>
-	</distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>

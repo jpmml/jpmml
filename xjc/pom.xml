@@ -10,6 +10,10 @@
 
 	<groupId>org.jpmml</groupId>
 	<artifactId>xjc</artifactId>
+	<packaging>jar</packaging>
+
+	<name>JPMML XJC plugin</name>
+	<description>JPMML XJC plugin for programmatic class model customization</description>
 
 	<dependencies>
 		<dependency>
