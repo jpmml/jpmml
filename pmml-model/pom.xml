@@ -9,10 +9,10 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-core</artifactId>
+	<artifactId>pmml-model</artifactId>
 	<packaging>jar</packaging>
 
-	<name>JPMML core</name>
+	<name>JPMML model</name>
 	<description>JPMML class model</description>
 
 	<dependencies>
