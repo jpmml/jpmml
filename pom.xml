@@ -10,7 +10,7 @@
 
 	<groupId>org.jpmml</groupId>
 	<artifactId>jpmml</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>JPMML</name>
@@ -51,9 +51,9 @@
 	</modules>
 
 	<scm>
-		<connection>scm:svn:http://jpmml.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://jpmml.googlecode.com/svn/trunk/</developerConnection>
-		<url>http://code.google.com/p/jpmml/source/browse/</url>
+		<connection>scm:svn:http://jpmml.googlecode.com/svn/tags/1.0.0</connection>
+		<developerConnection>scm:svn:https://jpmml.googlecode.com/svn/tags/1.0.0</developerConnection>
+		<url>http://code.google.com/p/jpmml/source/browse/tags/1.0.0</url>
 	</scm>
 	<issueManagement>
 		<system>Google Code</system>
@@ -65,28 +65,28 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>1.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-manager</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>1.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>1.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-schema</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>1.0.0</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>xjc</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>1.0.0</version>
 				<scope>provided</scope>
 			</dependency>
 
