@@ -21,4 +21,8 @@ public class PMMLObject implements Equals, HashCode, Serializable {
 	public int hashCode(ObjectLocator thisLocator, HashCodeStrategy hashCodeStrategy){
 		return 1;
 	}
+
+    public StringBuilder appendFields(ObjectLocator locator, StringBuilder buffer, ToStringStrategy strategy) {
+		return buffer;
+	}
 }

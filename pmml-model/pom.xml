@@ -74,6 +74,7 @@
 						<arg>-Xannotate</arg>
 						<arg>-Xequals</arg>
 						<arg>-XhashCode</arg>
+						<arg>-XtoString</arg>
 						<arg>-Xpmml</arg>
 						<arg>-XsuperClass</arg>
 						<arg>-XsuperClass-defaultName=org.dmg.pmml.PMMLObject</arg>
