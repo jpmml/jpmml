@@ -42,7 +42,6 @@
 
 	<modules>
 		<module>bundle</module>
-		<module>example</module>
 		<module>pmml-evaluator</module>
 		<module>pmml-manager</module>
 		<module>pmml-model</module>
