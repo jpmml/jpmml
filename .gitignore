@@ -1,0 +1,16 @@
+# eclipse files
+/.metadata
+/.settings/
+/.checkstyle
+
+/*/.settings
+/*/.classpath
+/*/.project
+
+# maven output
+/*/target
+
+# test results
+pmml-translation/test-output
+pmml-translation/velocity.log
+
