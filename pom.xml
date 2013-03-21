@@ -46,6 +46,7 @@
 		<module>pmml-manager</module>
 		<module>pmml-model</module>
 		<module>pmml-schema</module>
+ 		<module>pmml-translation</module>
 		<module>xjc</module>
 	</modules>
 
@@ -61,6 +62,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+ 			<dependency>
+                                <groupId>org.jpmml</groupId>
+                                <artifactId>pmml-translation</artifactId>
+                                <version>1.0-SNAPSHOT</version>
+                        </dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator</artifactId>
