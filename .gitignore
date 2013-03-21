@@ -11,6 +11,6 @@
 /*/target
 
 # test results
-pmml-translation/test-output
-pmml-translation/velocity.log
+pmml-translator/test-output
+pmml-translator/velocity.log
 

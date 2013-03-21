@@ -46,7 +46,7 @@
 		<module>pmml-manager</module>
 		<module>pmml-model</module>
 		<module>pmml-schema</module>
- 		<module>pmml-translation</module>
+ 		<module>pmml-translator</module>
 		<module>xjc</module>
 	</modules>
 
