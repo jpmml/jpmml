@@ -64,7 +64,7 @@
 		<dependencies>
  			<dependency>
                                 <groupId>org.jpmml</groupId>
-                                <artifactId>pmml-translation</artifactId>
+                                <artifactId>pmml-translator</artifactId>
                                 <version>1.0-SNAPSHOT</version>
                         </dependency>
 			<dependency>
