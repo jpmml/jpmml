@@ -1,4 +1,4 @@
-package org.jpmml.translator;
+package org.jpmml.itest;
 
 import java.io.StringReader;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.jpmml.translator.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class BaseModelTest {
 		//logger.info("Generated source code:\n"+javaSource);
 		
 
-		Class<?> modelClass = PmmlToJavaTranslator.createModelClass(className, "org.jpmml.translator", javaSource);
+		Class<?> modelClass = PmmlToJavaTranslator.createModelClass(className, "org.jpmml.itest", javaSource);
 		
 		return (CompiledModel)modelClass.newInstance();
 	}

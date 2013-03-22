@@ -1,4 +1,4 @@
-package org.jpmml.translator;
+package org.jpmml.itest;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -153,9 +153,9 @@ public class TreeModelTest extends BaseModelTest {
 	}
 
 	static private final String GOLF_MODEL_TEMPLATE = "	" +
-			"package org.jpmml.translator;\n" +
+			"package org.jpmml.itest;\n" +
 			"import java.util.Map;\n" +
-			"import org.jpmml.translator.BaseModelTest.CompiledModel;\n" +
+			"import org.jpmml.itest.BaseModelTest.CompiledModel;\n" +
 			"" +
 			"#foreach($import in $imports) \n" + 
 			"${import}\n" + 
