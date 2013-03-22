@@ -26,7 +26,7 @@ public class TreeModelTest extends BaseModelTest {
 			variableToValues);		
 	}
 	*/
-	@Test
+	/* @Test
 	public void testGolfModel() throws Exception {
 		
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree.xml"));
@@ -43,7 +43,7 @@ public class TreeModelTest extends BaseModelTest {
 			20);
 	}
 
-	@Test
+	//@Test
 	public void testGolfModelLastPrediction() throws Exception {
 		
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree_last_prediction.xml"));
@@ -58,7 +58,7 @@ public class TreeModelTest extends BaseModelTest {
 			new GolfModel_LastPrediction(),
 			variableToValues, 
 			20);
-	}
+	}*/
 	
 	protected double getMissingVarProbability() {
 		return 0.01;
