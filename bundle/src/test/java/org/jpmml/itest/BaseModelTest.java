@@ -5,8 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.jpmml.manager.PMMLManager;
 import org.jpmml.translator.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,14 +21,36 @@ public class BaseModelTest {
 	protected double getMissingVarProbability() {
 		return 0.1;
 	}
+
+	public void runSingleModelEvaluation(PMML pmmlDoc,
+			String codeTemplate, 
+			ManualModelImplementation manual,
+			Map<String, Object> variableValues 
+			) throws Exception {
+
+		// creating evaluator
+		PMMLManager pmmlManager = new PMMLManager(pmmlDoc);
+		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+
+		// translate and compile
+		CompiledModel compiledModel = createCompiledModel(pmmlDoc, codeTemplate);
+		
+		executeAndCompareOutput(0, compiledModel, evaluator, manual, variableValues);
+	}
 	
 	public void testModelEvaluation(PMML pmmlDoc,
 			String codeTemplate, 
 			ManualModelImplementation manual,
 			Map<String, List<?>> variables, 
 			final int iterations) throws Exception {
+
+		// creating evaluator
+		PMMLManager pmmlManager = new PMMLManager(pmmlDoc);
+		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+
+		// translate and compile
+		CompiledModel compiledModel = createCompiledModel(pmmlDoc, codeTemplate);
 		
-		CompiledModel compiledModel = createCompiledModel(pmmlDoc, codeTemplate); 
 		
 		for (int i=0;i<iterations; i++) {
 			// generate random variables
@@ -47,7 +73,7 @@ public class BaseModelTest {
  					}
  				}
 
-				executeAndCompareOutput(i, compiledModel, manual, nameToValue);
+				executeAndCompareOutput(i, compiledModel, evaluator, manual, nameToValue);
 			}
 		}		
 	}
@@ -74,7 +100,9 @@ public class BaseModelTest {
 		return (CompiledModel)modelClass.newInstance();
 	}
 
-	public void executeAndCompareOutput(int iteration, CompiledModel pmmlModel, 
+	public void executeAndCompareOutput(int iteration, 
+			CompiledModel pmmlModel,
+			Evaluator evaluator,
 			ManualModelImplementation manual,
 			Map<String, Object> nameToValue) {
 
@@ -82,10 +110,25 @@ public class BaseModelTest {
 		Object value2 = manual.execute(nameToValue);
 		
 		compareValues(iteration, nameToValue, value1, value2);
+
+		// if we get here then value1==value2
+		// now evaluate value3 and compare against value1
+		Object value3 = evaluateModel(evaluator, nameToValue);
+		compareValues(iteration, nameToValue, value1, value3);
+	}
+	
+	protected Object evaluateModel(Evaluator evaluator, Map<String, Object> nameToValue) {
+		Map<FieldName, Object> fieldToValue = new HashMap<FieldName, Object>();
+		for (Map.Entry<String, Object> entry : nameToValue.entrySet()) {
+			fieldToValue.put(new FieldName(entry.getKey()), entry.getValue());
+		}
+		return evaluator.evaluate(fieldToValue);
 	}
 
-	private void compareValues(int iteration, Map<String, Object> nameToValue, Object value1,
-			Object value2) {
+	private void compareValues(int iteration, Map<String, Object> nameToValue, 
+			Object value1,
+			Object value2 
+			) {
 		if ((value1==null && value2!=null) 
 				|| (value1!=null && value2==null) 
 				|| (value1!=null && value2!=null && !value1.equals(value2))) {
