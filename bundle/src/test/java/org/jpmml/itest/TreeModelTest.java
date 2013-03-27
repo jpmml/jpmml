@@ -166,7 +166,7 @@ public class TreeModelTest extends BaseModelTest {
 		
 	}
 
-	static private final String GOLF_MODEL_TEMPLATE = "	" +
+	static private final String GOLF_MODEL_TEMPLATE = "" +
 			"package org.jpmml.itest;\n" +
 			"import java.util.Map;\n" +
 			"import org.jpmml.itest.BaseModelTest.CompiledModel;\n" +
