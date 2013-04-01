@@ -26,6 +26,22 @@ public class ScoreCardModelTest extends BaseModelTest {
 			variableToValues, 
 			20);
 	}
+	
+	@Test
+	public void testSampleScoreCardModel2() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/scorecard2.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		//variableToValues.put("department", "engineering");
+		variableToValues.put("age", Arrays.asList(22, 35, 45));
+		variableToValues.put("income", Arrays.asList(1600, 1000, 500));
+		variableToValues.put("department", Arrays.asList("engineering", "marketing", "business"));
+
+		testModelEvaluation(pmmlDoc,
+			SAMPLE_SCORECARD_MODEL_TEMPLATE, 
+			new SampleScoreCardModel(),
+			variableToValues, 
+			20);
+	}
 
 	protected double getMissingVarProbability() {
 		return 0.01;
