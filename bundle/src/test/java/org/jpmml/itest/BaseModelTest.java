@@ -132,20 +132,20 @@ public class BaseModelTest {
 		if ((value1==null && value2!=null) 
 				|| (value1!=null && value2==null) 
 				|| (value1!=null && value2!=null && !value1.equals(value2))) {
-			logger.info("Test failed. Value1="+value1+"; value2="+value2);
+			logger.info("Test failed. Value1 = " + value1 + "; value2 = " + value2);
 			for (Map.Entry<String, Object> e : nameToValue.entrySet()) {
-				logger.info(e.getKey()+"="+e.getValue());
+				logger.info(e.getKey() + " = " + e.getValue());
 			}
 		}
 		
-		if (value1!=null) {
+		if (value1 != null) {
 			assert value1.equals(value2);
 		}
-		else if (value2!=null) {
+		else if (value2 != null) {
 			assert value2.equals(value1);
 		}
 		else {
-			assert value1==value2;
+			assert value1 == value2;
 		}
 		//logger.info(iteration+") value1: "+value1+"; value2: "+value2);
 	}
