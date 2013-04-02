@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.IOUtil;
@@ -52,65 +53,97 @@ public class ScoreCardModelTest extends BaseModelTest {
 		public Object execute(Map<String, Object> nameToValue) {
 			double score = 0.0; 
 
+			TreeMap<Double, String> diffToReasonCode = new TreeMap<Double, String>();
+			
 			String department = (String) nameToValue.get("department");
 			Integer age = (Integer) nameToValue.get("age");
 			Integer income = (Integer) nameToValue.get("income");
 
+			
+			
 			// Department score
+			Double baselineScore = 19.0;
+			Double diff = 0.0;
 			if (department == null) {
 			}
 			else if (department.equals("marketing")) {
 				score += 19;
+				diff = baselineScore - 19.0;
 			}
 			else if (department.equals("engineering")) {
 				score += 3;
+				diff = baselineScore - 3.0;
 			}
 			else if (department.equals("business")) {
 				score += 6;
+				diff = baselineScore - 6.0;
 			}
 			else {
 			}
-						
+			diffToReasonCode.put(diff, "RC1");
+		
+			
+			baselineScore = 18.0;
 			// Age score
 			if (age == null) {
 				score += -1;
+				diff = baselineScore + 1;
 			}
 			else if (is_in_range(age, 0, 18)) {
 				score += -3;
+				diff = baselineScore + 3;
 			}
 			else if (is_in_range(age, 19, 29)) {
 				// Verbose but explicit...
 				score += 0;
+				diff = baselineScore;
 			}
 			else if (is_in_range(age, 30, 39)) {
 				score += 12;
+				diff = baselineScore - 12;
 			}
 			else if (age >= 40) {
 				score += 18;
+				diff = baselineScore - 18;
 			}
 			else {
 				score += -1;
+				diff = baselineScore + 1;
 			}
 			 
+			diffToReasonCode.put(diff, "RC2");
+			diff = 0.0;
+			baselineScore = 10.0;
+			
 			// Income score
 			if (income == null) {
 				score += 5;
+				diff = baselineScore - 5.0;
 			}
 			else if (income <= 1000) {
 				score += 26;
+				diff = baselineScore - 26;
 			}
 			else if (income > 1000 && income <= 1500) {
 				score += 5;
+				diff = baselineScore - 5;
 			}
 			else if (income > 1500) {
 				score += -3;
+				diff = baselineScore + 3;
 			}
 
+			diffToReasonCode.put(diff, "RC3");
+
+
+			// The code that gives the reason code:
+			// diffToReasonCode.lastEntry().getValue();
+			
 			return score;
 	}
 
 		private Boolean is_in_range(Integer value, Integer lower_bound, Integer upper_bound) {
-			return lower_bound <= value && value <= upper_bound;			
+			return lower_bound <= value && value <= upper_bound;
 		}
 	}
 

@@ -30,7 +30,7 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 		this(parent.getPmml(), parent.getModel());
 	}
 
-	// The main method. It takes a context, and print the code corresponding tot he scorecard.
+	// The main method. It takes a context, and print the code corresponding to the scorecard.
 	public String translate(TranslationContext context) throws TranslationException {
 
 		String outputVariableName = null;
@@ -54,16 +54,30 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 		List<Characteristic> cl
 		= scorecard.getCharacteristics().getCharacteristics();
 		
+		String diffToReasonCodeVariable = context.generateLocalVariableName("diffToReasonCode");
+		
+		context.requiredImports.add("import java.util.TreeMap;");
+		sb.append(context.getIndentation()).append("TreeMap<Double, String> ")
+			.append(diffToReasonCodeVariable).append(" = new TreeMap<Double, String>();\n");
+
+
 		// Analyze each characteristic and print the corresponding code. 
 		for (Characteristic c : cl) {
-			translateCharacteristic(c, context, sb, outputField);
+			translateCharacteristic(c, context, sb, outputField, diffToReasonCodeVariable);
+		}
+
+		// Store the result of the reason code. It is currently stored in diffToReasonCode.lastEntry().getValue().
+		if (context.getModelResultTrackingVariable() != null) {
+			sb.append(context.getIndentation())
+				.append(context.getModelResultTrackingVariable()).append(" = ").append(diffToReasonCodeVariable).append(".lastEntry().getValue()")
+				.append(";\n");
 		}
 		
 		return sb.toString();
 	}
 
 	// Method that takes a characteristics, and update the code. 
-	private void translateCharacteristic(Characteristic c, TranslationContext context, StringBuilder code, DataField outputVariable) throws TranslationException {
+	private void translateCharacteristic(Characteristic c, TranslationContext context, StringBuilder code, DataField outputVariable, String diffToReasonCodeVariable) throws TranslationException {
 		// Run through each characteristic.
 		// first is useful to know if we are the first case, or not. Depending on that, we add an 'else' before the if.
 		Boolean first = true;
@@ -86,9 +100,38 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 			.append(") {\n");
 			context.incIndentation();
 			
-			// update the outputVariable with the corresponding partial score.
+			// Update the outputVariable with the corresponding partial score.
 			code.append(context.getIndentation()).append(outputVariable.getName().getValue()).append(" += ")
 			.append(a.getPartialScore()).append(";\n");
+			
+			// Work on reason code.
+			String diffVariable = context.generateLocalVariableName("diff");
+			// Compute the diff, include the result in the generated code.
+			double diff = 0;
+			switch (reasonCodeAlgorithm) {
+			case POINTS_BELOW:
+				diff = c.getBaselineScore() - a.getPartialScore();
+				break;
+			case POINTS_ABOVE:
+				diff = a.getPartialScore() - c.getBaselineScore();
+				break;
+			default:
+				// We should never be there.
+				assert false;
+				break;
+			}
+			//code.append(context.getIndentation()).append(diffVariable).append(" = ").append(diff).append(";\n");
+
+			// If there is a reason code at the attribute level, use it. Otherwise use the one in the
+			// characteristic level.
+			code.append(context.getIndentation()).append(diffToReasonCodeVariable).append(".put(").append(diff).append(", \"");
+			if (a.getReasonCode()!=null && !a.getReasonCode().isEmpty()) {
+				code.append(a.getReasonCode());
+			}
+			else {
+				code.append(c.getReasonCode());
+			}
+			code.append("\");\n");
 			context.decIndentation();
 			code.append(context.getIndentation()).append("}\n");
 			first = false;

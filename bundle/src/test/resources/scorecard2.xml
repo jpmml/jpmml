@@ -44,13 +44,7 @@
                <Attribute partialScore="6">
                   <SimplePredicate field="department" operator="equal" value="business"/> 
                </Attribute> 
-               <Attribute partialScore="6">
-                  <SimplePredicate field="department" operator="equal" value="business"/> 
-               </Attribute> 
-               <Attribute partialScore="6">
-                  <SimplePredicate field="department" operator="equal" value="business"/> 
-               </Attribute> 
-	    </Characteristic>
+            </Characteristic>
             <Characteristic name="ageScore" reasonCode="RC2" baselineScore="18">
                <Attribute partialScore="-1">
                   <SimplePredicate field="age" operator="isMissing"/>
@@ -81,6 +75,12 @@
                <Attribute partialScore="26">
                   <SimplePredicate field="income" operator="lessOrEqual" value="1000"/>
                </Attribute>
+               <Attribute partialScore="5">
+                  <CompoundPredicate booleanOperator="and">
+                     <SimplePredicate field="income" operator="greaterThan" value="1000"/>
+                     <SimplePredicate field="income" operator="lessOrEqual" value="1500"/>
+                  </CompoundPredicate>
+               </Attribute> 
                <Attribute partialScore="-3">
                   <SimplePredicate field="income" operator="greaterThan" value="1500"/>
                </Attribute>

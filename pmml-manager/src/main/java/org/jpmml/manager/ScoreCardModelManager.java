@@ -12,13 +12,9 @@ import org.dmg.pmml.*;
  * @author tbadie
  *
  */
-/**
- * @author tbadie
- *
- */
 public class ScoreCardModelManager extends ModelManager<Scorecard> {
 	protected Scorecard scorecard = null;
-
+	
 	public ScoreCardModelManager(){
 	}
 
@@ -29,6 +25,8 @@ public class ScoreCardModelManager extends ModelManager<Scorecard> {
 	public ScoreCardModelManager(PMML pmml, Scorecard scorecard){
 		super(pmml);
 
+		useReasonCodes = true;
+		reasonCodeAlgorithm = ReasonCodeAlgorithm.POINTS_BELOW;
 		this.scorecard = scorecard;
 	}
 
@@ -95,4 +93,76 @@ public class ScoreCardModelManager extends ModelManager<Scorecard> {
 
 		return null;
 	}
+	
+	
+	// Reason Code part of the manager.
+	protected ReasonCodeAlgorithm reasonCodeAlgorithm;
+	protected Boolean useReasonCodes;
+	protected String lastReasonCode = null; 
+
+	
+	public String getLastReasonCode() {
+		return lastReasonCode;
+	}
+
+	public boolean isUseReasonCodes() {
+		return useReasonCodes;
+	}
+
+	public void setUseReasonCodes(boolean useReasonCodes) {
+		this.useReasonCodes = useReasonCodes;
+	}
+
+	public ReasonCodeAlgorithm getReasonCodeAlgorithm() {
+		return reasonCodeAlgorithm;
+	}
+
+	public void setReasonCodeAlgorithm(ReasonCodeAlgorithm reasonCodeAlgorithm) {
+		this.reasonCodeAlgorithm = reasonCodeAlgorithm;
+	}
+	
+	
+	static protected enum ReasonCodeAlgorithm {
+		POINTS_ABOVE (1, "pointsAbove"),
+		POINTS_BELOW (2, "pointsBelow"),
+		;
+				
+		private int id;
+		private String label;
+		
+		private ReasonCodeAlgorithm(int id, String label) {
+			this.id = id;
+			this.label = label;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		static public ReasonCodeAlgorithm fromLabel(String label) {
+			ReasonCodeAlgorithm result = null;
+			for (ReasonCodeAlgorithm opType : ReasonCodeAlgorithm.values()) {
+				if (opType.label.equals(label)) {
+					result = opType;
+					break;
+				}
+			}
+			return result;
+		}
+
+		static public ReasonCodeAlgorithm fromId(int id) {
+			ReasonCodeAlgorithm result = null;
+			for (ReasonCodeAlgorithm opType : ReasonCodeAlgorithm.values()) {
+				if (opType.id==id) {
+					result = opType;
+					break;
+				}
+			}
+			return result;
+		}
+	};
 }

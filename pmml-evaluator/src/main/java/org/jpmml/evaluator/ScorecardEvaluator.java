@@ -2,6 +2,7 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.dmg.pmml.Attribute;
 import org.dmg.pmml.Characteristic;
@@ -28,7 +29,7 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 	// Evaluate the parameters on the score card.
 	public Object evaluate(Map<FieldName, ?> parameters) {
 		Double score = 0.0;
-		
+		TreeMap<Double, String> diffToReasonCode = new TreeMap<Double, String>();
 		List<Characteristic> cl
 			= scorecard.getCharacteristics().getCharacteristics();
 		for (Characteristic c : cl) {
@@ -41,12 +42,33 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 				// If it is valid, and the value is true, update the score.
 				if (predicateValue != null && predicateValue.booleanValue()) {
 					score += a.getPartialScore();
+					
+					double diff = 0;
+					switch (reasonCodeAlgorithm) {
+						case POINTS_BELOW:
+							diff = c.getBaselineScore() - a.getPartialScore();
+							break;
+						case POINTS_ABOVE:
+							diff = a.getPartialScore() - c.getBaselineScore();
+							break;
+						default:
+							// We should never be there.
+							assert false;
+							break;
+					}
+
+					if (a.getReasonCode()!=null && !a.getReasonCode().isEmpty()) {
+						diffToReasonCode.put(diff, a.getReasonCode());
+					}
+					else {
+						diffToReasonCode.put(diff, c.getReasonCode());
+					}
 					break;
 				// FIXME: Add a missing value strategy.
 				}
 			}
 		}
-
+		
     	return score;
 	}
 }
