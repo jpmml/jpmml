@@ -137,11 +137,16 @@ public class ScoreCardModelTest extends BaseModelTest {
 
 
 			// The code that gives the reason code:
-			// diffToReasonCode.lastEntry().getValue();
+			resultExplanation = diffToReasonCode.lastEntry().getValue();
 			
 			return score;
 	}
 
+		String resultExplanation = null;
+		public String getResultExplanation() {
+			return resultExplanation;
+		}
+		
 		private Boolean is_in_range(Integer value, Integer lower_bound, Integer upper_bound) {
 			return lower_bound <= value && value <= upper_bound;
 		}
@@ -170,6 +175,10 @@ public class ScoreCardModelTest extends BaseModelTest {
 			"		\n" + 
 			"${modelCode}\n" + 
 			"		return overallScore;\n" + 
-			"	}\n" + 
+			"	}\n" +
+			"	String resultExplanation = null;\n" +
+			" 	public String getResultExplanation() {\n" +
+			" 		return resultExplanation;\n" +
+			"	}\n" +
 			"}\n"; 
 }

@@ -27,35 +27,35 @@
         <MiningField name="outlook"/>
         <MiningField name="whatIdo" usageType="predicted"/>
       </MiningSchema>
-      <Node score="will play">
+      <Node id="0" score="will play">
         <True/>
-        <Node score="will play">
+        <Node id="1" score="will play">
           <SimplePredicate field="outlook" operator="equal" value="sunny"/>
-          <Node score="will play">
+          <Node id="2" score="will play">
             <CompoundPredicate booleanOperator="and" >
               <SimplePredicate field="temperature" operator="lessThan" value="90" />
               <SimplePredicate field="temperature" operator="greaterThan" value="50" />
             </CompoundPredicate>
-            <Node score="will play" >
+            <Node id="3" score="will play" >
               <SimplePredicate field="humidity" operator="lessThan" value="80" />
             </Node>
-            <Node score="no play" >
+            <Node id="4" score="no play" >
               <SimplePredicate field="humidity" operator="greaterOrEqual" value="80" />
             </Node>
           </Node>
-	          <Node score="no play" >
+	          <Node id="5" score="no play" >
 	            <CompoundPredicate booleanOperator="or" >
 	              <SimplePredicate field="temperature" operator="greaterOrEqual" value="90"/>
 	              <SimplePredicate field="temperature" operator="lessOrEqual" value="50" />
 	            </CompoundPredicate>
 	          </Node>
         </Node>
-        <Node score="may play" >
+        <Node id="6" score="may play" >
           <CompoundPredicate booleanOperator="or" >
             <SimplePredicate field="outlook" operator="equal" value="overcast" />
             <SimplePredicate field="outlook" operator="equal" value="rain" />
           </CompoundPredicate>
-          <Node score="may play" >
+          <Node id="7" score="may play" >
             <CompoundPredicate booleanOperator="and" >
               <SimplePredicate field="temperature" operator="greaterThan" value="60" />
               <SimplePredicate field="temperature" operator="lessThan" value="100" />
@@ -64,7 +64,7 @@
               <SimplePredicate field="windy" operator="equal" value="false" />
             </CompoundPredicate>
           </Node>
-          <Node score="no play" >
+          <Node id="8" score="no play" >
             <CompoundPredicate booleanOperator="and" >
               <SimplePredicate field="outlook" operator="equal" value="rain" />
               <SimplePredicate field="humidity" operator="lessThan" value="70" />

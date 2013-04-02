@@ -72,7 +72,6 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 				.append(context.getModelResultTrackingVariable()).append(" = ").append(diffToReasonCodeVariable).append(".lastEntry().getValue()")
 				.append(";\n");
 		}
-		
 		return sb.toString();
 	}
 
@@ -104,8 +103,6 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 			code.append(context.getIndentation()).append(outputVariable.getName().getValue()).append(" += ")
 			.append(a.getPartialScore()).append(";\n");
 			
-			// Work on reason code.
-			String diffVariable = context.generateLocalVariableName("diff");
 			// Compute the diff, include the result in the generated code.
 			double diff = 0;
 			switch (reasonCodeAlgorithm) {

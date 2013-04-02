@@ -98,5 +98,6 @@ public interface Evaluator extends Consumer {
 	 *
 	 * @see Computable
 	 */
-	Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters);
+	Object evaluate(Map<FieldName, ?> parameters);
 }
+

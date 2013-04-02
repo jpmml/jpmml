@@ -68,7 +68,13 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 				}
 			}
 		}
-		
+
+		lastReasonCode = diffToReasonCode.lastEntry().getValue();
     	return score;
 	}
+
+	public String getResultExplanation() {
+		return lastReasonCode;
+	}
+
 }
