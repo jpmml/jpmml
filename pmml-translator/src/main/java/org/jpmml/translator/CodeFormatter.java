@@ -68,8 +68,7 @@ public interface CodeFormatter {
 	 * 
 	 * @param code The code on which we append.
 	 * @param context The context of the translation. Define the null value.
-	 * @param variableType The type of the variable.
-	 * @param variable The name of the variable.
+	 * @param variable The variable.
 	 */
 	public void affectVariableToNullValue(StringBuilder code, TranslationContext context,
 										Variable variable);
@@ -148,4 +147,11 @@ public interface CodeFormatter {
 	 * @param context ...
 	 */
 	public void endControlFlowStructure(StringBuilder code, TranslationContext context);
+	
+	/**
+	 * Append and prepend double quotes around the string given in argument.
+	 * 
+	 * 
+	 */
+	 public String stringify(String str);
 }

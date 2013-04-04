@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.FieldUsageType;
-import org.dmg.pmml.MiningField;
 import org.dmg.pmml.NoTrueChildStrategyType;
 import org.dmg.pmml.Node;
 import org.dmg.pmml.OpType;
@@ -13,6 +11,7 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.TreeModel;
 import org.jpmml.manager.TreeModelManager;
+import org.jpmml.translator.Variable.VariableType;
 
 /**
  * Translate tree model into java code
@@ -50,24 +49,11 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 		}
 		
 		Node rootNode = getOrCreateRoot();
-		StringBuilder sb = new StringBuilder();		
-		generateCodeForNode(rootNode, context, sb, outputField);
+		StringBuilder sb = new StringBuilder();
+		CodeFormatter cf = new StandardCodeFormatter();
+		generateCodeForNode(rootNode, context, sb, outputField, cf);
 		
 		return sb.toString();
-	}
-	
-	private OpType findOutputVariableType() {
-		OpType type = OpType.CONTINUOUS;
-		for (MiningField miningField : getMiningSchema().getMiningFields()) {
-			if (miningField.getUsageType()==FieldUsageType.PREDICTED) {
-				DataField dataField = this.getDataField(miningField.getName());
-				if (dataField!=null) {
-					type = dataField.getOptype();
-					break;
-				}
-			}
-		}
-		return type;
 	}
 	
 	private Node getChildById(Node node, String id) {
@@ -83,68 +69,50 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 		return result;
 	}
 	
-	private void assignExplanation(StringBuilder code, TranslationContext context, Node node) {
-		code.append(context.getIndentation())
-		.append(context.getModelResultTrackingVariable())
-		.append(" = \"")
-		.append(node.getId())
-		.append("\";\n");
-	}
-	
-	private void generateCodeForNode(Node node, TranslationContext context, StringBuilder code, DataField outputVariable) throws TranslationException {
-		
+	private void generateCodeForNode(Node node, TranslationContext context, StringBuilder code, DataField outputVariable, CodeFormatter cf) throws TranslationException {
 		TranslatorUtil.assignOutputVariable(code, node.getScore(), context, outputVariable);
-		assignExplanation(code, context, node);
 		
-		if (context.getModelResultTrackingVariable()!=null) {
-				code.append(context.getIndentation())
-					.append(context.getModelResultTrackingVariable()).append(" = \"").append(node.getId()).append("\"")
-					.append(";\n");
+		cf.affectVariable(code, context,
+				context.getModelResultTrackingVariable(), cf.stringify(node.getId()));
+		
+		if (context.getModelResultTrackingVariable() != null) {
+			cf.affectVariable(code, context, context.getModelResultTrackingVariable(), cf.stringify(node.getId()));
 		}
 
 
-		if (node.getNodes()==null || node.getNodes().isEmpty()) return;
+		if (node.getNodes() == null || node.getNodes().isEmpty()) {
+			return;
+		}
 
 		String succVariable = context.generateLocalVariableName("succ");
-		code.append(context.getIndentation()).append("boolean ")
-			.append(succVariable).append(" = false;\n");
 		
-		//List<Node> children = node.getNodes();
+		cf.addDeclarationVariable(code, context, new Variable(VariableType.BOOLEAN, succVariable));
+		
 		for (Node child : node.getNodes()) {				
 			
-			//Node child = children.get(i);
 			Predicate predicate = child.getPredicate();
 			if (predicate==null) {
 				throw new TranslationException("No predicate for node: "+child.getId());
 			}
 			
-			code.append(context.getIndentation())
-				.append("if (!").append(succVariable).append(") {\n");
-			context.incIndentation();
+			cf.beginControlFlowStructure(code, context, "if", "!" + succVariable);
 			
 			String predicateValue = context.generateLocalVariableName("predicateValue");
 			String predicateCode = PredicateTranslationUtil.generateCode(predicate, this, context);
 			
 			// evaluate predicate and store value into "predicateValue" variable
-			code.append(context.getIndentation())
-				.append("int ").append(predicateValue).append(" = ").append(predicateCode).append(";\n");
+			cf.addDeclarationVariable(code, context, new Variable(VariableType.INTEGER, predicateValue), predicateCode);
 			
-			code.append(context.getIndentation())
-				.append("if (").append(predicateValue).append("==").append(PredicateTranslationUtil.TRUE)
-				.append(") {\n");
-			context.incIndentation();
+			cf.beginControlFlowStructure(code, context, "if", predicateValue + " == " + PredicateTranslationUtil.TRUE);
 
-			code.append(context.getIndentation()).append(succVariable).append(" = true;\n");
+			cf.affectVariable(code, context, succVariable, "true");
+
 			// predicate is true - insert code for nested nodes 
-			generateCodeForNode(child, context, code, outputVariable);
+			generateCodeForNode(child, context, code, outputVariable, cf);
 
-			context.decIndentation();
-			code.append(context.getIndentation()).append("}\n");
+			cf.endControlFlowStructure(code, context);
 
-			code.append(context.getIndentation())
-				.append("else if (").append(predicateValue).append("==").append(PredicateTranslationUtil.UNKNOWN)
-				.append(") {\n");
-			context.incIndentation();
+			cf.beginControlFlowStructure(code, context, "else if", predicateValue + " == " + PredicateTranslationUtil.UNKNOWN);
 			// predicate is unknown
 			
 			switch (this.getModel().getMissingValueStrategy()) {
@@ -156,18 +124,14 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 				case LAST_PREDICTION:
 					// assume this node evaluated to true, but ignore its value
 					// take last prediction instead
-					code.append(context.getIndentation()).append(succVariable).append(" = true;\n");
+					cf.affectVariable(code, context, succVariable, "true");
 					break;
 					
 				case NULL_PREDICTION:
 					// same as above, but reset prediction to null
-					code.append(context.getIndentation()).append(succVariable).append(" = true;\n");
-					// this.getDataField(context.getO)
-					code.append(context.getIndentation())
-						.append(context.formatOutputVariable(outputVariable.getName().getValue()))
-						.append(" = ")
-						.append(context.getNullValueForVariable(findOutputVariableType()))
-						.append(";\n");
+					cf.affectVariable(code, context, succVariable, "true");
+
+					cf.affectVariableToNullValue(code, context, new Variable(outputVariable));
 					break;
 				
 				case DEFAULT_CHILD:
@@ -178,39 +142,29 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 					if (defaultNode==null) {
 						throw new TranslationException("No default child defined for nodeId: "+child.getId());
 					}
-					generateCodeForNode(defaultNode, context, code, outputVariable);
+					generateCodeForNode(defaultNode, context, code, outputVariable, cf);
 					break;
 				default:
 					throw new TranslationException("Unsupported strategy: " + getModel().getMissingValueStrategy());
 			}
 
-			context.decIndentation();
-			code.append(context.getIndentation()).append("}\n");
 
-			context.decIndentation();
-			code.append(context.getIndentation()).append("}\n");
+			cf.endControlFlowStructure(code, context);
+			cf.endControlFlowStructure(code, context);
 		}
 		
 		if (getModel().getNoTrueChildStrategy()==NoTrueChildStrategyType.RETURN_NULL_PREDICTION) {
-			code.append(context.getIndentation()).append("if (!").append(succVariable).append(") {\n") ;
-
-			context.incIndentation();
-
-			code.append(context.getIndentation())
-				.append(context.formatOutputVariable(outputVariable.getName().getValue()))
-				.append(" = ").append(context.getNullValueForVariable(findOutputVariableType()))
-				.append(";\n");
-			code.append(context.getIndentation())
-			.append(context.getModelResultTrackingVariable())
-			.append(" = ")
-			.append(context.getNullValueForVariable(OpType.CATEGORICAL))
-			.append(";\n");
-
-			context.decIndentation();
+			cf.beginControlFlowStructure(code, context, "if", "!" + succVariable);
 			
-			code.append(context.getIndentation()).append("}\n");
-		}
-		
+			cf.affectVariableToNullValue(code, context, new Variable(outputVariable));
+
+
+			cf.affectVariable(code, context,
+					context.getModelResultTrackingVariable(),
+					context.getNullValueForVariable(OpType.CATEGORICAL));
+			
+			cf.endControlFlowStructure(code, context);
+		}	
 	}
 
 }

@@ -25,6 +25,9 @@ public class StandardCodeFormatter implements CodeFormatter {
 		case FLOAT:
 			initializer = "0.0";
 			break;
+		case BOOLEAN:
+			initializer = "false";
+			break;
 		case STRING:
 		case OBJECT:
 			initializer = "new " + variable.getTypeName() + "()";
@@ -93,11 +96,9 @@ public class StandardCodeFormatter implements CodeFormatter {
 
 	public void affectVariable(StringBuilder code, TranslationContext context,
 			String variableName, String expression) {
-		// TODO Auto-generated method stub
 		code.append(context.getIndentation()).append(variableName)
 		.append(" = ").append(expression)
-		.append(";\n");
-		
+		.append(";\n");	
 	}
 
 	public void affectVariable(StringBuilder code, TranslationContext context,
@@ -105,6 +106,10 @@ public class StandardCodeFormatter implements CodeFormatter {
 		code.append(context.getIndentation()).append(variableName)
 		.append(" ").append(op.value()).append(expression)
 		.append(";\n");
+	}
+
+	public String stringify(String str) {
+		return "\"" + str + "\"";
 	}
 
 }
