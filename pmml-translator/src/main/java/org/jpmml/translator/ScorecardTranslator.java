@@ -10,6 +10,8 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Scorecard;
 import org.jpmml.manager.ScoreCardModelManager;
+import org.jpmml.translator.CodeFormatter.Operator;
+import org.jpmml.translator.Variable.VariableType;
 
 /**
  * Translate score card model into java code.
@@ -57,10 +59,10 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 		String diffToReasonCodeVariable = context.generateLocalVariableName("diffToReasonCode");
 		
 		context.requiredImports.add("import java.util.TreeMap;");
-		sb.append(context.getIndentation()).append("TreeMap<Double, String> ")
-			.append(diffToReasonCodeVariable).append(" = new TreeMap<Double, String>();\n");
-
-
+		context.getFormatter().addDeclarationVariable(sb, context,
+				new Variable(VariableType.OBJECT, "TreeMap<Double, String>", diffToReasonCodeVariable));
+		
+		
 		// Analyze each characteristic and print the corresponding code. 
 		for (Characteristic c : cl) {
 			translateCharacteristic(c, context, sb, outputField, diffToReasonCodeVariable);
@@ -68,9 +70,8 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 
 		// Store the result of the reason code. It is currently stored in diffToReasonCode.lastEntry().getValue().
 		if (context.getModelResultTrackingVariable() != null) {
-			sb.append(context.getIndentation())
-				.append(context.getModelResultTrackingVariable()).append(" = ").append(diffToReasonCodeVariable).append(".lastEntry().getValue()")
-				.append(";\n");
+			context.getFormatter().affectVariable(sb, context, Operator.EQUAL, context.getModelResultTrackingVariable(),
+					diffToReasonCodeVariable + ".lastEntry().getValue()");
 		}
 		return sb.toString();
 	}
@@ -80,7 +81,7 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 		// Run through each characteristic.
 		// first is useful to know if we are the first case, or not. Depending on that, we add an 'else' before the if.
 		Boolean first = true;
-
+		CodeFormatter cf = context.getFormatter();
 		// Put some space between the different characteristics.
 		code.append("\n");
 		
@@ -92,16 +93,16 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 
 			String predicateCode = PredicateTranslationUtil.generateCode(p, this, context);
 
-			// Evaluate the predicate. If it is true, update the score. If it is not the first if of the list,
-			// Change it in a else if.
-			code.append(context.getIndentation()).append(first ? "" : "else ")
-			.append("if ((").append(predicateCode).append(") == ").append(PredicateTranslationUtil.TRUE)
-			.append(") {\n");
-			context.incIndentation();
+			// Evaluate the predicate. If it is true, update the score. If it is not the first 'if' of the list,
+			// Change it in an else if.
+			cf.beginControlFlowStructure(code, context, (first ? "" : "else ") + "if",
+					"(" + predicateCode + ") == " + PredicateTranslationUtil.TRUE);
+
+			
 			
 			// Update the outputVariable with the corresponding partial score.
-			code.append(context.getIndentation()).append(outputVariable.getName().getValue()).append(" += ")
-			.append(a.getPartialScore()).append(";\n");
+			cf.affectVariable(code, context, Operator.PLUS_EQUAL,
+					outputVariable.getName().getValue(), a.getPartialScore().toString());
 			
 			// Compute the diff, include the result in the generated code.
 			double diff = 0;
@@ -117,20 +118,15 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 				assert false;
 				break;
 			}
-			//code.append(context.getIndentation()).append(diffVariable).append(" = ").append(diff).append(";\n");
 
 			// If there is a reason code at the attribute level, use it. Otherwise use the one in the
 			// characteristic level.
-			code.append(context.getIndentation()).append(diffToReasonCodeVariable).append(".put(").append(diff).append(", \"");
-			if (a.getReasonCode()!=null && !a.getReasonCode().isEmpty()) {
-				code.append(a.getReasonCode());
-			}
-			else {
-				code.append(c.getReasonCode());
-			}
-			code.append("\");\n");
-			context.decIndentation();
-			code.append(context.getIndentation()).append("}\n");
+			cf.addLine(code, context, diffToReasonCodeVariable + ".put(" + diff + ", \""
+			+ (a.getReasonCode()!=null && !a.getReasonCode().isEmpty()
+				? a.getReasonCode()
+				: c.getReasonCode()) + "\");");
+
+			cf.endControlFlowStructure(code, context);
 			first = false;
 		}
 	}

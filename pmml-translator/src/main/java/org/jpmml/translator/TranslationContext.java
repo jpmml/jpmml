@@ -38,13 +38,17 @@ public class TranslationContext {
 	protected Set<String> createdVariables;
 	
 	protected int localVariablesIndex;
+	protected CodeFormatter formatter;
 	
+
+
 	public TranslationContext() {
 		indentationString = "\t\t";
 		createdVariables = new HashSet<String>();
 		constantDeclarations = new ArrayList<String>();
 		requiredImports = new TreeSet<String>();
 		localVariablesIndex = 0;
+		formatter = new StandardCodeFormatter();
 	}
 	
 	public void incIndentation() {
@@ -58,6 +62,10 @@ public class TranslationContext {
 
 	public String getIndentation() {
 		return indentationString;
+	}
+
+	public CodeFormatter getFormatter() {
+		return formatter;
 	}
 
 	/**

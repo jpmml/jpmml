@@ -36,11 +36,11 @@ public class TranslatorUtil {
 					.append(";\n");
 					break;
 				case STRING:
-					code.append(context.getIndentation())
-					.append(context
-							.formatOutputVariable(outputVariable.getName()
-													.getValue()))
-							.append(" = \"").append(value)
+						code.append(context.getIndentation())
+						.append(context
+								.formatOutputVariable(outputVariable.getName()
+														.getValue()))
+						.append(" = \"").append(value)
 					.append("\";\n");
 					break;
 				default:
