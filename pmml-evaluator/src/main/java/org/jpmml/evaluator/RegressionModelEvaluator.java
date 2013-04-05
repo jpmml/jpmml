@@ -123,6 +123,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		result += regressionTable.getIntercept();
 
 		List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
+
 		for(NumericPredictor numericPredictor : numericPredictors){
 			Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
 
@@ -151,6 +152,11 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
 		for(PredictorTerm predictorTerm : predictorTerms){
 			throw new UnsupportedFeatureException(predictorTerm);
+		}
+		
+		List<CategoricalPredictor> categoricalPredictors = getCategoricalPredictors();
+		for (CategoricalPredictor categoricalPredictor : categoricalPredictors) {
+			result += evaluateCategoricalPredictor(categoricalPredictor, parameters);
 		}
 
 		return Double.valueOf(result);
@@ -189,5 +195,12 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			default:
 				throw new UnsupportedFeatureException(regressionNormalizationMethod);
 		}
+	}
+	
+	private double evaluateCategoricalPredictor(CategoricalPredictor categoricalPredictor, Map<FieldName, ?> parameters){
+		String value = (String) ParameterUtil.getValue(parameters, categoricalPredictor.getName());
+		
+		
+		return categoricalPredictor.getCoefficient() * (categoricalPredictor.getValue().equalsIgnoreCase(value) ? 1 : 0);
 	}
 }

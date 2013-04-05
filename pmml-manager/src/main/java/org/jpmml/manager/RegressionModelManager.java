@@ -76,7 +76,6 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	public List<RegressionTable> getRegressionTables(){
 		RegressionModel model = getModel();
-
 		return model.getRegressionTables();
 	}
 
