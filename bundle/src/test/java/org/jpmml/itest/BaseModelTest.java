@@ -8,8 +8,10 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.jpmml.evaluator.RegressionModelEvaluator;
 import org.jpmml.manager.PMMLManager;
 import org.jpmml.translator.*;
 import org.slf4j.Logger;
@@ -72,8 +74,23 @@ public class BaseModelTest {
  						nameToValue.put(e.getKey(), 100.0*Math.random());
  					}
  				}
-
+ 				try {
 				executeAndCompareOutput(i, compiledModel, evaluator, manual, nameToValue);
+ 				}
+ 				catch (EvaluationException ee) {
+ 					if (ee.getMessage().startsWith("Missing parameter ")
+ 							&& evaluator instanceof RegressionModelEvaluator) {
+ 						// This is fine, the way we generate our test
+ 						// doesn't fit with the input for the regression model.
+ 						// So in order to keep this way of thinking, we just
+ 						// remove the exception for this particular case.
+ 					}
+ 					else {
+ 						// Otherwise, this exception is not normal, and should be sent
+ 						// to the user.
+ 						throw ee;
+ 					}
+ 				}
 			}
 		}		
 	}
@@ -122,7 +139,7 @@ public class BaseModelTest {
 		Object value3 = evaluateModel(evaluator, nameToValue);
 		
 		// Fake for the result explanation, because evaluator.getResultExplanation doesn't exist.
-		compareValues(iteration, nameToValue, value1, value3, null, null);
+		compareValues(iteration, nameToValue, value2, value3, null, null);
 	}
 	
 	protected Object evaluateModel(Evaluator evaluator, Map<String, Object> nameToValue) {

@@ -2,6 +2,7 @@ package org.jpmml.translator;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.RegressionModel;
 import org.dmg.pmml.Scorecard;
 import org.dmg.pmml.TreeModel;
 import org.jpmml.manager.ModelManager;
@@ -24,9 +25,9 @@ public class ModelTranslatorFactory extends ModelManagerFactory {
 			return new ScorecardTranslator(pmml, (Scorecard)model);
 		} else
 			
-//		if(model instanceof RegressionModel){
-//			return new RegressionModelEvaluator(pmml, (RegressionModel)model);
-//		} else
+		if(model instanceof RegressionModel){
+			return new RegressionModelTranslator(pmml, (RegressionModel)model);
+		} else
 //
 //		if(model instanceof NeuralNetwork){
 //			return new NeuralNetworkEvaluator(pmml, (NeuralNetwork)model);

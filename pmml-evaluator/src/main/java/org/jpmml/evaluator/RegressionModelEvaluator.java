@@ -201,6 +201,6 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		String value = (String) ParameterUtil.getValue(parameters, categoricalPredictor.getName());
 		
 		
-		return categoricalPredictor.getCoefficient() * (categoricalPredictor.getValue().equalsIgnoreCase(value) ? 1 : 0);
+		return categoricalPredictor.getCoefficient() * (categoricalPredictor.getValue().equals(value) ? 1 : 0);
 	}
 }

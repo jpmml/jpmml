@@ -75,8 +75,13 @@ public class StandardCodeFormatter implements CodeFormatter {
 	public void beginControlFlowStructure(StringBuilder code,
 			TranslationContext context, String keyword,
 			String conditionnalExpression) {
-		code.append(context.getIndentation()).append(keyword)
-			.append(" (").append(conditionnalExpression).append(") {\n");
+		code.append(context.getIndentation()).append(keyword);
+		if (!(conditionnalExpression == null && keyword.equals("else"))) {
+			code.append(" (").append(conditionnalExpression).append(") {\n");
+		}
+		else {
+			code.append(" {\n");
+		}
 		
 		context.incIndentation();
 		
@@ -104,7 +109,7 @@ public class StandardCodeFormatter implements CodeFormatter {
 	public void affectVariable(StringBuilder code, TranslationContext context,
 			Operator op, String variableName, String expression) {
 		code.append(context.getIndentation()).append(variableName)
-		.append(" ").append(op.value()).append(expression)
+		.append(" ").append(op.value()).append(" ").append(expression)
 		.append(";\n");
 	}
 
