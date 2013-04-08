@@ -158,7 +158,24 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		for (CategoricalPredictor categoricalPredictor : categoricalPredictors) {
 			result += evaluateCategoricalPredictor(categoricalPredictor, parameters);
 		}
-
+		RegressionNormalizationMethodType normalizationMethod = getNormalizationMethodType();
+		switch (normalizationMethod) {
+			case NONE:
+				// The same thing than: result = result;
+				break;
+			case SOFTMAX:
+			case LOGIT:
+				result = 1.0 / (1.0 + Math.exp(-result));
+				break;
+			case EXP:
+				result = Math.exp(result);
+				break;
+			default:
+				// We should never be here.
+				assert false;
+				break;
+		}
+		
 		return Double.valueOf(result);
 	}
 

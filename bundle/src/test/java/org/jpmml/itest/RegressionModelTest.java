@@ -28,6 +28,23 @@ public class RegressionModelTest extends BaseModelTest {
 			20);
 	}
 
+	
+	@Test
+	public void testSampleRegressionModelNormalization() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/regression2.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		//variableToValues.put("department", "engineering");
+		variableToValues.put("age", Arrays.asList(22, 35, 45, 63, 33, 42, 51));
+		variableToValues.put("salary", Arrays.asList(1600, 1000, 500));
+		variableToValues.put("car_location", Arrays.asList("street", "carpark"));
+
+		testModelEvaluation(pmmlDoc,
+			SAMPLE_REGRESSION_MODEL_TEMPLATE,
+			new SampleRegressionModelNormalization(),
+			variableToValues, 
+			20);
+	}
+	
 	protected double getMissingVarProbability() {
 		return 0.01;
 	}
@@ -61,6 +78,18 @@ public class RegressionModelTest extends BaseModelTest {
 		}
 	}
 
+	static public class SampleRegressionModelNormalization extends SampleRegressionModel {
+		@Override
+		public Object execute(Map<String, Object> nameToValue) {
+			Double result = (Double) super.execute(nameToValue);
+
+			if (result == null)
+				return null;
+
+			return 1.0 / (1.0 + Math.exp(-result));
+		}
+	}
+	
 	static private final String SAMPLE_REGRESSION_MODEL_TEMPLATE = "" +
 			"package org.jpmml.itest;\n" +
 			"import java.util.Map;\n" +

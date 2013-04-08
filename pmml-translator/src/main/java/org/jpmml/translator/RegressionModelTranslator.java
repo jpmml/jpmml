@@ -8,6 +8,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.NumericPredictor;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.RegressionModel;
+import org.dmg.pmml.RegressionNormalizationMethodType;
 import org.jpmml.manager.RegressionModelManager;
 import org.jpmml.translator.CodeFormatter.Operator;
 
@@ -61,15 +62,42 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			translateNumericPredictor(sb, context, outputField, np, cf);
 		}
 
-		
-		// FIXME: categorical.
 		for (CategoricalPredictor cp : lcp) {
 			translateCategoricalPredictor(sb, context, outputField, cp, cf);
 		}
+
+		translateNormalizationRegression(sb, context, outputField, cf);
+		
 		
 		return sb.toString();
 	}
 
+	
+	private void translateNormalizationRegression(StringBuilder code, TranslationContext context,
+			DataField outputVariable, CodeFormatter cf) {
+		RegressionNormalizationMethodType normalizationMethod = getNormalizationMethodType();
+		switch (normalizationMethod) {
+			case NONE:
+				// Do nothing.
+				break;
+			case SOFTMAX:
+			case LOGIT:
+				cf.affectVariable(code, context, outputVariable.getName().getValue(), "1.0 / (1.0 + Math.exp(-"
+						+ outputVariable.getName().getValue() + "))");
+				// result = 1.0 / (1.0 + Math.exp(-result));
+				break;
+			case EXP:
+				cf.affectVariable(code, context, outputVariable.getName().getValue(), "Math.exp("
+						+ outputVariable.getName().getValue() + ")");
+				// result = Math.exp(result);
+				break;
+			default:
+				// We should never be here.
+				assert false;
+				break;
+		}
+	}
+	
 	public void translateNumericPredictor(StringBuilder code, TranslationContext context, DataField outputVariable,
 			NumericPredictor numericPredictor, CodeFormatter cf) {
 
