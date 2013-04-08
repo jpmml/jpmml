@@ -112,4 +112,14 @@ public class StandardCodeFormatter implements CodeFormatter {
 		return "\"" + str + "\"";
 	}
 
+	public void printStatement(StringBuilder code, TranslationContext context,
+			String statement) {
+		addLine(code, context, "System.out.println(\"" + statement + "\");");
+	}
+
+	public void printVariable(StringBuilder code, TranslationContext context,
+			String variableName) {
+		addLine(code, context, "System.out.println(\"" + variableName + ": \" + " + variableName + ");");
+	}
+
 }
