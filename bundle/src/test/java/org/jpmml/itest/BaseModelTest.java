@@ -115,9 +115,6 @@ public class BaseModelTest {
 				}
 			);
 
-		//logger.info("Generated source code:\n"+javaSource);
-		
-
 		Class<?> modelClass = PmmlToJavaTranslator.createModelClass(className, "org.jpmml.itest", javaSource);
 		
 		return (CompiledModel)modelClass.newInstance();

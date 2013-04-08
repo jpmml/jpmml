@@ -7,14 +7,9 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.NumericPredictor;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.Parameter;
-import org.dmg.pmml.Predicate;
 import org.dmg.pmml.RegressionModel;
-import org.dmg.pmml.Scorecard;
 import org.jpmml.manager.RegressionModelManager;
-import org.jpmml.manager.ScoreCardModelManager;
 import org.jpmml.translator.CodeFormatter.Operator;
-import org.jpmml.translator.Variable.VariableType;
 
 /**
  * Translate regression model into java code.
@@ -86,7 +81,9 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		cf.endControlFlowStructure(code, context);
 		cf.beginControlFlowStructure(code, context, "else", null);
 		cf.affectVariable(code, context, Operator.PLUS_EQUAL, outputVariable.getName().getValue(),
-				numericPredictor.getCoefficient() + " * " + numericPredictor.getName().getValue());
+				numericPredictor.getCoefficient()
+				+ " * Math.pow(" + numericPredictor.getName().getValue() + ", "
+				+ numericPredictor.getExponent().doubleValue() + ")");
 		cf.endControlFlowStructure(code, context);
 	}
 
