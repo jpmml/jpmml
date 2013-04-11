@@ -11,7 +11,6 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	private RegressionModel regressionModel = null;
 
-
 	public RegressionModelManager(){
 	}
 

@@ -31,7 +31,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	 * @see #evaluateRegression(EvaluationContext)
 	 * @see #evaluateClassification(EvaluationContext)
 	 */
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+	public Object evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
 
 		Map<FieldName, ?> predictions;
@@ -153,11 +153,80 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		for(PredictorTerm predictorTerm : predictorTerms){
 			throw new UnsupportedFeatureException(predictorTerm);
 		}
+		String result = new String();
+		if (targetCategoryToScore.isEmpty()) return null;
 		
-		List<CategoricalPredictor> categoricalPredictors = getCategoricalPredictors();
-		for (CategoricalPredictor categoricalPredictor : categoricalPredictors) {
-			result += evaluateCategoricalPredictor(categoricalPredictor, parameters);
+		TreeMap<Double, String> scoreToCategory = new TreeMap<Double, String>();
+		switch (getNormalizationMethodType()) {
+			case NONE:
+				// pick the category with top score
+				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+					scoreToCategory.put(categoryScore.getValue(), categoryScore.getKey());
+				}
+				result = scoreToCategory.lastEntry().getValue();
+				break;
+			case LOGIT:
+				// pick the max of pj = 1 / ( 1 + exp( -yj ) )
+				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+					double yj = categoryScore.getValue();
+					double pj = 1.0/(1.0 + Math.exp(yj));
+
+					scoreToCategory.put(pj, categoryScore.getKey());
+				}
+				result = scoreToCategory.lastEntry().getValue();
+				break;
+			case EXP:
+				// pick the max of exp(yj) 
+				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+					double yj = categoryScore.getValue();
+					double pj = Math.exp(yj);
+					scoreToCategory.put(pj, categoryScore.getKey());
+				}
+				result = scoreToCategory.lastEntry().getValue();
+				break;
+			case SOFTMAX:
+				// pj = exp(yj) / (Sum[i = 1 to N](exp(yi) ) ) 
+				double sum = 0.0;
+				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+					double yj = categoryScore.getValue();
+					sum += Math.exp(yj);
+				}
+				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+					double yj = categoryScore.getValue();
+					double pj = Math.exp(yj) / sum;
+					scoreToCategory.put(pj, categoryScore.getKey());
+				}
+				result = scoreToCategory.lastEntry().getValue();
+				break;
+			case CLOGLOG:
+				// pick the max of pj = 1 - exp( -exp( yj ) ) 
+				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+					double yj = categoryScore.getValue();
+					double pj = 1 - Math.exp(-Math.exp(yj));
+					scoreToCategory.put(pj, categoryScore.getKey());
+				}
+				result = scoreToCategory.lastEntry().getValue();
+				break;
+			case LOGLOG:
+				// pick the max of pj = exp( -exp( -yj ) ) 
+				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+					double yj = categoryScore.getValue();
+					double pj = Math.exp(-Math.exp( -yj));
+					scoreToCategory.put(pj, categoryScore.getKey());
+				}
+				result = scoreToCategory.lastEntry().getValue();
+				break;
+			default:
+				
+				result = null;					
 		}
+
+		return result;
+	}
+
+	private Double evaluateRegression(Map<FieldName, ?> parameters) {
+		double result = evaluateRegressionTable(getOrCreateRegressionTable(), parameters);
+
 		RegressionNormalizationMethodType normalizationMethod = getNormalizationMethodType();
 		switch (normalizationMethod) {
 			case NONE:
@@ -175,13 +244,30 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				assert false;
 				break;
 		}
+				
+		return result;
+	}
+
+	private double evaluateRegressionTable(RegressionTable rt, Map<FieldName, ?> parameters) {
+		double result = 0D;
+
+		result += getIntercept(rt);
 		
+		List<NumericPredictor> numericPredictors = rt.getNumericPredictors();
+		for(NumericPredictor numericPredictor : numericPredictors) {
+			result += evaluateNumericPredictor(numericPredictor, parameters);
+		}
+
+		List<CategoricalPredictor> categoricalPredictors = rt.getCategoricalPredictors();
+		for (CategoricalPredictor categoricalPredictor : categoricalPredictors) {
+			result += evaluateCategoricalPredictor(categoricalPredictor, parameters);
+		}
+
 		return Double.valueOf(result);
 	}
 
 	static
 	private Double normalizeRegressionResult(RegressionNormalizationMethodType regressionNormalizationMethod, Double value){
-
 		switch(regressionNormalizationMethod){
 			case NONE:
 				return value;
@@ -214,10 +300,34 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		}
 	}
 	
-	private double evaluateCategoricalPredictor(CategoricalPredictor categoricalPredictor, Map<FieldName, ?> parameters){
-		String value = (String) ParameterUtil.getValue(parameters, categoricalPredictor.getName());
-		
-		
-		return categoricalPredictor.getCoefficient() * (categoricalPredictor.getValue().equals(value) ? 1 : 0);
+	private double evaluateCategoricalPredictor(CategoricalPredictor categoricalPredictor, Map<FieldName, ?> parameters) {
+		Object blobValue =  ParameterUtil.getValue(parameters, categoricalPredictor.getName());
+		boolean isEqual = false;
+		List<DataField> ldf = getDataDictionary().getDataFields();
+
+		for (DataField df : ldf) {
+			if (df.getName().getValue().equals(categoricalPredictor.getName().getValue())) {
+				switch (df.getDataType()) {
+				case INTEGER:
+					isEqual = (Integer) blobValue == Integer.parseInt(categoricalPredictor.getValue());
+					break;
+				case DOUBLE:
+					isEqual = (Double) blobValue == Double.parseDouble(categoricalPredictor.getValue());
+					break;
+				case BOOLEAN:
+					isEqual = (Boolean) blobValue == Boolean.parseBoolean(categoricalPredictor.getValue());
+					break;
+				case FLOAT:
+					isEqual = (Float) blobValue == Float.parseFloat(categoricalPredictor.getValue());
+					break;
+				case STRING:
+					isEqual = categoricalPredictor.getValue().equals((String)blobValue);
+					break;
+				default:
+					throw new UnsupportedOperationException();
+				}
+			}
+		}
+		return categoricalPredictor.getCoefficient() * (isEqual ? 1 : 0);
 	}
 }

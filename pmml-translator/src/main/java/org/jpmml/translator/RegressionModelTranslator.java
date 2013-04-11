@@ -1,6 +1,8 @@
 package org.jpmml.translator;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.dmg.pmml.CategoricalPredictor;
 import org.dmg.pmml.DataField;
@@ -9,8 +11,10 @@ import org.dmg.pmml.NumericPredictor;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.RegressionModel;
 import org.dmg.pmml.RegressionNormalizationMethodType;
+import org.dmg.pmml.RegressionTable;
 import org.jpmml.manager.RegressionModelManager;
 import org.jpmml.translator.CodeFormatter.Operator;
+import org.jpmml.translator.Variable.VariableType;
 
 /**
  * Translate regression model into java code.
@@ -33,18 +37,17 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 
 	// The main method. It takes a context, and print the code corresponding to the regression model.
 	public String translate(TranslationContext context) throws TranslationException {
-
 		String outputVariableName = null;
 		List<FieldName> predictedFields = getPredictedFields();
 		// Get the predicted field. If there is none, it is an error.
-		if (predictedFields!=null && predictedFields.size()>0) {
+		if (predictedFields != null && predictedFields.size() > 0) {
 			outputVariableName = predictedFields.get(0).getValue();
 		}
-		if (outputVariableName==null) {
+		if (outputVariableName == null) {
 			throw new TranslationException("Predicted variable is not defined");
 		}
-		
-		DataField outputField = getDataField(new FieldName(outputVariableName));		
+
+		DataField outputField = getDataField(new FieldName(outputVariableName));
 		if (outputField==null || outputField.getDataType()==null) {
 			throw new TranslationException("Predicted variable [" +
 					outputVariableName + "] does not have type defined");
@@ -52,26 +55,150 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		
 		StringBuilder sb = new StringBuilder();
 	
-		List<NumericPredictor> lnp = getNumericPredictors();
-		List<CategoricalPredictor> lcp = getCategoricalPredictors();
-		CodeFormatter cf = context.getFormatter();
 
-		cf.affectVariable(sb, context, outputVariableName, getIntercept().toString());
-		
-		for (NumericPredictor np : lnp) {
-			translateNumericPredictor(sb, context, outputField, np, cf);
+		switch (getFunctionName()) {
+		case REGRESSION:
+			translateRegression(sb, context, outputField);
+			break;
+		case CLASSIFICATION:
+			translateClassification(sb, context, outputField);
+			break;
+		default:
+			throw new UnsupportedOperationException();
 		}
 
-		for (CategoricalPredictor cp : lcp) {
-			translateCategoricalPredictor(sb, context, outputField, cp, cf);
-		}
-
-		translateNormalizationRegression(sb, context, outputField, cf);
-		
-		
 		return sb.toString();
 	}
 
+	public void translateRegression(StringBuilder sb, TranslationContext context, DataField outputField) {
+		RegressionTable rt = getOrCreateRegressionTable();
+		CodeFormatter cf = context.getFormatter();
+
+		translateRegressionTable(sb, context, outputField.getName().getValue(), rt, cf, false);
+		translateNormalizationRegression(sb, context, outputField, cf);
+	}
+	
+	public void translateClassification(StringBuilder sb, TranslationContext context, DataField outputField) {
+		CodeFormatter cf = context.getFormatter();
+		String targetCategoryToScoreVariable = "targetCategoryToScore";
+		context.requiredImports.add("import java.util.TreeMap;");
+		cf.addLine(sb, context, "TreeMap<String, Double> " + targetCategoryToScoreVariable
+				+ " = new TreeMap<String, Double>();");
+
+		// FIXME: Remove the use of the hashtable that keeps track of the category's values.
+		// Make a link between the name of the category and the variable that contains the result instead.
+		TreeMap<String, String> categoryNameToVariable = new TreeMap<String, String>();
+		for (RegressionTable rt : getOrCreateRegressionTables()) {
+			categoryNameToVariable.put(rt.getTargetCategory(),
+					translateRegressionTable(sb, context, targetCategoryToScoreVariable, rt, cf, true));
+		}
+		
+		// Apply the normalization:
+		String scoreToCategoryVariable = "scoreToCategory";
+		cf.addLine(sb, context, "TreeMap<Double, String> " + scoreToCategoryVariable
+				+ " = new TreeMap<Double, String>();");
+		switch (getNormalizationMethodType()) {
+		case NONE:
+			// Pick the category with top score.
+			String entryName = context.generateLocalVariableName("entry");
+			cf.addDeclarationVariable(sb, context, new Variable(VariableType.DOUBLE, entryName));
+			//cf.addLine(sb, context, "Map.Entry<String, Double> " + entryName + " = null;");
+			for (RegressionTable rt : getOrCreateRegressionTables()) {
+				cf.affectVariable(sb, context, entryName, categoryNameToVariable.get(rt.getTargetCategory()));
+				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
+						entryName + ", \"" + rt.getTargetCategory() + "\");");
+			}
+			break;
+		case LOGIT:
+			// pick the max of pj = 1 / ( 1 + exp( -yj ) )
+			for (RegressionTable rt : getOrCreateRegressionTables()) {
+				String expression = "1.0 / (1.0 + Math.exp(" + categoryNameToVariable.get(rt.getTargetCategory()) + "))";
+				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
+						expression + ", \"" + rt.getTargetCategory() + "\");");
+			}
+			break;
+		case EXP:
+			// pick the max of exp(yj) 
+			for (RegressionTable rt : getOrCreateRegressionTables()) {
+				String expression = "Math.exp(" + categoryNameToVariable.get(rt.getTargetCategory()) + ")";
+				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
+						expression + ", \"" + rt.getTargetCategory() + "\");");
+			}
+			break;
+		case SOFTMAX:
+			// pj = exp(yj) / (Sum[i = 1 to N](exp(yi) ) )
+			String sumName = context.generateLocalVariableName("sum");
+			cf.addDeclarationVariable(sb, context, new Variable(Variable.VariableType.DOUBLE, sumName));
+			for (RegressionTable rt : getOrCreateRegressionTables()) {
+				cf.affectVariable(sb, context, Operator.PLUS_EQUAL, sumName, "Math.exp(" 
+						+ categoryNameToVariable.get(rt.getTargetCategory()) + ")");
+			}
+
+			for (RegressionTable rt : getOrCreateRegressionTables()) {
+				cf.addLine(sb, context, scoreToCategoryVariable + ".put(Math.exp(" 
+						+ categoryNameToVariable.get(rt.getTargetCategory()) + ") / "
+						+ sumName + ", \"" + rt.getTargetCategory() + "\");");
+			}
+			break;
+		case CLOGLOG:
+			// pick the max of pj = 1 - exp( -exp( yj ) ) 
+
+			for (RegressionTable rt : getOrCreateRegressionTables()) {
+				String expression = "1.0 - Math.exp(-Math.exp("
+							+ categoryNameToVariable.get(rt.getTargetCategory()) + "))";
+				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
+						expression + ", \"" + rt.getTargetCategory() + "\");");
+			}
+			break;
+		case LOGLOG:
+			// pick the max of pj = exp( -exp( -yj ) )
+			for (RegressionTable rt : getOrCreateRegressionTables()) {
+				String expression = "Math.exp(-Math.exp(-"
+							+ categoryNameToVariable.get(rt.getTargetCategory()) + "))";
+				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
+						expression + ", \"" + rt.getTargetCategory() + "\");");
+			}
+			break;
+		default:
+			cf.addLine(sb, context, "return null;");
+			break;
+	}
+
+		
+		cf.affectVariable(sb, context, outputField.getName().getValue(),
+						scoreToCategoryVariable + ".lastEntry().getValue()");
+	}
+	
+	// storeResultInHashTable allows us to have two different ways of storing the result. If false,
+	// it is a simple affectation, if true, we consider we are filling a has table where the key is the name
+	// of the category and the result its evaluation.
+	private String translateRegressionTable(StringBuilder sb, TranslationContext context, String variableName,
+			RegressionTable rt, CodeFormatter cf, boolean storeResultInHashTable) {
+		List<NumericPredictor> lnp = getNumericPredictors(rt);
+		List<CategoricalPredictor> lcp = getCategoricalPredictors(rt);
+
+		String categoryVariableName = context.generateLocalVariableName(rt.getTargetCategory());
+		cf.addDeclarationVariable(sb, context, new Variable(Variable.VariableType.DOUBLE,
+				categoryVariableName), getIntercept(rt).toString());
+
+		for (NumericPredictor np : lnp) {
+			translateNumericPredictor(sb, context, categoryVariableName, np, cf);
+		}
+
+		for (CategoricalPredictor cp : lcp) {
+			translateCategoricalPredictor(sb, context, categoryVariableName, cp, cf);
+		}
+		
+		if (!storeResultInHashTable) {
+			cf.affectVariable(sb, context, variableName, categoryVariableName);
+		}
+		else {
+			cf.addLine(sb, context, variableName + ".put(\"" + rt.getTargetCategory() + "\", "
+					+ categoryVariableName + ");");
+		}
+		
+		return categoryVariableName;
+	}
 	
 	private void translateNormalizationRegression(StringBuilder code, TranslationContext context,
 			DataField outputVariable, CodeFormatter cf) {
@@ -98,7 +225,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		}
 	}
 	
-	public void translateNumericPredictor(StringBuilder code, TranslationContext context, DataField outputVariable,
+	public void translateNumericPredictor(StringBuilder code, TranslationContext context, String outputVariableName,
 			NumericPredictor numericPredictor, CodeFormatter cf) {
 
 		cf.beginControlFlowStructure(code, context, "if", numericPredictor.getName().getValue() + " == null");
@@ -108,21 +235,44 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 					+ numericPredictor.getName().getValue() + "\");");
 		cf.endControlFlowStructure(code, context);
 		cf.beginControlFlowStructure(code, context, "else", null);
-		cf.affectVariable(code, context, Operator.PLUS_EQUAL, outputVariable.getName().getValue(),
+		cf.affectVariable(code, context, Operator.PLUS_EQUAL, outputVariableName,
 				numericPredictor.getCoefficient()
 				+ " * Math.pow(" + numericPredictor.getName().getValue() + ", "
 				+ numericPredictor.getExponent().doubleValue() + ")");
 		cf.endControlFlowStructure(code, context);
 	}
 
-	public void translateCategoricalPredictor(StringBuilder code, TranslationContext context, DataField outputVariable,
+	public void translateCategoricalPredictor(StringBuilder code, TranslationContext context, String outputVariableName,
 			CategoricalPredictor categoricalPredictor, CodeFormatter cf) {
-
+		
 		cf.beginControlFlowStructure(code, context, "if", categoricalPredictor.getName().getValue() + " != null");
-		cf.affectVariable(code, context, Operator.PLUS_EQUAL, outputVariable.getName().getValue(),
-				categoricalPredictor.getCoefficient() + " * (" + categoricalPredictor.getName().getValue()
-					+ ".equals(\"" + categoricalPredictor.getValue() + "\") ? 1 : 0)");
+		cf.affectVariable(code, context, Operator.PLUS_EQUAL, outputVariableName,
+				categoricalPredictor.getCoefficient() + " * (("
+				+ generateEqualityExpression(categoricalPredictor) + ") ? 1 : 0)");
 		cf.endControlFlowStructure(code, context);
+	}
+	
+	public String generateEqualityExpression(CategoricalPredictor categoricalPredictor) {
+		
+		for (DataField df : getDataDictionary().getDataFields()) {
+			if (df.getName().getValue().equals(categoricalPredictor.getName().getValue())) {
+				switch (df.getDataType()) {
+				case STRING:
+					return "" + categoricalPredictor.getName().getValue() + ".equals(\"" + categoricalPredictor.getValue()
+							+ "\")";
+				case FLOAT:
+				case DOUBLE:
+				case BOOLEAN:
+				case INTEGER:
+					return "" + categoricalPredictor.getName().getValue() + " == " + categoricalPredictor.getValue();
+				default:
+					throw new UnsupportedOperationException();
+				}
+			}
+		}
+		
+		
+		return "";
 	}
 	
 }
