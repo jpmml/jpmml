@@ -129,14 +129,15 @@ public class BaseModelTest {
 		Object value1 = pmmlModel.execute(nameToValue);
 		Object value2 = manual.execute(nameToValue);
 		
-		compareValues(iteration, nameToValue, value1, value2, pmmlModel.getResultExplanation(), manual.getResultExplanation());
+		compareValues(iteration, nameToValue, value1, value2, pmmlModel.getResultExplanation(), manual.getResultExplanation(),
+				false);
 
 		// if we get here then value1==value2
 		// now evaluate value3 and compare against value1
 		Object value3 = evaluateModel(evaluator, nameToValue);
 		
 		// Fake for the result explanation, because evaluator.getResultExplanation doesn't exist.
-		compareValues(iteration, nameToValue, value2, value3, null, null);
+		compareValues(iteration, nameToValue, value2, value3, null, null, true);
 	}
 	
 	protected Object evaluateModel(Evaluator evaluator, Map<String, Object> nameToValue) {
@@ -149,7 +150,7 @@ public class BaseModelTest {
 
 	private void compareValues(int iteration, Map<String, Object> nameToValue, 
 			Object value1,
-			Object value2, String explanation1, String explanation2 
+			Object value2, String explanation1, String explanation2, boolean secondTest 
 			) {
 		if ((value1==null && value2!=null)
 				|| (value1!=null && value2==null)
@@ -157,7 +158,7 @@ public class BaseModelTest {
 				|| (explanation1 != null && explanation2 == null)
 				|| (value1!=null && value2!=null && !value1.equals(value2))
 				|| (explanation1 != null && explanation2 != null && !explanation1.equals(explanation2))) {
-			logger.info("Test failed. Value1 = " + value1 + "; value2 = " + value2 + "; explanation1 = "
+			logger.info((secondTest ? "Second " : "First ") + "test failed. Value1 = " + value1 + "; value2 = " + value2 + "; explanation1 = "
 				+ explanation1 + "; explanation2 = " + explanation2);
 			for (Map.Entry<String, Object> e : nameToValue.entrySet()) {
 				logger.info(e.getKey() + " = " + e.getValue());
