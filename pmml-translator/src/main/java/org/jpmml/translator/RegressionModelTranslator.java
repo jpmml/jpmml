@@ -18,7 +18,8 @@ import org.jpmml.translator.Variable.VariableType;
 
 /**
  * Translate regression model into java code.
- * 
+ * @see RegressionModelManager.
+ *
  * @author tbadie
  *
  */
@@ -35,7 +36,11 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		this(parent.getPmml(), parent.getModel());
 	}
 
-	// The main method. It takes a context, and print the code corresponding to the regression model.
+	/**
+	 * Return a string that is a java code able to evaluate the model on a set of parameters.
+	 * 
+	 * @param context The translation context. 
+	 */
 	public String translate(TranslationContext context) throws TranslationException {
 		String outputVariableName = null;
 		List<FieldName> predictedFields = getPredictedFields();
@@ -48,13 +53,12 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		}
 
 		DataField outputField = getDataField(new FieldName(outputVariableName));
-		if (outputField==null || outputField.getDataType()==null) {
+		if (outputField == null || outputField.getDataType() == null) {
 			throw new TranslationException("Predicted variable [" +
 					outputVariableName + "] does not have type defined");
 		}
 		
 		StringBuilder sb = new StringBuilder();
-	
 
 		switch (getFunctionName()) {
 		case REGRESSION:
@@ -70,27 +74,39 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		return sb.toString();
 	}
 
-	public void translateRegression(StringBuilder sb, TranslationContext context, DataField outputField) {
+	/**
+	 * Translate the regression.
+	 * 
+	 * @param sb The string builder we are working with.
+	 * @param context The context of the translation.
+	 * @param outputField The name of the output variable.
+	 */
+	private void translateRegression(StringBuilder sb, TranslationContext context, DataField outputField) {
 		RegressionTable rt = getOrCreateRegressionTable();
 		CodeFormatter cf = context.getFormatter();
 
-		translateRegressionTable(sb, context, outputField.getName().getValue(), rt, cf, false);
+		translateRegressionTable(sb, context, outputField.getName().getValue(), rt, cf, true);
 		translateNormalizationRegression(sb, context, outputField, cf);
 	}
 	
-	public void translateClassification(StringBuilder sb, TranslationContext context, DataField outputField) {
+	/** 
+	 * Translate the classification.
+	 * 
+	 * @param sb The string builder we are working with.
+	 * @param context The context of the translation.
+	 * @param outputField The name of the output variable.
+	 */
+	private void translateClassification(StringBuilder sb, TranslationContext context, DataField outputField) {
 		CodeFormatter cf = context.getFormatter();
 		String targetCategoryToScoreVariable = "targetCategoryToScore";
 		context.requiredImports.add("import java.util.TreeMap;");
 		cf.addLine(sb, context, "TreeMap<String, Double> " + targetCategoryToScoreVariable
 				+ " = new TreeMap<String, Double>();");
 
-		// FIXME: Remove the use of the hashtable that keeps track of the category's values.
-		// Make a link between the name of the category and the variable that contains the result instead.
 		TreeMap<String, String> categoryNameToVariable = new TreeMap<String, String>();
 		for (RegressionTable rt : getOrCreateRegressionTables()) {
 			categoryNameToVariable.put(rt.getTargetCategory(),
-					translateRegressionTable(sb, context, targetCategoryToScoreVariable, rt, cf, true));
+					translateRegressionTable(sb, context, targetCategoryToScoreVariable, rt, cf, false));
 		}
 		
 		// Apply the normalization:
@@ -169,11 +185,22 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 						scoreToCategoryVariable + ".lastEntry().getValue()");
 	}
 	
-	// storeResultInHashTable allows us to have two different ways of storing the result. If false,
-	// it is a simple affectation, if true, we consider we are filling a has table where the key is the name
-	// of the category and the result its evaluation.
+
+	/**
+	 * Produce a code that evaluates a regressionTable.
+	 * 
+	 * @param sb The string builder we are working with.
+	 * @param context The context of the translation.
+	 * @param variableName The name of the variable we wa
+	 * @param rt 
+	 * @param cf
+	 * @param storeResultInVariable True if we want to affect the result to
+	 * the output variable. False Otherwise.
+	 * @return The name of the variable that contains the evaluation of the
+	 * table.
+	 */
 	private String translateRegressionTable(StringBuilder sb, TranslationContext context, String variableName,
-			RegressionTable rt, CodeFormatter cf, boolean storeResultInHashTable) {
+			RegressionTable rt, CodeFormatter cf, boolean storeResultInVariable) {
 		List<NumericPredictor> lnp = getNumericPredictors(rt);
 		List<CategoricalPredictor> lcp = getCategoricalPredictors(rt);
 
@@ -189,17 +216,22 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			translateCategoricalPredictor(sb, context, categoryVariableName, cp, cf);
 		}
 		
-		if (!storeResultInHashTable) {
+		if (storeResultInVariable) {
 			cf.affectVariable(sb, context, variableName, categoryVariableName);
 		}
-		else {
-			cf.addLine(sb, context, variableName + ".put(\"" + rt.getTargetCategory() + "\", "
-					+ categoryVariableName + ");");
-		}
-		
+
 		return categoryVariableName;
 	}
 	
+	
+	/**
+	 * Produce the code for the normalization for the regression.
+	 * 
+	 * @param code The string builder we are working with.
+	 * @param context The context of the translation.
+	 * @param outputVariable The variable where we have to put the result.
+	 * @param cf The code formatter.
+	 */
 	private void translateNormalizationRegression(StringBuilder code, TranslationContext context,
 			DataField outputVariable, CodeFormatter cf) {
 		RegressionNormalizationMethodType normalizationMethod = getNormalizationMethodType();
@@ -225,7 +257,16 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		}
 	}
 	
-	public void translateNumericPredictor(StringBuilder code, TranslationContext context, String outputVariableName,
+	/**
+	 * Produce the code for the evaluation of a particular numeric predictor.
+	 * 
+	 * @param code The string builder we are working with.
+	 * @param context The context of the translation.
+	 * @param outputVariable The variable where we have to put the result.
+	 * @param numericPredictor The numeric predictor we translate.
+	 * @param cf The code formatter.
+	 */
+	private void translateNumericPredictor(StringBuilder code, TranslationContext context, String outputVariableName,
 			NumericPredictor numericPredictor, CodeFormatter cf) {
 
 		cf.beginControlFlowStructure(code, context, "if", numericPredictor.getName().getValue() + " == null");
@@ -242,7 +283,16 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		cf.endControlFlowStructure(code, context);
 	}
 
-	public void translateCategoricalPredictor(StringBuilder code, TranslationContext context, String outputVariableName,
+	/**
+	 * Produce the code for the evaluation of a particular categorical predictor.
+	 * 
+	 * @param code The string builder we are working with.
+	 * @param context The context of the translation.
+	 * @param outputVariable The variable where we have to put the result.
+	 * @param categoricalPredictor The categorical predictor we translate.
+	 * @param cf The code formatter.
+	 */
+	private void translateCategoricalPredictor(StringBuilder code, TranslationContext context, String outputVariableName,
 			CategoricalPredictor categoricalPredictor, CodeFormatter cf) {
 		
 		cf.beginControlFlowStructure(code, context, "if", categoricalPredictor.getName().getValue() + " != null");
@@ -252,7 +302,14 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		cf.endControlFlowStructure(code, context);
 	}
 	
-	public String generateEqualityExpression(CategoricalPredictor categoricalPredictor) {
+	/**
+	 * Produce the code for an equality expression. The code is different between
+	 * string and numbers type.
+	 * 
+	 * @param categoricalPredictor The categorical predictor we translate. 
+	 * @return The code corresponding to an is equal statement.
+	 */
+	private String generateEqualityExpression(CategoricalPredictor categoricalPredictor) {
 		
 		for (DataField df : getDataDictionary().getDataFields()) {
 			if (df.getName().getValue().equals(categoricalPredictor.getName().getValue())) {
@@ -272,7 +329,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		}
 		
 		
-		return "";
+		return "false";
 	}
 	
 }

@@ -15,6 +15,7 @@ import org.jpmml.translator.Variable.VariableType;
 
 /**
  * Translate score card model into java code.
+ * @see ScoreCardModelManager.
  * 
  * @author tbadie
  *
@@ -32,7 +33,11 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 		this(parent.getPmml(), parent.getModel());
 	}
 
-	// The main method. It takes a context, and print the code corresponding to the scorecard.
+	/**
+	 * Produce a code that evaluates the scorecard.
+	 * 
+	 * @param context The translation context.
+	 */
 	public String translate(TranslationContext context) throws TranslationException {
 
 		String outputVariableName = null;
@@ -76,7 +81,17 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 		return sb.toString();
 	}
 
-	// Method that takes a characteristics, and update the code. 
+	// Method that takes a characteristics, and update the code.
+	/**
+	 * Generate a code that evaluates a characteristic.
+	 * 
+	 * @param c The characteristic.
+	 * @param context The translation context.
+	 * @param code The string builder we are working with.
+	 * @param outputVariable The variable where the result will be written.
+	 * @param diffToReasonCodeVariable The variable that represents the difference to the reason code.
+	 * @throws TranslationException If an attribute is missing.
+	 */
 	private void translateCharacteristic(Characteristic c, TranslationContext context, StringBuilder code, DataField outputVariable, String diffToReasonCodeVariable) throws TranslationException {
 		// Run through each characteristic.
 		// first is useful to know if we are the first case, or not. Depending on that, we add an 'else' before the if.
