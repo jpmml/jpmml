@@ -42,6 +42,10 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		return this.miningModel;
 	}
 
+	public String getSummary() {
+		return "MiningModel";
+	}
+
 	/**
 	 * @throws ModelManagerException If the Model already exists
 	 *
@@ -122,5 +126,14 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		}
 
 		return result;
+	}
+
+	public MiningFunctionType getFunctionType() {
+		return miningModel.getFunctionName();
+	}
+
+
+	public MultipleModelMethodType  getMultipleMethodModel() {
+		return miningModel.getSegmentation().getMultipleModelMethod();
 	}
 }

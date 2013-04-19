@@ -31,7 +31,7 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 			return new MiningModelEvaluator(pmml, (MiningModel)model);
 		}
 		if (model instanceof Scorecard) {
-			return new ScorecardEvaluator(pmml, (Scorecard) model);	
+			return new ScorecardEvaluator(pmml, (Scorecard) model);
 		}
 
 		throw new UnsupportedFeatureException(model);
