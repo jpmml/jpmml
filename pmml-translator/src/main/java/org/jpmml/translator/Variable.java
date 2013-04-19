@@ -7,23 +7,23 @@ import org.jpmml.manager.UnsupportedFeatureException;
 /**
  * The aim of this class is to abstract the notion of variable
  * and to have a unified way to use them.
- * 
+ *
  * @author tbadie
  *
  */
 public class Variable {
-	
+
 	public enum VariableType {
 	    INTEGER("Integer"),
 	    FLOAT("Float"),
 	    DOUBLE("Double"),
 	    BOOLEAN("Boolean"),
 	    STRING("String"),
-	    
+
 	    // OBJECT is for handling any type.
 		OBJECT("FIXME"),
 		;
-		
+
 		private final String value;
 
 	    VariableType(String v) {
@@ -43,7 +43,7 @@ public class Variable {
 	        throw new IllegalArgumentException(v);
 	    }
 	}
-	
+
 	private VariableType type;
 	public VariableType getType() {
 		return type;
@@ -51,14 +51,20 @@ public class Variable {
 
 	public String typeName;
 	private String name;
-	
+
 
 	public Variable(DataField d) {
 		type = dataTypeToVariableType(d.getDataType());
 		name = d.getName().getValue();
 		typeName = null;
 	}
-	
+
+	public Variable(DataType d, String name) {
+		type = dataTypeToVariableType(d);
+		this.name = name;
+		typeName = null;
+	}
+
 	public Variable(VariableType type,
 					String name) {
 		this.type = type;
@@ -74,20 +80,20 @@ public class Variable {
 			// Name given to the type which  is allowed only for Object type.
 			assert false;
 		}
-		
+
 		this.name = name;
 		typeName = typename;
 		this.type = type;
 	}
-	
+
 	public Variable(String name) {
 		this.name = name;
 		type = VariableType.INTEGER;
 	}
-	
+
 	public VariableType dataTypeToVariableType(DataType d) {
 		VariableType res;
-		
+
 		switch (d) {
 		case INTEGER:
 			res = VariableType.INTEGER;
@@ -110,7 +116,7 @@ public class Variable {
 
 		return res;
 	}
-	
+
 	public String getTypeName() {
 		if (typeName == null) {
 			return type.value;
@@ -123,7 +129,7 @@ public class Variable {
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}

@@ -78,8 +78,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			// result already have the right value.
 			break;
 		case SELECT_ALL:
-			// FIXME: I don't know what I should do here.
-			break;
+			throw new UnsupportedFeatureException();
 		case MODEL_CHAIN:
 			// This case is to be managed before.
 			break;
@@ -88,17 +87,18 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			for (Map.Entry<String, Object> e : results.entrySet()) {
 				result = (Double) result + (Double) e.getValue();
 			}
-			result = (Double) result / results.size();
+			if (results.size() != 0)
+				result = (Double) result / results.size();
 			break;
 		case WEIGHTED_AVERAGE:
-			// FIXME: Check that this is correct.
 			Double sumWeight = 0.0;
 			result = new Double(0.0);
 			for (Map.Entry<String, Object> e : results.entrySet()) {
 				result = (Double) result + idToWeight.get(e.getKey()) * (Double) e.getValue();
 				sumWeight += idToWeight.get(e.getKey());
 			}
-			result = (Double) result / sumWeight;
+			if (sumWeight != 0)
+				result = (Double) result / sumWeight;
 			break;
 		case MEDIAN:
 			ArrayList<Double> list = new ArrayList<Double>(results.size());
