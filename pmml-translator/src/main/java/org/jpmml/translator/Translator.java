@@ -1,5 +1,6 @@
 package org.jpmml.translator;
 
+import org.dmg.pmml.DataField;
 import org.jpmml.manager.Consumer;
 
 /**
@@ -11,5 +12,6 @@ import org.jpmml.manager.Consumer;
 public interface Translator extends Consumer {
 	
 	public String translate(TranslationContext context) throws TranslationException;
+	public String translate(TranslationContext context, DataField outputField) throws TranslationException;
 
 }

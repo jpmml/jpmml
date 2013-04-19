@@ -56,8 +56,12 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 					outputVariableName + "] does not have type defined");
 		}
 		
-		StringBuilder sb = new StringBuilder();
+		return translate(context, outputField);
+	}
 	
+	public String translate(TranslationContext context, DataField outputField) throws TranslationException {
+		StringBuilder sb = new StringBuilder();
+		
 		List<Characteristic> cl
 		= scorecard.getCharacteristics().getCharacteristics();
 		
@@ -80,6 +84,7 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 		}
 		return sb.toString();
 	}
+
 
 	// Method that takes a characteristics, and update the code.
 	/**

@@ -42,20 +42,24 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 		if (outputVariableName==null) {
 			throw new TranslationException("Predicted variable is not defined");
 		}
-		
-		DataField outputField = getDataField(new FieldName(outputVariableName));		
+
+		DataField outputField = getDataField(new FieldName(outputVariableName));
 		if (outputField==null || outputField.getDataType()==null) {
 			throw new TranslationException("Predicted variable ["+outputVariableName+"] does not have type defined");
 		}
-		
+
+		return translate(context, outputField);
+	}
+
+	public String translate(TranslationContext context, DataField outputField) throws TranslationException {
 		Node rootNode = getOrCreateRoot();
 		StringBuilder sb = new StringBuilder();
 		CodeFormatter cf = new StandardCodeFormatter();
 		generateCodeForNode(rootNode, context, sb, outputField, cf);
-		
+
 		return sb.toString();
 	}
-	
+
 	private Node getChildById(Node node, String id) {
 		Node result = null;
 		if (id!=null) {

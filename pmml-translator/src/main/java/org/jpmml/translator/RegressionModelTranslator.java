@@ -1,7 +1,6 @@
 package org.jpmml.translator;
 
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import org.dmg.pmml.CategoricalPredictor;
@@ -58,6 +57,11 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 					outputVariableName + "] does not have type defined");
 		}
 		
+		return translate(context, outputField);
+	}
+
+	
+	public String translate(TranslationContext context, DataField outputField) {
 		StringBuilder sb = new StringBuilder();
 
 		switch (getFunctionName()) {
@@ -73,7 +77,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 
 		return sb.toString();
 	}
-
+	
 	/**
 	 * Translate the regression.
 	 * 
