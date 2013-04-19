@@ -68,14 +68,12 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 		}
 		return result;
 	}
-	
+
 	private void generateCodeForNode(Node node, TranslationContext context, StringBuilder code, DataField outputVariable, CodeFormatter cf) throws TranslationException {
 		TranslatorUtil.assignOutputVariable(code, node.getScore(), context, outputVariable);
-		
-		cf.affectVariable(code, context,
-				context.getModelResultTrackingVariable(), cf.stringify(node.getId()));
-		
-		if (context.getModelResultTrackingVariable() != null) {
+
+
+		if (context.getModelResultTrackingVariable() != null && node.getId() != null) {
 			cf.affectVariable(code, context, context.getModelResultTrackingVariable(), cf.stringify(node.getId()));
 		}
 
