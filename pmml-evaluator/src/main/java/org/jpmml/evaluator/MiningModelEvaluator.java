@@ -2,6 +2,7 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -14,6 +15,10 @@ import org.jpmml.manager.MiningModelManager;
 import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MiningModelEvaluator extends MiningModelManager implements Evaluator {
+
+	private HashMap<Segment, Integer> segmentToId = new HashMap<Segment, Integer>();
+	private Integer segmentMaxId = 0;
+
 	public MiningModelEvaluator(PMML pmml) {
 		super(pmml);
 	}
@@ -41,6 +46,15 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return result;
 	}
 
+	private String getId(Segment s) {
+		if (!segmentToId.containsKey(s)) {
+			segmentToId.put(s, segmentMaxId++);
+		}
+
+		return "segmentNumber" + segmentToId.get(s);
+
+	}
+
 	// Evaluate the parameters on the score card.
 	public Object evaluate(Map<FieldName, ?> parameters) {
 		switch (getFunctionType()) {
@@ -64,11 +78,22 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		for (Segment s : getSegment()) {
 			if (PredicateUtil.evaluatePredicate(s.getPredicate(), parameters)) {
 				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
-				results.put(s.getId(), m.evaluate(parameters));
-				idToWeight.put(s.getId(), s.getWeight());
-				if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
-					result = results.get(s.getId());
-					break;
+				Object tmpObj = m.evaluate(parameters);
+				if (tmpObj != null) {
+					Double tmpRes = null;
+					// FIXME: This is done because TreeModelEvaluator returns String even for regression.
+					if (tmpObj instanceof String) {
+						tmpRes = Double.parseDouble((String) tmpObj);
+					}
+					else {
+						tmpRes = (Double) tmpObj;
+					}
+					results.put(getId(s), tmpRes);
+					idToWeight.put(getId(s), s.getWeight());
+					if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
+						result = results.get(getId(s));
+						break;
+					}
 				}
 			}
 		}
@@ -94,10 +119,12 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			Double sumWeight = 0.0;
 			result = new Double(0.0);
 			for (Map.Entry<String, Object> e : results.entrySet()) {
-				result = (Double) result + idToWeight.get(e.getKey()) * (Double) e.getValue();
+				result = (Double) result
+						+ idToWeight.get(e.getKey())
+						* (Double) e.getValue();
 				sumWeight += idToWeight.get(e.getKey());
 			}
-			if (sumWeight != 0)
+			if (sumWeight != 0.0)
 				result = (Double) result / sumWeight;
 			break;
 		case MEDIAN:
@@ -129,11 +156,11 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
 				Object tmpRes = m.evaluate(parameters);
 				if (tmpRes != null) {
-					results.put(s.getId(), tmpRes);
-					idToWeight.put(s.getId(), s.getWeight());
+					results.put(getId(s), tmpRes);
+					idToWeight.put(getId(s), s.getWeight());
 				}
 				if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
-					result = results.get(s.getId());
+					result = results.get(getId(s));
 					break;
 				}
 			}

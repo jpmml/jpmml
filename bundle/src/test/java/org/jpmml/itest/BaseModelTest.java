@@ -158,15 +158,23 @@ public class BaseModelTest {
 				|| (explanation1 != null && explanation2 == null)
 				|| (value1 != null && value2 != null && !value1.equals(value2))
 				|| (explanation1 != null && explanation2 != null && !explanation1.equals(explanation2))) {
-			logger.info((secondTest ? "Second " : "First ") + "test failed. Value1 = " + value1 + "; value2 = " + value2 + "; explanation1 = "
-				+ explanation1 + "; explanation2 = " + explanation2);
-			for (Map.Entry<String, Object> e : nameToValue.entrySet()) {
-				logger.info(e.getKey() + " = " + e.getValue());
+			if (value1 != null && value2 != null && value1 instanceof Double
+					&& !((((Double) value1 + 1E-6) > ((Double) value2)) && (((Double) value1 - 1E-6) < ((Double) value2)))) {
+				logger.info((secondTest ? "Second " : "First ") + "test failed. Value1 = " + value1 + "; value2 = " + value2 + "; explanation1 = "
+						+ explanation1 + "; explanation2 = " + explanation2);
+				for (Map.Entry<String, Object> e : nameToValue.entrySet()) {
+					logger.info(e.getKey() + " = " + e.getValue());
+				}
 			}
 		}
 
 		if (value1 != null) {
-			assert value1.equals(value2);
+			if (value1 instanceof Double && value2 != null) {
+				assert (((Double) value1 + 1E-6) > ((Double) value2)) && (((Double) value1 - 1E-6) < ((Double) value2));
+			}
+			else {
+				assert value1.equals(value2);
+			}
 		}
 		else if (value2 != null) {
 			assert value2.equals(value1);

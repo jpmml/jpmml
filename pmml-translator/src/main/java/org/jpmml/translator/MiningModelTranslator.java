@@ -2,7 +2,6 @@ package org.jpmml.translator;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
@@ -106,8 +105,6 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			cf.addLine(code, context, "do {");
 		}
 
-		// FIXME: Can't rely on the id.
-
 		OpType op = outputField.getOptype();
 		DataType dt = outputField.getDataType();
 
@@ -163,22 +160,29 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 				// This following line is equivalent to add this to the code:
 				// 'result += value == null ? value * weight : 0;' Where
 				// the '* weight' is only done when we weighted is true.
-				cf.beginControlFlowStructure(code, context, "if", namify(s) + " != null");
+
+				// TODO: Standardize the output of the three methods. One can return null while the other return 0.0...
+				// It's bad!
+				cf.beginControlFlowStructure(code, context, "if", namify(s) + " != null && " + namify(s) + " != 0.0");
 				cf.affectVariable(code, context, Operator.PLUS_EQUAL, new Variable(outputField), namify(s)
 						+ (weighted ? " * " + s.getWeight() : ""));
 				cf.addLine(code, context, "++" + counterName + ";");
+
+				//cf.printVariable(code, context, outputField.getName().getValue());
 
 				if (weighted) {
 					// Little hack to transform the weight into a string without creating (explicitly) a Double, and call
 					// ToString on it.
 					cf.affectVariable(code, context, Operator.PLUS_EQUAL, sumWeightName, "" + s.getWeight());
 				}
+				cf.endControlFlowStructure(code, context);
 			}
 
-			cf.affectVariable(code, context, Operator.DIV_EQUAL, sumName,
+			cf.beginControlFlowStructure(code, context, "if", (weighted ? sumWeightName : counterName) + " != 0.0");
+			cf.affectVariable(code, context, Operator.DIV_EQUAL, outputField.getName().getValue(),
 							weighted ? sumWeightName : "" + counterName);
 
-			cf.affectVariable(code, context, outputField.getName().getValue(), sumName);
+			cf.endControlFlowStructure(code, context);
 			break;
 
 		case MEDIAN:
