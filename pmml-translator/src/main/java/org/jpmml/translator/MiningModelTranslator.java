@@ -1,5 +1,6 @@
 package org.jpmml.translator;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -23,7 +24,7 @@ import org.jpmml.translator.Variable.VariableType;
  *
  */
 public class MiningModelTranslator extends MiningModelManager implements Translator {
-	private TreeMap<Segment, Integer> segmentToId = new TreeMap<Segment, Integer>();
+	private HashMap<Segment, Integer> segmentToId = new HashMap<Segment, Integer>();
 	private Integer segmentMaxId = 0;
 
 	public MiningModelTranslator(PMML pmml){
@@ -87,7 +88,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			segmentToId.put(s, segmentMaxId++);
 		}
 
-		return "" + segmentToId.get(s);
+		return "segmentNumber" + segmentToId.get(s);
 	}
 
 	private void runModels(TranslationContext context, StringBuilder code, DataField outputField,
