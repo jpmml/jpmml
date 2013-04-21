@@ -118,6 +118,9 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 				cf.affectVariable(code, context, outputField.getName().getValue(), namify(s));
 				cf.addLine(code, context, "break;");
 			}
+			if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
+				cf.affectVariable(code, context, outputField.getName().getValue(), namify(s));
+			}
 			cf.endControlFlowStructure(code, context);
 		}
 
@@ -167,8 +170,6 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 				cf.affectVariable(code, context, Operator.PLUS_EQUAL, new Variable(outputField), namify(s)
 						+ (weighted ? " * " + s.getWeight() : ""));
 				cf.addLine(code, context, "++" + counterName + ";");
-
-				//cf.printVariable(code, context, outputField.getName().getValue());
 
 				if (weighted) {
 					// Little hack to transform the weight into a string without creating (explicitly) a Double, and call

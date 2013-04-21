@@ -3,9 +3,11 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningModel;
 import org.dmg.pmml.MultipleModelMethodType;
@@ -57,17 +59,49 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 	// Evaluate the parameters on the score card.
 	public Object evaluate(Map<FieldName, ?> parameters) {
+		String outputVariableName = null;
+		List<FieldName> predictedFields = getPredictedFields();
+		// Get the predicted field. If there is none, it is an error.
+		if (predictedFields!=null && predictedFields.size()>0) {
+			outputVariableName = predictedFields.get(0).getValue();
+		}
+		if (outputVariableName==null) {
+			throw new EvaluationException("Predicted variable is not defined");
+		}
+		
+		DataField outputField = getDataField(new FieldName(outputVariableName));		
+		if (outputField==null || outputField.getDataType()==null) {
+			throw new EvaluationException("Predicted variable [" +
+					outputVariableName + "] does not have type defined");
+		}
 		switch (getFunctionType()) {
 			case CLASSIFICATION:
-				return evaluateClassification(parameters);
+				return evaluateClassification((Map<FieldName, Object>) parameters, outputField);
 			case REGRESSION:
-				return evaluateRegression(parameters);
+				return evaluateRegression((Map<FieldName, Object>) parameters, outputField);
 			default:
 				throw new UnsupportedOperationException();
 		}
 	}
 
-	private Object evaluateRegression(Map<FieldName, ?> parameters) {
+	private Double getDouble(Object obj) {
+		Double tmpRes = null;
+		// FIXME: This is done because TreeModelEvaluator returns String even for regression.
+		if (obj instanceof String) {
+			tmpRes = Double.parseDouble((String) obj);
+		}
+		else {
+			tmpRes = (Double) obj;
+		}
+		
+		return tmpRes;
+
+	}
+	
+	
+	private Object evaluateRegression(Map<FieldName, Object> parameters, DataField outputField) {
+		assert parameters != null;
+		
 		Object result = null;
 
 		TreeMap<String, Object> results = new TreeMap<String, Object>();
@@ -79,16 +113,12 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			if (PredicateUtil.evaluatePredicate(s.getPredicate(), parameters)) {
 				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
 				Object tmpObj = m.evaluate(parameters);
+
+				if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
+					parameters.put(outputField.getName(), tmpObj);
+				}
 				if (tmpObj != null) {
-					Double tmpRes = null;
-					// FIXME: This is done because TreeModelEvaluator returns String even for regression.
-					if (tmpObj instanceof String) {
-						tmpRes = Double.parseDouble((String) tmpObj);
-					}
-					else {
-						tmpRes = (Double) tmpObj;
-					}
-					results.put(getId(s), tmpRes);
+					results.put(getId(s), tmpObj);
 					idToWeight.put(getId(s), s.getWeight());
 					if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
 						result = results.get(getId(s));
@@ -110,7 +140,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		case AVERAGE:
 			result = new Double(0.0);
 			for (Map.Entry<String, Object> e : results.entrySet()) {
-				result = (Double) result + (Double) e.getValue();
+				result = (Double) result + getDouble(e.getValue());
 			}
 			if (results.size() != 0)
 				result = (Double) result / results.size();
@@ -121,7 +151,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			for (Map.Entry<String, Object> e : results.entrySet()) {
 				result = (Double) result
 						+ idToWeight.get(e.getKey())
-						* (Double) e.getValue();
+						* getDouble(e.getValue());
 				sumWeight += idToWeight.get(e.getKey());
 			}
 			if (sumWeight != 0.0)
@@ -130,7 +160,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		case MEDIAN:
 			ArrayList<Double> list = new ArrayList<Double>(results.size());
 			for (Map.Entry<String, Object> e : results.entrySet()) {
-				list.add((Double)e.getValue());
+				list.add(getDouble(e.getValue()));
 			}
 			Collections.sort(list);
 			result = list.get(list.size() / 2);
@@ -143,7 +173,8 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return result;
 	}
 
-	private Object evaluateClassification(Map<FieldName, ?> parameters) {
+	private Object evaluateClassification(Map<FieldName, Object> parameters, DataField outputField) {
+		assert parameters != null;
 		Object result = null;
 
 		TreeMap<String, Object> results = new TreeMap<String, Object>();
@@ -155,6 +186,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			if (PredicateUtil.evaluatePredicate(s.getPredicate(), parameters)) {
 				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
 				Object tmpRes = m.evaluate(parameters);
+				if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
+					parameters.put(outputField.getName(), tmpRes);
+				}
 				if (tmpRes != null) {
 					results.put(getId(s), tmpRes);
 					idToWeight.put(getId(s), s.getWeight());
