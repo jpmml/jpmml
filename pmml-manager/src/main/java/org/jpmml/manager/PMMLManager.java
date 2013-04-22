@@ -87,6 +87,26 @@ public class PMMLManager {
 		return this.transformationDictionary;
 	}
 
+	public DataField getOutputField(ModelManager<?> model) throws Exception {
+		String outputVariableName = null;
+		List<FieldName> predictedFields = model.getPredictedFields();
+		// Get the predicted field. If there is none, it is an error.
+		if (predictedFields != null && predictedFields.size() > 0) {
+			outputVariableName = predictedFields.get(0).getValue();
+		}
+		if (outputVariableName == null) {
+			throw new Exception("Predicted variable is not defined");
+		}
+
+		DataField outputField = model.getDataField(new FieldName(outputVariableName));
+		if (outputField == null || outputField.getDataType() == null) {
+			throw new Exception("Predicted variable [" +
+					outputVariableName + "] does not have type defined");
+		}
+
+		return outputField;
+	}
+
 	public List<Model> getModels(){
 		return getPmml().getContent();
 	}

@@ -10,6 +10,7 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.MiningModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.RegressionModelEvaluator;
 import org.jpmml.manager.PMMLManager;
@@ -79,7 +80,8 @@ public class BaseModelTest {
  				}
  				catch (EvaluationException ee) {
  					if (ee.getMessage().startsWith("Missing parameter ")
- 							&& evaluator instanceof RegressionModelEvaluator) {
+ 							&& (evaluator instanceof RegressionModelEvaluator
+ 							|| evaluator instanceof MiningModelEvaluator)) {
  						// This is fine, the way we generate our test
  						// doesn't fit with the input for the regression model.
  						// So in order to keep this way of thinking, we just
@@ -158,8 +160,8 @@ public class BaseModelTest {
 				|| (explanation1 != null && explanation2 == null)
 				|| (value1 != null && value2 != null && !value1.equals(value2))
 				|| (explanation1 != null && explanation2 != null && !explanation1.equals(explanation2))) {
-			if (value1 != null && value2 != null && value1 instanceof Double
-					&& !((((Double) value1 + 1E-6) > ((Double) value2)) && (((Double) value1 - 1E-6) < ((Double) value2)))) {
+			if (!(value1 != null && value2 != null && value1 instanceof Double
+					&& ((((Double) value1 + 1E-6) > ((Double) value2)) && (((Double) value1 - 1E-6) < ((Double) value2))))) {
 				logger.info((secondTest ? "Second " : "First ") + "test failed. Value1 = " + value1 + "; value2 = " + value2 + "; explanation1 = "
 						+ explanation1 + "; explanation2 = " + explanation2);
 				for (Map.Entry<String, Object> e : nameToValue.entrySet()) {

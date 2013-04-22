@@ -14,6 +14,7 @@ import org.dmg.pmml.MultipleModelMethodType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Segment;
 import org.jpmml.manager.MiningModelManager;
+import org.jpmml.manager.ModelManager;
 import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MiningModelEvaluator extends MiningModelManager implements Evaluator {
@@ -59,28 +60,17 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 	// Evaluate the parameters on the score card.
 	public Object evaluate(Map<FieldName, ?> parameters) {
-		String outputVariableName = null;
-		List<FieldName> predictedFields = getPredictedFields();
-		// Get the predicted field. If there is none, it is an error.
-		if (predictedFields!=null && predictedFields.size()>0) {
-			outputVariableName = predictedFields.get(0).getValue();
-		}
-		if (outputVariableName==null) {
-			throw new EvaluationException("Predicted variable is not defined");
-		}
-		
-		DataField outputField = getDataField(new FieldName(outputVariableName));		
-		if (outputField==null || outputField.getDataType()==null) {
-			throw new EvaluationException("Predicted variable [" +
-					outputVariableName + "] does not have type defined");
-		}
+		try {
 		switch (getFunctionType()) {
 			case CLASSIFICATION:
-				return evaluateClassification((Map<FieldName, Object>) parameters, outputField);
+				return evaluateClassification((Map<FieldName, Object>) parameters, getOutputField(this));
 			case REGRESSION:
-				return evaluateRegression((Map<FieldName, Object>) parameters, outputField);
+				return evaluateRegression((Map<FieldName, Object>) parameters, getOutputField(this));
 			default:
 				throw new UnsupportedOperationException();
+		}
+		} catch (Exception e) {
+			return null;
 		}
 	}
 
@@ -93,15 +83,15 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		else {
 			tmpRes = (Double) obj;
 		}
-		
+
 		return tmpRes;
 
 	}
-	
-	
-	private Object evaluateRegression(Map<FieldName, Object> parameters, DataField outputField) {
+
+
+	private Object evaluateRegression(Map<FieldName, Object> parameters, DataField outputField) throws Exception {
 		assert parameters != null;
-		
+
 		Object result = null;
 
 		TreeMap<String, Object> results = new TreeMap<String, Object>();
@@ -115,7 +105,11 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				Object tmpObj = m.evaluate(parameters);
 
 				if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
-					parameters.put(outputField.getName(), tmpObj);
+					FieldName output = getOutputField((ModelManager<?>) m).getName();
+					parameters.put(output, tmpObj);
+					if (output.equals(outputField.getName())) {
+						result = tmpObj;
+					}
 				}
 				if (tmpObj != null) {
 					results.put(getId(s), tmpObj);

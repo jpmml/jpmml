@@ -9,9 +9,11 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningModel;
 import org.dmg.pmml.MultipleModelMethodType;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Segment;
 import org.jpmml.manager.MiningModelManager;
+import org.jpmml.manager.ModelManager;
 import org.jpmml.manager.UnsupportedFeatureException;
 import org.jpmml.translator.CodeFormatter.Operator;
 import org.jpmml.translator.Variable.VariableType;
@@ -45,41 +47,33 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 	 * @throws Exception
 	 */
 	public String translate(TranslationContext context) throws TranslationException {
-		String outputVariableName = null;
-		List<FieldName> predictedFields = getPredictedFields();
-		// Get the predicted field. If there is none, it is an error.
-		if (predictedFields != null && predictedFields.size() > 0) {
-			outputVariableName = predictedFields.get(0).getValue();
+		try {
+			return translate(context, getOutputField(this));
 		}
-		if (outputVariableName == null) {
-			throw new TranslationException("Predicted variable is not defined");
+		catch (Exception e) {
+			throw new TranslationException(e.getMessage());
 		}
-
-		DataField outputField = getDataField(new FieldName(outputVariableName));
-		if (outputField == null || outputField.getDataType() == null) {
-			throw new TranslationException("Predicted variable [" +
-					outputVariableName + "] does not have type defined");
-		}
-
-
-		return translate(context, outputField);
 	}
 
-	public String translate(TranslationContext context, DataField outputField) throws TranslationException{
+	public String translate(TranslationContext context, DataField outputField) throws TranslationException {
 		StringBuilder sb = new StringBuilder();
+		try	{
+			switch (getFunctionType()) {
+			case CLASSIFICATION:
+				translateClassification(context, sb, outputField);
+				break;
+			case REGRESSION:
+				translateRegression(context, sb, outputField);
+				break;
+			default:
+				throw new UnsupportedOperationException();
+			}
 
-		switch (getFunctionType()) {
-		case CLASSIFICATION:
-			translateClassification(context, sb, outputField);
-			break;
-		case REGRESSION:
-			translateRegression(context, sb, outputField);
-			break;
-		default:
-			throw new UnsupportedOperationException();
+			return sb.toString();
 		}
-
-		return sb.toString();
+		catch (Exception e) {
+			throw new TranslationException(e.getMessage());
+		}
 	}
 
 	private String namify(Segment s) {
@@ -91,7 +85,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 	}
 
 	private void runModels(TranslationContext context, StringBuilder code, DataField outputField,
-			CodeFormatter cf) throws TranslationException {
+			CodeFormatter cf) throws Exception {
 
 		ModelTranslatorFactory factory = new ModelTranslatorFactory();
 
@@ -105,21 +99,22 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			cf.addLine(code, context, "do {");
 		}
 
-		OpType op = outputField.getOptype();
-		DataType dt = outputField.getDataType();
-
+		// FIXME: Here we are in trouble because there is two Predicted results.
 		for (Segment s : getSegment()) {
-			cf.addDeclarationVariable(code, context, new Variable(dt, namify(s)), "null");
+			Translator t = (Translator) factory.getModelManager(getPmml(), s.getModel());
+			DataField out = getOutputField((ModelManager<?>) t);
+			OpType op = out.getOptype();
+			DataType dt = out.getDataType();
+			cf.addDeclarationVariable(code, context, new Variable(dt, namify(s)));
 			cf.beginControlFlowStructure(code, context, "if", "("
 					+ PredicateTranslationUtil.generateCode(s.getPredicate(), this, context) + ") == " + PredicateTranslationUtil.TRUE);
-			Translator t = (Translator) factory.getModelManager(getPmml(), s.getModel());
 			code.append(t.translate(context, new DataField(new FieldName(namify(s)), op, dt)));
 			if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
 				cf.affectVariable(code, context, outputField.getName().getValue(), namify(s));
 				cf.addLine(code, context, "break;");
 			}
 			if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
-				cf.affectVariable(code, context, outputField.getName().getValue(), namify(s));
+				cf.affectVariable(code, context, getOutputField((ModelManager<?>) t).getName().getValue(), namify(s));
 			}
 			cf.endControlFlowStructure(code, context);
 		}
@@ -132,7 +127,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 
 	}
 
-	private void translateRegression(TranslationContext context, StringBuilder code, DataField outputField) throws TranslationException {
+	private void translateRegression(TranslationContext context, StringBuilder code, DataField outputField) throws Exception {
 		CodeFormatter cf = context.getFormatter();
 		runModels(context, code, outputField, cf);
 
@@ -208,7 +203,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 	}
 
 
-	private void translateClassification(TranslationContext context, StringBuilder code, DataField outputField) throws TranslationException {
+	private void translateClassification(TranslationContext context, StringBuilder code, DataField outputField) throws Exception {
 		CodeFormatter cf = context.getFormatter();
 		runModels(context, code, outputField, cf);
 
