@@ -3,7 +3,6 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -61,6 +60,8 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	}
 
 	// Evaluate the parameters on the score card.
+	// We can convert anything to an Object type. So the cast is legitimate.
+	@SuppressWarnings(value = { "unchecked" })
 	public IPMMLResult evaluate(Map<FieldName, ?> parameters) {
 		try {
 		switch (getFunctionType()) {
@@ -131,40 +132,8 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	private IPMMLResult evaluateRegression(Map<FieldName, Object> parameters, DataField outputField) throws Exception {
 		assert parameters != null;
 
-
 		TreeMap<String, Object> results = new TreeMap<String, Object>();
 		TreeMap<String, Double> idToWeight = new TreeMap<String, Double>();
-
-//		ModelEvaluatorFactory factory = new ModelEvaluatorFactory();
-//
-//		for (Segment s : getSegment()) {
-//			if (PredicateUtil.evaluatePredicate(s.getPredicate(), parameters)) {
-//				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
-//				IPMMLResult tmpObj = m.evaluate(parameters);
-//
-//				if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
-//					FieldName output = getOutputField((ModelManager<?>) m).getName();
-//					tmpObj.merge(parameters);
-//					if (output.equals(outputField.getName())) {
-//						result = tmpObj.getValue(getOutputField((ModelManager<?>) m).getName());
-//					}
-//				}
-//				if (tmpObj != null && !tmpObj.isEmpty()) {
-//					// Associate the main result to the name of the segment.
-//					// So we don't override the previous result at each new segment.
-//					Object tmpRes = tmpObj.getValue(getOutputField((ModelManager<?>) m).getName());
-//					if (tmpRes != null) {
-//						results.put(getId(s), tmpRes);
-//
-//						idToWeight.put(getId(s), s.getWeight());
-//						if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
-//							result = results.get(getId(s));
-//							break;
-//						}
-//					}
-//				}
-//			}
-//		}
 
 		Object result = runModels(parameters, outputField, results, idToWeight);
 
@@ -226,37 +195,6 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 		TreeMap<String, Object> results = new TreeMap<String, Object>();
 		TreeMap<String, Double> idToWeight = new TreeMap<String, Double>();
-
-//		ModelEvaluatorFactory factory = new ModelEvaluatorFactory();
-//
-//		for (Segment s : getSegment()) {
-//			if (PredicateUtil.evaluatePredicate(s.getPredicate(), parameters)) {
-//				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
-//				IPMMLResult tmpObj = m.evaluate(parameters);
-//
-//				if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
-//					FieldName output = getOutputField((ModelManager<?>) m).getName();
-//					tmpObj.merge(parameters);
-//					if (output.equals(outputField.getName())) {
-//						result = tmpObj.getValue(getOutputField((ModelManager<?>) m).getName());
-//					}
-//				}
-//				if (tmpObj != null && !tmpObj.isEmpty()) {
-//					// Associate the main result to the name of the segment.
-//					// So we don't override the previous result at each new segment.
-//					Object tmpRes = tmpObj.getValue(getOutputField((ModelManager<?>) m).getName());
-//					if (tmpRes != null) {
-//						results.put(getId(s), tmpRes);
-//
-//						idToWeight.put(getId(s), s.getWeight());
-//						if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
-//							result = results.get(getId(s));
-//							break;
-//						}
-//					}
-//				}
-//			}
-//		}
 
 		Object result = runModels(parameters, outputField, results, idToWeight);
 

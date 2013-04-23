@@ -153,8 +153,6 @@ public class MiningModelTest extends BaseModelTest {
 
 		Double evaluateFirstSegment(Map<String, Object> nameToValue) {
 			Double petalLength = (Double) nameToValue.get("petal_length");
-			Double petalWidth = (Double) nameToValue.get("petal_width");
-			Double sepalLength = (Double) nameToValue.get("sepal_length");
 			Double sepalWidth = (Double) nameToValue.get("sepal_width");
 			Double result = 0.0;
 
@@ -213,9 +211,7 @@ public class MiningModelTest extends BaseModelTest {
 		}
 
 		Double evaluateSecondSegment(Map<String, Object> nameToValue) {
-			Double petalLength = (Double) nameToValue.get("petal_length");
 			Double petalWidth = (Double) nameToValue.get("petal_width");
-			Double sepalLength = (Double) nameToValue.get("sepal_length");
 			Double sepalWidth = (Double) nameToValue.get("sepal_width");
 			Double result = 0.0;
 			result = 5.843333;
@@ -281,9 +277,6 @@ public class MiningModelTest extends BaseModelTest {
 
 		Double evaluateThirdSegment(Map<String, Object> nameToValue) {
 			Double petalLength = (Double) nameToValue.get("petal_length");
-			Double petalWidth = (Double) nameToValue.get("petal_width");
-			Double sepalLength = (Double) nameToValue.get("sepal_length");
-			Double sepalWidth = (Double) nameToValue.get("sepal_width");
 			Double result = 0.0;
 			result = 5.843333;
 
@@ -423,7 +416,6 @@ public class MiningModelTest extends BaseModelTest {
 		}
 
 		public Object evaluateThirdSegment(Map<String, Object> nameToValue) {
-			Double petalLength = (Double) nameToValue.get("petal_length");
 			Double petalWidth = (Double) nameToValue.get("petal_width");
 			String continent = (String) nameToValue.get("continent");
 			String result = null;

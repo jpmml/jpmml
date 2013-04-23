@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.IOUtil;
-import org.jpmml.translator.TranslationContext;
 import org.testng.annotations.Test;
 
 @Test
@@ -18,29 +16,29 @@ public class TreeModelTest extends BaseModelTest {
 	public void testTroubledScenario() throws Exception {
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree.xml"));
 		Map<String, Object> variableToValues = new HashMap<String, Object>();
-		
+
 		variableToValues.put("humidity", 26.0);
 		variableToValues.put("outlook", "sunny");
-		
+
 		runSingleModelEvaluation(pmmlDoc,
-			GOLF_MODEL_TEMPLATE, 
+			GOLF_MODEL_TEMPLATE,
 			new GolfModel(),
-			variableToValues);		
+			variableToValues);
 	}
 	*/
 
 	/* @Test
 	public void testGolfModel() throws Exception {
-		
+
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree.xml"));
 		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
 		variableToValues.put("temperature", null);
-		variableToValues.put("humidity", null);		
+		variableToValues.put("humidity", null);
 		variableToValues.put("windy", Arrays.asList("true", "false"));
 		variableToValues.put("outlook", Arrays.asList("sunny", "outcast", "rain"));
-		
+
 		testModelEvaluation(pmmlDoc,
-			GOLF_MODEL_TEMPLATE, 
+			GOLF_MODEL_TEMPLATE,
 			new GolfModel(),
 			variableToValues,
 			20);
@@ -48,36 +46,37 @@ public class TreeModelTest extends BaseModelTest {
 
 	//@Test
 	public void testGolfModelLastPrediction() throws Exception {
-		
+
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree_last_prediction.xml"));
 		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
 		variableToValues.put("temperature", null);
-		variableToValues.put("humidity", null);		
+		variableToValues.put("humidity", null);
 		variableToValues.put("windy", Arrays.asList("true", "false"));
 		variableToValues.put("outlook", Arrays.asList("sunny", "outcast", "rain"));
-		
+
 		testModelEvaluation(pmmlDoc,
-			GOLF_MODEL_TEMPLATE, 
+			GOLF_MODEL_TEMPLATE,
 			new GolfModel_LastPrediction(),
-			variableToValues, 
+			variableToValues,
 			20);
+
 	}*/
 	
 	protected double getMissingVarProbability() {
 		return 0.01;
 	}
 
-	
+
 	static public class GolfModel implements ManualModelImplementation {
 
 		public Object execute(Map<String, Object> nameToValue) {
 			String whatIdo = "will play";
 
-			Double temperature = (Double)nameToValue.get("temperature"); 
-			Double humidity = (Double)nameToValue.get("humidity");  
-			String windy = (String)nameToValue.get("windy"); 
+			Double temperature = (Double)nameToValue.get("temperature");
+			Double humidity = (Double)nameToValue.get("humidity");
+			String windy = (String)nameToValue.get("windy");
 			String outlook = (String)nameToValue.get("outlook");
-			
+
 			if (outlook!=null && outlook.equals("sunny")) {
 				whatIdo = "will play";
 				resultExplanation = "1";
@@ -109,14 +108,14 @@ public class TreeModelTest extends BaseModelTest {
 			else if (outlook!=null && (outlook.equals("overcast") || outlook.equals("rain"))) {
 				whatIdo = "may play";
 				resultExplanation = "6";
-				if (temperature!=null && temperature>60 && temperature<100 
-					&& outlook!=null && outlook.equals("overcast")  
-					&& humidity!=null && humidity<70 
+				if (temperature!=null && temperature>60 && temperature<100
+					&& outlook!=null && outlook.equals("overcast")
+					&& humidity!=null && humidity<70
 					&& windy!=null && windy.equals("false")) {
 					whatIdo = "may play";
 					resultExplanation = "7";
 				}
-				else if (outlook!=null && outlook.equals("rain") 
+				else if (outlook!=null && outlook.equals("rain")
 						&& humidity!=null && humidity<70) {
 					whatIdo = "no play";
 					resultExplanation = "8";
@@ -130,10 +129,10 @@ public class TreeModelTest extends BaseModelTest {
 				resultExplanation = null;
 				whatIdo = null;
 			}
-				
+
 			return whatIdo;
 		}
-		
+
 		String resultExplanation = null;
 		public String getResultExplanation() {
 			return resultExplanation;
@@ -143,14 +142,14 @@ public class TreeModelTest extends BaseModelTest {
 	static public class GolfModel_LastPrediction implements ManualModelImplementation {
 
 		public Object execute(Map<String, Object> nameToValue) {
-			String whatIdo = "will play"; 
-			
-			Double temperature = (Double)nameToValue.get("temperature"); 
-			Double humidity = (Double)nameToValue.get("humidity");  
-			String windy = (String)nameToValue.get("windy"); 
+			String whatIdo = "will play";
+
+			Double temperature = (Double)nameToValue.get("temperature");
+			Double humidity = (Double)nameToValue.get("humidity");
+			String windy = (String)nameToValue.get("windy");
 			String outlook = (String)nameToValue.get("outlook");
 			resultExplanation = "0";
-			
+
 			if (outlook != null && outlook.equals("sunny")) {
 				whatIdo = "will play";
 				resultExplanation = "1";
@@ -174,29 +173,29 @@ public class TreeModelTest extends BaseModelTest {
 			else if (outlook!=null && (outlook.equals("overcast") || outlook.equals("rain"))) {
 				whatIdo = "may play";
 				resultExplanation = "6";
-				if (temperature!=null && temperature>60 && temperature<100 
-					&& outlook!=null && outlook.equals("overcast")  
-					&& humidity!=null && humidity<70 
+				if (temperature!=null && temperature>60 && temperature<100
+					&& outlook!=null && outlook.equals("overcast")
+					&& humidity!=null && humidity<70
 					&& windy!=null && windy.equals("false")) {
 					whatIdo = "may play";
 					resultExplanation = "7";
 				}
-				else if (outlook!=null && outlook.equals("rain") 
+				else if (outlook!=null && outlook.equals("rain")
 						&& humidity!=null && humidity<70) {
 					whatIdo = "no play";
 					resultExplanation = "8";
 				}
 			}
-				
+
 			return whatIdo;
 		}
 
-		
+
 		String resultExplanation;
 		public String getResultExplanation() {
 			return resultExplanation;
 		}
-		
+
 	}
 
 	static private final String GOLF_MODEL_TEMPLATE = "" +
@@ -204,24 +203,24 @@ public class TreeModelTest extends BaseModelTest {
 			"import java.util.Map;\n" +
 			"import org.jpmml.itest.BaseModelTest.CompiledModel;\n" +
 			"" +
-			"#foreach($import in $imports) \n" + 
-			"${import}\n" + 
-			"#end\n" + 
+			"#foreach($import in $imports) \n" +
+			"${import}\n" +
+			"#end\n" +
 			"\n" +
-			"#foreach($constant in $constants) \n" + 
-			"static private final ${constant}\n" + 
-			"#end" + 
+			"#foreach($constant in $constants) \n" +
+			"static private final ${constant}\n" +
+			"#end" +
 			"\n" +
-			"public class ${className} implements CompiledModel {\n" + 
-			"\n" + 
-			"	public Object execute(Map<String, Object> nameToValue) {\n" + 
-			"		String whatIdo = null;\n" + 
-			"		Double temperature = (Double)nameToValue.get(\"temperature\");\n" + 
-			"		Double humidity = (Double)nameToValue.get(\"humidity\");\n" + 
+			"public class ${className} implements CompiledModel {\n" +
+			"\n" +
+			"	public Object execute(Map<String, Object> nameToValue) {\n" +
+			"		String whatIdo = null;\n" +
+			"		Double temperature = (Double)nameToValue.get(\"temperature\");\n" +
+			"		Double humidity = (Double)nameToValue.get(\"humidity\");\n" +
 			"		String windy = (String)nameToValue.get(\"windy\");\n" +
 			"		String outlook = (String)nameToValue.get(\"outlook\");\n" +
 			"		\n" +
-			"		${modelCode}\n" + 
+			"		${modelCode}\n" +
 			"		\n" +
 			"		return whatIdo;\n" +
 			"	}\n" +
@@ -229,5 +228,5 @@ public class TreeModelTest extends BaseModelTest {
 			" 	public String getResultExplanation() {\n" +
 			" 		return resultExplanation;\n" +
 			"	}\n" +
-			"}\n"; 
+			"}\n";
 }
