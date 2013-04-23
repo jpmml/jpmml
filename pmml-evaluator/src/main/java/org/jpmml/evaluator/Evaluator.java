@@ -98,6 +98,6 @@ public interface Evaluator extends Consumer {
 	 *
 	 * @see Computable
 	 */
-	Object evaluate(Map<FieldName, ?> parameters);
-}
+	IPMMLResult evaluate(Map<FieldName, ?> parameters);
+	}
 

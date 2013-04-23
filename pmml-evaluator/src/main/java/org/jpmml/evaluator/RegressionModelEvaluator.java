@@ -13,7 +13,7 @@ import org.dmg.pmml.*;
  * This class evaluates the variables on the model. It reads the pmml object
  * to return a result.
  * For information about the regression model, see {@link RegressionModelManager}.
- * 
+ *
  * @author tbadie
  *
  */
@@ -39,7 +39,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	 * @see #evaluateRegression(EvaluationContext)
 	 * @see #evaluateClassification(EvaluationContext)
 	 */
-	public Object evaluate(Map<FieldName, ?> parameters){
+	public IPMMLResult evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
 
 		Map<FieldName, ?> predictions;
@@ -58,7 +58,9 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 
-		return OutputUtil.evaluate(predictions, context);
+		IPMMLResult res = new IPMMLResult();
+		res.merge(OutputUtil.evaluate(predictions, context));
+		return res;
 	}
 
 	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){
@@ -124,167 +126,181 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return Collections.singletonMap(name, values);
 	}
 
-	static
-	private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
-		double result = 0D;
+	// static
+	// private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
+	// 	double result = 0D;
 
-		result += regressionTable.getIntercept();
+	// 	result += regressionTable.getIntercept();
 
-		List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
+	// 	List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 
-		for(NumericPredictor numericPredictor : numericPredictors){
-			Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
+	// 	for(NumericPredictor numericPredictor : numericPredictors){
+	// 		Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
 
-			// "if the input value is missing then the result evaluates to a missing value"
-			if(value == null){
-				return null;
-			}
+	// 		// "if the input value is missing then the result evaluates to a missing value"
+	// 		if(value == null){
+	// 			return null;
+	// 		}
 
-			result += numericPredictor.getCoefficient() * Math.pow(((Number)value).doubleValue(), numericPredictor.getExponent());
-		}
+	// 		result += numericPredictor.getCoefficient() * Math.pow(((Number)value).doubleValue(), numericPredictor.getExponent());
+	// 	}
 
-		List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
-		for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-			Object value = ExpressionUtil.evaluate(categoricalPredictor.getName(), context);
+	// 	List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
+	// 	for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
+	// 		Object value = ExpressionUtil.evaluate(categoricalPredictor.getName(), context);
 
-			// "if the input value is missing then the product is ignored"
-			if(value == null){
-				continue;
-			}
+	// 		// "if the input value is missing then the product is ignored"
+	// 		if(value == null){
+	// 			continue;
+	// 		}
 
-			boolean equals = ParameterUtil.equals(value, categoricalPredictor.getValue());
+	// 		boolean equals = ParameterUtil.equals(value, categoricalPredictor.getValue());
 
-			result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
-		}
+	// 		result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
+	// 	}
 
-		List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
-		for(PredictorTerm predictorTerm : predictorTerms){
-			throw new UnsupportedFeatureException(predictorTerm);
-		}
-		String result = new String();
-		if (targetCategoryToScore.isEmpty()) return null;
-		
-		TreeMap<Double, String> scoreToCategory = new TreeMap<Double, String>();
-		switch (getNormalizationMethodType()) {
-			case NONE:
-				// pick the category with top score
-				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
-					scoreToCategory.put(categoryScore.getValue(), categoryScore.getKey());
-				}
-				result = scoreToCategory.lastEntry().getValue();
-				break;
-			case LOGIT:
-				// pick the max of pj = 1 / ( 1 + exp( -yj ) )
-				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
-					double yj = categoryScore.getValue();
-					double pj = 1.0/(1.0 + Math.exp(yj));
+	// 	List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
+	// 	for(PredictorTerm predictorTerm : predictorTerms){
+	// 		throw new UnsupportedFeatureException(predictorTerm);
+	// 	}
+	// 	String result = new String();
+	// 	if (targetCategoryToScore.isEmpty()) return null;
 
-					scoreToCategory.put(pj, categoryScore.getKey());
-				}
-				result = scoreToCategory.lastEntry().getValue();
-				break;
-			case EXP:
-				// pick the max of exp(yj) 
-				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
-					double yj = categoryScore.getValue();
-					double pj = Math.exp(yj);
-					scoreToCategory.put(pj, categoryScore.getKey());
-				}
-				result = scoreToCategory.lastEntry().getValue();
-				break;
-			case SOFTMAX:
-				// pj = exp(yj) / (Sum[i = 1 to N](exp(yi) ) ) 
-				double sum = 0.0;
-				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
-					double yj = categoryScore.getValue();
-					sum += Math.exp(yj);
-				}
-				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
-					double yj = categoryScore.getValue();
-					double pj = Math.exp(yj) / sum;
-					scoreToCategory.put(pj, categoryScore.getKey());
-				}
-				result = scoreToCategory.lastEntry().getValue();
-				break;
-			case CLOGLOG:
-				// pick the max of pj = 1 - exp( -exp( yj ) ) 
-				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
-					double yj = categoryScore.getValue();
-					double pj = 1 - Math.exp(-Math.exp(yj));
-					scoreToCategory.put(pj, categoryScore.getKey());
-				}
-				result = scoreToCategory.lastEntry().getValue();
-				break;
-			case LOGLOG:
-				// pick the max of pj = exp( -exp( -yj ) ) 
-				for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
-					double yj = categoryScore.getValue();
-					double pj = Math.exp(-Math.exp( -yj));
-					scoreToCategory.put(pj, categoryScore.getKey());
-				}
-				result = scoreToCategory.lastEntry().getValue();
-				break;
-			default:
-				
-				result = null;					
-		}
+	// 	TreeMap<Double, String> scoreToCategory = new TreeMap<Double, String>();
+	// 	switch (getNormalizationMethodType()) {
+	// 		case NONE:
+	// 			// pick the category with top score
+	// 			for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+	// 				scoreToCategory.put(categoryScore.getValue(), categoryScore.getKey());
+	// 			}
+	// 			result = scoreToCategory.lastEntry().getValue();
+	// 			break;
+	// 		case LOGIT:
+	// 			// pick the max of pj = 1 / ( 1 + exp( -yj ) )
+	// 			for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+	// 				double yj = categoryScore.getValue();
+	// 				double pj = 1.0/(1.0 + Math.exp(yj));
 
-		return result;
-	}
+	// 				scoreToCategory.put(pj, categoryScore.getKey());
+	// 			}
+	// 			result = scoreToCategory.lastEntry().getValue();
+	// 			break;
+	// 		case EXP:
+	// 			// pick the max of exp(yj)
+	// 			for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+	// 				double yj = categoryScore.getValue();
+	// 				double pj = Math.exp(yj);
+	// 				scoreToCategory.put(pj, categoryScore.getKey());
+	// 			}
+	// 			result = scoreToCategory.lastEntry().getValue();
+	// 			break;
+	// 		case SOFTMAX:
+	// 			// pj = exp(yj) / (Sum[i = 1 to N](exp(yi) ) )
+	// 			double sum = 0.0;
+	// 			for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+	// 				double yj = categoryScore.getValue();
+	// 				sum += Math.exp(yj);
+	// 			}
+	// 			for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+	// 				double yj = categoryScore.getValue();
+	// 				double pj = Math.exp(yj) / sum;
+	// 				scoreToCategory.put(pj, categoryScore.getKey());
+	// 			}
+	// 			result = scoreToCategory.lastEntry().getValue();
+	// 			break;
+	// 		case CLOGLOG:
+	// 			// pick the max of pj = 1 - exp( -exp( yj ) )
+	// 			for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+	// 				double yj = categoryScore.getValue();
+	// 				double pj = 1 - Math.exp(-Math.exp(yj));
+	// 				scoreToCategory.put(pj, categoryScore.getKey());
+	// 			}
+	// 			result = scoreToCategory.lastEntry().getValue();
+	// 			break;
+	// 		case LOGLOG:
+	// 			// pick the max of pj = exp( -exp( -yj ) )
+	// 			for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
+	// 				double yj = categoryScore.getValue();
+	// 				double pj = Math.exp(-Math.exp( -yj));
+	// 				scoreToCategory.put(pj, categoryScore.getKey());
+	// 			}
+	// 			result = scoreToCategory.lastEntry().getValue();
+	// 			break;
+	// 		default:
 
-	private Double evaluateRegression(Map<FieldName, ?> parameters) {
-		// When it's a simple regression, there is only one table. So we just
-		// evaluate it, normalize the result and return it.   
-		double result = evaluateRegressionTable(getOrCreateRegressionTable(), parameters);
+	// 			result = null;
+	// 	}
 
-		RegressionNormalizationMethodType normalizationMethod = getNormalizationMethodType();
-		switch (normalizationMethod) {
-			case NONE:
-				// The same thing than: result = result;
-				break;
-			case SOFTMAX:
-			case LOGIT:
-				result = 1.0 / (1.0 + Math.exp(-result));
-				break;
-			case EXP:
-				result = Math.exp(result);
-				break;
-			default:
-				// We should never be here.
-				assert false;
-				break;
-		}
-				
-		return result;
-	}
+	// 	IPMMLResult res = new PMMLResult();
+	// 	try {
+	// 		res.put(getOutputField(this).getName(), result);
+	// 	} catch (Exception e) {
+	// 		throw new EvaluationException(e.getMessage());
+	// 	}
 
-	/**
-	 * Evaluate a regression table.
-	 * 
-	 * @param rt The regression table.
-	 * @param parameters The set of parameters.
-	 * @return The evaluation.
-	 */
-	private double evaluateRegressionTable(RegressionTable rt, Map<FieldName, ?> parameters) {
-		// Evaluating a regression table is only evaluate all the numeric predictors,
-		// and all the categorical predictors.
-		double result = 0D;
+	// 	return res;
+	// }
 
-		result += getIntercept(rt);
-		
-		// If a value is missing for a numeric predictors, it's an error. 
-		List<NumericPredictor> numericPredictors = rt.getNumericPredictors();
-		for(NumericPredictor numericPredictor : numericPredictors) {
-			result += evaluateNumericPredictor(numericPredictor, parameters);
-		}
+	// private IPMMLResult evaluateRegression(Map<FieldName, ?> parameters) {
+	// 	// When it's a simple regression, there is only one table. So we just
+	// 	// evaluate it, normalize the result and return it.
+	// 	double result = evaluateRegressionTable(getOrCreateRegressionTable(), parameters);
 
-		List<CategoricalPredictor> categoricalPredictors = rt.getCategoricalPredictors();
-		for (CategoricalPredictor categoricalPredictor : categoricalPredictors) {
-			result += evaluateCategoricalPredictor(categoricalPredictor, parameters);
-		}
+	// 	RegressionNormalizationMethodType normalizationMethod = getNormalizationMethodType();
+	// 	switch (normalizationMethod) {
+	// 		case NONE:
+	// 			// The same thing than: result = result;
+	// 			break;
+	// 		case SOFTMAX:
+	// 		case LOGIT:
+	// 			result = 1.0 / (1.0 + Math.exp(-result));
+	// 			break;
+	// 		case EXP:
+	// 			result = Math.exp(result);
+	// 			break;
+	// 		default:
+	// 			// We should never be here.
+	// 			assert false;
+	// 			break;
+	// 	}
 
-		return Double.valueOf(result);
-	}
+	// 	IPMMLResult res = new PMMLResult();
+	// 	try {
+	// 		res.put(getOutputField(this).getName(), result);
+	// 	} catch (Exception e) {
+	// 		throw new EvaluationException(e.getMessage());
+	// 	}
+
+	// 	return res;
+	// }
+
+	// /**
+	//  * Evaluate a regression table.
+	//  *
+	//  * @param rt The regression table.
+	//  * @param parameters The set of parameters.
+	//  * @return The evaluation.
+	//  */
+	// private double evaluateRegressionTable(RegressionTable rt, Map<FieldName, ?> parameters) {
+	// 	// Evaluating a regression table is only evaluate all the numeric predictors,
+	// 	// and all the categorical predictors.
+	// 	double result = 0D;
+
+	// 	result += getIntercept(rt);
+
+	// 	// If a value is missing for a numeric predictors, it's an error.
+	// 	List<NumericPredictor> numericPredictors = rt.getNumericPredictors();
+	// 	for(NumericPredictor numericPredictor : numericPredictors) {
+	// 		result += evaluateNumericPredictor(numericPredictor, parameters);
+	// 	}
+
+	// 	List<CategoricalPredictor> categoricalPredictors = rt.getCategoricalPredictors();
+	// 	for (CategoricalPredictor categoricalPredictor : categoricalPredictors) {
+	// 		result += evaluateCategoricalPredictor(categoricalPredictor, parameters);
+	// 	}
+
+	// 	return Double.valueOf(result);
+	// }
 
 	static
 	private Double normalizeRegressionResult(RegressionNormalizationMethodType regressionNormalizationMethod, Double value){
@@ -319,10 +335,10 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				throw new UnsupportedFeatureException(regressionNormalizationMethod);
 		}
 	}
-	
+
 	/**
 	 * Evaluate a categorical predictor on a set of parameters.
-	 * 
+	 *
 	 * @param categoricalPredictor The predictor.
 	 * @param parameters The parameters.
 	 * @return The result of the evaluation.
@@ -335,7 +351,12 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		// type of the variable used to know how to compare them. Because 0.0 != "0".
 		// This is why there is this ugly switch below. It's unfortunate, but it's the
 		// only way that works I have found.
-		Object blobValue =  ParameterUtil.getValue(parameters, categoricalPredictor.getName());
+		Object blobValue = null;
+		try {
+			blobValue = ParameterUtil.getValue(parameters, categoricalPredictor.getName());
+		} catch (EvaluationException e) {
+			return 0.0;
+		}
 		boolean isEqual = false;
 		List<DataField> ldf = getDataDictionary().getDataFields();
 

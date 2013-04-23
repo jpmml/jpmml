@@ -160,7 +160,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	/**
 	 * @see #evaluateTree(EvaluationContext)
 	 */
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+	public IPMMLResult evaluate(Map<FieldName, ?> parameters){
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		Node node = evaluateTree(context);
@@ -169,7 +169,9 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		Map<FieldName, NodeClassificationMap> predictions = Collections.singletonMap(getTarget(), values);
 
-		return OutputUtil.evaluate(predictions, context);
+		IPMMLResult res = new PMMLResult();
+		res.merge(OutputUtil.evaluate(predictions, context));
+		return res;
 	}
 
 	private String computeScore(Node node){

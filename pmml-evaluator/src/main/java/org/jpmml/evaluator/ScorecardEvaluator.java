@@ -9,31 +9,33 @@ import org.dmg.pmml.Characteristic;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Scorecard;
+import org.jpmml.manager.IPMMLResult;
+import org.jpmml.manager.PMMLResult;
 import org.jpmml.manager.ScoreCardModelManager;
 
 public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluator {
 
-	
+
 	public ScorecardEvaluator(PMML pmml) {
 		super(pmml);
 	}
-	
+
 	public ScorecardEvaluator(PMML pmml, Scorecard scorecard) {
 		super(pmml, scorecard);
 	}
-	
+
 	public ScorecardEvaluator(ScoreCardModelManager parent){
 		this(parent.getPmml(), parent.getModel());
 	}
 
 	// Evaluate the parameters on the score card.
-	public Object evaluate(Map<FieldName, ?> parameters) {
+	public IPMMLResult evaluate(Map<FieldName, ?> parameters) {
 		Double score = 0.0;
 		TreeMap<Double, String> diffToReasonCode = new TreeMap<Double, String>();
 		List<Characteristic> cl
 			= scorecard.getCharacteristics().getCharacteristics();
 		for (Characteristic c : cl) {
-			List<Attribute> al = c.getAttributes(); 
+			List<Attribute> al = c.getAttributes();
 			for (Attribute a : al) {
 				// Evaluate the predicate.
 				Boolean predicateValue = PredicateUtil
@@ -42,7 +44,7 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 				// If it is valid, and the value is true, update the score.
 				if (predicateValue != null && predicateValue.booleanValue()) {
 					score += a.getPartialScore();
-					
+
 					double diff = 0;
 					switch (reasonCodeAlgorithm) {
 						case POINTS_BELOW:
@@ -70,7 +72,15 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 		}
 
 		lastReasonCode = diffToReasonCode.lastEntry().getValue();
-    	return score;
+
+		IPMMLResult res = new PMMLResult();
+		try {
+			res.put(getOutputField(this).getName(), score);
+		} catch (Exception e) {
+			throw new EvaluationException(e.getMessage());
+		}
+
+		return res;
 	}
 
 	public String getResultExplanation() {

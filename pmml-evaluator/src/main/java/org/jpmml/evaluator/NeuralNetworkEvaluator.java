@@ -31,7 +31,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	 * @see #evaluateRegression(EvaluationContext)
 	 * @see #evaluateClassification(EvaluationContext)
 	 */
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters) {
+	public IPMMLResult evaluate(Map<FieldName, ?> parameters) {
 		NeuralNetwork neuralNetwork = getModel();
 
 		Map<FieldName, ?> predictions;
@@ -50,7 +50,11 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 
-		return OutputUtil.evaluate(predictions, context);
+		
+		IPMMLResult result = new PMMLResult();
+		result.merge(OutputUtil.evaluate(predictions, context));
+
+		return result;
 	}
 
 	public Map<FieldName, Double> evaluateRegression(EvaluationContext context) {

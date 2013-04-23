@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
@@ -13,6 +14,8 @@ import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.MiningModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.RegressionModelEvaluator;
+import org.jpmml.manager.IPMMLResult;
+import org.jpmml.manager.ModelManager;
 import org.jpmml.manager.PMMLManager;
 import org.jpmml.translator.*;
 import org.slf4j.Logger;
@@ -136,13 +139,22 @@ public class BaseModelTest {
 
 		// if we get here then value1==value2
 		// now evaluate value3 and compare against value1
-		Object value3 = evaluateModel(evaluator, nameToValue);
+		Object value3 = null;
+
+		try {
+			value3 = evaluateModel(evaluator, nameToValue)
+					.getValue(((PMMLManager) evaluator).getOutputField((ModelManager<?>) evaluator).getName());
+		} catch (NoSuchElementException e) {
+			value3 = null;
+		} catch (Exception e) {
+			value3 = null;
+		}
 
 		// Fake for the result explanation, because evaluator.getResultExplanation doesn't exist.
 		compareValues(iteration, nameToValue, value2, value3, null, null, true);
 	}
 
-	protected Object evaluateModel(Evaluator evaluator, Map<String, Object> nameToValue) {
+	protected IPMMLResult evaluateModel(Evaluator evaluator, Map<String, Object> nameToValue) {
 		Map<FieldName, Object> fieldToValue = new HashMap<FieldName, Object>();
 		for (Map.Entry<String, Object> entry : nameToValue.entrySet()) {
 			fieldToValue.put(new FieldName(entry.getKey()), entry.getValue());
