@@ -35,8 +35,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		this(parent.getPmml(), parent.getModel());
 	}
 
-	// Work for vote. Each value is at least > 0.0. Return the key of the pair
-	// that has the biggest value.
+	/** Work for vote. Each value is at least > 0.0. Return the key of the pair
+	* that has the biggest value.
+	*/
 	private Object getBetterKey(Map<?, Double> map) {
 		Double max = 0.0;
 		Object result = null;
@@ -50,6 +51,14 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return result;
 	}
 
+	/**
+	 * Allow to get a unique id for each segment. It is useful
+	 * because we can't rely on the id from the pmml that might contain a dot,
+	 * or that can be anything.
+	 *
+	 * @param s The segment we want to identify.
+	 * @return His id.
+	 */
 	private String getId(Segment s) {
 		if (!segmentToId.containsKey(s)) {
 			segmentToId.put(s, segmentMaxId++);
@@ -59,7 +68,6 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 	}
 
-	// Evaluate the parameters on the score card.
 	// We can convert anything to an Object type. So the cast is legitimate.
 	@SuppressWarnings(value = { "unchecked" })
 	public IPMMLResult evaluate(Map<FieldName, ?> parameters) {
@@ -77,19 +85,43 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		}
 	}
 
-	private Double getDouble(Object obj) {
+	/**
+	 * Get a double value from the object.
+	 *
+	 * @param obj An object representing a double. Must be a Double,
+	 * or a String representing a double.
+	 * @return The value of the object in Double.
+	 * @throws EvaluationException If the value is not a double nor a string.
+	 */
+	private Double getDouble(Object obj) throws EvaluationException {
 		Double tmpRes = null;
-		// FIXME: This is done because TreeModelEvaluator returns String even for regression.
 		if (obj instanceof String) {
 			tmpRes = Double.parseDouble((String) obj);
 		}
-		else {
+		else if (obj instanceof Double){
 			tmpRes = (Double) obj;
+		}
+		else {
+			throw new EvaluationException("Received type is neither a double nor a string.");
 		}
 
 		return tmpRes;
 	}
 
+	/**
+	 * Run all the models, and store the results in results,
+	 * the weight in idToWeight if we are interested in them,
+	 * it augments parameters in case of modelChain,
+	 * and return the main result.
+	 *
+	 * @param parameters The set of parameters for the evaluation.
+	 * @param outputField The outputField where we will store the final result.
+	 * @param results The set of results.
+	 * @param idToWeight The weights. Useful for regression and weighted average for example.
+	 * @return The main result if any (for example in select first).
+	 * @throws Exception If there is a trouble with getting the name of the outputField
+	 * of a model.
+	 */
 	private Object runModels(Map<FieldName, Object> parameters, DataField outputField,
 			TreeMap<String, Object> results, TreeMap<String, Double> idToWeight) throws Exception {
 
@@ -105,18 +137,25 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
 					FieldName output = getOutputField((ModelManager<?>) m).getName();
 					tmpObj.merge(parameters);
+					// If this is the result we are interested in, put it in result.
 					if (output.equals(outputField.getName())) {
+						// This cast is legitimate because getModelManager returns a modelManager that is
+						// also an evaluator.
 						result = tmpObj.getValue(getOutputField((ModelManager<?>) m).getName());
 					}
 				}
+				// If there is at least one result.
 				if (tmpObj != null && !tmpObj.isEmpty()) {
 					// Associate the main result to the name of the segment.
-					// So we don't override the previous result at each new segment.
+					// So we won't override the previous result at each new segment.
+
+					// If there is one result, store it in the result list.
 					Object tmpRes = tmpObj.getValue(getOutputField((ModelManager<?>) m).getName());
 					if (tmpRes != null) {
 						results.put(getId(s), tmpRes);
 
 						idToWeight.put(getId(s), s.getWeight());
+						// In this case, we are done with the evaluation of these model. We can quit.
 						if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
 							result = results.get(getId(s));
 							break;
@@ -129,6 +168,15 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return result;
 	}
 
+	/**
+	 * Evaluate the regression.
+	 *
+	 * @param parameters The set of parameters.
+	 * @param outputField The output field.
+	 * @return The result of the evaluation.
+	 * @throws Exception If there is a trouble with getting the name of the outputField
+	 * of a model.
+	 */
 	private IPMMLResult evaluateRegression(Map<FieldName, Object> parameters, DataField outputField) throws Exception {
 		assert parameters != null;
 
@@ -190,6 +238,16 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return res;
 	}
 
+
+	/**
+	 * Evaluate the classification.
+	 *
+	 * @param parameters The set of parameters.
+	 * @param outputField The output field.
+	 * @return The result of the evaluation.
+	 * @throws Exception If there is a trouble with getting the name of the outputField
+	 * of a model.
+	 */
 	private IPMMLResult evaluateClassification(Map<FieldName, Object> parameters, DataField outputField) throws Exception {
 		assert parameters != null;
 

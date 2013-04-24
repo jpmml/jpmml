@@ -169,8 +169,14 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		Map<FieldName, NodeClassificationMap> predictions = Collections.singletonMap(getTarget(), values);
 
-		IPMMLResult res = new PMMLResult();
+		TreePMMLResult res = new PMMLResult();
 		res.merge(OutputUtil.evaluate(predictions, context));
+
+		// Sometimes we ends up with no currentNode.
+		if (currentNode != null) {
+		    res.setNodeId(currentNode.getId());
+		}
+
 		return res;
 	}
 

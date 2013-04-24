@@ -173,7 +173,8 @@ public class BaseModelTest {
 				|| (value1 != null && value2 != null && !value1.equals(value2))
 				|| (explanation1 != null && explanation2 != null && !explanation1.equals(explanation2))) {
 			if (!(value1 != null && value2 != null && value1 instanceof Double
-					&& ((((Double) value1 + 1E-6) > ((Double) value2)) && (((Double) value1 - 1E-6) < ((Double) value2))))) {
+					&& (((((Double) value1) + 1E-6) > ((Double) value2))
+					&& (((Double) value1 - 1E-6) < ((Double) value2))))) {
 				logger.info((secondTest ? "Second " : "First ") + "test failed. Value1 = " + value1 + "; value2 = " + value2 + "; explanation1 = "
 						+ explanation1 + "; explanation2 = " + explanation2);
 				for (Map.Entry<String, Object> e : nameToValue.entrySet()) {

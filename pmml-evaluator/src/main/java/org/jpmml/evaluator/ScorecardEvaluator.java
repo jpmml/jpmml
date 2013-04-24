@@ -10,8 +10,8 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Scorecard;
 import org.jpmml.manager.IPMMLResult;
-import org.jpmml.manager.PMMLResult;
 import org.jpmml.manager.ScoreCardModelManager;
+import org.jpmml.manager.ScoreCardPMMLResult;
 
 public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluator {
 
@@ -73,9 +73,10 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 
 		lastReasonCode = diffToReasonCode.lastEntry().getValue();
 
-		IPMMLResult res = new PMMLResult();
+		ScoreCardPMMLResult res = new ScoreCardPMMLResult();
 		try {
 			res.put(getOutputField(this).getName(), score);
+			res.setLastReasonCode(lastReasonCode);
 		} catch (Exception e) {
 			throw new EvaluationException(e.getMessage());
 		}

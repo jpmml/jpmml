@@ -43,6 +43,19 @@ public interface IPMMLResult {
 	 */
 	public void merge(Map<FieldName, Object> m);
 
+	/**
+	 * Return true if there is not result.
+	 */
 	public Boolean isEmpty();
+
+	/**
+	 * Most of the time, there is only one return value to a model.
+	 * This result is what you get by calling this function.
+	 *
+	 * @return The result wanted.
+	 * @throws NoSuchElementException If there is more than one result or
+	 * if there is none.
+	 */
+	public Object getResult() throws NoSuchElementException;
 
 }
