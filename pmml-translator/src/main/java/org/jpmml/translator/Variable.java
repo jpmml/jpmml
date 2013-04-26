@@ -49,31 +49,31 @@ public class Variable {
 		return type;
 	}
 
-	public String typeName;
+	private String typeName;
 	private String name;
 
 
 	public Variable(DataField d) {
-		type = dataTypeToVariableType(d.getDataType());
-		name = d.getName().getValue();
-		typeName = null;
+		this.type = dataTypeToVariableType(d.getDataType());
+		this.name = d.getName().getValue();
+		this.typeName = null;
 	}
 
 	public Variable(DataType d, String name) {
-		type = dataTypeToVariableType(d);
+		this.type = dataTypeToVariableType(d);
 		this.name = name;
-		typeName = null;
+		this.typeName = null;
 	}
 
 	public Variable(VariableType type,
 					String name) {
 		this.type = type;
 		this.name = name;
-		typeName = null;
+		this.typeName = null;
 	}
 
 	public Variable(VariableType type,
-					String typename,
+					String typeName,
 					String name)
 	{
 		if (type != VariableType.OBJECT) {
@@ -82,13 +82,13 @@ public class Variable {
 		}
 
 		this.name = name;
-		typeName = typename;
+		this.typeName = typeName;
 		this.type = type;
 	}
 
 	public Variable(String name) {
 		this.name = name;
-		type = VariableType.INTEGER;
+		this.type = VariableType.INTEGER;
 	}
 
 	public VariableType dataTypeToVariableType(DataType d) {
