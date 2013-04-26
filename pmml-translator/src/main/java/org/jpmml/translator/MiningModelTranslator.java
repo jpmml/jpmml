@@ -1,7 +1,6 @@
 package org.jpmml.translator;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
@@ -9,7 +8,6 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningModel;
 import org.dmg.pmml.MultipleModelMethodType;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Segment;
 import org.jpmml.manager.MiningModelManager;
@@ -26,7 +24,6 @@ import org.jpmml.translator.Variable.VariableType;
  */
 public class MiningModelTranslator extends MiningModelManager implements Translator {
 	private HashMap<Segment, Integer> segmentToId = new HashMap<Segment, Integer>();
-	private Integer segmentMaxId = 0;
 
 	public MiningModelTranslator(PMML pmml){
 		super(pmml);
@@ -78,7 +75,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 
 	private String namify(Segment s) {
 		if (!segmentToId.containsKey(s)) {
-			segmentToId.put(s, segmentMaxId++);
+			segmentToId.put(s, segmentToId.size());
 		}
 
 		return "segmentNumber" + segmentToId.get(s);
@@ -105,16 +102,23 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			DataField out = getOutputField((ModelManager<?>) t);
 			OpType op = out.getOptype();
 			DataType dt = out.getDataType();
-			cf.addDeclarationVariable(code, context, new Variable(dt, namify(s)));
+
+
+			cf.addDeclarationVariable(code, context, new Variable(dt, namify(s)), "null");
 			cf.beginControlFlowStructure(code, context, "if", "("
-					+ PredicateTranslationUtil.generateCode(s.getPredicate(), this, context) + ") == " + PredicateTranslationUtil.TRUE);
+					+ PredicateTranslationUtil.generateCode(s.getPredicate(), this, context)
+					+ ") == " + PredicateTranslationUtil.TRUE);
 			code.append(t.translate(context, new DataField(new FieldName(namify(s)), op, dt)));
+
+
 			if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
 				cf.affectVariable(code, context, outputField.getName().getValue(), namify(s));
 				cf.addLine(code, context, "break;");
 			}
+
 			if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
-				cf.affectVariable(code, context, getOutputField((ModelManager<?>) t).getName().getValue(), namify(s));
+				cf.affectVariable(code, context, getOutputField((ModelManager<?>) t)
+						.getName().getValue(), namify(s));
 			}
 			cf.endControlFlowStructure(code, context);
 		}
@@ -159,9 +163,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 				// 'result += value == null ? value * weight : 0;' Where
 				// the '* weight' is only done when we weighted is true.
 
-				// TODO: Standardize the output of the three methods. One can return null while the other return 0.0...
-				// It's bad!
-				cf.beginControlFlowStructure(code, context, "if", namify(s) + " != null && " + namify(s) + " != 0.0");
+				cf.beginControlFlowStructure(code, context, "if", namify(s) + " != null");
 				cf.affectVariable(code, context, Operator.PLUS_EQUAL, new Variable(outputField), namify(s)
 						+ (weighted ? " * " + s.getWeight() : ""));
 				cf.addLine(code, context, "++" + counterName + ";");

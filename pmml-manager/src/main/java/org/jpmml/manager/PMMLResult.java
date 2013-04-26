@@ -30,10 +30,23 @@ public class PMMLResult implements IPMMLResult {
 		return results.get(key);
 	}
 
+    /**
+     * Associate key with value. If key already exists, the old value is
+     * overridden.
+     *
+     * @param key The key.
+     * @param value The value.
+     */
 	public void put(FieldName key, Object value) {
 		results.put(key, value);
 	}
 
+	/**
+	 * Take a map and add all the content of the result to this map.
+	 *
+	 * @param m The map to fill.
+	 * @return
+	 */
 	public void merge(Map<FieldName, Object> m) {
 		for (Map.Entry<FieldName, Object> e : results.entrySet()) {
 			m.put(e.getKey(), e.getValue());

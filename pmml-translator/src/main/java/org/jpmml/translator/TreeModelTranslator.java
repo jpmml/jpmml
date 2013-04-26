@@ -133,7 +133,8 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 					// same as above, but reset prediction to null
 					cf.affectVariable(code, context, succVariable, "true");
 
-					cf.affectVariableToNullValue(code, context, new Variable(outputVariable));
+					cf.affectVariableToNullValue(code, context, new Variable(VariableType.OBJECT, "Double",
+																			outputVariable.getName().getValue()));
 					break;
 
 				case DEFAULT_CHILD:
@@ -150,7 +151,6 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 					throw new TranslationException("Unsupported strategy: " + getModel().getMissingValueStrategy());
 			}
 
-
 			cf.endControlFlowStructure(code, context);
 			cf.endControlFlowStructure(code, context);
 		}
@@ -158,7 +158,8 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 		if (getModel().getNoTrueChildStrategy()==NoTrueChildStrategyType.RETURN_NULL_PREDICTION) {
 			cf.beginControlFlowStructure(code, context, "if", "!" + succVariable);
 
-			cf.affectVariableToNullValue(code, context, new Variable(outputVariable));
+			cf.affectVariableToNullValue(code, context, new Variable(VariableType.OBJECT, "Double",
+					outputVariable.getName().getValue()));
 
 
 			cf.affectVariable(code, context,

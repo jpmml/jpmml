@@ -132,7 +132,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		for (Segment s : getSegment()) {
 			if (PredicateUtil.evaluatePredicate(s.getPredicate(), parameters)) {
 				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
-				IPMMLResult tmpObj = m.evaluate(parameters);
+				PMMLResult tmpObj = (PMMLResult) m.evaluate(parameters);
 
 				if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
 					FieldName output = getOutputField((ModelManager<?>) m).getName();
@@ -228,7 +228,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		}
 
 
-		IPMMLResult res = new PMMLResult();
+		PMMLResult res = new PMMLResult();
 		try {
 			res.put(getOutputField(this).getName(), result);
 		} catch (Exception e) {
@@ -301,7 +301,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 					+ " is not compatible with the regression.");
 		}
 
-		IPMMLResult res = new PMMLResult();
+		PMMLResult res = new PMMLResult();
 		try {
 			res.put(getOutputField(this).getName(), result);
 		} catch (Exception e) {

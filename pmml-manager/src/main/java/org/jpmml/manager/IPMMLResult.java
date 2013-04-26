@@ -1,6 +1,5 @@
 package org.jpmml.manager;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.dmg.pmml.FieldName;
@@ -24,24 +23,6 @@ public interface IPMMLResult {
 	 * @throws NoSuchElementException If the key does not exist.
 	 */
 	public Object getValue(FieldName key) throws NoSuchElementException;
-
-	/**
-	 * Associate key with value. If key already exists, the old value is
-	 * overridden.
-	 *
-	 * @param key The key.
-	 * @param value The value.
-	 */
-	public void put(FieldName key, Object value);
-
-
-	/**
-	 * Take a map and add all the content of the result to this map.
-	 *
-	 * @param m The map to fill.
-	 * @return
-	 */
-	public void merge(Map<FieldName, Object> m);
 
 	/**
 	 * Return true if there is not result.
