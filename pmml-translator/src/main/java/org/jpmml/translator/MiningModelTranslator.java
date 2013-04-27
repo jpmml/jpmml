@@ -104,7 +104,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			DataType dt = out.getDataType();
 
 
-			cf.addDeclarationVariable(code, context, new Variable(dt, namify(s)), "null");
+			cf.declareVariable(code, context, new Variable(dt, namify(s)), "null");
 			cf.beginControlFlowStructure(code, context, "if", "("
 					+ PredicateTranslationUtil.generateCode(s.getPredicate(), this, context)
 					+ ") == " + PredicateTranslationUtil.TRUE);
@@ -112,12 +112,12 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 
 
 			if (getMultipleMethodModel() == MultipleModelMethodType.SELECT_FIRST) {
-				cf.affectVariable(code, context, outputField.getName().getValue(), namify(s));
+				cf.assignVariable(code, context, outputField.getName().getValue(), namify(s));
 				cf.addLine(code, context, "break;");
 			}
 
 			if (getMultipleMethodModel() == MultipleModelMethodType.MODEL_CHAIN) {
-				cf.affectVariable(code, context, getOutputField((ModelManager<?>) t)
+				cf.assignVariable(code, context, getOutputField((ModelManager<?>) t)
 						.getName().getValue(), namify(s));
 			}
 			cf.endControlFlowStructure(code, context);
@@ -150,13 +150,13 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			String sumName = context.generateLocalVariableName("sum");
 			String sumWeightName = context.generateLocalVariableName("sumWeight");
 
-			cf.addDeclarationVariable(code, context, new Variable(VariableType.DOUBLE, sumName));
+			cf.declareVariable(code, context, new Variable(VariableType.DOUBLE, sumName));
 			if (weighted) {
-				cf.addDeclarationVariable(code, context, new Variable(VariableType.DOUBLE, sumWeightName));
+				cf.declareVariable(code, context, new Variable(VariableType.DOUBLE, sumWeightName));
 			}
 
 			String counterName = context.generateLocalVariableName("counter");
-			cf.addDeclarationVariable(code, context, new Variable(VariableType.INTEGER, counterName));
+			cf.declareVariable(code, context, new Variable(VariableType.INTEGER, counterName));
 
 			for (Segment s : getSegment()) {
 				// This following line is equivalent to add this to the code:
@@ -164,20 +164,20 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 				// the '* weight' is only done when we weighted is true.
 
 				cf.beginControlFlowStructure(code, context, "if", namify(s) + " != null");
-				cf.affectVariable(code, context, Operator.PLUS_EQUAL, new Variable(outputField), namify(s)
+				cf.assignVariable(code, context, Operator.PLUS_EQUAL, new Variable(outputField), namify(s)
 						+ (weighted ? " * " + s.getWeight() : ""));
 				cf.addLine(code, context, "++" + counterName + ";");
 
 				if (weighted) {
 					// Little hack to transform the weight into a string without creating (explicitly) a Double, and call
 					// ToString on it.
-					cf.affectVariable(code, context, Operator.PLUS_EQUAL, sumWeightName, "" + s.getWeight());
+					cf.assignVariable(code, context, Operator.PLUS_EQUAL, sumWeightName, "" + s.getWeight());
 				}
 				cf.endControlFlowStructure(code, context);
 			}
 
 			cf.beginControlFlowStructure(code, context, "if", (weighted ? sumWeightName : counterName) + " != 0.0");
-			cf.affectVariable(code, context, Operator.DIV_EQUAL, outputField.getName().getValue(),
+			cf.assignVariable(code, context, Operator.DIV_EQUAL, outputField.getName().getValue(),
 							weighted ? sumWeightName : "" + counterName);
 
 			cf.endControlFlowStructure(code, context);
@@ -194,7 +194,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 				cf.endControlFlowStructure(code, context);
 			}
 			cf.addLine(code, context, "Collections.sort(" + listName + ");");
-			cf.affectVariable(code, context, outputField.getName().getValue(), listName + ".get("
+			cf.assignVariable(code, context, outputField.getName().getValue(), listName + ".get("
 					+ listName + ".size() / 2);");
 			break;
 		default:
@@ -220,7 +220,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 		case MAJORITY_VOTE:
 		case WEIGHTED_MAJORITY_VOTE:
 			context.addRequiredImport("java.util.TreeMap;");
-			cf.addDeclarationVariable(code, context, new Variable(VariableType.OBJECT, "TreeMap<String, Double>", "nameToVote"));
+			cf.declareVariable(code, context, new Variable(VariableType.OBJECT, "TreeMap<String, Double>", "nameToVote"));
 			for (Segment s : getSegment()) {
 				Double weight = getMultipleMethodModel() == MultipleModelMethodType.WEIGHTED_MAJORITY_VOTE
 						? s.getWeight()
@@ -263,11 +263,11 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 		StringBuilder result = new StringBuilder();
 
 		String maxVarName = context.generateLocalVariableName("max");
-		cf.addDeclarationVariable(result, context, new Variable(VariableType.DOUBLE, maxVarName));
+		cf.declareVariable(result, context, new Variable(VariableType.DOUBLE, maxVarName));
 		cf.beginControlFlowStructure(result, context, "for", "Map.Entry<?, Double> tmpVariable : " + mapName + ".entrySet()");
 		cf.beginControlFlowStructure(result, context, "if", "tmpVariable.getValue() > " + maxVarName);
-		cf.affectVariable(result, context, outputVariableName, "(String) tmpVariable.getKey()");
-		cf.affectVariable(result, context, maxVarName, "tmpVariable.getValue()");
+		cf.assignVariable(result, context, outputVariableName, "(String) tmpVariable.getKey()");
+		cf.assignVariable(result, context, maxVarName, "tmpVariable.getValue()");
 		cf.endControlFlowStructure(result, context);
 
 		cf.endControlFlowStructure(result, context);

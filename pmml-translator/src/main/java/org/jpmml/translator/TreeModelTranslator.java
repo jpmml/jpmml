@@ -78,7 +78,7 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 
 
 		if (context.getModelResultTrackingVariable() != null && node.getId() != null) {
-			cf.affectVariable(code, context, context.getModelResultTrackingVariable(), cf.stringify(node.getId()));
+			cf.assignVariable(code, context, context.getModelResultTrackingVariable(), cf.stringify(node.getId()));
 		}
 
 
@@ -88,7 +88,7 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 
 		String succVariable = context.generateLocalVariableName("succ");
 
-		cf.addDeclarationVariable(code, context, new Variable(VariableType.BOOLEAN, succVariable));
+		cf.declareVariable(code, context, new Variable(VariableType.BOOLEAN, succVariable));
 
 		for (Node child : node.getNodes()) {
 
@@ -103,11 +103,11 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 			String predicateCode = PredicateTranslationUtil.generateCode(predicate, this, context);
 
 			// evaluate predicate and store value into "predicateValue" variable
-			cf.addDeclarationVariable(code, context, new Variable(VariableType.INTEGER, predicateValue), predicateCode);
+			cf.declareVariable(code, context, new Variable(VariableType.INTEGER, predicateValue), predicateCode);
 
 			cf.beginControlFlowStructure(code, context, "if", predicateValue + " == " + PredicateTranslationUtil.TRUE);
 
-			cf.affectVariable(code, context, succVariable, "true");
+			cf.assignVariable(code, context, succVariable, "true");
 
 			// predicate is true - insert code for nested nodes
 			generateCodeForNode(child, context, code, outputVariable, cf);
@@ -126,14 +126,14 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 				case LAST_PREDICTION:
 					// assume this node evaluated to true, but ignore its value
 					// take last prediction instead
-					cf.affectVariable(code, context, succVariable, "true");
+					cf.assignVariable(code, context, succVariable, "true");
 					break;
 
 				case NULL_PREDICTION:
 					// same as above, but reset prediction to null
-					cf.affectVariable(code, context, succVariable, "true");
+					cf.assignVariable(code, context, succVariable, "true");
 
-					cf.affectVariableToNullValue(code, context, new Variable(VariableType.OBJECT, "Double",
+					cf.assignVariableToNullValue(code, context, new Variable(VariableType.OBJECT, "Double",
 																			outputVariable.getName().getValue()));
 					break;
 
@@ -158,11 +158,11 @@ public class TreeModelTranslator extends TreeModelManager implements Translator 
 		if (getModel().getNoTrueChildStrategy()==NoTrueChildStrategyType.RETURN_NULL_PREDICTION) {
 			cf.beginControlFlowStructure(code, context, "if", "!" + succVariable);
 
-			cf.affectVariableToNullValue(code, context, new Variable(VariableType.OBJECT, "Double",
+			cf.assignVariableToNullValue(code, context, new Variable(VariableType.OBJECT, "Double",
 					outputVariable.getName().getValue()));
 
 
-			cf.affectVariable(code, context,
+			cf.assignVariable(code, context,
 					context.getModelResultTrackingVariable(),
 					context.getNullValueForVariable(OpType.CATEGORICAL));
 

@@ -4,7 +4,7 @@ import org.jpmml.manager.UnsupportedFeatureException;
 
 public class StandardCodeFormatter implements CodeFormatter {
 
-	public void addDeclarationVariable(StringBuilder code,
+	public void declareVariable(StringBuilder code,
 			TranslationContext context, Variable variable,
 			String initializer) {
 		code.append(context.getIndentation())
@@ -13,7 +13,7 @@ public class StandardCodeFormatter implements CodeFormatter {
 			.append(initializer).append(";\n");
 	}
 
-	public void addDeclarationVariable(StringBuilder code,
+	public void declareVariable(StringBuilder code,
 			TranslationContext context, Variable variable) {
 		String initializer = null;
 
@@ -36,7 +36,7 @@ public class StandardCodeFormatter implements CodeFormatter {
 			throw new UnsupportedFeatureException(variable.getType());
 		}
 
-		addDeclarationVariable(code, context, variable, initializer);
+		declareVariable(code, context, variable, initializer);
 	}
 
 	public void addLine(StringBuilder code, TranslationContext context,
@@ -44,7 +44,7 @@ public class StandardCodeFormatter implements CodeFormatter {
 		code.append(context.getIndentation()).append(line).append("\n");
 	}
 
-	public void affectVariableToNullValue(StringBuilder code,
+	public void assignVariableToNullValue(StringBuilder code,
 			TranslationContext context, Variable variable) {
 		String initializer = null;
 
@@ -64,12 +64,12 @@ public class StandardCodeFormatter implements CodeFormatter {
 			throw new UnsupportedFeatureException(variable.getType());
 		}
 		
-		affectVariable(code, context, Operator.EQUAL, variable, initializer);
+		assignVariable(code, context, Operator.EQUAL, variable, initializer);
 	}
 
-	public void affectVariable(StringBuilder code, TranslationContext context,
+	public void assignVariable(StringBuilder code, TranslationContext context,
 			Operator op, Variable variable, String expression) {
-		affectVariable(code, context, op, variable.getName(), expression);
+		assignVariable(code, context, op, variable.getName(), expression);
 	}
 
 	public void beginControlFlowStructure(StringBuilder code,
@@ -93,20 +93,20 @@ public class StandardCodeFormatter implements CodeFormatter {
 		code.append(context.getIndentation()).append("}\n");
 	}
 
-	public void affectVariable(StringBuilder code, TranslationContext context,
+	public void assignVariable(StringBuilder code, TranslationContext context,
 			Variable variable, String expression) {
-		affectVariable(code, context, Operator.EQUAL, variable, expression);
+		assignVariable(code, context, Operator.EQUAL, variable, expression);
 		
 	}
 
-	public void affectVariable(StringBuilder code, TranslationContext context,
+	public void assignVariable(StringBuilder code, TranslationContext context,
 			String variableName, String expression) {
 		code.append(context.getIndentation()).append(variableName)
 		.append(" = ").append(expression)
 		.append(";\n");	
 	}
 
-	public void affectVariable(StringBuilder code, TranslationContext context,
+	public void assignVariable(StringBuilder code, TranslationContext context,
 			Operator op, String variableName, String expression) {
 		code.append(context.getIndentation()).append(variableName)
 		.append(" ").append(op.value()).append(" ").append(expression)

@@ -121,10 +121,10 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		case NONE:
 			// Pick the category with top score.
 			String entryName = context.generateLocalVariableName("entry");
-			cf.addDeclarationVariable(sb, context, new Variable(VariableType.DOUBLE, entryName));
+			cf.declareVariable(sb, context, new Variable(VariableType.DOUBLE, entryName));
 			//cf.addLine(sb, context, "Map.Entry<String, Double> " + entryName + " = null;");
 			for (RegressionTable rt : getOrCreateRegressionTables()) {
-				cf.affectVariable(sb, context, entryName, categoryNameToVariable.get(rt.getTargetCategory()));
+				cf.assignVariable(sb, context, entryName, categoryNameToVariable.get(rt.getTargetCategory()));
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
 						entryName + ", \"" + rt.getTargetCategory() + "\");");
 			}
@@ -148,9 +148,9 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		case SOFTMAX:
 			// pj = exp(yj) / (Sum[i = 1 to N](exp(yi) ) )
 			String sumName = context.generateLocalVariableName("sum");
-			cf.addDeclarationVariable(sb, context, new Variable(Variable.VariableType.DOUBLE, sumName));
+			cf.declareVariable(sb, context, new Variable(Variable.VariableType.DOUBLE, sumName));
 			for (RegressionTable rt : getOrCreateRegressionTables()) {
-				cf.affectVariable(sb, context, Operator.PLUS_EQUAL, sumName, "Math.exp(" 
+				cf.assignVariable(sb, context, Operator.PLUS_EQUAL, sumName, "Math.exp(" 
 						+ categoryNameToVariable.get(rt.getTargetCategory()) + ")");
 			}
 
@@ -185,7 +185,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 	}
 
 		
-		cf.affectVariable(sb, context, outputField.getName().getValue(),
+		cf.assignVariable(sb, context, outputField.getName().getValue(),
 						scoreToCategoryVariable + ".lastEntry().getValue()");
 	}
 	
@@ -209,7 +209,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		List<CategoricalPredictor> lcp = getCategoricalPredictors(rt);
 
 		String categoryVariableName = context.generateLocalVariableName(rt.getTargetCategory());
-		cf.addDeclarationVariable(sb, context, new Variable(Variable.VariableType.DOUBLE,
+		cf.declareVariable(sb, context, new Variable(Variable.VariableType.DOUBLE,
 				categoryVariableName), getIntercept(rt).toString());
 
 		for (NumericPredictor np : lnp) {
@@ -221,7 +221,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		}
 		
 		if (storeResultInVariable) {
-			cf.affectVariable(sb, context, variableName, categoryVariableName);
+			cf.assignVariable(sb, context, variableName, categoryVariableName);
 		}
 
 		return categoryVariableName;
@@ -245,12 +245,12 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 				break;
 			case SOFTMAX:
 			case LOGIT:
-				cf.affectVariable(code, context, outputVariable.getName().getValue(), "1.0 / (1.0 + Math.exp(-"
+				cf.assignVariable(code, context, outputVariable.getName().getValue(), "1.0 / (1.0 + Math.exp(-"
 						+ outputVariable.getName().getValue() + "))");
 				// result = 1.0 / (1.0 + Math.exp(-result));
 				break;
 			case EXP:
-				cf.affectVariable(code, context, outputVariable.getName().getValue(), "Math.exp("
+				cf.assignVariable(code, context, outputVariable.getName().getValue(), "Math.exp("
 						+ outputVariable.getName().getValue() + ")");
 				// result = Math.exp(result);
 				break;
@@ -280,7 +280,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 					+ numericPredictor.getName().getValue() + "\");");
 		cf.endControlFlowStructure(code, context);
 		cf.beginControlFlowStructure(code, context, "else", null);
-		cf.affectVariable(code, context, Operator.PLUS_EQUAL, outputVariableName,
+		cf.assignVariable(code, context, Operator.PLUS_EQUAL, outputVariableName,
 				numericPredictor.getCoefficient()
 				+ " * Math.pow(" + numericPredictor.getName().getValue() + ", "
 				+ numericPredictor.getExponent().doubleValue() + ")");
@@ -300,7 +300,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			CategoricalPredictor categoricalPredictor, CodeFormatter cf) {
 		
 		cf.beginControlFlowStructure(code, context, "if", categoricalPredictor.getName().getValue() + " != null");
-		cf.affectVariable(code, context, Operator.PLUS_EQUAL, outputVariableName,
+		cf.assignVariable(code, context, Operator.PLUS_EQUAL, outputVariableName,
 				categoricalPredictor.getCoefficient() + " * (("
 				+ generateEqualityExpression(categoricalPredictor) + ") ? 1 : 0)");
 		cf.endControlFlowStructure(code, context);

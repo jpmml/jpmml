@@ -68,7 +68,7 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 		String diffToReasonCodeVariable = context.generateLocalVariableName("diffToReasonCode");
 		
 		context.requiredImports.add("import java.util.TreeMap;");
-		context.getFormatter().addDeclarationVariable(sb, context,
+		context.getFormatter().declareVariable(sb, context,
 				new Variable(VariableType.OBJECT, "TreeMap<Double, String>", diffToReasonCodeVariable));
 		
 		
@@ -79,7 +79,7 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 
 		// Store the result of the reason code. It is currently stored in diffToReasonCode.lastEntry().getValue().
 		if (context.getModelResultTrackingVariable() != null) {
-			context.getFormatter().affectVariable(sb, context, Operator.EQUAL, context.getModelResultTrackingVariable(),
+			context.getFormatter().assignVariable(sb, context, Operator.EQUAL, context.getModelResultTrackingVariable(),
 					diffToReasonCodeVariable + ".lastEntry().getValue()");
 		}
 		return sb.toString();
@@ -121,7 +121,7 @@ public class ScorecardTranslator extends ScoreCardModelManager implements Transl
 			
 			
 			// Update the outputVariable with the corresponding partial score.
-			cf.affectVariable(code, context, Operator.PLUS_EQUAL,
+			cf.assignVariable(code, context, Operator.PLUS_EQUAL,
 					outputVariable.getName().getValue(), a.getPartialScore().toString());
 			
 			// Compute the diff, include the result in the generated code.

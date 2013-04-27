@@ -40,7 +40,7 @@ public interface CodeFormatter {
 	 * @param variable The variable.
 	 * @param initializer The initial value.
 	 */
-	public void addDeclarationVariable(StringBuilder code, TranslationContext context,
+	public void declareVariable(StringBuilder code, TranslationContext context,
 					Variable variable, String initializer);
 	
 	/**
@@ -52,7 +52,7 @@ public interface CodeFormatter {
 	 * @param context The context of the translation.
 	 * @param variable The variable.
 	 */
-	public void addDeclarationVariable(StringBuilder code, TranslationContext context,
+	public void declareVariable(StringBuilder code, TranslationContext context,
 					Variable variable);
 	
 	/**
@@ -64,59 +64,59 @@ public interface CodeFormatter {
 	public void addLine(StringBuilder code, TranslationContext context, String line);
 	
 	/**
-	 * Affect the variable to the "null" value corresponding to its type.
+	 * Assign the variable to the "null" value corresponding to its type.
 	 * 
 	 * @param code The code on which we append.
 	 * @param context The context of the translation. Define the null value.
 	 * @param variable The variable.
 	 */
-	public void affectVariableToNullValue(StringBuilder code, TranslationContext context,
+	public void assignVariableToNullValue(StringBuilder code, TranslationContext context,
 										Variable variable);
 	
 	/**
-	 * Affect a variable.
+	 * Assign a variable.
 	 * 
 	 * @param code The code on which we append.
 	 * @param context The context of the translation.
-	 * @param op The operation on the affectation.
+	 * @param op The operation on the assignment.
 	 * @param variable The variable we affect.
-	 * @param expression The expression on the right side of the affectation.
+	 * @param expression The expression on the right side of the assignment.
 	 */
-	public void affectVariable(StringBuilder code, TranslationContext context,
+	public void assignVariable(StringBuilder code, TranslationContext context,
 			Operator op, Variable variable, String expression);
 
 	/**
-	 * Affect a variable.
+	 * Assign a variable.
 	 * 
 	 * @param code The code on which we append.
 	 * @param context The context of the translation.
-	 * @param op The operation on the affectation.
+	 * @param op The operation on the assignment.
 	 * @param variableName The name of the variable we affect.
-	 * @param expression The expression on the right side of the affectation.
+	 * @param expression The expression on the right side of the assignment.
 	 */
-	public void affectVariable(StringBuilder code, TranslationContext context,
+	public void assignVariable(StringBuilder code, TranslationContext context,
 			Operator op, String variableName, String expression);
 	
 	/**
-	 * Affect a variable with the operator "=".
+	 * Assign a variable with the operator "=".
 	 * 
 	 * @param code The code on which we append.
 	 * @param context The context of the translation.
-	 * @param variable The variable we affect.
-	 * @param expression The expression on the right side of the affectation.
+	 * @param variable The variable we assign.
+	 * @param expression The expression on the right side of the assignment.
 	 */
-	public void affectVariable(StringBuilder code, TranslationContext context,
+	public void assignVariable(StringBuilder code, TranslationContext context,
 			Variable variable, String expression);
 	
 	/**
-	 * Affect a variable with the operator "=".
+	 * Assign a variable with the operator "=".
 	 * 
 	 * @param code The code on which we append.
 	 * @param context The context of the translation.
-	 * @param variableName The name of the variable we affect.
-	 * @param expression The expression on the right side of the affectation.
+	 * @param variableName The name of the variable we assign.
+	 * @param expression The expression on the right side of the assignment.
 	 */
-	public void affectVariable(StringBuilder code, TranslationContext context,
+	public void assignVariable(StringBuilder code, TranslationContext context,
 			String variableName, String expression);
 	
 	
