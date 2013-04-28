@@ -40,7 +40,7 @@ public class TranslationContext {
 	protected int localVariablesIndex;
 	protected CodeFormatter formatter;
 	
-
+	protected String prefix = "__";
 
 	public TranslationContext() {
 		indentationString = "\t\t";
@@ -168,7 +168,7 @@ public class TranslationContext {
 	 * @return
 	 */
 	public String generateLocalVariableName(String prefix) {
-		return prefix + localVariablesIndex++;
+		return this.prefix + prefix + localVariablesIndex++;
 	}
 
 	/**

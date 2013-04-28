@@ -102,7 +102,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 	 */
 	private void translateClassification(StringBuilder sb, TranslationContext context, DataField outputField) {
 		CodeFormatter cf = context.getFormatter();
-		String targetCategoryToScoreVariable = "targetCategoryToScore";
+		String targetCategoryToScoreVariable = context.generateLocalVariableName("targetCategoryToScore");
 		context.requiredImports.add("import java.util.TreeMap;");
 		cf.addLine(sb, context, "TreeMap<String, Double> " + targetCategoryToScoreVariable
 				+ " = new TreeMap<String, Double>();");
@@ -112,9 +112,9 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			categoryNameToVariable.put(rt.getTargetCategory(),
 					translateRegressionTable(sb, context, targetCategoryToScoreVariable, rt, cf, false));
 		}
-		
+
 		// Apply the normalization:
-		String scoreToCategoryVariable = "scoreToCategory";
+		String scoreToCategoryVariable = context.generateLocalVariableName("scoreToCategory");
 		cf.addLine(sb, context, "TreeMap<Double, String> " + scoreToCategoryVariable
 				+ " = new TreeMap<Double, String>();");
 		switch (getNormalizationMethodType()) {
@@ -122,7 +122,6 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			// Pick the category with top score.
 			String entryName = context.generateLocalVariableName("entry");
 			cf.declareVariable(sb, context, new Variable(VariableType.DOUBLE, entryName));
-			//cf.addLine(sb, context, "Map.Entry<String, Double> " + entryName + " = null;");
 			for (RegressionTable rt : getOrCreateRegressionTables()) {
 				cf.assignVariable(sb, context, entryName, categoryNameToVariable.get(rt.getTargetCategory()));
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
