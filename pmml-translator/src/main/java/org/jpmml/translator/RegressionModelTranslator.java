@@ -131,7 +131,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		case LOGIT:
 			// pick the max of pj = 1 / ( 1 + exp( -yj ) )
 			for (RegressionTable rt : getOrCreateRegressionTables()) {
-				String expression = "1.0 / (1.0 + Math.exp(" + categoryNameToVariable.get(rt.getTargetCategory()) + "))";
+				String expression = "1.0 / (1.0 + Math.exp(-" + categoryNameToVariable.get(rt.getTargetCategory()) + "))";
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
 						expression + ", \"" + rt.getTargetCategory() + "\");");
 			}

@@ -28,7 +28,39 @@ public class RegressionModelTest extends BaseModelTest {
 			20);
 	}
 
+	
+	@Test
+	public void testSampleClassification() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/regressionClassification.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		variableToValues.put("age", Arrays.asList(22.0, 35.0, 45.0, 63.0, 33.0, 42.0, 51.0));
+		variableToValues.put("work", Arrays.asList(10.0, 20.0, 30.0));
+		variableToValues.put("sex", Arrays.asList("0", "1"));
+		variableToValues.put("minority", Arrays.asList(0, 1));
 
+		testModelEvaluation(pmmlDoc,
+			SAMPLE_CLASSIFICATION_MODEL_TEMPLATE,
+			new SampleClassificationModel(),
+			variableToValues,
+			20);	
+	}
+
+	@Test
+	public void testSampleClassification2() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/regressionClassification2.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		variableToValues.put("age", Arrays.asList(22.0, 35.0, 45.0, 63.0, 33.0, 42.0, 51.0));
+		variableToValues.put("work", Arrays.asList(10.0, 20.0, 30.0));
+		variableToValues.put("sex", Arrays.asList("0", "1"));
+		variableToValues.put("minority", Arrays.asList(0, 1));
+
+		testModelEvaluation(pmmlDoc,
+			SAMPLE_CLASSIFICATION_MODEL_TEMPLATE,
+			new SampleClassificationModel2(),
+			variableToValues,
+			20);	
+	}
+	
 	@Test
 	public void testSampleRegressionModelNormalization() throws Exception {
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/regression2.xml"));
@@ -44,24 +76,6 @@ public class RegressionModelTest extends BaseModelTest {
 			20);
 	}
 
-	@Test
-	public void testSampleClassification() throws Exception {
-		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/regressionClassification.xml"));
-		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
-		variableToValues.put("age", Arrays.asList(22.0, 35.0, 45.0, 63.0, 33.0, 42.0, 51.0));
-		variableToValues.put("work", Arrays.asList(10.0, 20.0, 30.0));
-		variableToValues.put("sex", Arrays.asList("0", "1"));
-		variableToValues.put("minority", Arrays.asList(0, 1));
-
-		testModelEvaluation(pmmlDoc,
-			SAMPLE_CLASSIFICATION_MODEL_TEMPLATE,
-			new SampleClassificationModel(),
-			variableToValues,
-			20);
-		
-		
-	}
-	
 	protected double getMissingVarProbability() {
 		return 0.01;
 	}
@@ -113,11 +127,15 @@ public class RegressionModelTest extends BaseModelTest {
 			categoryNameToValue.put("professional", professional);
 			categoryNameToValue.put("trainee", trainee);
 			categoryNameToValue.put("skilled", skilled);
-			
-//			System.out.println("clerical: " + clerical);
-//			System.out.println("professional: " + professional);
-//			System.out.println("trainee: " + trainee);
-//			System.out.println("skilled: " + skilled);
+
+			return normalization(categoryNameToValue);
+		}
+		
+		public Object normalization(TreeMap<String, Double> categoryNameToValue) {
+			double clerical = categoryNameToValue.get("clerical");
+			double professional = categoryNameToValue.get("professional");
+			double trainee = categoryNameToValue.get("trainee");
+			double skilled = categoryNameToValue.get("skilled");
 			
 			double sum = Math.exp(clerical) + Math.exp(trainee) + Math.exp(trainee) + 1;
 			
@@ -131,9 +149,29 @@ public class RegressionModelTest extends BaseModelTest {
 			return scoreToCategory.lastEntry().getValue();
 		}
 
+
 		String resultExplanation = null;
 		public String getResultExplanation() {
 			return resultExplanation;
+		}
+	}
+	
+	static public class SampleClassificationModel2 extends SampleClassificationModel {
+		@Override
+		public Object normalization(TreeMap<String, Double> categoryNameToValue) {
+			double clerical = categoryNameToValue.get("clerical");
+			double professional = categoryNameToValue.get("professional");
+			double trainee = categoryNameToValue.get("trainee");
+			double skilled = categoryNameToValue.get("skilled");
+			
+			TreeMap<Double, String> scoreToCategory = new TreeMap<Double, String>();
+			
+			scoreToCategory.put(1.0 / (1.0 + Math.exp(-clerical)), "clerical");
+			scoreToCategory.put(1.0 / (1.0 + Math.exp(-professional)), "professional");
+			scoreToCategory.put(1.0 / (1.0 + Math.exp(-trainee)), "trainee");
+			scoreToCategory.put(1.0 / (1.0 + Math.exp(-skilled)), "skilled");
+			
+			return scoreToCategory.lastEntry().getValue();			
 		}
 	}
 	
