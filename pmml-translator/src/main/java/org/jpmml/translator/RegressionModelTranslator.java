@@ -138,7 +138,9 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			}
 			break;
 		case EXP:
-			// pick the max of exp(yj) 
+			// pick the max of exp(yj)
+			// FIXME: Since this is classification, and since exponential is growing, we may want to
+			// only take the max without computing the exp.
 			for (RegressionTable rt : getOrCreateRegressionTables()) {
 				String expression = "Math.exp(" + categoryNameToVariable.get(rt.getTargetCategory()) + ")";
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +

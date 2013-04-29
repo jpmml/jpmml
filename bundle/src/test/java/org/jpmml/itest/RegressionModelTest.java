@@ -60,6 +60,38 @@ public class RegressionModelTest extends BaseModelTest {
 			variableToValues,
 			20);	
 	}
+
+	@Test
+	public void testSampleClassification3() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/regressionClassification3.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		variableToValues.put("age", Arrays.asList(22.0, 35.0, 45.0, 63.0, 33.0, 42.0, 51.0));
+		variableToValues.put("work", Arrays.asList(10.0, 20.0, 30.0));
+		variableToValues.put("sex", Arrays.asList("0", "1"));
+		variableToValues.put("minority", Arrays.asList(0, 1));
+
+		testModelEvaluation(pmmlDoc,
+			SAMPLE_CLASSIFICATION_MODEL_TEMPLATE,
+			new SampleClassificationModel3(),
+			variableToValues,
+			20);
+	}
+
+	@Test
+	public void testSampleClassification4() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/regressionClassification4.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		variableToValues.put("age", Arrays.asList(22.0, 35.0, 45.0, 63.0, 33.0, 42.0, 51.0));
+		variableToValues.put("work", Arrays.asList(10.0, 20.0, 30.0));
+		variableToValues.put("sex", Arrays.asList("0", "1"));
+		variableToValues.put("minority", Arrays.asList(0, 1));
+
+		testModelEvaluation(pmmlDoc,
+			SAMPLE_CLASSIFICATION_MODEL_TEMPLATE,
+			new SampleClassificationModel4(),
+			variableToValues,
+			20);
+	}
 	
 	@Test
 	public void testSampleRegressionModelNormalization() throws Exception {
@@ -170,6 +202,44 @@ public class RegressionModelTest extends BaseModelTest {
 			scoreToCategory.put(1.0 / (1.0 + Math.exp(-professional)), "professional");
 			scoreToCategory.put(1.0 / (1.0 + Math.exp(-trainee)), "trainee");
 			scoreToCategory.put(1.0 / (1.0 + Math.exp(-skilled)), "skilled");
+			
+			return scoreToCategory.lastEntry().getValue();			
+		}
+	}
+	
+	static public class SampleClassificationModel3 extends SampleClassificationModel {
+		@Override
+		public Object normalization(TreeMap<String, Double> categoryNameToValue) {
+			double clerical = categoryNameToValue.get("clerical");
+			double professional = categoryNameToValue.get("professional");
+			double trainee = categoryNameToValue.get("trainee");
+			double skilled = categoryNameToValue.get("skilled");
+			
+			TreeMap<Double, String> scoreToCategory = new TreeMap<Double, String>();
+			
+			scoreToCategory.put((1.0 - Math.exp(- Math.exp(clerical))), "clerical");
+			scoreToCategory.put((1.0 - Math.exp(- Math.exp(professional))), "professional");
+			scoreToCategory.put((1.0 - Math.exp(- Math.exp(trainee))), "trainee");
+			scoreToCategory.put((1.0 - Math.exp(- Math.exp(skilled))), "skilled");
+			
+			return scoreToCategory.lastEntry().getValue();			
+		}
+	}
+	
+	static public class SampleClassificationModel4 extends SampleClassificationModel {
+		@Override
+		public Object normalization(TreeMap<String, Double> categoryNameToValue) {
+			double clerical = categoryNameToValue.get("clerical");
+			double professional = categoryNameToValue.get("professional");
+			double trainee = categoryNameToValue.get("trainee");
+			double skilled = categoryNameToValue.get("skilled");
+			
+			TreeMap<Double, String> scoreToCategory = new TreeMap<Double, String>();
+			
+			scoreToCategory.put((Math.exp(- Math.exp(-clerical))), "clerical");
+			scoreToCategory.put((Math.exp(- Math.exp(-professional))), "professional");
+			scoreToCategory.put((Math.exp(- Math.exp(-trainee))), "trainee");
+			scoreToCategory.put((Math.exp(- Math.exp(-skilled))), "skilled");
 			
 			return scoreToCategory.lastEntry().getValue();			
 		}

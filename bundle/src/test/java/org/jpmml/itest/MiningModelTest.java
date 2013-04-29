@@ -80,6 +80,22 @@ public class MiningModelTest extends BaseModelTest {
 			20);
 	}
 
+	@Test
+	public void testNestedMiningModel() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/miningModelNested.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		variableToValues.put("v1", Arrays.asList(0.2, 0.3, 0.4, 0.5, 0.6));
+		variableToValues.put("v2", Arrays.asList(69.0));
+		variableToValues.put("v3", Arrays.asList(1.1, 1.4, 1.6, 0.4, 0.5, 0.9));
+		variableToValues.put("v4", Arrays.asList(51.0));
+		variableToValues.put("v5", Arrays.asList(42.0));
+
+		testModelEvaluation(pmmlDoc,
+			VARIABLE_REGRESSION_MULTIPLE_MODEL_TEMPLATE,
+			new VariableMiningModel(),
+			variableToValues,
+			20);
+	}
 
 	protected double getMissingVarProbability() {
 		return 0.01;
