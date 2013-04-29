@@ -12,6 +12,7 @@ import org.dmg.pmml.RegressionModel;
 import org.dmg.pmml.RegressionNormalizationMethodType;
 import org.dmg.pmml.RegressionTable;
 import org.jpmml.manager.RegressionModelManager;
+import org.jpmml.manager.UnsupportedFeatureException;
 import org.jpmml.translator.CodeFormatter.Operator;
 import org.jpmml.translator.Variable.VariableType;
 
@@ -179,8 +180,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			}
 			break;
 		default:
-			cf.addLine(sb, context, "return null;");
-			break;
+			throw new UnsupportedFeatureException(getNormalizationMethodType() + " is not supported.");
 	}
 
 		
