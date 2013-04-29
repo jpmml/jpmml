@@ -7,8 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.IOUtil;
+import org.jpmml.manager.ModelManager;
+import org.jpmml.translator.TranslationContext;
 import org.testng.annotations.Test;
 
 @Test
@@ -96,6 +100,60 @@ public class MiningModelTest extends BaseModelTest {
 			variableToValues,
 			20);
 	}
+
+	@Test
+	public void testVariableOtherNameMiningModel() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/variableMiningModel.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		variableToValues.put("v1", Arrays.asList(0.2, 0.3, 0.4, 0.5, 0.6));
+		variableToValues.put("v2", Arrays.asList(69.0));
+		variableToValues.put("v3", Arrays.asList(1.1, 1.4, 1.6, 0.4, 0.5, 0.9));
+		variableToValues.put("v4", Arrays.asList(51.0));
+		variableToValues.put("v5", Arrays.asList(42.0));
+
+		testModelEvaluation(pmmlDoc,
+			VARIABLE_REGRESSION_MULTIPLE_MODEL_TEMPLATE2,
+			new VariableMiningModel(),
+			variableToValues,
+			20,
+			new TranslationContext() {
+			// override missing value method, since in our template numeric variables represented with Double class
+			public String getMissingValue(OpType variableType) {
+				if (variableType == OpType.CONTINUOUS)
+					return "null";
+
+				return super.getMissingValue(variableType);
+			}
+
+			public String getModelResultTrackingVariable() {
+				return "resultExplanation";
+			}
+
+			protected String formatExternalVariable(ModelManager<?> modelManager, FieldName variableName) {
+				return "p_" + variableName.getValue();
+			}
+		});
+	}
+
+
+//  Work on a simple example.
+//	@Test
+//	public void testFunctionCallRegressionMultipleEasyMiningModel() throws Exception {
+//		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/callMiningModel.xml"));
+//		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+//		variableToValues.put("v1", Arrays.asList(0.2, 0.3, 0.4, 0.5, 0.6));
+//		variableToValues.put("v2", Arrays.asList(69.0));
+//		variableToValues.put("v3", Arrays.asList(1.1, 1.4, 1.6, 0.4, 0.5, 0.9));
+//		variableToValues.put("v4", Arrays.asList(51.0));
+//		variableToValues.put("v5", Arrays.asList(42.0));
+//
+//		testModelEvaluation(pmmlDoc,
+//			VARIABLE_REGRESSION_MULTIPLE_MODEL_TEMPLATE,
+//			new VariableMiningModel(),
+//			variableToValues,
+//			20);
+//	}
+
 
 	protected double getMissingVarProbability() {
 		return 0.01;
@@ -522,6 +580,7 @@ public class MiningModelTest extends BaseModelTest {
 			"\n" +
 			"public class ${className} implements CompiledModel {\n" +
 			"\n" +
+			"public Double identity(Double v) { return v; }\n\n" +
 			"	public Object execute(Map<String, Object> nameToValue) {\n" +
 			"		try {\n" +
 			"		Double result = null;\n" +
@@ -530,6 +589,41 @@ public class MiningModelTest extends BaseModelTest {
 			"		Double v3 = (Double)nameToValue.get(\"v3\");\n" +
 			"		Double v4 = (Double)nameToValue.get(\"v4\");\n" +
 			"		Double v5 = (Double)nameToValue.get(\"v5\");\n" +
+			"		\n" +
+			"${modelCode}\n" +
+			"		return result;\n" +
+			"	} catch (Exception eee) { return null; }\n" +
+			"	}\n" +
+			"	String resultExplanation = null;\n" +
+			" 	public String getResultExplanation() {\n" +
+			" 		return resultExplanation;\n" +
+			"	}\n" +
+			"}\n";
+
+	static private final String VARIABLE_REGRESSION_MULTIPLE_MODEL_TEMPLATE2 = "" +
+			"package org.jpmml.itest;\n" +
+			"import java.util.Map;\n" +
+			"import org.jpmml.itest.BaseModelTest.CompiledModel;\n" +
+			"" +
+			"#foreach($import in $imports) \n" +
+			"${import}\n" +
+			"#end\n" +
+			"\n" +
+			"#foreach($constant in $constants) \n" +
+			"static private final ${constant}\n" +
+			"#end" +
+			"\n" +
+			"public class ${className} implements CompiledModel {\n" +
+			"\n" +
+			"public Double identity(Double v) { return v; }\n\n" +
+			"	public Object execute(Map<String, Object> nameToValue) {\n" +
+			"		try {\n" +
+			"		Double result = null;\n" +
+			"		Double p_v1 = (Double)nameToValue.get(\"v1\");\n" +
+			"		Double p_v2 = (Double)nameToValue.get(\"v2\");\n" +
+			"		Double p_v3 = (Double)nameToValue.get(\"v3\");\n" +
+			"		Double p_v4 = (Double)nameToValue.get(\"v4\");\n" +
+			"		Double p_v5 = (Double)nameToValue.get(\"v5\");\n" +
 			"		\n" +
 			"${modelCode}\n" +
 			"		return result;\n" +

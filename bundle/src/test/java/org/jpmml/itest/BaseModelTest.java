@@ -39,7 +39,7 @@ public class BaseModelTest {
 		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
 		// translate and compile
-		CompiledModel compiledModel = createCompiledModel(pmmlDoc, codeTemplate);
+		CompiledModel compiledModel = createCompiledModel(pmmlDoc, codeTemplate, null);
 
 		executeAndCompareOutput(0, compiledModel, evaluator, manual, variableValues);
 	}
@@ -48,14 +48,15 @@ public class BaseModelTest {
 			String codeTemplate,
 			ManualModelImplementation manual,
 			Map<String, List<?>> variables,
-			final int iterations) throws Exception {
+			final int iterations,
+			TranslationContext context) throws Exception {
 
 		// creating evaluator
 		PMMLManager pmmlManager = new PMMLManager(pmmlDoc);
 		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
 		// translate and compile
-		CompiledModel compiledModel = createCompiledModel(pmmlDoc, codeTemplate);
+		CompiledModel compiledModel = createCompiledModel(pmmlDoc, codeTemplate, context);
 
 
 		for (int i=0;i<iterations; i++) {
@@ -100,25 +101,37 @@ public class BaseModelTest {
 		}
 	}
 
-	private CompiledModel createCompiledModel(PMML pmmlDoc, String codeTemplate) throws Exception {
+	public void testModelEvaluation(PMML pmmlDoc,
+			String codeTemplate,
+			ManualModelImplementation manual,
+			Map<String, List<?>> variables,
+			final int iterations) throws Exception {
+		testModelEvaluation(pmmlDoc, codeTemplate, manual, variables, iterations, null);
+	}
+
+	private CompiledModel createCompiledModel(PMML pmmlDoc, String codeTemplate, TranslationContext context) throws Exception {
 		//InputStream is = getClass().getResourceAsStream("/codetemplate.vm");
 
 		String className = "TestModel" + System.currentTimeMillis();
+		if (context == null) {
+			context = new TranslationContext() {
+				// override missing value method, since in our template numeric variables represented with Double class
+				public String getMissingValue(OpType variableType) {
+					if (variableType == OpType.CONTINUOUS)
+						return "null";
+
+					return super.getMissingValue(variableType);
+				}
+
+				public String getModelResultTrackingVariable() {
+					return "resultExplanation";
+				}
+			};
+		}
 
 		String javaSource = PmmlToJavaTranslator.generateJavaCode(pmmlDoc, className,
 				new StringReader(codeTemplate),
-				new TranslationContext() {
-					// override missing value method, since in our template numeric variables represented with Double class
-					public String getMissingValue(OpType variableType) {
-						if (variableType==OpType.CONTINUOUS) return "null";
-						return super.getMissingValue(variableType);
-					}
-
-					public String getModelResultTrackingVariable() {
-						return "resultExplanation";
-					}
-				}
-			);
+				context);
 
 		Class<?> modelClass = PmmlToJavaTranslator.createModelClass(className, "org.jpmml.itest", javaSource);
 

@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.IOUtil;
+import org.jpmml.manager.ModelManager;
+import org.jpmml.translator.TranslationContext;
 import org.testng.annotations.Test;
 
 @Test
@@ -22,14 +26,30 @@ public class ScoreCardModelTest extends BaseModelTest {
 		variableToValues.put("department", Arrays.asList("engineering", "marketing", "business"));
 
 		testModelEvaluation(pmmlDoc,
-			SAMPLE_SCORECARD_MODEL_TEMPLATE, 
+			SAMPLE_SCORECARD_MODEL_TEMPLATE,
 			new SampleScoreCardModel(),
-			variableToValues, 
+			variableToValues,
 			20);
 	}
-	
+
 	@Test
 	public void testSampleScoreCardModel2() throws Exception {
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/scorecard.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		//variableToValues.put("department", "engineering");
+		variableToValues.put("age", Arrays.asList(22, 35, 45));
+		variableToValues.put("income", Arrays.asList(1600, 1000, 500));
+		variableToValues.put("department", Arrays.asList("engineering", "marketing", "business"));
+
+		testModelEvaluation(pmmlDoc,
+			SAMPLE_SCORECARD_MODEL_TEMPLATE,
+			new SampleScoreCardModel(),
+			variableToValues,
+			20);
+	}
+
+	@Test
+	public void testSampleScoreCardModelModifiedName() throws Exception {
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/scorecard2.xml"));
 		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
 		//variableToValues.put("department", "engineering");
@@ -38,29 +58,46 @@ public class ScoreCardModelTest extends BaseModelTest {
 		variableToValues.put("department", Arrays.asList("engineering", "marketing", "business"));
 
 		testModelEvaluation(pmmlDoc,
-			SAMPLE_SCORECARD_MODEL_TEMPLATE, 
+			SAMPLE_SCORECARD_MODEL_TEMPLATE_MODIFIED_NAME,
 			new SampleScoreCardModel(),
-			variableToValues, 
-			20);
+			variableToValues,
+			20,
+			new TranslationContext() {
+			// override missing value method, since in our template numeric variables represented with Double class
+			public String getMissingValue(OpType variableType) {
+				if (variableType == OpType.CONTINUOUS)
+					return "null";
+
+				return super.getMissingValue(variableType);
+			}
+
+			public String getModelResultTrackingVariable() {
+				return "resultExplanation";
+			}
+
+			protected String formatExternalVariable(ModelManager<?> modelManager, FieldName variableName) {
+				return "p_" + variableName.getValue();
+			}
+		});
 	}
 
 	protected double getMissingVarProbability() {
 		return 0.01;
 	}
-	
+
 	static public class SampleScoreCardModel implements ManualModelImplementation {
 
 		public Object execute(Map<String, Object> nameToValue) {
-			double score = 0.0; 
+			double score = 0.0;
 
 			TreeMap<Double, String> diffToReasonCode = new TreeMap<Double, String>();
-			
+
 			String department = (String) nameToValue.get("department");
 			Integer age = (Integer) nameToValue.get("age");
 			Integer income = (Integer) nameToValue.get("income");
 
-			
-			
+
+
 			// Department score
 			Double baselineScore = 19.0;
 			Double diff = 0.0;
@@ -81,8 +118,8 @@ public class ScoreCardModelTest extends BaseModelTest {
 			else {
 			}
 			diffToReasonCode.put(diff, "RC1");
-		
-			
+
+
 			baselineScore = 18.0;
 			// Age score
 			if (age == null) {
@@ -110,11 +147,11 @@ public class ScoreCardModelTest extends BaseModelTest {
 				score += -1;
 				diff = baselineScore + 1;
 			}
-			 
+
 			diffToReasonCode.put(diff, "RC2");
 			diff = 0.0;
 			baselineScore = 10.0;
-			
+
 			// Income score
 			if (income == null) {
 				score += 5;
@@ -138,7 +175,7 @@ public class ScoreCardModelTest extends BaseModelTest {
 
 			// The code that gives the reason code:
 			resultExplanation = diffToReasonCode.lastEntry().getValue();
-			
+
 			return score;
 	}
 
@@ -146,7 +183,7 @@ public class ScoreCardModelTest extends BaseModelTest {
 		public String getResultExplanation() {
 			return resultExplanation;
 		}
-		
+
 		private Boolean is_in_range(Integer value, Integer lower_bound, Integer upper_bound) {
 			return lower_bound <= value && value <= upper_bound;
 		}
@@ -157,28 +194,58 @@ public class ScoreCardModelTest extends BaseModelTest {
 			"import java.util.Map;\n" +
 			"import org.jpmml.itest.BaseModelTest.CompiledModel;\n" +
 			"" +
-			"#foreach($import in $imports) \n" + 
-			"${import}\n" + 
-			"#end\n" + 
+			"#foreach($import in $imports) \n" +
+			"${import}\n" +
+			"#end\n" +
 			"\n" +
-			"#foreach($constant in $constants) \n" + 
-			"static private final ${constant}\n" + 
-			"#end" + 
+			"#foreach($constant in $constants) \n" +
+			"static private final ${constant}\n" +
+			"#end" +
 			"\n" +
-			"public class ${className} implements CompiledModel {\n" + 
-			"\n" + 
-			"	public Object execute(Map<String, Object> nameToValue) {\n" + 
-			"		Double overallScore = 0.0;\n" + 
-			"		Integer age = (Integer)nameToValue.get(\"age\");\n" + 
-			"		Integer income = (Integer)nameToValue.get(\"income\");\n" + 
-			"		String department = (String)nameToValue.get(\"department\");\n" + 
-			"		\n" + 
-			"${modelCode}\n" + 
-			"		return overallScore;\n" + 
+			"public class ${className} implements CompiledModel {\n" +
+			"\n" +
+			"	public Object execute(Map<String, Object> nameToValue) {\n" +
+			"		Double overallScore = 0.0;\n" +
+			"		Integer age = (Integer)nameToValue.get(\"age\");\n" +
+			"		Integer income = (Integer)nameToValue.get(\"income\");\n" +
+			"		String department = (String)nameToValue.get(\"department\");\n" +
+			"		\n" +
+			"${modelCode}\n" +
+			"		return overallScore;\n" +
 			"	}\n" +
 			"	String resultExplanation = null;\n" +
 			" 	public String getResultExplanation() {\n" +
 			" 		return resultExplanation;\n" +
 			"	}\n" +
-			"}\n"; 
+			"}\n";
+
+	static private final String SAMPLE_SCORECARD_MODEL_TEMPLATE_MODIFIED_NAME = "" +
+			"package org.jpmml.itest;\n" +
+			"import java.util.Map;\n" +
+			"import org.jpmml.itest.BaseModelTest.CompiledModel;\n" +
+			"" +
+			"#foreach($import in $imports) \n" +
+			"${import}\n" +
+			"#end\n" +
+			"\n" +
+			"#foreach($constant in $constants) \n" +
+			"static private final ${constant}\n" +
+			"#end" +
+			"\n" +
+			"public class ${className} implements CompiledModel {\n" +
+			"\n" +
+			"	public Object execute(Map<String, Object> nameToValue) {\n" +
+			"		Double overallScore = 0.0;\n" +
+			"		Integer p_age = (Integer)nameToValue.get(\"age\");\n" +
+			"		Integer p_income = (Integer)nameToValue.get(\"income\");\n" +
+			"		String p_department = (String)nameToValue.get(\"department\");\n" +
+			"		\n" +
+			"${modelCode}\n" +
+			"		return overallScore;\n" +
+			"	}\n" +
+			"	String resultExplanation = null;\n" +
+			" 	public String getResultExplanation() {\n" +
+			" 		return resultExplanation;\n" +
+			"	}\n" +
+			"}\n";
 }

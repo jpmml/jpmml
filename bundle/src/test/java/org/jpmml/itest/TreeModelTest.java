@@ -5,8 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.IOUtil;
+import org.jpmml.manager.ModelManager;
+import org.jpmml.translator.TranslationContext;
 import org.testng.annotations.Test;
 
 @Test
@@ -44,7 +48,41 @@ public class TreeModelTest extends BaseModelTest {
 			20);
 	}
 
-	//@Test
+	@Test
+	public void testGolfModelModifiedName() throws Exception {
+
+		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree.xml"));
+		Map<String, List<?>> variableToValues = new HashMap<String, List<?>>();
+		variableToValues.put("temperature", null);
+		variableToValues.put("humidity", null);
+		variableToValues.put("windy", Arrays.asList("true", "false"));
+		variableToValues.put("outlook", Arrays.asList("sunny", "outcast", "rain"));
+
+		testModelEvaluation(pmmlDoc,
+			GOLF_MODEL_TEMPLATE_MODIFIED_NAME,
+			new GolfModel(),
+			variableToValues,
+			20,
+			new TranslationContext() {
+			// override missing value method, since in our template numeric variables represented with Double class
+			public String getMissingValue(OpType variableType) {
+				if (variableType == OpType.CONTINUOUS)
+					return "null";
+
+				return super.getMissingValue(variableType);
+			}
+
+			public String getModelResultTrackingVariable() {
+				return "resultExplanation";
+			}
+
+			protected String formatExternalVariable(ModelManager<?> modelManager, FieldName variableName) {
+				return "p_" + variableName.getValue();
+			}
+		});
+	}
+
+	@Test
 	public void testGolfModelLastPrediction() throws Exception {
 
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree_last_prediction.xml"));
@@ -219,6 +257,38 @@ public class TreeModelTest extends BaseModelTest {
 			"		Double humidity = (Double)nameToValue.get(\"humidity\");\n" +
 			"		String windy = (String)nameToValue.get(\"windy\");\n" +
 			"		String outlook = (String)nameToValue.get(\"outlook\");\n" +
+			"		\n" +
+			"		${modelCode}\n" +
+			"		\n" +
+			"		return whatIdo;\n" +
+			"	}\n" +
+			"	String resultExplanation = null;\n" +
+			" 	public String getResultExplanation() {\n" +
+			" 		return resultExplanation;\n" +
+			"	}\n" +
+			"}\n";
+
+	static private final String GOLF_MODEL_TEMPLATE_MODIFIED_NAME = "" +
+			"package org.jpmml.itest;\n" +
+			"import java.util.Map;\n" +
+			"import org.jpmml.itest.BaseModelTest.CompiledModel;\n" +
+			"" +
+			"#foreach($import in $imports) \n" +
+			"${import}\n" +
+			"#end\n" +
+			"\n" +
+			"#foreach($constant in $constants) \n" +
+			"static private final ${constant}\n" +
+			"#end" +
+			"\n" +
+			"public class ${className} implements CompiledModel {\n" +
+			"\n" +
+			"	public Object execute(Map<String, Object> nameToValue) {\n" +
+			"		String whatIdo = null;\n" +
+			"		Double p_temperature = (Double)nameToValue.get(\"temperature\");\n" +
+			"		Double p_humidity = (Double)nameToValue.get(\"humidity\");\n" +
+			"		String p_windy = (String)nameToValue.get(\"windy\");\n" +
+			"		String p_outlook = (String)nameToValue.get(\"outlook\");\n" +
 			"		\n" +
 			"		${modelCode}\n" +
 			"		\n" +
