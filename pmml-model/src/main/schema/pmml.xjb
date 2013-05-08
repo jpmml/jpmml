@@ -264,6 +264,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='DataField']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.DictionaryField"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='DataField']/xsd:complexType/xsd:attribute[@name='isCyclic']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="Cyclic"
@@ -294,6 +300,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='DecisionTree']/xsd:complexType/xsd:attribute[@name='splitCharacteristic']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="SplitCharacteristic"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='DerivedField']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.DictionaryField"
 			/>
 		</jaxb:bindings>
 
@@ -435,6 +447,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='MiningField']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Field"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='MiningModel']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Model"
@@ -516,6 +534,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='OutputField']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.DictionaryField"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='PCovMatrix']/xsd:complexType/xsd:attribute[@name='type']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="Type"
@@ -561,6 +585,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='RegressionModel']/xsd:complexType/xsd:attribute[@name='modelType']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="ModelType"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='ResultField']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.DictionaryField"
 			/>
 		</jaxb:bindings>
 
