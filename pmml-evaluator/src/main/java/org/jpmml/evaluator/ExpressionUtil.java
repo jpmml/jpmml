@@ -37,6 +37,19 @@ public class ExpressionUtil {
 	static
 	public Object getValue(Expression expression, ModelManager<?> modelManager, Map<FieldName, ?> parameters){
 
+		if(expression instanceof Constant){
+			Constant constant = (Constant)expression;
+
+			String value = constant.getValue();
+
+			DataType dataType = constant.getDataType();
+			if(dataType == null){
+				dataType = ParameterUtil.getDataType(value);
+			}
+
+			return ParameterUtil.parse(dataType, value);
+		} else
+
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 

@@ -14,7 +14,11 @@ public class ParameterUtil {
 
 	static
 	public Object parse(DictionaryField field, String string){
-		DataType dataType = field.getDataType();
+		return parse(field.getDataType(), string);
+	}
+
+	static
+	public Object parse(DataType dataType, String string){
 
 		switch(dataType){
 			case STRING:
@@ -27,6 +31,27 @@ public class ParameterUtil {
 				return new Double(string);
 			default:
 				throw new UnsupportedFeatureException(dataType);
+		}
+	}
+
+	static
+	public DataType getDataType(String string){
+
+		try {
+
+			if(string.indexOf('.') > -1){
+				Float.parseFloat(string);
+
+				return DataType.FLOAT;
+			} else
+
+			{
+				Integer.parseInt(string);
+
+				return DataType.INTEGER;
+			}
+		} catch(NumberFormatException nfe){
+			return DataType.STRING;
 		}
 	}
 }
