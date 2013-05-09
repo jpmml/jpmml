@@ -10,6 +10,9 @@ import org.dmg.pmml.*;
 abstract
 public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 
+	private LocalTransformations localTransformations = null;
+
+
 	public ModelManager(){
 	}
 
@@ -74,6 +77,24 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	public MiningSchema getMiningSchema(){
 		return getModel().getMiningSchema();
+	}
+
+	public LocalTransformations getOrCreateLocalTransformations(){
+
+		if(this.localTransformations == null){
+			M model = getModel();
+
+			LocalTransformations localTransformations = model.getLocalTransformations();
+			if(localTransformations == null){
+				localTransformations = new LocalTransformations();
+
+				model.setLocalTransformations(localTransformations);
+			}
+
+			this.localTransformations = localTransformations;
+		}
+
+		return this.localTransformations;
 	}
 
 	static

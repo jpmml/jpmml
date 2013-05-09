@@ -7,9 +7,18 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+/**
+ * Naming conventions for getter methods:
+ * <ul>
+ * <li><code>getXXX()</code> - Required schema elements. For example {@link #getDataDictionary()}
+ * <li><code>getOrCreateXXX()</code> - Optional schema elements. When <code>null</code> then a new element instance is created. For example {@link #getOrCreateTransformationDictionary()}
+ * </ul>
+ */
 public class PMMLManager {
 
 	private PMML pmml = null;
+
+	private TransformationDictionary transformationDictionary = null;
 
 
 	public PMMLManager(){
@@ -56,6 +65,24 @@ public class PMMLManager {
 
 	public DataDictionary getDataDictionary(){
 		return getPmml().getDataDictionary();
+	}
+
+	public TransformationDictionary getOrCreateTransformationDictionary(){
+
+		if(this.transformationDictionary == null){
+			PMML pmml = getPmml();
+
+			TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
+			if(transformationDictionary == null){
+				transformationDictionary = new TransformationDictionary();
+
+				pmml.setTransformationDictionary(transformationDictionary);
+			}
+
+			this.transformationDictionary = transformationDictionary;
+		}
+
+		return this.transformationDictionary;
 	}
 
 	public List<Model> getModels(){
