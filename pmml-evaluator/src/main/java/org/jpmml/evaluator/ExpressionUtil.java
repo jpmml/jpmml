@@ -70,6 +70,21 @@ public class ExpressionUtil {
 			String value = (String)getValue(normDiscrete.getField(), modelManager, parameters);
 
 			return (normDiscrete.getValue()).equals(value) ? 1.0d : 0.0d;
+		} else
+
+		if(expression instanceof Apply){
+			Apply apply = (Apply)expression;
+
+			List<Object> values = new ArrayList<Object>();
+
+			List<Expression> arguments = apply.getExpressions();
+			for(Expression argument : arguments){
+				Object value = getValue(argument, modelManager, parameters);
+
+				values.add(value);
+			}
+
+			return FunctionUtil.evaluate(apply.getFunction(), values);
 		}
 
 		throw new UnsupportedFeatureException(expression);
