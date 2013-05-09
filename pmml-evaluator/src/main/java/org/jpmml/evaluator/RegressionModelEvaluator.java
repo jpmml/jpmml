@@ -52,7 +52,10 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	}
 
 	private double evaluateNumericPredictor(NumericPredictor numericPredictor, Map<FieldName, ?> parameters){
-		Number value = (Number)ParameterUtil.getValue(parameters, numericPredictor.getName());
+		Number value = (Number)ExpressionUtil.getValue(numericPredictor.getName(), this, parameters);
+		if(value == null){
+			throw new MissingParameterException(numericPredictor.getName());
+		}
 
 		return numericPredictor.getCoefficient() * value.doubleValue();
 	}

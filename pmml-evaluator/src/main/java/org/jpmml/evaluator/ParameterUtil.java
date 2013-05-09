@@ -3,8 +3,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
@@ -12,22 +10,6 @@ import org.dmg.pmml.*;
 public class ParameterUtil {
 
 	private ParameterUtil(){
-	}
-
-	static
-	public Object getValue(Map<FieldName, ?> parameters, FieldName name){
-		return getValue(parameters, name, false);
-	}
-
-	static
-	public Object getValue(Map<FieldName, ?> parameters, FieldName name, boolean nullable){
-		Object value = parameters.get(name);
-
-		if(value == null && !nullable){
-			throw new EvaluationException("Missing parameter " + name.getValue());
-		}
-
-		return value;
 	}
 
 	static

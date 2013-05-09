@@ -45,7 +45,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, Map<FieldName, ?> parameters){
-		Object value = ParameterUtil.getValue(parameters, simplePredicate.getField(), true);
+		Object value = ExpressionUtil.getValue(simplePredicate.getField(), null, parameters);
 
 		switch(simplePredicate.getOperator()){
 			case IS_MISSING:
@@ -125,7 +125,10 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, Map<FieldName, ?> parameters){
-		Object value = ParameterUtil.getValue(parameters, simpleSetPredicate.getField());
+		Object value = ExpressionUtil.getValue(simpleSetPredicate.getField(), null, parameters);
+		if(value == null){
+			throw new MissingParameterException(simpleSetPredicate.getField());
+		}
 
 		ArrayType array = simpleSetPredicate.getArray();
 

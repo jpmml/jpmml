@@ -121,7 +121,10 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();
 		for (NeuralInput neuralInput: neuralInputs) {
-			Double value = evaluateDerivedField(neuralInput.getDerivedField(), parameters);
+			Double value = (Double)ExpressionUtil.getValue(neuralInput.getDerivedField(), this, parameters);
+			if(value == null){
+				throw new MissingParameterException(neuralInput.getDerivedField());
+			}
 
 			result.put(neuralInput.getId(), value);
 		}
@@ -183,62 +186,6 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 		{
 			throw new UnsupportedFeatureException(normalizationMethod);
-		}
-	}
-
-	private double evaluateDerivedField(DerivedField derivedField, Map<FieldName,?> parameters) {
-
-		if (!(derivedField.getDataType()).equals(DataType.DOUBLE) && !(derivedField.getOptype()).equals(OpType.CONTINUOUS)) {
-			throw new UnsupportedFeatureException(derivedField);
-		}
-
-		return evaluateExpression(derivedField.getExpression(), parameters);
-	}
-
-	private double evaluateExpression(Expression expression, Map<FieldName, ?> parameters){
-
-		if (expression instanceof FieldRef) {
-			FieldRef fieldRef = (FieldRef)expression;
-			FieldName field = fieldRef.getField();
-
-			// check refs to derived fields in local and global transformation dictionaries
-			DerivedField derivedField = resolve(field);
-			if (derivedField != null) {
-				return evaluateDerivedField(derivedField, parameters);
-			}
-
-			// refs to a data field in the data dictionary
-			List<DataField> dataFields = getDataDictionary().getDataFields();
-			DataField dataField = FieldUtil.getField(dataFields, field);
-			if (dataField != null) {
-				Number value = (Number)ParameterUtil.getValue(parameters, field);
-
-				return value.doubleValue();
-			}
-
-			throw new EvaluationException();
-		} else
-
-		if (expression instanceof NormContinuous) {
-			NormContinuous normContinuous = (NormContinuous)expression;
-
-			FieldName field = normContinuous.getField();
-			Number value = (Number)ParameterUtil.getValue(parameters, field);
-
-			return NormalizationUtil.normalize(normContinuous, value.doubleValue());
-		} else
-
-		if (expression instanceof NormDiscrete) {
-			NormDiscrete normDiscrete = (NormDiscrete)expression;
-
-			FieldName field = normDiscrete.getField();
-			Object value = ParameterUtil.getValue(parameters, field);
-
-			return (normDiscrete.getValue()).equals(value) ? 1.0 : 0.0;
-		} else
-
-		{
-			throw new UnsupportedFeatureException(expression);
 		}
 	}
 
