@@ -31,14 +31,8 @@ public class PMMLManager {
 
 	public DataField getDataField(FieldName name){
 		List<DataField> dataFields = getDataDictionary().getDataFields();
-		for(DataField dataField : dataFields){
 
-			if((dataField.getName()).equals(name)){
-				return dataField;
-			}
-		}
-
-		return null;
+		return FieldUtil.getField(dataFields, name);
 	}
 
 	public DataField addDataField(FieldName name, String displayName, OpType opType, DataType dataType){

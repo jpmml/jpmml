@@ -29,8 +29,8 @@ public class ParameterUtil {
 	}
 
 	static
-	public Object parse(DataField dataField, String string){
-		DataType dataType = dataField.getDataType();
+	public Object parse(DictionaryField field, String string){
+		DataType dataType = field.getDataType();
 
 		switch(dataType){
 			case STRING:

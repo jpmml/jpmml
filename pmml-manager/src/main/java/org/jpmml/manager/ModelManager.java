@@ -54,15 +54,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public MiningField getMiningField(FieldName name){
-		List<MiningField> miningFields = getMiningSchema().getMiningFields();
-		for(MiningField miningField : miningFields){
+		List<MiningField> miningField = getMiningSchema().getMiningFields();
 
-			if((miningField.getName()).equals(name)){
-				return miningField;
-			}
-		}
-
-		return null;
+		return FieldUtil.getField(miningField, name);
 	}
 
 	public MiningField addMiningField(FieldName name, FieldUsageType usageType){
