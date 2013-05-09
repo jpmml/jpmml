@@ -5,6 +5,8 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import org.jpmml.manager.*;
+
 import org.dmg.pmml.*;
 
 public class ParameterUtil {
@@ -42,7 +44,7 @@ public class ParameterUtil {
 			case DOUBLE:
 				return new Double(string);
 			default:
-				throw new IllegalArgumentException();
+				throw new UnsupportedFeatureException(dataType);
 		}
 	}
 }
