@@ -69,6 +69,20 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return miningField;
 	}
 
+	@Override
+	public DerivedField resolve(FieldName name){
+		LocalTransformations localTransformations = getOrCreateLocalTransformations();
+
+		List<DerivedField> derivedFields = localTransformations.getDerivedFields();
+
+		DerivedField derivedField = FieldUtil.getField(derivedFields, name);
+		if(derivedField == null){
+			derivedField = super.resolve(name);
+		}
+
+		return derivedField;
+	}
+
 	public MiningSchema getMiningSchema(){
 		return getModel().getMiningSchema();
 	}

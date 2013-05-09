@@ -45,6 +45,14 @@ public class PMMLManager {
 		return dataField;
 	}
 
+	public DerivedField resolve(FieldName name){
+		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
+
+		List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
+
+		return FieldUtil.getField(derivedFields, name);
+	}
+
 	public PMML getPmml(){
 		return this.pmml;
 	}

@@ -80,9 +80,9 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			Expression expression = (neuralOutput.getDerivedField()).getExpression();
 			if (expression instanceof FieldRef) {
 				FieldRef fieldRef = (FieldRef)expression;
-				DerivedField derivedField = findDerivedField(fieldRef.getField());
+				DerivedField derivedField = resolve(fieldRef.getField());
 				expression = derivedField.getExpression();
-			}
+			} // End if
 
 			if (expression instanceof NormDiscrete) {
 				NormDiscrete normDiscrete = (NormDiscrete)expression;
@@ -202,20 +202,18 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			FieldName field = fieldRef.getField();
 
 			// check refs to derived fields in local and global transformation dictionaries
-			DerivedField derivedField = findDerivedField(field);
+			DerivedField derivedField = resolve(field);
 			if (derivedField != null) {
 				return evaluateDerivedField(derivedField, parameters);
 			}
 
 			// refs to a data field in the data dictionary
 			List<DataField> dataFields = getDataDictionary().getDataFields();
-			for (DataField dataField : dataFields) {
+			DataField dataField = FieldUtil.getField(dataFields, field);
+			if (dataField != null) {
+				Number value = (Number)ParameterUtil.getValue(parameters, field);
 
-				if ((dataField.getName()).equals(field)) {
-					Number value = (Number)ParameterUtil.getValue(parameters, field);
-
-					return value.doubleValue();
-				}
+				return value.doubleValue();
 			}
 
 			throw new EvaluationException();
@@ -242,28 +240,6 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		{
 			throw new UnsupportedFeatureException(expression);
 		}
-	}
-
-	private DerivedField findDerivedField(FieldName field) {
-		List<DerivedField> derivedFields = new ArrayList<DerivedField>();
-
-		LocalTransformations localTransformations = getModel().getLocalTransformations();
-		if (localTransformations != null) {
-			derivedFields.addAll(localTransformations.getDerivedFields());
-		}
-
-		TransformationDictionary transformationDictionary = getPmml().getTransformationDictionary();
-		if (transformationDictionary != null) {
-			derivedFields.addAll(transformationDictionary.getDerivedFields());
-		}
-
-		for (DerivedField derivedField : derivedFields) {
-			if ((derivedField.getName()).equals(field)) {
-				return derivedField;
-			}
-		}
-
-		return null;
 	}
 
 	private double activation(double z, NeuralLayer layer) {
