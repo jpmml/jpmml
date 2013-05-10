@@ -67,9 +67,13 @@ public class ExpressionUtil {
 		if(expression instanceof NormDiscrete){
 			NormDiscrete normDiscrete = (NormDiscrete)expression;
 
-			String value = (String)getValue(normDiscrete.getField(), modelManager, parameters);
+			Object value = getValue(normDiscrete.getField(), modelManager, parameters);
 
-			return (normDiscrete.getValue()).equals(value) ? 1.0d : 0.0d;
+			DataType dataType = ParameterUtil.getDataType(value);
+
+			boolean equals = (ParameterUtil.parse(dataType, normDiscrete.getValue())).equals(value);
+
+			return Double.valueOf(equals ? 1.0 : 0.0);
 		} else
 
 		if(expression instanceof Apply){

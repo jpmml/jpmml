@@ -30,15 +30,38 @@ public class ParameterUtil {
 			case DOUBLE:
 				return new Double(string);
 			default:
-				throw new UnsupportedFeatureException(dataType);
+				break;
 		}
+
+		throw new UnsupportedFeatureException(dataType);
+	}
+
+	static
+	public DataType getDataType(Object object){
+
+		if(object instanceof String){
+			return DataType.STRING;
+		} else
+
+		if(object instanceof Integer){
+			return DataType.INTEGER;
+		} else
+
+		if(object instanceof Float){
+			return DataType.FLOAT;
+		} else
+
+		if(object instanceof Double){
+			return DataType.DOUBLE;
+		} else
+
+		throw new UnsupportedOperationException();
 	}
 
 	static
 	public DataType getDataType(String string){
 
 		try {
-
 			if(string.indexOf('.') > -1){
 				Float.parseFloat(string);
 
