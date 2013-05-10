@@ -60,6 +60,9 @@ public class ExpressionUtil {
 			NormContinuous normContinuous = (NormContinuous)expression;
 
 			Number value = (Number)getValue(normContinuous.getField(), modelManager, parameters);
+			if(value == null){
+				return normContinuous.getMapMissingTo();
+			}
 
 			return NormalizationUtil.normalize(normContinuous, value.doubleValue());
 		} else
@@ -68,6 +71,9 @@ public class ExpressionUtil {
 			NormDiscrete normDiscrete = (NormDiscrete)expression;
 
 			Object value = getValue(normDiscrete.getField(), modelManager, parameters);
+			if(value == null){
+				return normDiscrete.getMapMissingTo();
+			}
 
 			DataType dataType = ParameterUtil.getDataType(value);
 

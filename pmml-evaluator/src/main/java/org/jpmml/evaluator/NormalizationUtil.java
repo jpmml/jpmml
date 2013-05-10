@@ -10,22 +10,6 @@ import org.dmg.pmml.*;
 public class NormalizationUtil {
 
 	static
-	public double normalize(NormContinuous normContinuous, Number number) {
-
-		// handle missing values
-		if (number == null) {
-			Double missing = normContinuous.getMapMissingTo();
-			if (missing == null) {
-				throw new EvaluationException();
-			}
-
-			return missing;
-		}
-
-		return normalize(normContinuous, number.doubleValue());
-	}
-
-	static
 	public double normalize(NormContinuous normContinuous, double value){
 		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
 

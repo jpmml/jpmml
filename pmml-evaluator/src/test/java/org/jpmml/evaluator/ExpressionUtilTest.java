@@ -14,6 +14,17 @@ import static org.junit.Assert.*;
 public class ExpressionUtilTest {
 
 	@Test
+	public void evaluateNormContinuous(){
+		FieldName name = new FieldName("x");
+
+		NormContinuous expression = new NormContinuous(name);
+
+		expression.setMapMissingTo(5d);
+
+		assertEquals(5d, ExpressionUtil.getValue(expression, null, Collections.singletonMap(name, null)));
+	}
+
+	@Test
 	public void evaluateNormDiscrete(){
 		FieldName name = new FieldName("x");
 
@@ -23,6 +34,10 @@ public class ExpressionUtilTest {
 		NormDiscrete stringThree = new NormDiscrete(name, "3");
 		assertEquals(equals, ExpressionUtil.getValue(stringThree, null, Collections.singletonMap(name, "3")));
 		assertEquals(notEquals, ExpressionUtil.getValue(stringThree, null, Collections.singletonMap(name, "1")));
+
+		stringThree.setMapMissingTo(5d);
+
+		assertEquals(5d, ExpressionUtil.getValue(stringThree, null, Collections.singletonMap(name, null)));
 
 		NormDiscrete integerThree = new NormDiscrete(name, "3");
 		assertEquals(equals, ExpressionUtil.getValue(integerThree, null, Collections.singletonMap(name, Integer.valueOf(3))));

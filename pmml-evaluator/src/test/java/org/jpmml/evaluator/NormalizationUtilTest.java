@@ -31,12 +31,6 @@ public class NormalizationUtilTest {
 	}
 
 	@Test
-	public void testNormalizeMissing() {
-		norm.setMapMissingTo(1.0);
-		assertEquals(1.0, NormalizationUtil.normalize(norm, null), 1e-5);
-	}
-
-	@Test
 	public void testNormalizeOutliers() {
 		// as is method
 		assertEquals(-0.16455, NormalizationUtil.normalize(norm, -1.0), 1e-5);
