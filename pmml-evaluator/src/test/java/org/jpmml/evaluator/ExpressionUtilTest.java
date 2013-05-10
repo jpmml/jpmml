@@ -14,6 +14,29 @@ import static org.junit.Assert.*;
 public class ExpressionUtilTest {
 
 	@Test
+	public void evaluateConstant(){
+		Constant stringThree = new Constant("3");
+		stringThree.setDataType(DataType.STRING);
+		assertEquals("3", ExpressionUtil.getValue(stringThree, null, null));
+
+		Constant integerThree = new Constant("3");
+		integerThree.setDataType(DataType.INTEGER);
+		assertEquals(Integer.valueOf(3), ExpressionUtil.getValue(integerThree, null, null));
+
+		Constant floatThree = new Constant("3");
+		floatThree.setDataType(DataType.FLOAT);
+		assertEquals(Float.valueOf(3f), ExpressionUtil.getValue(floatThree, null, null));
+	}
+
+	@Test
+	public void evaluateFieldRef(){
+		FieldName name = new FieldName("x");
+
+		FieldRef nameRef = new FieldRef(name);
+		assertEquals("3", ExpressionUtil.getValue(nameRef, null, Collections.singletonMap(name, "3")));
+	}
+
+	@Test
 	public void evaluateNormContinuous(){
 		FieldName name = new FieldName("x");
 
