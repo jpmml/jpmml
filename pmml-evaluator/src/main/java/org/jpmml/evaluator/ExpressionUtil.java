@@ -82,6 +82,65 @@ public class ExpressionUtil {
 			return Double.valueOf(equals ? 1.0 : 0.0);
 		} else
 
+		if(expression instanceof MapValues){
+			MapValues mapValues = (MapValues)expression;
+
+			DataType dataType = mapValues.getDataType();
+			if(dataType == null){
+				dataType = DataType.STRING; // XXX
+			}
+
+			Map<String, Object> values = new LinkedHashMap<String, Object>();
+
+			List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
+			for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
+				Object value = getValue(fieldColumnPair.getField(), modelManager, parameters);
+				if(value == null){
+					String missingValue = mapValues.getMapMissingTo();
+					if(missingValue != null){
+						return ParameterUtil.parse(dataType, missingValue);
+					}
+
+					return null;
+				}
+
+				values.put(fieldColumnPair.getColumn(), value);
+			}
+
+			List<Map<String, String>> rows;
+
+			InlineTable table = mapValues.getInlineTable();
+			if(table == null){
+				TableLocator tableLocator = mapValues.getTableLocator();
+				if(tableLocator != null){
+					throw new UnsupportedFeatureException(tableLocator);
+				}
+
+				rows = Collections.<Map<String, String>>emptyList();
+			} else
+
+			{
+				rows = TableUtil.parse(table);
+			}
+
+			Map<String, String> row = TableUtil.match(rows, values);
+
+			if(row != null){
+				String value = row.get(mapValues.getOutputColumn());
+
+				return ParameterUtil.parse(dataType, value);
+			} else
+
+			{
+				String defaultValue = mapValues.getDefaultValue();
+				if(defaultValue != null){
+					return ParameterUtil.parse(dataType, defaultValue);
+				}
+
+				return null;
+			}
+		} else
+
 		if(expression instanceof Apply){
 			Apply apply = (Apply)expression;
 

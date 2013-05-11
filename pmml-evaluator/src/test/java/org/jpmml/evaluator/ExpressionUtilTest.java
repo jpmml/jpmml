@@ -70,4 +70,20 @@ public class ExpressionUtilTest {
 		assertEquals(equals, ExpressionUtil.getValue(floatThree, null, Collections.singletonMap(name, Float.valueOf(3.0f))));
 		assertEquals(notEquals, ExpressionUtil.getValue(floatThree, null, Collections.singletonMap(name, Float.valueOf(1.0f))));
 	}
+
+	@Test
+	public void evaluateMapValues(){
+		FieldName name = new FieldName("x");
+
+		MapValues mapValue = new MapValues(null);
+		(mapValue.getFieldColumnPairs()).add(new FieldColumnPair(name, null));
+
+		assertEquals(null, ExpressionUtil.getValue(mapValue, null, Collections.<FieldName, Object>emptyMap()));
+		mapValue.setMapMissingTo("Missing");
+		assertEquals("Missing", ExpressionUtil.getValue(mapValue, null, Collections.<FieldName, Object>emptyMap()));
+
+		assertEquals(null, ExpressionUtil.getValue(mapValue, null, Collections.singletonMap(name, "3")));
+		mapValue.setDefaultValue("Default");
+		assertEquals("Default", ExpressionUtil.getValue(mapValue, null, Collections.singletonMap(name, "3")));
+	}
 }
