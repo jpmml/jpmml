@@ -50,11 +50,12 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		for (NeuralOutput neuralOutput : neuralOutputs) {
 			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = (neuralOutput.getDerivedField()).getExpression();
+			Expression expression = getExpression(neuralOutput.getDerivedField());
 			if (expression instanceof NormContinuous) {
 				NormContinuous normContinuous = (NormContinuous)expression;
 
 				FieldName field = normContinuous.getField();
+
 				Double value = NormalizationUtil.denormalize(normContinuous, neuronOutputs.get(id));
 
 				result.put(field, value);
@@ -74,31 +75,25 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		Map<String, Double> neuronOutputs = evaluateRaw(context);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
-		for (NeuralOutput neuralOutput: neuralOutputs) {
+		for (NeuralOutput neuralOutput : neuralOutputs) {
 			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = (neuralOutput.getDerivedField()).getExpression();
-			if (expression instanceof FieldRef) {
-				FieldRef fieldRef = (FieldRef)expression;
-				DerivedField derivedField = resolve(fieldRef.getField());
-				expression = derivedField.getExpression();
-			} // End if
-
+			Expression expression = getExpression(neuralOutput.getDerivedField());
 			if (expression instanceof NormDiscrete) {
 				NormDiscrete normDiscrete = (NormDiscrete)expression;
 
 				FieldName field = normDiscrete.getField();
 
-				Map<String, Double> valuesMap = result.get(field);
-				if(valuesMap == null){
-					valuesMap = new HashMap<String, Double>();
+				Map<String, Double> values = result.get(field);
+				if(values == null){
+					values = new HashMap<String, Double>();
 
-					result.put(field, valuesMap);
+					result.put(field, values);
 				}
 
 				Double value = neuronOutputs.get(id);
 
-				valuesMap.put(normDiscrete.getValue(), value);
+				values.put(normDiscrete.getValue(), value);
 			} else
 
 			{
@@ -107,6 +102,23 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		}
 
 		return result;
+	}
+
+	private Expression getExpression(DerivedField derivedField){
+		Expression expression = derivedField.getExpression();
+
+		if(expression instanceof FieldRef){
+			FieldRef fieldRef = (FieldRef)expression;
+
+			derivedField = resolve(fieldRef.getField());
+			if(derivedField == null){
+				throw new EvaluationException();
+			}
+
+			return getExpression(derivedField);
+		}
+
+		return expression;
 	}
 
 	/**
