@@ -15,14 +15,14 @@ public class ExpressionUtil {
 	}
 
 	static
-	public Object getValue(FieldName name, ModelManager<?> modelManager, Map<FieldName, ?> parameters){
+	public Object evaluate(FieldName name, ModelManager<?> modelManager, Map<FieldName, ?> parameters){
 
 		// XXX: Should not accept <code>null</code> parameter
 		if(modelManager != null){
 			DerivedField derivedField = modelManager.resolve(name);
 
 			if(derivedField != null){
-				return getValue(derivedField, modelManager, parameters);
+				return evaluate(derivedField, modelManager, parameters);
 			}
 		}
 
@@ -30,12 +30,12 @@ public class ExpressionUtil {
 	}
 
 	static
-	public Object getValue(DerivedField derivedField, ModelManager<?> modelManager, Map<FieldName, ?> parameters){
-		return getValue(derivedField.getExpression(), modelManager, parameters);
+	public Object evaluate(DerivedField derivedField, ModelManager<?> modelManager, Map<FieldName, ?> parameters){
+		return evaluate(derivedField.getExpression(), modelManager, parameters);
 	}
 
 	static
-	public Object getValue(Expression expression, ModelManager<?> modelManager, Map<FieldName, ?> parameters){
+	public Object evaluate(Expression expression, ModelManager<?> modelManager, Map<FieldName, ?> parameters){
 
 		if(expression instanceof Constant){
 			Constant constant = (Constant)expression;
@@ -53,13 +53,13 @@ public class ExpressionUtil {
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			return getValue(fieldRef.getField(), modelManager, parameters);
+			return evaluate(fieldRef.getField(), modelManager, parameters);
 		} else
 
 		if(expression instanceof NormContinuous){
 			NormContinuous normContinuous = (NormContinuous)expression;
 
-			Number value = (Number)getValue(normContinuous.getField(), modelManager, parameters);
+			Number value = (Number)evaluate(normContinuous.getField(), modelManager, parameters);
 			if(value == null){
 				return normContinuous.getMapMissingTo();
 			}
@@ -70,7 +70,7 @@ public class ExpressionUtil {
 		if(expression instanceof NormDiscrete){
 			NormDiscrete normDiscrete = (NormDiscrete)expression;
 
-			Object value = getValue(normDiscrete.getField(), modelManager, parameters);
+			Object value = evaluate(normDiscrete.getField(), modelManager, parameters);
 			if(value == null){
 				return normDiscrete.getMapMissingTo();
 			}
@@ -90,7 +90,7 @@ public class ExpressionUtil {
 				dataType = DataType.STRING; // XXX
 			}
 
-			Object value = getValue(discretize.getField(), modelManager, parameters);
+			Object value = evaluate(discretize.getField(), modelManager, parameters);
 			if(value == null){
 				String missingValue = discretize.getMapMissingTo();
 				if(missingValue != null){
@@ -117,7 +117,7 @@ public class ExpressionUtil {
 
 			List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 			for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-				Object value = getValue(fieldColumnPair.getField(), modelManager, parameters);
+				Object value = evaluate(fieldColumnPair.getField(), modelManager, parameters);
 				if(value == null){
 					String missingValue = mapValues.getMapMissingTo();
 					if(missingValue != null){
@@ -142,7 +142,7 @@ public class ExpressionUtil {
 
 			List<Expression> arguments = apply.getExpressions();
 			for(Expression argument : arguments){
-				Object value = getValue(argument, modelManager, parameters);
+				Object value = evaluate(argument, modelManager, parameters);
 
 				values.add(value);
 			}
