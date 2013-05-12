@@ -42,7 +42,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	public Map<FieldName, Double> evaluateRegression(EvaluationContext<NeuralNetwork> context) {
-		Map<FieldName, Double> result = new HashMap<FieldName, Double>();
+		Map<FieldName, Double> result = new LinkedHashMap<FieldName, Double>();
 
 		Map<String, Double> neuronOutputs = evaluateRaw(context);
 
@@ -70,7 +70,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	public Map<FieldName, Map<String, Double>> evaluateClassification(EvaluationContext<NeuralNetwork> context) {
-		Map<FieldName, Map<String,Double>> result = new HashMap<FieldName, Map<String, Double>>();
+		Map<FieldName, Map<String,Double>> result = new LinkedHashMap<FieldName, Map<String, Double>>();
 
 		Map<String, Double> neuronOutputs = evaluateRaw(context);
 
@@ -86,7 +86,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 				Map<String, Double> values = result.get(field);
 				if(values == null){
-					values = new HashMap<String, Double>();
+					values = new LinkedHashMap<String, Double>();
 
 					result.put(field, values);
 				}
@@ -130,7 +130,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	 * @see Neuron#getId()
 	 */
 	public Map<String, Double> evaluateRaw(EvaluationContext<NeuralNetwork> context) {
-		Map<String, Double> result = new HashMap<String, Double>();
+		Map<String, Double> result = new LinkedHashMap<String, Double>();
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();
 		for (NeuralInput neuralInput: neuralInputs) {
