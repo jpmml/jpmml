@@ -16,18 +16,18 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluatePredicate(Predicate predicate, Map<FieldName, ?> parameters){
+	public Boolean evaluatePredicate(Predicate predicate, EvaluationContext<?> context){
 
 		if(predicate instanceof SimplePredicate){
-			return evaluateSimplePredicate((SimplePredicate)predicate, parameters);
+			return evaluateSimplePredicate((SimplePredicate)predicate, context);
 		} else
 
 		if(predicate instanceof CompoundPredicate){
-			return evaluateCompoundPredicate((CompoundPredicate)predicate, parameters);
+			return evaluateCompoundPredicate((CompoundPredicate)predicate, context);
 		} else
 
 		if(predicate instanceof SimpleSetPredicate){
-			return evaluateSimpleSetPredicate((SimpleSetPredicate)predicate, parameters);
+			return evaluateSimpleSetPredicate((SimpleSetPredicate)predicate, context);
 		} else
 
 		if(predicate instanceof True){
@@ -44,8 +44,8 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, Map<FieldName, ?> parameters){
-		Object value = ExpressionUtil.evaluate(simplePredicate.getField(), null, parameters);
+	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext<?> context){
+		Object value = ExpressionUtil.evaluate(simplePredicate.getField(), context);
 
 		switch(simplePredicate.getOperator()){
 			case IS_MISSING:
@@ -82,10 +82,10 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, Map<FieldName, ?> parameters){
+	public Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, EvaluationContext<?> context){
 		List<Predicate> predicates = compoundPredicate.getContent();
 
-		Boolean result = evaluatePredicate(predicates.get(0), parameters);
+		Boolean result = evaluatePredicate(predicates.get(0), context);
 
 		switch(compoundPredicate.getBooleanOperator()){
 			case AND:
@@ -100,7 +100,7 @@ public class PredicateUtil {
 		}
 
 		for(Predicate predicate : predicates.subList(1, predicates.size())){
-			Boolean value = evaluatePredicate(predicate, parameters);
+			Boolean value = evaluatePredicate(predicate, context);
 
 			switch(compoundPredicate.getBooleanOperator()){
 				case AND:
@@ -124,8 +124,8 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, Map<FieldName, ?> parameters){
-		Object value = ExpressionUtil.evaluate(simpleSetPredicate.getField(), null, parameters);
+	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext<?> context){
+		Object value = ExpressionUtil.evaluate(simpleSetPredicate.getField(), context);
 		if(value == null){
 			throw new MissingParameterException(simpleSetPredicate.getField());
 		}

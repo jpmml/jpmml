@@ -24,8 +24,8 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	/**
-	 * @see #evaluateRegression(Map)
-	 * @see #evaluateClassification(Map)
+	 * @see #evaluateRegression(EvaluationContext)
+	 * @see #evaluateClassification(EvaluationContext)
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters) {
 		NeuralNetwork neuralNetwork = getModel();
@@ -33,18 +33,18 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(parameters);
+				return evaluateRegression(new EvaluationContext<NeuralNetwork>(this, parameters));
 			case CLASSIFICATION:
-				return evaluateClassification(parameters);
+				return evaluateClassification(new EvaluationContext<NeuralNetwork>(this, parameters));
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 	}
 
-	public Map<FieldName, Double> evaluateRegression(Map<FieldName, ?> parameters) {
+	public Map<FieldName, Double> evaluateRegression(EvaluationContext<NeuralNetwork> context) {
 		Map<FieldName, Double> result = new HashMap<FieldName, Double>();
 
-		Map<String, Double> neuronOutputs = evaluateRaw(parameters);
+		Map<String, Double> neuronOutputs = evaluateRaw(context);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
 		for (NeuralOutput neuralOutput : neuralOutputs) {
@@ -68,10 +68,10 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return result;
 	}
 
-	public Map<FieldName, Map<String, Double>> evaluateClassification(Map<FieldName, ?> parameters) {
+	public Map<FieldName, Map<String, Double>> evaluateClassification(EvaluationContext<NeuralNetwork> context) {
 		Map<FieldName, Map<String,Double>> result = new HashMap<FieldName, Map<String, Double>>();
 
-		Map<String, Double> neuronOutputs = evaluateRaw(parameters);
+		Map<String, Double> neuronOutputs = evaluateRaw(context);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
 		for (NeuralOutput neuralOutput: neuralOutputs) {
@@ -116,12 +116,12 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	 *
 	 * @return Mapping between Neuron ids and their outputs
 	 */
-	public Map<String, Double> evaluateRaw(Map<FieldName, ?> parameters) {
+	public Map<String, Double> evaluateRaw(EvaluationContext<NeuralNetwork> context) {
 		Map<String, Double> result = new HashMap<String, Double>();
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();
 		for (NeuralInput neuralInput: neuralInputs) {
-			Double value = (Double)ExpressionUtil.evaluate(neuralInput.getDerivedField(), this, parameters);
+			Double value = (Double)ExpressionUtil.evaluate(neuralInput.getDerivedField(), context);
 			if(value == null){
 				throw new MissingParameterException(neuralInput.getDerivedField());
 			}

@@ -3,8 +3,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
@@ -19,11 +17,13 @@ public class NoTrueChildStrategyTest {
 	public void returnNullPrediction(){
 		TreeModelEvaluator treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_NULL_PREDICTION);
 
-		Node node = treeModelManager.scoreModel(prepareParameters(0));
+		FieldName name = new FieldName("prob1");
+
+		Node node = treeModelManager.scoreModel(new LocalEvaluationContext<TreeModel>(treeModelManager, name, 0));
 
 		assertNull(node);
 
-		Node t1 = treeModelManager.scoreModel(prepareParameters(1));
+		Node t1 = treeModelManager.scoreModel(new LocalEvaluationContext<TreeModel>(treeModelManager, name, 1));
 
 		assertNotNull(t1);
 		assertEquals("T1", t1.getId());
@@ -33,12 +33,14 @@ public class NoTrueChildStrategyTest {
 	public void returnLastPrediction(){
 		TreeModelEvaluator treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_LAST_PREDICTION);
 
-		Node n1 = treeModelManager.scoreModel(prepareParameters(0));
+		FieldName name = new FieldName("prob1");
+
+		Node n1 = treeModelManager.scoreModel(new LocalEvaluationContext<TreeModel>(treeModelManager, name, 0));
 
 		assertNotNull(n1);
 		assertEquals("N1", n1.getId());
 
-		Node t1 = treeModelManager.scoreModel(prepareParameters(1));
+		Node t1 = treeModelManager.scoreModel(new LocalEvaluationContext<TreeModel>(treeModelManager, name, 1));
 
 		assertNotNull(t1);
 		assertEquals("T1", t1.getId());
@@ -66,10 +68,5 @@ public class NoTrueChildStrategyTest {
 		t1.setScore("1");
 
 		return new TreeModelEvaluator(treeModelManager);
-	}
-
-	static
-	private Map<FieldName, Double> prepareParameters(double value){
-		return Collections.singletonMap(new FieldName("prob1"), Double.valueOf(value));
 	}
 }

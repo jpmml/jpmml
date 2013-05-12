@@ -24,7 +24,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	}
 
 	/**
-	 * @see #evaluateRegression(Map)
+	 * @see #evaluateRegression(EvaluationContext)
 	 */
 	public Double evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
@@ -32,27 +32,27 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		MiningFunctionType miningFunction = regressionModel.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(parameters);
+				return evaluateRegression(new EvaluationContext(this, parameters));
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 	}
 
-	public Double evaluateRegression(Map<FieldName, ?> parameters){
+	public Double evaluateRegression(EvaluationContext<RegressionModel> context){
 		double result = 0D;
 
 		result += getIntercept();
 
 		List<NumericPredictor> numericPredictors = getNumericPrecictors();
 		for(NumericPredictor numericPredictor : numericPredictors){
-			result += evaluateNumericPredictor(numericPredictor, parameters);
+			result += evaluateNumericPredictor(numericPredictor, context);
 		}
 
 		return Double.valueOf(result);
 	}
 
-	private double evaluateNumericPredictor(NumericPredictor numericPredictor, Map<FieldName, ?> parameters){
-		Number value = (Number)ExpressionUtil.evaluate(numericPredictor.getName(), this, parameters);
+	private double evaluateNumericPredictor(NumericPredictor numericPredictor, EvaluationContext<RegressionModel> context){
+		Number value = (Number)ExpressionUtil.evaluate(numericPredictor.getName(), context);
 		if(value == null){
 			throw new MissingParameterException(numericPredictor.getName());
 		}

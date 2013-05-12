@@ -24,7 +24,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	}
 
 	public String evaluate(Map<FieldName, ?> parameters){
-		Node node = scoreModel(parameters);
+		Node node = scoreModel(new EvaluationContext<TreeModel>(this, parameters));
 
 		if(node != null){
 			String score = node.getScore();
@@ -53,10 +53,10 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		return result != null ? result.getValue() : null;
 	}
 
-	public Node scoreModel(Map<FieldName, ?> parameters){
+	public Node scoreModel(EvaluationContext<TreeModel> context){
 		Node root = getOrCreateRoot();
 
-		Prediction prediction = findTrueChild(root, root, parameters); // XXX
+		Prediction prediction = findTrueChild(root, root, context); // XXX
 
 		if(prediction.getLastTrueNode() != null && prediction.getTrueNode() != null && !(prediction.getLastTrueNode()).equals(prediction.getTrueNode())){
 			return prediction.getTrueNode();
@@ -75,8 +75,8 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 	}
 
-	private Prediction findTrueChild(Node lastNode, Node node, Map<FieldName, ?> parameters){
-		Boolean value = evaluateNode(node, parameters);
+	private Prediction findTrueChild(Node lastNode, Node node, EvaluationContext<TreeModel> context){
+		Boolean value = evaluateNode(node, context);
 
 		if(value == null){
 			throw new EvaluationException();
@@ -86,7 +86,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 			List<Node> children = node.getNodes();
 
 			for(Node child : children){
-				Prediction childPrediction = findTrueChild(node, child, parameters);
+				Prediction childPrediction = findTrueChild(node, child, context);
 
 				if(childPrediction.getTrueNode() != null){
 					return childPrediction;
@@ -101,13 +101,13 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 	}
 
-	private Boolean evaluateNode(Node node, Map<FieldName, ?> parameters){
+	private Boolean evaluateNode(Node node, EvaluationContext<TreeModel> context){
 		Predicate predicate = node.getPredicate();
 		if(predicate == null){
 			throw new EvaluationException();
 		}
 
-		return PredicateUtil.evaluatePredicate(predicate, parameters);
+		return PredicateUtil.evaluatePredicate(predicate, context);
 	}
 
 	static

@@ -24,7 +24,7 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 	}
 
 	/**
-	 * @see #evaluateRegression(Map)
+	 * @see #evaluateRegression(EvaluationContext)
 	 */
 	public Object evaluate(Map<FieldName, ?> parameters){
 		MiningModel model = getModel();
@@ -32,13 +32,13 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 		MiningFunctionType miningFunction = model.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(parameters);
+				return evaluateRegression(new EvaluationContext<MiningModel>(this, parameters));
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 	}
 
-	public Double evaluateRegression(Map<FieldName, ?> parameters){
+	public Double evaluateRegression(EvaluationContext<MiningModel> context){
 		Segmentation segmentation = getSegmentation();
 
 		double sum = 0;
@@ -50,7 +50,7 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 		for(Segment segment : segments){
 			Predicate predicate = segment.getPredicate();
 
-			Boolean selectable = PredicateUtil.evaluatePredicate(predicate, parameters);
+			Boolean selectable = PredicateUtil.evaluatePredicate(predicate, context);
 			if(selectable == null){
 				throw new EvaluationException();
 			} // End if
@@ -66,12 +66,12 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 
 			TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(getPmml(), treeModel);
 
-			String score = treeModelEvaluator.evaluate(parameters);
+			String score = treeModelEvaluator.evaluate(context.getParameters());
 			if(score == null){
 				throw new EvaluationException();
 			}
 
-			Double value = Double.valueOf(score);
+			Double value = ParameterUtil.toDouble(score);
 
 			sum += value.doubleValue();
 			weightedSum += (segment.getWeight() * value.doubleValue());
