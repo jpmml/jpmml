@@ -110,11 +110,12 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	/**
-	 * Evaluate neural network.
+	 * Evaluates neural network.
 	 *
-	 * @param parameters Mapping between input data fields and their values
+	 * @return Mapping between Neuron identifiers and their outputs
 	 *
-	 * @return Mapping between Neuron ids and their outputs
+	 * @see NeuralInput#getId()
+	 * @see Neuron#getId()
 	 */
 	public Map<String, Double> evaluateRaw(EvaluationContext<NeuralNetwork> context) {
 		Map<String, Double> result = new HashMap<String, Double>();
