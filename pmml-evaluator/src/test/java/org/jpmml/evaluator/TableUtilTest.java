@@ -34,8 +34,9 @@ public class TableUtilTest {
 
 		List<Map<String, String>> rows = Arrays.asList(firstTrue, firstFalse, secondTrue, secondFalse, thirdTrue, thirdFalse);
 
-		assertEquals(thirdTrue, TableUtil.match(rows, createRow(new String[][]{{"value", "3"}, {"flag", "true"}})));
 		assertEquals(null, TableUtil.match(rows, createRow(new String[][]{{"value", "3"}})));
+
+		assertEquals(thirdTrue, TableUtil.match(rows, createRow(new String[][]{{"value", "3"}, {"flag", "true"}})));
 		assertEquals(null, TableUtil.match(rows, createRow(new String[][]{{"value", "three"}, {"flag", "true"}})));
 	}
 

@@ -72,6 +72,21 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
+	public void evaluateDiscretize(){
+		FieldName name = new FieldName("x");
+
+		Discretize discretize = new Discretize(name);
+
+		assertEquals(null, ExpressionUtil.getValue(discretize, null, Collections.<FieldName, Object>emptyMap()));
+		discretize.setMapMissingTo("Missing");
+		assertEquals("Missing", ExpressionUtil.getValue(discretize, null, Collections.<FieldName, Object>emptyMap()));
+
+		assertEquals(null, ExpressionUtil.getValue(discretize, null, Collections.singletonMap(name, "3")));
+		discretize.setDefaultValue("Default");
+		assertEquals("Default", ExpressionUtil.getValue(discretize, null, Collections.singletonMap(name, "3")));
+	}
+
+	@Test
 	public void evaluateMapValues(){
 		FieldName name = new FieldName("x");
 

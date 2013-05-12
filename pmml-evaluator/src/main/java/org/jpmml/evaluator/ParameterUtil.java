@@ -36,6 +36,54 @@ public class ParameterUtil {
 		throw new UnsupportedFeatureException(dataType);
 	}
 
+	/**
+	 * Converts the specified value from an unknown data type to String data type.
+	 *
+	 * @see DataType#STRING
+	 */
+	static
+	public String toString(Object value){
+
+		if(value instanceof String){
+			return (String)value;
+		} else
+
+		if(value instanceof Number){
+			Number number = (Number)value;
+
+			return number.toString();
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * Converts the specified value from an unknown data type to Double data type.
+	 *
+	 * @see DataType#DOUBLE
+	 */
+	static
+	public Double toDouble(Object value){
+
+		if(value instanceof String){
+			String string = (String)value;
+
+			return Double.valueOf(string);
+		} else
+
+		if(value instanceof Double){
+			return (Double)value;
+		} else
+
+		if(value instanceof Number){
+			Number number = (Number)value;
+
+			return Double.valueOf(number.doubleValue());
+		}
+
+		throw new EvaluationException();
+	}
+
 	static
 	public DataType getDataType(Object object){
 
