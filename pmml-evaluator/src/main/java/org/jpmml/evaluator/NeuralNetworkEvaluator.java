@@ -30,18 +30,20 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters) {
 		NeuralNetwork neuralNetwork = getModel();
 
+		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+
 		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(new EvaluationContext<NeuralNetwork>(this, parameters));
+				return evaluateRegression(context);
 			case CLASSIFICATION:
-				return evaluateClassification(new EvaluationContext<NeuralNetwork>(this, parameters));
+				return evaluateClassification(context);
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 	}
 
-	public Map<FieldName, Double> evaluateRegression(EvaluationContext<NeuralNetwork> context) {
+	public Map<FieldName, Double> evaluateRegression(EvaluationContext context) {
 		Map<FieldName, Double> result = new LinkedHashMap<FieldName, Double>();
 
 		Map<String, Double> neuronOutputs = evaluateRaw(context);
@@ -69,7 +71,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return result;
 	}
 
-	public Map<FieldName, Map<String, Double>> evaluateClassification(EvaluationContext<NeuralNetwork> context) {
+	public Map<FieldName, Map<String, Double>> evaluateClassification(EvaluationContext context) {
 		Map<FieldName, Map<String,Double>> result = new LinkedHashMap<FieldName, Map<String, Double>>();
 
 		Map<String, Double> neuronOutputs = evaluateRaw(context);
@@ -129,7 +131,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	 * @see NeuralInput#getId()
 	 * @see Neuron#getId()
 	 */
-	public Map<String, Double> evaluateRaw(EvaluationContext<NeuralNetwork> context) {
+	public Map<String, Double> evaluateRaw(EvaluationContext context) {
 		Map<String, Double> result = new LinkedHashMap<String, Double>();
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();

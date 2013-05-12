@@ -16,7 +16,7 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluatePredicate(Predicate predicate, EvaluationContext<?> context){
+	public Boolean evaluatePredicate(Predicate predicate, EvaluationContext context){
 
 		if(predicate instanceof SimplePredicate){
 			return evaluateSimplePredicate((SimplePredicate)predicate, context);
@@ -44,7 +44,7 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext<?> context){
+	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
 		Object value = ExpressionUtil.evaluate(simplePredicate.getField(), context);
 
 		switch(simplePredicate.getOperator()){
@@ -82,7 +82,7 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, EvaluationContext<?> context){
+	public Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, EvaluationContext context){
 		List<Predicate> predicates = compoundPredicate.getContent();
 
 		Boolean result = evaluatePredicate(predicates.get(0), context);
@@ -124,7 +124,7 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext<?> context){
+	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
 		Object value = ExpressionUtil.evaluate(simpleSetPredicate.getField(), context);
 		if(value == null){
 			throw new MissingParameterException(simpleSetPredicate.getField());

@@ -15,7 +15,7 @@ public class ExpressionUtil {
 	}
 
 	static
-	public Object evaluate(FieldName name, EvaluationContext<?> context){
+	public Object evaluate(FieldName name, EvaluationContext context){
 		DerivedField derivedField = context.resolve(name);
 		if(derivedField != null){
 			return evaluate(derivedField, context);
@@ -25,12 +25,12 @@ public class ExpressionUtil {
 	}
 
 	static
-	public Object evaluate(DerivedField derivedField, EvaluationContext<?> context){
+	public Object evaluate(DerivedField derivedField, EvaluationContext context){
 		return evaluate(derivedField.getExpression(), context);
 	}
 
 	static
-	public Object evaluate(Expression expression, EvaluationContext<?> context){
+	public Object evaluate(Expression expression, EvaluationContext context){
 
 		if(expression instanceof Constant){
 			Constant constant = (Constant)expression;

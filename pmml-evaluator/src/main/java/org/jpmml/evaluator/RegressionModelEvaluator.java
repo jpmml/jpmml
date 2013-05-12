@@ -29,16 +29,18 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	public Double evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
 
+		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+
 		MiningFunctionType miningFunction = regressionModel.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(new EvaluationContext(this, parameters));
+				return evaluateRegression(context);
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 	}
 
-	public Double evaluateRegression(EvaluationContext<RegressionModel> context){
+	public Double evaluateRegression(EvaluationContext context){
 		double result = 0D;
 
 		result += getIntercept();
@@ -51,7 +53,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return Double.valueOf(result);
 	}
 
-	private double evaluateNumericPredictor(NumericPredictor numericPredictor, EvaluationContext<RegressionModel> context){
+	private double evaluateNumericPredictor(NumericPredictor numericPredictor, EvaluationContext context){
 		Number value = (Number)ExpressionUtil.evaluate(numericPredictor.getName(), context);
 		if(value == null){
 			throw new MissingParameterException(numericPredictor.getName());

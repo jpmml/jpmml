@@ -24,7 +24,9 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	}
 
 	public String evaluate(Map<FieldName, ?> parameters){
-		Node node = scoreModel(new EvaluationContext<TreeModel>(this, parameters));
+		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+
+		Node node = scoreModel(context);
 
 		if(node != null){
 			String score = node.getScore();
@@ -53,7 +55,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		return result != null ? result.getValue() : null;
 	}
 
-	public Node scoreModel(EvaluationContext<TreeModel> context){
+	public Node scoreModel(EvaluationContext context){
 		Node root = getOrCreateRoot();
 
 		Prediction prediction = findTrueChild(root, root, context); // XXX
@@ -75,7 +77,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 	}
 
-	private Prediction findTrueChild(Node lastNode, Node node, EvaluationContext<TreeModel> context){
+	private Prediction findTrueChild(Node lastNode, Node node, EvaluationContext context){
 		Boolean value = evaluateNode(node, context);
 
 		if(value == null){
@@ -101,7 +103,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 	}
 
-	private Boolean evaluateNode(Node node, EvaluationContext<TreeModel> context){
+	private Boolean evaluateNode(Node node, EvaluationContext context){
 		Predicate predicate = node.getPredicate();
 		if(predicate == null){
 			throw new EvaluationException();

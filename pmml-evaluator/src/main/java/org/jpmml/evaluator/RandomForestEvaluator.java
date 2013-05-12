@@ -29,16 +29,18 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 	public Object evaluate(Map<FieldName, ?> parameters){
 		MiningModel model = getModel();
 
+		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+
 		MiningFunctionType miningFunction = model.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(new EvaluationContext<MiningModel>(this, parameters));
+				return evaluateRegression(context);
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 	}
 
-	public Double evaluateRegression(EvaluationContext<MiningModel> context){
+	public Double evaluateRegression(EvaluationContext context){
 		Segmentation segmentation = getSegmentation();
 
 		double sum = 0;
