@@ -71,8 +71,8 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return result;
 	}
 
-	public Map<FieldName, Map<String, Double>> evaluateClassification(EvaluationContext context) {
-		Map<FieldName, Map<String,Double>> result = new LinkedHashMap<FieldName, Map<String, Double>>();
+	public Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context) {
+		Map<FieldName, ClassificationMap> result = new LinkedHashMap<FieldName, ClassificationMap>();
 
 		Map<String, Double> neuronOutputs = evaluateRaw(context);
 
@@ -86,9 +86,9 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 				FieldName field = normDiscrete.getField();
 
-				Map<String, Double> values = result.get(field);
+				ClassificationMap values = result.get(field);
 				if(values == null){
-					values = new LinkedHashMap<String, Double>();
+					values = new ClassificationMap();
 
 					result.put(field, values);
 				}
@@ -243,6 +243,28 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 				return Math.atan(z);
 			default:
 				throw new UnsupportedFeatureException(activationFunction);
+		}
+	}
+
+	static
+	private class ClassificationMap extends LinkedHashMap<String, Double> implements Computable<String> {
+
+		public String getResult(){
+			Map.Entry<String, Double> result = null;
+
+			Collection<Map.Entry<String, Double>> entries = entrySet();
+			for(Map.Entry<String, Double> entry : entries){
+
+				if(result == null || (result.getValue()).compareTo(entry.getValue()) < 0){
+					result = entry;
+				}
+			}
+
+			if(result == null){
+				throw new EvaluationException();
+			}
+
+			return result.getKey();
 		}
 	}
 }
