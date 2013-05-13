@@ -3,7 +3,6 @@
  */
 package org.jpmml.xjc;
 
-import java.lang.reflect.*;
 import java.util.*;
 
 import com.sun.tools.xjc.*;
@@ -75,46 +74,21 @@ public class SuperClassPlugin extends AbstractParameterizablePlugin {
 
 	@Override
 	public boolean run(Outline outline, Options options, ErrorHandler errorHandler){
-		Model model = outline.getModel();
+		Collection<? extends ClassOutline> clazzes = outline.getClasses();
 
-		try {
-			Field customizationsField = (Model.class).getDeclaredField("customizations");
-			if(!customizationsField.isAccessible()){
-				customizationsField.setAccessible(true);
+		for(ClassOutline clazz : clazzes){
+			List<CPluginCustomization> customizations = PluginUtil.getAllCustomizations(clazz.target, this);
+
+			/*
+			 * Mark all customizations as acknowledged.
+			 * For some reason, the initial marking in #postProcessModel(Model, ErrorHandler) does not have a lasting effect
+			 */
+			for(CPluginCustomization customization : customizations){
+				customization.markAsAcknowledged();
 			}
-
-			CCustomizations customizations = (CCustomizations)customizationsField.get(model);
-
-			Field nextField = (CCustomizations.class).getDeclaredField("next");
-			if(!nextField.isAccessible()){
-				nextField.setAccessible(true);
-			}
-
-			while(customizations != null){
-				Collection<CPluginCustomization> pluginCustomizations = customizations;
-				for(CPluginCustomization pluginCustomization : pluginCustomizations){
-
-					if(!isSuperClassPluginCustomization(pluginCustomization)){
-						continue;
-					}
-
-					// XXX: Log a warning
-					if(!pluginCustomization.isAcknowledged()){
-						pluginCustomization.markAsAcknowledged();
-					}
-				}
-
-				customizations = (CCustomizations)nextField.get(customizations);
-			}
-		} catch(Exception e){
-			throw new RuntimeException(e);
 		}
 
 		return true;
-	}
-
-	private boolean isSuperClassPluginCustomization(CPluginCustomization pluginCustomization){
-		return isCustomizationTagName(pluginCustomization.element.getNamespaceURI(), pluginCustomization.element.getLocalName());
 	}
 
 	public String getDefaultName(){
