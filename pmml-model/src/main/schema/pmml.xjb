@@ -649,6 +649,10 @@ Copyright (c) 2009 University of Tartu
 			<java:superClass
 				name="org.dmg.pmml.Model"
 			/>
+			<java:unsupportedProperty
+				property="output"
+				name="org.dmg.pmml.Output"
+			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='SimplePredicate']/xsd:complexType">

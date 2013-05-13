@@ -70,6 +70,7 @@ public class ValueConstructorPlugin extends Plugin {
 	)
 	public boolean run(Outline outline, Options options, ErrorHandler errorHandler){
 		Collection<? extends ClassOutline> clazzes = outline.getClasses();
+
 		for(ClassOutline clazz : clazzes){
 			List<JFieldVar> superClassFields = getSuperClassFields(clazz);
 			List<JFieldVar> classFields = getClassFields(clazz);

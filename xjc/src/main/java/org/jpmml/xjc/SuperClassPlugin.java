@@ -53,7 +53,7 @@ public class SuperClassPlugin extends AbstractParameterizablePlugin {
 
 		Collection<CClassInfo> classInfos = (model.beans()).values();
 		for(CClassInfo classInfo : classInfos){
-			CPluginCustomization customization = classInfo.getCustomizations().find(JAVA_URI, "superClass");
+			CPluginCustomization customization = PluginUtil.getCustomization(classInfo, this);
 
 			if(customization != null){
 				String name = customization.element.getAttribute("name");

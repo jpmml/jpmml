@@ -12,6 +12,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	private LocalTransformations localTransformations = null;
 
+	private Output output = null;
+
 
 	public ModelManager(){
 	}
@@ -103,6 +105,24 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		}
 
 		return this.localTransformations;
+	}
+
+	public Output getOrCreateOutput(){
+
+		if(this.output == null){
+			M model = getModel();
+
+			Output output = model.getOutput();
+			if(output == null){
+				output = new Output();
+
+				model.setOutput(output);
+			}
+
+			this.output = output;
+		}
+
+		return this.output;
 	}
 
 	static
