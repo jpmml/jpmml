@@ -23,39 +23,28 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		this(parent.getPmml(), parent.getModel());
 	}
 
-	public String evaluate(Map<FieldName, ?> parameters){
+	/**
+	 * @see #evaluateTree(EvaluationContext)
+	 */
+	public Map<FieldName, String> evaluate(Map<FieldName, ?> parameters){
 		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
-		Node node = scoreModel(context);
+		String score = null;
+
+		Node node = evaluateTree(context);
 
 		if(node != null){
-			String score = node.getScore();
-			if(score != null){
-				return score;
-			}
+			score = node.getScore();
 
-			return computeScore(node);
-		}
-
-		return null;
-	}
-
-	private String computeScore(Node node){
-		ScoreDistribution result = null;
-
-		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
-
-		for(ScoreDistribution scoreDistribution : scoreDistributions){
-
-			if(result == null || result.getRecordCount() < scoreDistribution.getRecordCount()){
-				result = scoreDistribution;
+			if(score == null){
+				score = computeScore(node);
 			}
 		}
 
-		return result != null ? result.getValue() : null;
+		return Collections.singletonMap(getTarget(), score);
 	}
 
-	public Node scoreModel(EvaluationContext context){
+	public Node evaluateTree(EvaluationContext context){
 		Node root = getOrCreateRoot();
 
 		Prediction prediction = findTrueChild(root, root, context); // XXX
@@ -110,6 +99,20 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 
 		return PredicateUtil.evaluatePredicate(predicate, context);
+	}
+
+	private String computeScore(Node node){
+		ScoreDistribution result = null;
+
+		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
+		for(ScoreDistribution scoreDistribution : scoreDistributions){
+
+			if(result == null || result.getRecordCount() < scoreDistribution.getRecordCount()){
+				result = scoreDistribution;
+			}
+		}
+
+		return result != null ? result.getValue() : null;
 	}
 
 	static

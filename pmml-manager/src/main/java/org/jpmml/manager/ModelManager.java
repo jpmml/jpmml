@@ -37,6 +37,20 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return getFields(FieldUsageType.ACTIVE);
 	}
 
+	public FieldName getTarget(){
+		List<FieldName> fields = getPredictedFields();
+
+		if(fields.size() < 1){
+			throw new ModelManagerException("No predicted fields");
+		} else
+
+		if(fields.size() > 1){
+			throw new ModelManagerException("Too many predicted fields");
+		}
+
+		return fields.get(0);
+	}
+
 	public List<FieldName> getPredictedFields(){
 		return getFields(FieldUsageType.PREDICTED);
 	}

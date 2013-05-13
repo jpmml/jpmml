@@ -26,7 +26,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	/**
 	 * @see #evaluateRegression(EvaluationContext)
 	 */
-	public Double evaluate(Map<FieldName, ?> parameters){
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
 
 		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
@@ -40,7 +40,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		}
 	}
 
-	public Double evaluateRegression(EvaluationContext context){
+	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){
 		double result = 0D;
 
 		result += getIntercept();
@@ -50,7 +50,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			result += evaluateNumericPredictor(numericPredictor, context);
 		}
 
-		return Double.valueOf(result);
+		return Collections.singletonMap(getTarget(), result);
 	}
 
 	private double evaluateNumericPredictor(NumericPredictor numericPredictor, EvaluationContext context){

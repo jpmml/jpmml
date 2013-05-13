@@ -12,9 +12,11 @@ import org.dmg.pmml.*;
 public interface Evaluator extends Consumer {
 
 	/**
-	 * @throws EvaluationException If the evaluation failed.
+	 * @param parameters Map of {@link #getActiveFields() active field values}.
 	 *
-	 * @see #getActiveFields()
+	 * @return Map of {@link #getPredictedFields() predicted field values}
+	 *
+	 * @throws EvaluationException If the evaluation failed.
 	 */
-	Object evaluate(Map<FieldName, ?> parameters);
+	Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters);
 }

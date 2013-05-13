@@ -26,7 +26,7 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 	/**
 	 * @see #evaluateRegression(EvaluationContext)
 	 */
-	public Object evaluate(Map<FieldName, ?> parameters){
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		MiningModel model = getModel();
 
 		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
@@ -40,13 +40,15 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 		}
 	}
 
-	public Double evaluateRegression(EvaluationContext context){
+	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){
 		Segmentation segmentation = getSegmentation();
 
 		double sum = 0;
 		double weightedSum = 0;
 
 		int count = 0;
+
+		FieldName target = getTarget();
 
 		List<Segment> segments = getSegments();
 		for(Segment segment : segments){
@@ -68,7 +70,9 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 
 			TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(getPmml(), treeModel);
 
-			String score = treeModelEvaluator.evaluate(context.getParameters());
+			Map<FieldName, String> result = treeModelEvaluator.evaluate(context.getParameters());
+
+			String score = result.get(target);
 			if(score == null){
 				throw new EvaluationException();
 			}
@@ -81,16 +85,23 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 			count++;
 		}
 
+		double result;
+
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SUM:
-				return sum;
+				result = sum;
+				break;
 			case AVERAGE:
-				return (sum / count);
+				result = (sum / count);
+				break;
 			case WEIGHTED_AVERAGE:
-				return (weightedSum / count); // XXX
+				result = (weightedSum / count);
+				break;
 			default:
 				throw new UnsupportedFeatureException(multipleModelMethod);
 		}
+
+		return Collections.singletonMap(target, result);
 	}
 }
