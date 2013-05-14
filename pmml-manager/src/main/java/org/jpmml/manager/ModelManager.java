@@ -34,7 +34,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public List<FieldName> getActiveFields(){
-		return getFields(FieldUsageType.ACTIVE);
+		return getMiningFields(FieldUsageType.ACTIVE);
 	}
 
 	public FieldName getTarget(){
@@ -52,10 +52,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public List<FieldName> getPredictedFields(){
-		return getFields(FieldUsageType.PREDICTED);
+		return getMiningFields(FieldUsageType.PREDICTED);
 	}
 
-	public List<FieldName> getFields(FieldUsageType fieldUsageType){
+	public List<FieldName> getMiningFields(FieldUsageType fieldUsageType){
 		List<FieldName> result = new ArrayList<FieldName>();
 
 		List<MiningField> miningFields = getMiningSchema().getMiningFields();
@@ -70,9 +70,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public MiningField getMiningField(FieldName name){
-		List<MiningField> miningField = getMiningSchema().getMiningFields();
+		List<MiningField> miningFields = getMiningSchema().getMiningFields();
 
-		return FieldUtil.getField(miningField, name);
+		return FieldUtil.getField(miningFields, name);
 	}
 
 	public MiningField addMiningField(FieldName name, FieldUsageType usageType){
