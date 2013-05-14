@@ -29,15 +29,20 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		MiningModel model = getModel();
 
+		Map<FieldName, ?> predictions;
+
 		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		MiningFunctionType miningFunction = model.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(context);
+				predictions = evaluateRegression(context);
+				break;
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
+
+		return OutputUtil.evaluate(this, parameters, predictions);
 	}
 
 	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){
@@ -70,9 +75,9 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 
 			TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(getPmml(), treeModel);
 
-			Map<FieldName, String> result = treeModelEvaluator.evaluate(context.getParameters());
+			Map<FieldName, ?> result = treeModelEvaluator.evaluate(context.getParameters());
 
-			String score = result.get(target);
+			Object score = result.get(target);
 			if(score == null){
 				throw new EvaluationException();
 			}

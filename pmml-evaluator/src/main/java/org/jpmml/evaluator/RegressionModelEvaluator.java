@@ -29,15 +29,20 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
 
+		Map<FieldName, ?> predictions;
+
 		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		MiningFunctionType miningFunction = regressionModel.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(context);
+				predictions = evaluateRegression(context);
+				break;
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
+
+		return OutputUtil.evaluate(this, parameters, predictions);
 	}
 
 	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){

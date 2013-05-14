@@ -30,17 +30,23 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters) {
 		NeuralNetwork neuralNetwork = getModel();
 
+		Map<FieldName, ?> predictions;
+
 		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return evaluateRegression(context);
+				predictions = evaluateRegression(context);
+				break;
 			case CLASSIFICATION:
-				return evaluateClassification(context);
+				predictions = evaluateClassification(context);
+				break;
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
+
+		return OutputUtil.evaluate(this, parameters, predictions);
 	}
 
 	public Map<FieldName, Double> evaluateRegression(EvaluationContext context) {
