@@ -29,9 +29,26 @@ public interface Consumer {
 	List<FieldName> getPredictedFields();
 
 	/**
-	 * Gets the data definition of a field from the {@link DataDictionary}.
+	 * Gets the definition of a field from the {@link DataDictionary}.
+	 *
+	 * @see #getActiveFields()
+	 * @see #getPredictedFields()
 	 *
 	 * @see PMMLManager#getDataField(FieldName)
 	 */
-	DataField getDataField(FieldName fieldName);
+	DataField getDataField(FieldName name);
+
+	/**
+	 * Gets the output fields of a {@link Model} from its {@link Output}.
+	 *
+	 * @see ModelManager#getOutputFields()
+	 */
+	List<FieldName> getOutputFields();
+
+	/**
+	 * Gets the definition of a field from the {@link Output}
+	 *
+	 * @see #getOutputFields()
+	 */
+	OutputField getOutputField(FieldName name);
 }

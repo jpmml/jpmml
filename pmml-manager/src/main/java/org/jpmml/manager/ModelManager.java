@@ -85,6 +85,27 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return miningField;
 	}
 
+	public List<FieldName> getOutputFields(){
+		List<FieldName> result = new ArrayList<FieldName>();
+
+		Output output = getOrCreateOutput();
+
+		List<OutputField> outputFields = output.getOutputFields();
+		for(OutputField outputField : outputFields){
+			result.add(outputField.getName());
+		}
+
+		return result;
+	}
+
+	public OutputField getOutputField(FieldName name){
+		Output output = getOrCreateOutput();
+
+		List<OutputField> outputFields = output.getOutputFields();
+
+		return FieldUtil.getField(outputFields, name);
+	}
+
 	@Override
 	public DerivedField resolve(FieldName name){
 		LocalTransformations localTransformations = getOrCreateLocalTransformations();
