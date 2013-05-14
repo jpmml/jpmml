@@ -15,6 +15,13 @@ public interface Consumer {
 	String getSummary();
 
 	/**
+	 * Gets the definition of a field from the {@link DataDictionary}.
+	 *
+	 * @see PMMLManager#getDataField(FieldName)
+	 */
+	DataField getDataField(FieldName name);
+
+	/**
 	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
 	 *
 	 * @see ModelManager#getActiveFields()
@@ -29,14 +36,14 @@ public interface Consumer {
 	List<FieldName> getPredictedFields();
 
 	/**
-	 * Gets the definition of a field from the {@link DataDictionary}.
+	 * Gets the definition of a field from the {@link MiningSchema}.
 	 *
 	 * @see #getActiveFields()
 	 * @see #getPredictedFields()
 	 *
-	 * @see PMMLManager#getDataField(FieldName)
+	 * @see ModelManager#getMiningField(FieldName)
 	 */
-	DataField getDataField(FieldName name);
+	MiningField getMiningField(FieldName name);
 
 	/**
 	 * Gets the output fields of a {@link Model} from its {@link Output}.

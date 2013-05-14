@@ -28,6 +28,12 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	abstract
 	public M getModel();
 
+	/**
+	 * Convenience method for adding a field declaration to {@link DataDictionary} and {@link MiningSchema}.
+	 *
+	 * @see #addDataField(FieldName, String, OpType, DataType)
+	 * @see #addMiningField(FieldName, FieldUsageType)
+	 */
 	public void addField(FieldName name, String displayName, OpType opType, DataType dataType, FieldUsageType fieldUsageType){
 		addDataField(name, displayName, opType, dataType);
 		addMiningField(name, fieldUsageType);
