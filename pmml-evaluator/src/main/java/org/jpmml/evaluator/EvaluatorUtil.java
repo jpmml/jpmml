@@ -13,6 +13,21 @@ public class EvaluatorUtil {
 	}
 
 	/**
+	 * @see Computable
+	 */
+	static
+	public Object simplify(Object object){
+
+		if(object instanceof Computable){
+			Computable<?> computable = (Computable<?>)object;
+
+			return computable.getResult();
+		}
+
+		return object;
+	}
+
+	/**
 	 * Decouples a {@link Map} instance from the current runtime environment by simplifying both its keys and values.
 	 *
 	 * @see #simplifyKeys(Map)
@@ -51,21 +66,9 @@ public class EvaluatorUtil {
 
 		Collection<? extends Map.Entry<K, ?>> entries = map.entrySet();
 		for(Map.Entry<K, ?> entry : entries){
-			result.put(entry.getKey(), compute(entry.getValue()));
+			result.put(entry.getKey(), simplify(entry.getValue()));
 		}
 
 		return result;
-	}
-
-	static
-	private Object compute(Object object){
-
-		if(object instanceof Computable){
-			Computable<?> computable = (Computable<?>)object;
-
-			return computable.getResult();
-		}
-
-		return object;
 	}
 }
