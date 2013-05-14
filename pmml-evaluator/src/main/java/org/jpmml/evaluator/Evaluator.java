@@ -55,6 +55,8 @@ import org.dmg.pmml.*;
  *   value = computable.getResult();
  * }
  * </pre>
+ *
+ * @see EvaluatorUtil
  */
 public interface Evaluator extends Consumer {
 
