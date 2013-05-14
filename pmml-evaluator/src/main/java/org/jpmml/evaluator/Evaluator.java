@@ -10,25 +10,47 @@ import org.jpmml.manager.*;
 import org.dmg.pmml.*;
 
 /**
+ * <p>
+ * Performs the evaluation of a {@link Model} in "interpreted mode".
+ * </p>
+ *
+ * Obtaining {@link Evaluator} instance:
  * <pre>
  * PMML pmml = ...;
  * PMMLManager pmmlManager = new PMMLManager(pmml);
  * Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+ * </pre>
  *
- * Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
- * List<FieldName> activeFields = evaluator.getActiveFields();
+ * Preparing {@link Evaluator#getActiveFields() active fields}:
+ * <pre>
+ * Map&lt;FieldName, Object&gt; parameters = new LinkedHashMap&lt;FieldName, Object&gt;();
+ * List&lt;FieldName&gt; activeFields = evaluator.getActiveFields();
  * for(FieldName activeField : activeFields){
  *   parameters.put(activeField, ...);
  * }
+ * </pre>
  *
- * Map<FieldName, ?> result = evaluator.evaluate(parameters);
+ * Performing the {@link Evaluator#evaluate(Map) evaluation}:
+ * <pre>
+ * Map&lt;FieldName, ?&gt; result = evaluator.evaluate(parameters);
+ * </pre>
  *
- * FieldName target = evaluator.getTarget();
- * Object value = result.get(target);
+ * Retrieving the value of the {@link Evaluator#getTarget() predicted field} and {@link Evaluator#getOutputFields() output fields}:
+ * <pre>
+ * FieldName targetField = evaluator.getTarget();
+ * Object targetValue = result.get(targetField);
  *
- * // Decode complex value to simple value
+ * List&lt;FieldName&gt; outputFields = evaluator.getOutputFields();
+ * for(FieldName outputField : outputFields){
+ *   Object outputValue = result.get(outputField);
+ * }
+ * </pre>
+ *
+ * Decoding {@link Computable complex value} to simple value:
+ * <pre>
+ * Object value = ...;
  * if(value instanceof Computable){
- *   Computable<?> computable = (Computable<?>)value;
+ *   Computable&lt;?&gt; computable = (Computable&lt;?&gt;)value;
  *
  *   value = computable.getResult();
  * }
