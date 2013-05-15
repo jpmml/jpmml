@@ -45,6 +45,7 @@
 		<module>pmml-evaluator</module>
 		<module>pmml-manager</module>
 		<module>pmml-model</module>
+		<module>pmml-rattle</module>
 		<module>pmml-schema</module>
 		<module>xjc</module>
 	</modules>

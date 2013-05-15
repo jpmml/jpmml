@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="Neural Network PMML Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.2.34r27"/>
+  <Timestamp>2013-05-15 22:03:11</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="5">
+  <DataField name="Species" optype="categorical" dataType="string">
+   <Value value="setosa"/>
+   <Value value="versicolor"/>
+   <Value value="virginica"/>
+  </DataField>
+  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <NeuralNetwork modelName="NeuralNet_model" functionName="classification" numberOfLayers="2" activationFunction="logistic">
+  <MiningSchema>
+   <MiningField name="Species" usageType="predicted"/>
+   <MiningField name="Sepal.Length" usageType="active"/>
+   <MiningField name="Sepal.Width" usageType="active"/>
+   <MiningField name="Petal.Length" usageType="active"/>
+   <MiningField name="Petal.Width" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_Species" feature="predictedValue"/>
+   <!--
+   <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
+   <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
+   <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
+   -->
+  </Output>
+  <NeuralInputs numberOfInputs="4">
+   <NeuralInput id="1">
+    <DerivedField name="derivedNI_Sepal.Length" optype="continuous" dataType="double">
+     <FieldRef field="Sepal.Length"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="2">
+    <DerivedField name="derivedNI_Sepal.Width" optype="continuous" dataType="double">
+     <FieldRef field="Sepal.Width"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="3">
+    <DerivedField name="derivedNI_Petal.Length" optype="continuous" dataType="double">
+     <FieldRef field="Petal.Length"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="4">
+    <DerivedField name="derivedNI_Petal.Width" optype="continuous" dataType="double">
+     <FieldRef field="Petal.Width"/>
+    </DerivedField>
+   </NeuralInput>
+  </NeuralInputs>
+  <NeuralLayer numberOfNeurons="5">
+   <Neuron id="5" bias="-6.95999804197491">
+    <Con from="1" weight="-42.492485337608"/>
+    <Con from="2" weight="-20.4533779964751"/>
+    <Con from="3" weight="-30.9919037513128"/>
+    <Con from="4" weight="-9.70288233185283"/>
+   </Neuron>
+   <Neuron id="6" bias="-21.4961210707628">
+    <Con from="1" weight="24.2155470191962"/>
+    <Con from="2" weight="-24.4124466963411"/>
+    <Con from="3" weight="-2.95646749141241"/>
+    <Con from="4" weight="-30.691322575278"/>
+   </Neuron>
+   <Neuron id="7" bias="181.629291818329">
+    <Con from="1" weight="36.4149599970582"/>
+    <Con from="2" weight="35.8392810033616"/>
+    <Con from="3" weight="-85.1287628756734"/>
+    <Con from="4" weight="-56.2994471224908"/>
+   </Neuron>
+   <Neuron id="8" bias="14.0045238120348">
+    <Con from="1" weight="19.9301254186377"/>
+    <Con from="2" weight="36.6452661679967"/>
+    <Con from="3" weight="-71.7174807032499"/>
+    <Con from="4" weight="-34.2070001351331"/>
+   </Neuron>
+   <Neuron id="9" bias="85.2412743167248">
+    <Con from="1" weight="0.872148616802832"/>
+    <Con from="2" weight="10.791767204924"/>
+    <Con from="3" weight="31.9891361117104"/>
+    <Con from="4" weight="-174.854410793366"/>
+   </Neuron>
+  </NeuralLayer>
+  <NeuralLayer numberOfNeurons="3" activationFunction="identity" normalizationMethod="softmax">
+   <Neuron id="10" bias="-5.94591267593606">
+    <Con from="5" weight="-77.3671537386979"/>
+    <Con from="6" weight="-5.17528034899394"/>
+    <Con from="7" weight="-0.00992664983744576"/>
+    <Con from="8" weight="105.188318300469"/>
+    <Con from="9" weight="0.48432768210574"/>
+   </Neuron>
+   <Neuron id="11" bias="-10.2237662014378">
+    <Con from="5" weight="-55.7963744333647"/>
+    <Con from="6" weight="-24.4280195232633"/>
+    <Con from="7" weight="79.2802520677168"/>
+    <Con from="8" weight="-44.3617796700915"/>
+    <Con from="9" weight="23.2021020837726"/>
+   </Neuron>
+   <Neuron id="12" bias="15.3307339523327">
+    <Con from="5" weight="132.220760527614"/>
+    <Con from="6" weight="30.2133439073849"/>
+    <Con from="7" weight="-80.1025406608567"/>
+    <Con from="8" weight="-61.9046342656379"/>
+    <Con from="9" weight="-22.8232618854024"/>
+   </Neuron>
+  </NeuralLayer>
+  <NeuralOutputs numberOfOutputs="3">
+   <NeuralOutput outputNeuron="10">
+    <DerivedField name="derivedNO_Species" optype="continuous" dataType="double">
+     <NormDiscrete field="Species" value="setosa"/>
+    </DerivedField>
+   </NeuralOutput>
+   <NeuralOutput outputNeuron="11">
+    <DerivedField name="derivedNO_Species" optype="continuous" dataType="double">
+     <NormDiscrete field="Species" value="versicolor"/>
+    </DerivedField>
+   </NeuralOutput>
+   <NeuralOutput outputNeuron="12">
+    <DerivedField name="derivedNO_Species" optype="continuous" dataType="double">
+     <NormDiscrete field="Species" value="virginica"/>
+    </DerivedField>
+   </NeuralOutput>
+  </NeuralOutputs>
+ </NeuralNetwork>
+</PMML>
