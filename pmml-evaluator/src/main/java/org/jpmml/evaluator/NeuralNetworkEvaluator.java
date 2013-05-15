@@ -59,7 +59,15 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			String id = neuralOutput.getOutputNeuron();
 
 			Expression expression = getExpression(neuralOutput.getDerivedField());
-			if (expression instanceof NormContinuous) {
+			if(expression instanceof FieldRef){
+				FieldRef fieldRef = (FieldRef)expression;
+
+				FieldName field = fieldRef.getField();
+
+				result.put(field, neuronOutputs.get(id));
+			} else
+
+			if(expression instanceof NormContinuous){
 				NormContinuous normContinuous = (NormContinuous)expression;
 
 				FieldName field = normContinuous.getField();
@@ -87,7 +95,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			String id = neuralOutput.getOutputNeuron();
 
 			Expression expression = getExpression(neuralOutput.getDerivedField());
-			if (expression instanceof NormDiscrete) {
+			if(expression instanceof NormDiscrete){
 				NormDiscrete normDiscrete = (NormDiscrete)expression;
 
 				FieldName field = normDiscrete.getField();
@@ -119,11 +127,11 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			FieldRef fieldRef = (FieldRef)expression;
 
 			derivedField = resolve(fieldRef.getField());
-			if(derivedField == null){
-				throw new EvaluationException();
+			if(derivedField != null){
+				return getExpression(derivedField);
 			}
 
-			return getExpression(derivedField);
+			return fieldRef;
 		}
 
 		return expression;
