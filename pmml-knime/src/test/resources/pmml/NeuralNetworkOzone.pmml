@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1">
+  <Header copyright="Vfed">
+    <Application name="KNIME" version="2.7.4"/>
+  </Header>
+  <DataDictionary numberOfFields="4">
+    <DataField dataType="integer" name="O3" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="38.0"/>
+    </DataField>
+    <DataField dataType="integer" name="temp" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="25.0" rightMargin="93.0"/>
+    </DataField>
+    <DataField dataType="integer" name="ibh" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="111.0" rightMargin="5000.0"/>
+    </DataField>
+    <DataField dataType="integer" name="ibt" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="-25.0" rightMargin="332.0"/>
+    </DataField>
+  </DataDictionary>
+  <TransformationDictionary/>
+  <NeuralNetwork functionName="regression" algorithmName="RProp" activationFunction="logistic" normalizationMethod="none" width="0.0" numberOfLayers="2">
+    <MiningSchema>
+      <MiningField name="temp" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" invalidValueTreatment="asIs"/>
+      <MiningField name="O3" invalidValueTreatment="asIs" usageType="predicted"/>
+    </MiningSchema>
+    <LocalTransformations>
+      <DerivedField dataType="double" displayName="O3" name="O3*" optype="continuous">
+        <Extension extender="KNIME" name="summary" value="Min/Max (0.0, 1) normalization on 4 column(s)"/>
+        <NormContinuous field="O3">
+          <LinearNorm norm="-0.02702702702702703" orig="0.0"/>
+          <LinearNorm norm="0.0" orig="1.0"/>
+        </NormContinuous>
+      </DerivedField>
+      <DerivedField dataType="double" displayName="temp" name="temp*" optype="continuous">
+        <Extension extender="KNIME" name="summary" value="Min/Max (0.0, 1) normalization on 4 column(s)"/>
+        <NormContinuous field="temp">
+          <LinearNorm norm="-0.3676470588235294" orig="0.0"/>
+          <LinearNorm norm="-0.3529411764705882" orig="1.0"/>
+        </NormContinuous>
+      </DerivedField>
+      <DerivedField dataType="double" displayName="ibh" name="ibh*" optype="continuous">
+        <Extension extender="KNIME" name="summary" value="Min/Max (0.0, 1) normalization on 4 column(s)"/>
+        <NormContinuous field="ibh">
+          <LinearNorm norm="-0.02270402945387605" orig="0.0"/>
+          <LinearNorm norm="-0.022499488647985275" orig="1.0"/>
+        </NormContinuous>
+      </DerivedField>
+      <DerivedField dataType="double" displayName="ibt" name="ibt*" optype="continuous">
+        <Extension extender="KNIME" name="summary" value="Min/Max (0.0, 1) normalization on 4 column(s)"/>
+        <NormContinuous field="ibt">
+          <LinearNorm norm="0.0700280112044818" orig="0.0"/>
+          <LinearNorm norm="0.07282913165266107" orig="1.0"/>
+        </NormContinuous>
+      </DerivedField>
+    </LocalTransformations>
+    <NeuralInputs numberOfInputs="3">
+      <NeuralInput id="0,0">
+        <DerivedField optype="continuous" dataType="double">
+          <FieldRef field="temp*"/>
+        </DerivedField>
+      </NeuralInput>
+      <NeuralInput id="0,1">
+        <DerivedField optype="continuous" dataType="double">
+          <FieldRef field="ibh*"/>
+        </DerivedField>
+      </NeuralInput>
+      <NeuralInput id="0,2">
+        <DerivedField optype="continuous" dataType="double">
+          <FieldRef field="ibt*"/>
+        </DerivedField>
+      </NeuralInput>
+    </NeuralInputs>
+    <NeuralLayer>
+      <Neuron id="1,0" bias="2.5373417463169">
+        <Con from="0,0" weight="-2.459030741889763"/>
+        <Con from="0,1" weight="0.6188633228143058"/>
+        <Con from="0,2" weight="-1.9120387631953015"/>
+      </Neuron>
+      <Neuron id="1,1" bias="0.6539505533536923">
+        <Con from="0,0" weight="2.2165150433904244"/>
+        <Con from="0,1" weight="-0.4806323845564764"/>
+        <Con from="0,2" weight="-3.1065652554161094"/>
+      </Neuron>
+      <Neuron id="1,2" bias="-16.788248514676056">
+        <Con from="0,0" weight="89.27544050791417"/>
+        <Con from="0,1" weight="208.4789003210837"/>
+        <Con from="0,2" weight="-72.54007721237947"/>
+      </Neuron>
+      <Neuron id="1,3" bias="20.90220039167014">
+        <Con from="0,0" weight="39.278538339366534"/>
+        <Con from="0,1" weight="-20.537732467152487"/>
+        <Con from="0,2" weight="-49.94190211685317"/>
+      </Neuron>
+    </NeuralLayer>
+    <NeuralLayer>
+      <Neuron id="2,0" bias="0.1546809386785444">
+        <Con from="1,0" weight="-3.9193177137055946"/>
+        <Con from="1,1" weight="-1.3682600665418976"/>
+        <Con from="1,2" weight="1.1624590633028924"/>
+        <Con from="1,3" weight="0.8677290716580969"/>
+      </Neuron>
+    </NeuralLayer>
+    <NeuralOutputs numberOfOutputs="1">
+      <NeuralOutput outputNeuron="2,0">
+        <DerivedField optype="continuous" dataType="double">
+          <FieldRef field="O3"/>
+        </DerivedField>
+      </NeuralOutput>
+    </NeuralOutputs>
+  </NeuralNetwork>
+</PMML>
