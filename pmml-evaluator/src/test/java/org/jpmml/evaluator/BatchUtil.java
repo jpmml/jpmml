@@ -70,6 +70,17 @@ public class BatchUtil {
 
 				DataType dataType = dataTypes.get(predictedField);
 
+				// The output data type is usually more relaxed than the input data type
+				switch(dataType){
+					case INTEGER:
+					case FLOAT:
+					case DOUBLE:
+						dataType = DataType.DOUBLE;
+						break;
+					default:
+						break;
+				}
+
 				result &= checkEquality(predictedValue, ParameterUtil.parse(dataType, outputRow.get(predictedField)));
 			}
 		}
