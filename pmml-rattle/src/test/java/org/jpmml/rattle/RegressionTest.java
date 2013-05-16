@@ -12,15 +12,15 @@ import static org.junit.Assert.*;
 public class RegressionTest {
 
 	@Test
-	public void evaluateRegression() throws Exception {
-		Batch batch = new RattleBatch("Regression", "Ozone");
+	public void evaluateNeuralNetwork() throws Exception {
+		Batch batch = new RattleBatch("NeuralNetwork", "Ozone");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
 
 	@Test
-	public void evaluateNeuralNetwork() throws Exception {
-		Batch batch = new RattleBatch("NeuralNetwork", "Ozone");
+	public void evaluateRegression() throws Exception {
+		Batch batch = new RattleBatch("Regression", "Ozone");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
