@@ -81,25 +81,13 @@ public class BatchUtil {
 						break;
 				}
 
-				result &= checkEquality(predictedValue, ParameterUtil.parse(dataType, outputRow.get(predictedField)));
+				result &= VerificationUtil.acceptable(ParameterUtil.parse(dataType, outputRow.get(predictedField)), predictedValue, BatchUtil.precision);
 			}
 		}
 
 		return result;
 	}
 
-	static
-	public boolean checkEquality(Object left, Object right){
-
-		if(left instanceof Number && right instanceof Number){
-			BigDecimal leftDecimal = new BigDecimal(left.toString(), context);
-			BigDecimal rightDecimal = new BigDecimal(right.toString(), context);
-
-			return (leftDecimal).compareTo(rightDecimal) == 0;
-		}
-
-		return (left).equals(right);
-	}
-
-	private static final MathContext context = new MathContext(8);
+	// One part per million parts
+	private static final double precision = 1d / (1000 * 1000);
 }
