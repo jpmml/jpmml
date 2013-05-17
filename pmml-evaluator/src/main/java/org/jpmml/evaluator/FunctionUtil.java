@@ -32,6 +32,16 @@ public class FunctionUtil {
 		FunctionUtil.functions.put(name, function);
 	}
 
+	static
+	private Boolean asBoolean(Object value){
+
+		if(value instanceof Boolean){
+			return (Boolean)value;
+		}
+
+		throw new EvaluationException();
+	}
+
 	private static final Map<String, Function> functions = new LinkedHashMap<String, Function>();
 
 	public interface Function {
@@ -214,6 +224,74 @@ public class FunctionUtil {
 		});
 	}
 
+	static
+	abstract
+	public class BinaryBooleanFunction implements Function {
+
+		abstract
+		public Boolean evaluate(Boolean left, Boolean right);
+
+		public Boolean evaluate(List<?> values){
+
+			if(values.size() < 2){
+				throw new EvaluationException();
+			}
+
+			Boolean result = asBoolean(values.get(0));
+
+			for(int i = 1; i < values.size(); i++){
+				result = evaluate(result, asBoolean(values.get(i)));
+			}
+
+			return result;
+		}
+	}
+
+	static {
+		putFunction("and", new BinaryBooleanFunction(){
+
+			@Override
+			public Boolean evaluate(Boolean left, Boolean right){
+				return Boolean.valueOf(left.booleanValue() & right.booleanValue());
+			}
+		});
+
+		putFunction("or", new BinaryBooleanFunction(){
+
+			@Override
+			public Boolean evaluate(Boolean left, Boolean right){
+				return Boolean.valueOf(left.booleanValue() | right.booleanValue());
+			}
+		});
+	}
+
+	static
+	abstract
+	public class UnaryBooleanFunction implements Function {
+
+		abstract
+		public Boolean evaluate(Boolean value);
+
+		public Boolean evaluate(List<?> values){
+
+			if(values.size() != 1){
+				throw new EvaluationException();
+			}
+
+			return evaluate(asBoolean(values.get(0)));
+		}
+	}
+
+	static {
+		putFunction("not", new UnaryBooleanFunction(){
+
+			@Override
+			public Boolean evaluate(Boolean value){
+				return Boolean.valueOf(!value.booleanValue());
+			}
+		});
+	}
+
 	static {
 		putFunction("if", new Function(){
 
@@ -223,7 +301,7 @@ public class FunctionUtil {
 					throw new EvaluationException();
 				}
 
-				Boolean flag = (Boolean)values.get(0);
+				Boolean flag = asBoolean(values.get(0));
 
 				if(flag.booleanValue()){
 					return values.get(1);

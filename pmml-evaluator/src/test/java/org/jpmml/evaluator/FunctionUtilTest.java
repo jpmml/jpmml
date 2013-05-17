@@ -50,6 +50,26 @@ public class FunctionUtilTest {
 	}
 
 	@Test
+	public void evaluateBinaryFunctions(){
+		assertEquals(Boolean.TRUE, evaluate("and", Boolean.TRUE, Boolean.TRUE));
+		assertEquals(Boolean.TRUE, evaluate("and", Boolean.TRUE, Boolean.TRUE, Boolean.TRUE));
+
+		assertEquals(Boolean.FALSE, evaluate("and", Boolean.TRUE, Boolean.FALSE));
+		assertEquals(Boolean.FALSE, evaluate("and", Boolean.FALSE, Boolean.TRUE));
+
+		assertEquals(Boolean.TRUE, evaluate("or", Boolean.FALSE, Boolean.TRUE));
+		assertEquals(Boolean.TRUE, evaluate("or", Boolean.FALSE, Boolean.FALSE, Boolean.TRUE));
+
+		assertEquals(Boolean.FALSE, evaluate("or", Boolean.FALSE, Boolean.FALSE));
+	}
+
+	@Test
+	public void evaluateUnaryFunction(){
+		assertEquals(Boolean.TRUE, evaluate("not", Boolean.FALSE));
+		assertEquals(Boolean.FALSE, evaluate("not", Boolean.TRUE));
+	}
+
+	@Test
 	public void evaluateIfFunction(){
 		assertEquals("left", evaluate("if", Boolean.TRUE, "left"));
 		assertEquals("left", evaluate("if", Boolean.TRUE, "left", "right"));
