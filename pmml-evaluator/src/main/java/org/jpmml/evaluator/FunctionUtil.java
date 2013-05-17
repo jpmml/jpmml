@@ -52,6 +52,26 @@ public class FunctionUtil {
 		throw new EvaluationException();
 	}
 
+	static
+	private Integer asInteger(Object value){
+
+		if(value instanceof Integer){
+			return (Integer)value;
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	private String asString(Object value){
+
+		if(value instanceof String){
+			return (String)value;
+		}
+
+		throw new EvaluationException();
+	}
+
 	private static final Map<String, Function> functions = new LinkedHashMap<String, Function>();
 
 	public interface Function {
@@ -483,6 +503,70 @@ public class FunctionUtil {
 					// XXX
 					return null;
 				}
+			}
+		});
+	}
+
+	static
+	abstract
+	public class StringFunction implements Function {
+
+		abstract
+		public String evaluate(String value);
+
+		public String evaluate(List<?> values){
+
+			if(values.size() != 1){
+				throw new EvaluationException();
+			}
+
+			return evaluate(asString(values.get(0)));
+		}
+	}
+
+	static {
+		putFunction("uppercase", new StringFunction(){
+
+			@Override
+			public String evaluate(String value){
+				return value.toUpperCase();
+			}
+		});
+
+		putFunction("lowercase", new StringFunction(){
+
+			@Override
+			public String evaluate(String value){
+				return value.toLowerCase();
+			}
+		});
+
+		putFunction("substring", new Function(){
+
+			public String evaluate(List<?> values){
+
+				if(values.size() != 3){
+					throw new EvaluationException();
+				}
+
+				String value = asString(values.get(0));
+
+				int position = asInteger(values.get(1));
+				int length = asInteger(values.get(2));
+
+				if(position <= 0 || length < 0){
+					throw new EvaluationException();
+				}
+
+				return value.substring(position - 1, (position + length) - 1);
+			}
+		});
+
+		putFunction("trimBlanks", new StringFunction(){
+
+			@Override
+			public String evaluate(String value){
+				return value.trim();
 			}
 		});
 	}

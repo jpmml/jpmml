@@ -107,6 +107,20 @@ public class FunctionUtilTest {
 		assertEquals("right", evaluate("if", Boolean.FALSE, "left", "right"));
 	}
 
+	@Test
+	public void evaluateStringFunctions(){
+		assertEquals("VALUE", evaluate("uppercase", "Value"));
+		assertEquals("value", evaluate("lowercase", "Value"));
+
+		assertEquals("", evaluate("substring", "value", 1, 0));
+		assertEquals("value", evaluate("substring", "value", 1, 5));
+
+		assertEquals("alue", evaluate("substring", "value", 2, 4));
+		assertEquals("valu", evaluate("substring", "value", 1, 4));
+
+		assertEquals("value", evaluate("trimBlanks", "\tvalue\t"));
+	}
+
 	static
 	private Object evaluate(String name, Object... values){
 		return FunctionUtil.evaluate(name, Arrays.asList(values));
