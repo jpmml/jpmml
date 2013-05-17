@@ -70,6 +70,18 @@ public class FunctionUtilTest {
 	}
 
 	@Test
+	public void evaluateValueListFunctions(){
+		assertEquals(Boolean.TRUE, evaluate("isIn", "3", "1", "2", "3"));
+		assertEquals(Boolean.TRUE, evaluate("isNotIn", "0", "1", "2", "3"));
+
+		assertEquals(Boolean.TRUE, evaluate("isIn", 3, 1, 2, 3));
+		assertEquals(Boolean.TRUE, evaluate("isNotIn", 0, 1, 2, 3));
+
+		assertEquals(Boolean.TRUE, evaluate("isIn", 3d, 1d, 2d, 3d));
+		assertEquals(Boolean.TRUE, evaluate("isNotIn", 0d, 1d, 2d, 3d));
+	}
+
+	@Test
 	public void evaluateIfFunction(){
 		assertEquals("left", evaluate("if", Boolean.TRUE, "left"));
 		assertEquals("left", evaluate("if", Boolean.TRUE, "left", "right"));

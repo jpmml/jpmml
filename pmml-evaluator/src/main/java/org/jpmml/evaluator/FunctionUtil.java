@@ -292,6 +292,41 @@ public class FunctionUtil {
 		});
 	}
 
+	static
+	abstract
+	public class ValueListFunction implements Function {
+
+		abstract
+		public Boolean evaluate(Object value, List<?> values);
+
+		public Boolean evaluate(List<?> values){
+
+			if(values.size() < 2){
+				throw new EvaluationException();
+			}
+
+			return evaluate(values.get(0), values.subList(1, values.size()));
+		}
+	}
+
+	static {
+		putFunction("isIn", new ValueListFunction(){
+
+			@Override
+			public Boolean evaluate(Object value, List<?> values){
+				return Boolean.valueOf(values.contains(value));
+			}
+		});
+
+		putFunction("isNotIn", new ValueListFunction(){
+
+			@Override
+			public Boolean evaluate(Object value, List<?> values){
+				return Boolean.valueOf(!values.contains(value));
+			}
+		});
+	}
+
 	static {
 		putFunction("if", new Function(){
 
