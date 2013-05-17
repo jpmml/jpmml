@@ -7,6 +7,11 @@ import java.util.*;
 
 import org.jpmml.manager.*;
 
+import org.apache.commons.math3.stat.descriptive.*;
+import org.apache.commons.math3.stat.descriptive.moment.*;
+import org.apache.commons.math3.stat.descriptive.rank.*;
+import org.apache.commons.math3.stat.descriptive.summary.*;
+
 public class FunctionUtil {
 
 	private FunctionUtil(){
@@ -133,6 +138,75 @@ public class FunctionUtil {
 			@Override
 			public Number evaluate(Number left, Number right){
 				return Double.valueOf(left.doubleValue() / right.doubleValue());
+			}
+		});
+	}
+
+	static
+	abstract
+	public class AggregateFunction implements Function {
+
+		abstract
+		public StorelessUnivariateStatistic createStatistic();
+
+		public Double evaluate(List<?> values){
+			StorelessUnivariateStatistic statistic = createStatistic();
+
+			for(Object value : values){
+
+				if(value == null){
+					continue;
+				}
+
+				statistic.increment(asNumber(value).doubleValue());
+			}
+
+			if(statistic.getN() == 0){
+				throw new EvaluationException();
+			}
+
+			return Double.valueOf(statistic.getResult());
+		}
+	}
+
+	static {
+		putFunction("min", new AggregateFunction(){
+
+			@Override
+			public Min createStatistic(){
+				return new Min();
+			}
+		});
+
+		putFunction("max", new AggregateFunction(){
+
+			@Override
+			public Max createStatistic(){
+				return new Max();
+			}
+		});
+
+		putFunction("avg", new AggregateFunction(){
+
+			@Override
+			public Mean createStatistic(){
+				return new Mean();
+			}
+		});
+
+		putFunction("sum", new AggregateFunction(){
+
+			@Override
+			public Sum createStatistic(){
+				return new Sum();
+			}
+		});
+
+		putFunction("product", new AggregateFunction(){
+
+			@Override
+			public Product createStatistic(){
+				return new Product();
 			}
 		});
 	}

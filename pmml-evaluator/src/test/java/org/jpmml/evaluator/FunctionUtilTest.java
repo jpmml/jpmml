@@ -13,23 +13,33 @@ public class FunctionUtilTest {
 
 	@Test
 	public void evaluateArithmeticFunctions(){
-		Double one = Double.valueOf(1d);
-		Double three = Double.valueOf(3d);
+		assertEquals(4d, evaluate("+", 1d, 3d));
+		assertEquals(-2d, evaluate("-", 1d, 3d));
+		assertEquals(3d, evaluate("*", 1d, 3d));
+		assertEquals((1d / 3d), evaluate("/", 1d, 3d));
 
-		assertEquals(Double.valueOf(1d + 3d), evaluate("+", one, three));
-		assertEquals(Double.valueOf(1d - 3d), evaluate("-", one, three));
-		assertEquals(Double.valueOf(1d * 3d), evaluate("*", one, three));
-		assertEquals(Double.valueOf(1d / 3d), evaluate("/", one, three));
+		assertEquals(null, evaluate("+", 1d, null));
+		assertEquals(null, evaluate("+", null, 1d));
+	}
 
-		assertEquals(null, evaluate("+", one, null));
-		assertEquals(null, evaluate("+", null, three));
+	@Test
+	public void evaluateAggregateFunctions(){
+		List<Double> values = Arrays.asList(2.5d, 5d, 1.5d);
+
+		assertEquals(1.5d, evaluate("min", values));
+		assertEquals(5d, evaluate("max", values));
+
+		assertEquals(3d, evaluate("avg", values));
+
+		assertEquals(9d, evaluate("sum", values));
+		assertEquals(18.75d, evaluate("product", values));
 	}
 
 	@Test
 	public void evaluateMathFunctions(){
 		assertEquals(Integer.valueOf(1), evaluate("abs", Integer.valueOf(-1)));
-		assertEquals(Float.valueOf(1), evaluate("abs", Float.valueOf(-1f)));
-		assertEquals(Double.valueOf(1), evaluate("abs", Double.valueOf(-1)));
+		assertEquals(Float.valueOf(1f), evaluate("abs", Float.valueOf(-1f)));
+		assertEquals(Double.valueOf(1d), evaluate("abs", Double.valueOf(-1)));
 
 		assertEquals(0, evaluate("threshold", 2, 3));
 		assertEquals(0, evaluate("threshold", 3, 3));
@@ -53,17 +63,14 @@ public class FunctionUtilTest {
 
 	@Test
 	public void evaluateComparisonFunctions(){
-		Double one = Double.valueOf(1d);
-		Double three = Double.valueOf(3d);
+		assertEquals(Boolean.TRUE, evaluate("equal", 1d, 1d));
+		assertEquals(Boolean.TRUE, evaluate("notEqual", 1d, 3d));
 
-		assertEquals(Boolean.TRUE, evaluate("equal", one, one));
-		assertEquals(Boolean.TRUE, evaluate("notEqual", one, three));
+		assertEquals(Boolean.TRUE, evaluate("lessThan", 1d, 3d));
+		assertEquals(Boolean.TRUE, evaluate("lessOrEqual", 1d, 1d));
 
-		assertEquals(Boolean.TRUE, evaluate("lessThan", one, three));
-		assertEquals(Boolean.TRUE, evaluate("lessOrEqual", one, one));
-
-		assertEquals(Boolean.TRUE, evaluate("greaterThan", three, one));
-		assertEquals(Boolean.TRUE, evaluate("greaterOrEqual", three, three));
+		assertEquals(Boolean.TRUE, evaluate("greaterThan", 3d, 1d));
+		assertEquals(Boolean.TRUE, evaluate("greaterOrEqual", 3d, 3d));
 	}
 
 	@Test
@@ -123,6 +130,11 @@ public class FunctionUtilTest {
 
 	static
 	private Object evaluate(String name, Object... values){
-		return FunctionUtil.evaluate(name, Arrays.asList(values));
+		return evaluate(name, Arrays.asList(values));
+	}
+
+	static
+	private Object evaluate(String name, List<?> values){
+		return FunctionUtil.evaluate(name, values);
 	}
 }
