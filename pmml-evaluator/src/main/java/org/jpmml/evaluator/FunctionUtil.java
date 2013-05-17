@@ -42,6 +42,16 @@ public class FunctionUtil {
 		throw new EvaluationException();
 	}
 
+	static
+	private Number asNumber(Object value){
+
+		if(value instanceof Number){
+			return (Number)value;
+		}
+
+		throw new EvaluationException();
+	}
+
 	private static final Map<String, Function> functions = new LinkedHashMap<String, Function>();
 
 	public interface Function {
@@ -69,7 +79,7 @@ public class FunctionUtil {
 				return null;
 			}
 
-			return evaluate((Number)left, (Number)right);
+			return evaluate(asNumber(left), asNumber(right));
 		}
 	}
 
@@ -103,6 +113,129 @@ public class FunctionUtil {
 			@Override
 			public Number evaluate(Number left, Number right){
 				return Double.valueOf(left.doubleValue() / right.doubleValue());
+			}
+		});
+	}
+
+	static
+	abstract
+	public class MathFunction implements Function {
+
+		abstract
+		public Number evaluate(Number value);
+
+		public Number evaluate(List<?> values){
+
+			if(values.size() != 1){
+				throw new EvaluationException();
+			}
+
+			return evaluate(asNumber(values.get(0)));
+		}
+	}
+
+	static {
+		putFunction("log10", new MathFunction(){
+
+			@Override
+			public Double evaluate(Number value){
+				return Math.log10(value.doubleValue());
+			}
+		});
+
+		putFunction("ln", new MathFunction(){
+
+			@Override
+			public Double evaluate(Number value){
+				return Math.log(value.doubleValue());
+			}
+		});
+
+		putFunction("exp", new MathFunction(){
+
+			@Override
+			public Double evaluate(Number value){
+				return Math.exp(value.doubleValue());
+			}
+		});
+
+		putFunction("sqrt", new MathFunction(){
+
+			@Override
+			public Double evaluate(Number value){
+				return Math.sqrt(value.doubleValue());
+			}
+		});
+
+		putFunction("abs", new MathFunction(){
+
+			@Override
+			public Number evaluate(Number value){
+
+				// Attempt to preserve data type
+				if(value instanceof Integer){
+					return Math.abs(value.intValue());
+				} else
+
+				if(value instanceof Float){
+					return Math.abs(value.floatValue());
+				}
+
+				return Math.abs(value.doubleValue());
+			}
+		});
+
+		putFunction("pow", new Function(){
+
+			public Double evaluate(List<?> values){
+
+				if(values.size() != 2){
+					throw new EvaluationException();
+				}
+
+				Number left = asNumber(values.get(0));
+				Number right = asNumber(values.get(1));
+
+				return Math.pow(left.doubleValue(), right.doubleValue());
+			}
+		});
+
+		putFunction("threshold", new Function(){
+
+			public Integer evaluate(List<?> values){
+
+				if(values.size() != 2){
+					throw new EvaluationException();
+				}
+
+				Number left = asNumber(values.get(0));
+				Number right = asNumber(values.get(1));
+
+				return (left.doubleValue() > right.doubleValue()) ? 1 : 0;
+			}
+		});
+
+		putFunction("floor", new MathFunction(){
+
+			@Override
+			public Integer evaluate(Number number){
+				return (int)Math.floor(number.doubleValue());
+			}
+		});
+
+		putFunction("ceil", new MathFunction(){
+
+			@Override
+			public Integer evaluate(Number number){
+				return (int)Math.ceil(number.doubleValue());
+			}
+		});
+
+		putFunction("round", new MathFunction(){
+
+			@Override
+			public Integer evaluate(Number number){
+				return (int)Math.round(number.doubleValue());
 			}
 		});
 	}

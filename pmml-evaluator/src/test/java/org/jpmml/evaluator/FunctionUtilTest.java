@@ -26,6 +26,23 @@ public class FunctionUtilTest {
 	}
 
 	@Test
+	public void evaluateMathFunctions(){
+		assertEquals(Integer.valueOf(1), evaluate("abs", Integer.valueOf(-1)));
+		assertEquals(Float.valueOf(1), evaluate("abs", Float.valueOf(-1f)));
+		assertEquals(Double.valueOf(1), evaluate("abs", Double.valueOf(-1)));
+
+		assertEquals(0, evaluate("threshold", 2, 3));
+		assertEquals(0, evaluate("threshold", 3, 3));
+		assertEquals(1, evaluate("threshold", 3, 2));
+
+		assertEquals(1, evaluate("floor", 1.99d));
+		assertEquals(2, evaluate("round", 1.99d));
+
+		assertEquals(1, evaluate("ceil", 0.01d));
+		assertEquals(0, evaluate("round", 0.01d));
+	}
+
+	@Test
 	public void evaluateValueFunctions(){
 		assertEquals(Boolean.TRUE, evaluate("isMissing", (String)null));
 		assertEquals(Boolean.FALSE, evaluate("isMissing", "value"));
