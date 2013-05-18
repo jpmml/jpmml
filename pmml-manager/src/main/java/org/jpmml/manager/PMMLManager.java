@@ -32,7 +32,7 @@ public class PMMLManager {
 	public DataField getDataField(FieldName name){
 		List<DataField> dataFields = getDataDictionary().getDataFields();
 
-		return FieldUtil.getField(dataFields, name);
+		return find(dataFields, name);
 	}
 
 	public DataField addDataField(FieldName name, String displayName, OpType opType, DataType dataType){
@@ -50,7 +50,7 @@ public class PMMLManager {
 
 		List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
 
-		return FieldUtil.getField(derivedFields, name);
+		return find(derivedFields, name);
 	}
 
 	public PMML getPmml(){
@@ -159,5 +159,18 @@ public class PMMLManager {
 		}
 
 		return result;
+	}
+
+	static
+	public <E extends PMMLObject & HasName> E find(Collection<E> objects, FieldName name){
+
+		for(E object : objects){
+
+			if((object.getName()).equals(name)){
+				return object;
+			}
+		}
+
+		return null;
 	}
 }

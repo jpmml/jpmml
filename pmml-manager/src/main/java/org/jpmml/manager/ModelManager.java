@@ -78,7 +78,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	public MiningField getMiningField(FieldName name){
 		List<MiningField> miningFields = getMiningSchema().getMiningFields();
 
-		return FieldUtil.getField(miningFields, name);
+		return find(miningFields, name);
 	}
 
 	public MiningField addMiningField(FieldName name, FieldUsageType usageType){
@@ -109,7 +109,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		List<OutputField> outputFields = output.getOutputFields();
 
-		return FieldUtil.getField(outputFields, name);
+		return find(outputFields, name);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		List<DerivedField> derivedFields = localTransformations.getDerivedFields();
 
-		DerivedField derivedField = FieldUtil.getField(derivedFields, name);
+		DerivedField derivedField = find(derivedFields, name);
 		if(derivedField == null){
 			derivedField = super.resolve(name);
 		}

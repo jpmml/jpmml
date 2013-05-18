@@ -11,8 +11,6 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	private RegressionModel regressionModel = null;
 
-	private RegressionTable regressionTable = null;
-
 
 	public RegressionModelManager(){
 	}
@@ -72,62 +70,35 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		return regressionModel;
 	}
 
-	public Double getIntercept(){
-		RegressionTable regressionTable = getOrCreateRegressionTable();
+	public List<RegressionTable> getRegressionTables(){
+		RegressionModel model = getModel();
 
-		return Double.valueOf(regressionTable.getIntercept());
+		return model.getRegressionTables();
 	}
 
-	public RegressionTable setIntercept(Double intercept){
-		RegressionTable regressionTable = getOrCreateRegressionTable();
-		regressionTable.setIntercept(intercept.doubleValue());
-
-		return regressionTable;
+	static
+	public NumericPredictor getNumericPredictor(RegressionTable regressionTable, FieldName name){
+		return find(regressionTable.getNumericPredictors(), name);
 	}
 
-	public List<NumericPredictor> getNumericPrecictors(){
-		RegressionTable regressionTable = getOrCreateRegressionTable();
-
-		return regressionTable.getNumericPredictors();
-	}
-
-	public NumericPredictor getNumericPredictor(FieldName name){
-		List<NumericPredictor> numericPredictors = getNumericPrecictors();
-
-		for(NumericPredictor numericPredictor : numericPredictors){
-
-			if((numericPredictor.getName()).equals(name)){
-				return numericPredictor;
-			}
-		}
-
-		return null;
-	}
-
-	public NumericPredictor addNumericPredictor(FieldName name, Double coefficient){
-		RegressionTable regressionTable = getOrCreateRegressionTable();
-
+	static
+	public NumericPredictor addNumericPredictor(RegressionTable regressionTable, FieldName name, Double coefficient){
 		NumericPredictor numericPredictor = new NumericPredictor(name, coefficient.doubleValue());
-		regressionTable.getNumericPredictors().add(numericPredictor);
+		(regressionTable.getNumericPredictors()).add(numericPredictor);
 
 		return numericPredictor;
 	}
 
-	public RegressionTable getOrCreateRegressionTable(){
+	static
+	public CategoricalPredictor getCategoricalPredictor(RegressionTable regressionTable, FieldName name){
+		return find(regressionTable.getCategoricalPredictors(), name);
+	}
 
-		if(this.regressionTable == null){
-			RegressionModel regressionModel = getModel();
+	static
+	public CategoricalPredictor addCategoricalPredictor(RegressionTable regressionTable, FieldName name, String value, Double coefficient){
+		CategoricalPredictor categoricalPredictor = new CategoricalPredictor(name, value, coefficient.doubleValue());
+		(regressionTable.getCategoricalPredictors()).add(categoricalPredictor);
 
-			List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
-			if(regressionTables.isEmpty()){
-				RegressionTable regressionTable = new RegressionTable(0d);
-
-				regressionTables.add(regressionTable);
-			}
-
-			this.regressionTable = regressionTables.get(0);
-		}
-
-		return this.regressionTable;
+		return categoricalPredictor;
 	}
 }
