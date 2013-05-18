@@ -21,7 +21,7 @@ generateDecisionTreeIris = function(){
 	writeIris(classes, probabilities, "csv/DecisionTreeIris.csv")
 }
 
-generateNeuralNetworkOzone = function(){
+generateNeuralNetworkIris = function(){
 	nnet = nnet(Species ~ ., data = data, size = 5)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkIris.pmml")
 
@@ -31,4 +31,4 @@ generateNeuralNetworkOzone = function(){
 }
 
 generateDecisionTreeIris()
-generateNeuralNetworkOzone()
+generateNeuralNetworkIris()
