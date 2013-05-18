@@ -38,6 +38,9 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			case REGRESSION:
 				predictions = evaluateRegression(context);
 				break;
+			case CLASSIFICATION:
+				predictions = evaluateClassification(context);
+				break;
 			default:
 				throw new UnsupportedFeatureException(miningFunction);
 		}
@@ -57,24 +60,67 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		Double value = evaluateRegressionTable(regressionTable, context);
 
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
-		switch(regressionNormalizationMethod){
-			case NONE:
-				break;
-			case SOFTMAX:
-			case LOGIT:
-				value = (1d / (1d + Math.exp(-value)));
-				break;
-			case EXP:
-				value = Math.exp(value);
-				break;
-			default:
-				throw new UnsupportedFeatureException(regressionNormalizationMethod);
-		}
+		FieldName name = getTarget();
 
-		return Collections.singletonMap(getTarget(), value);
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
+
+		value = normalizeRegressionResult(regressionNormalizationMethod, value);
+
+		return Collections.singletonMap(name, value);
 	}
 
+	public Map<FieldName, String> evaluateClassification(EvaluationContext context){
+		RegressionModel regressionModel = getModel();
+
+		List<RegressionTable> regressionTables = getRegressionTables();
+		if(regressionTables.size() < 1){
+			throw new EvaluationException();
+		}
+
+		double sumExp = 0d;
+
+		Map<RegressionTable, Double> values = new LinkedHashMap<RegressionTable, Double>();
+
+		for(RegressionTable regressionTable : regressionTables){
+			Double value = evaluateRegressionTable(regressionTable, context);
+
+			sumExp += Math.exp(value.doubleValue());
+
+			values.put(regressionTable, value);
+		}
+
+		FieldName name = getTarget();
+
+		DataField dataField = getDataField(name);
+
+		OpType opType = dataField.getOptype();
+		switch(opType){
+			case CATEGORICAL:
+				break;
+			default:
+				throw new UnsupportedFeatureException(opType);
+		}
+
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
+
+		values = normalizeClassificationResult(regressionNormalizationMethod, values, sumExp);
+
+		Map.Entry<RegressionTable, Double> maxEntry = null;
+
+		Collection<Map.Entry<RegressionTable, Double>> entries = values.entrySet();
+		for(Map.Entry<RegressionTable, Double> entry : entries){
+
+			if(maxEntry == null || (maxEntry.getValue()).compareTo(entry.getValue()) < 0){
+				maxEntry = entry;
+			}
+		}
+
+		RegressionTable regressionTable = maxEntry.getKey();
+
+		return Collections.singletonMap(name, regressionTable.getTargetCategory());
+	}
+
+	static
 	private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
 		double result = 0D;
 
@@ -114,5 +160,52 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		}
 
 		return Double.valueOf(result);
+	}
+
+	static
+	private Double normalizeRegressionResult(RegressionNormalizationMethodType regressionNormalizationMethod, Double value){
+
+		switch(regressionNormalizationMethod){
+			case NONE:
+				return value;
+			case SOFTMAX:
+			case LOGIT:
+				return 1d / (1d + Math.exp(-value));
+			case EXP:
+				return Math.exp(value);
+			default:
+				throw new UnsupportedFeatureException(regressionNormalizationMethod);
+		}
+	}
+
+	static
+	private <K> Map<K, Double> normalizeClassificationResult(RegressionNormalizationMethodType regressionNormalizationMethod, Map<K, Double> values, Double sumExp){
+		Map<K, Double> result = new LinkedHashMap<K, Double>();
+
+		Collection<Map.Entry<K, Double>> entries = values.entrySet();
+		for(Map.Entry<K, Double> entry : entries){
+			result.put(entry.getKey(), normalizeClassificationResult(regressionNormalizationMethod, entry.getValue(), sumExp));
+		}
+
+		return result;
+	}
+
+	static
+	private Double normalizeClassificationResult(RegressionNormalizationMethodType regressionNormalizationMethod, Double value, Double sumExp){
+
+		switch(regressionNormalizationMethod){
+			case NONE:
+				return value;
+			case SOFTMAX:
+				return Math.exp(value) / sumExp;
+			case LOGIT:
+				return 1d / (1d + Math.exp(-value));
+			case CLOGLOG:
+				return 1d - Math.exp(-Math.exp(value));
+			case LOGLOG:
+				return Math.exp(-Math.exp(-value));
+			default:
+				throw new UnsupportedFeatureException(regressionNormalizationMethod);
+		}
 	}
 }
