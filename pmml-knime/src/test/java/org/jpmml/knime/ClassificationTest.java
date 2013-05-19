@@ -12,14 +12,14 @@ import static org.junit.Assert.*;
 public class ClassificationTest {
 
 	@Test
-	public void evaluateDecisionTree() throws Exception {
+	public void evaluateDecisionTreeIris() throws Exception {
 		Batch batch = new KnimeBatch("DecisionTree", "Iris");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
 
 	@Test
-	public void evaluateNeuralNetwork() throws Exception {
+	public void evaluateNeuralNetworkIris() throws Exception {
 		Batch batch = new KnimeBatch("NeuralNetwork", "Iris");
 
 		assertTrue(BatchUtil.evaluate(batch));

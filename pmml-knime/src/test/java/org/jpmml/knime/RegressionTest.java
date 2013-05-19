@@ -12,14 +12,14 @@ import static org.junit.Assert.*;
 public class RegressionTest {
 
 	@Test
-	public void evaluateNeuralNetwork() throws Exception {
+	public void evaluateNeuralNetworkOzone() throws Exception {
 		Batch batch = new KnimeBatch("NeuralNetwork", "Ozone");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
 
 	@Test
-	public void evaluateRegression() throws Exception {
+	public void evaluateRegressionOzone() throws Exception {
 		Batch batch = new KnimeBatch("Regression", "Ozone");
 
 		assertTrue(BatchUtil.evaluate(batch));
