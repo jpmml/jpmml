@@ -31,4 +31,18 @@ public class ClassificationTest {
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
+
+	@Test
+	public void evaluateDecisionTreeAudit() throws Exception {
+		Batch batch = new RattleBatch("DecisionTree", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateNeuralNetworkAudit() throws Exception {
+		Batch batch = new RattleBatch("NeuralNetwork", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
 }
