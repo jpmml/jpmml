@@ -52,13 +52,13 @@
 	</modules>
 
 	<scm>
-		<connection>scm:svn:http://jpmml.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://jpmml.googlecode.com/svn/trunk/</developerConnection>
-		<url>http://code.google.com/p/jpmml/source/browse/</url>
+		<connection>scm:git:git@github.com:jpmml/jpmml.git</connection>
+		<developerConnection>scm:git:git@github.com:jpmml/jpmml.git</developerConnection>
+		<url>git://github.com/jpmml/jpmml.git</url>
 	</scm>
 	<issueManagement>
-		<system>Google Code</system>
-		<url>http://code.google.com/p/jpmml/issues/list</url>
+		<system>GitHub</system>
+		<url>https://github.com/jpmml/jpmml/issues</url>
 	</issueManagement>
 
 	<dependencyManagement>
@@ -114,6 +114,14 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<localCheckout>true</localCheckout>
+					<pushChanges>false</pushChanges>
 				</configuration>
 			</plugin>
 		</plugins>
