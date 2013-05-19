@@ -60,7 +60,12 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 	public FieldName getTarget(){
 		RegressionModel regressionModel = getModel();
 
-		return regressionModel.getTargetFieldName();
+		FieldName name = regressionModel.getTargetFieldName();
+		if(name != null){
+			return name;
+		}
+
+		return super.getTarget();
 	}
 
 	public RegressionModel setTarget(FieldName name){
