@@ -3,7 +3,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.math.*;
 import java.util.*;
 
 import org.jpmml.manager.*;
@@ -33,23 +32,10 @@ public class BatchUtil {
 
 		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
-		Map<FieldName, DataType> dataTypes = new HashMap<FieldName, DataType>();
-
 		List<FieldName> activeFields = evaluator.getActiveFields();
-		for(FieldName activeField : activeFields){
-			DataField dataField = evaluator.getDataField(activeField);
-
-			dataTypes.put(activeField, dataField.getDataType());
-		}
-
 		List<FieldName> predictedFields = evaluator.getPredictedFields();
-		for(FieldName predictedField : predictedFields){
-			DataField dataField = evaluator.getDataField(predictedField);
 
-			dataTypes.put(predictedField, dataField.getDataType());
-		}
-
-		boolean result = true;
+		boolean success = true;
 
 		for(int i = 0; i < input.size(); i++){
 			Map<FieldName, String> inputRow = input.get(i);
@@ -58,17 +44,19 @@ public class BatchUtil {
 			Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
 
 			for(FieldName activeField : activeFields){
-				DataType dataType = dataTypes.get(activeField);
+				String inputCell = inputRow.get(activeField);
 
-				parameters.put(activeField, ParameterUtil.parse(dataType, inputRow.get(activeField)));
+				parameters.put(activeField, evaluator.prepare(activeField, inputCell));
 			}
 
-			Map<FieldName, ?> predictions = evaluator.evaluate(parameters);
+			Map<FieldName, ?> result = evaluator.evaluate(parameters);
 
 			for(FieldName predictedField : predictedFields){
-				Object predictedValue = EvaluatorUtil.decode(predictions.get(predictedField));
+				String outputCell = outputRow.get(predictedField);
 
-				DataType dataType = dataTypes.get(predictedField);
+				Object predictedValue = EvaluatorUtil.decode(result.get(predictedField));
+
+				DataType dataType = ParameterUtil.getDataType(predictedValue);
 
 				// The output data type is usually more relaxed than the input data type
 				switch(dataType){
@@ -81,11 +69,11 @@ public class BatchUtil {
 						break;
 				}
 
-				result &= VerificationUtil.acceptable(ParameterUtil.parse(dataType, outputRow.get(predictedField)), predictedValue, BatchUtil.precision);
+				success &= VerificationUtil.acceptable(ParameterUtil.parse(dataType, outputCell), predictedValue, BatchUtil.precision);
 			}
 		}
 
-		return result;
+		return success;
 	}
 
 	// One part per million parts

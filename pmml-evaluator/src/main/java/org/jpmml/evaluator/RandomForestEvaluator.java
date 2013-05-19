@@ -23,6 +23,10 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 		this(parent.getPmml(), parent.getModel());
 	}
 
+	public Object prepare(FieldName name, String string){
+		return ParameterUtil.prepare(getDataField(name), getMiningField(name), string);
+	}
+
 	/**
 	 * @see #evaluateRegression(EvaluationContext)
 	 */

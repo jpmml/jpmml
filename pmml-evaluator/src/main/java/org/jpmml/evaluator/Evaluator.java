@@ -26,7 +26,7 @@ import org.dmg.pmml.*;
  * Map&lt;FieldName, Object&gt; parameters = new LinkedHashMap&lt;FieldName, Object&gt;();
  * List&lt;FieldName&gt; activeFields = evaluator.getActiveFields();
  * for(FieldName activeField : activeFields){
- *   parameters.put(activeField, ...);
+ *   parameters.put(activeField, evaluator.prepare(activeField, ...));
  * }
  * </pre>
  *
@@ -70,6 +70,19 @@ public interface Evaluator extends Consumer {
 	 * @see Consumer#getPredictedFields()
 	 */
 	FieldName getTarget();
+
+	/**
+	 * Prepares the input value for a field
+	 *
+	 * @param name The name of the field
+	 * @param string The String representation of the input value. Use <code>null</code> to represent missing input value.
+	 *
+	 * @throws EvaluationException If the input value preparation fails
+	 *
+	 * @see #getDataField(FieldName)
+	 * @see #getMiningField(FieldName)
+	 */
+	Object prepare(FieldName name, String string);
 
 	/**
 	 * @param parameters Map of {@link #getActiveFields() active field} values.

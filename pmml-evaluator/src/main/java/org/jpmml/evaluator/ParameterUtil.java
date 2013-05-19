@@ -13,8 +13,13 @@ public class ParameterUtil {
 	}
 
 	static
-	public Object parse(DictionaryField field, String string){
-		return parse(field.getDataType(), string);
+	public Object prepare(DataField dataField, MiningField miningField, String string){
+
+		if(string == null){
+			return null;
+		}
+
+		return parse(dataField.getDataType(), string);
 	}
 
 	static

@@ -23,6 +23,10 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		this(parent.getPmml(), parent.getModel());
 	}
 
+	public Object prepare(FieldName name, String string){
+		return ParameterUtil.prepare(getDataField(name), getMiningField(name), string);
+	}
+
 	/**
 	 * @see #evaluateTree(EvaluationContext)
 	 */

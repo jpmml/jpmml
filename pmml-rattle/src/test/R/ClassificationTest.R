@@ -76,7 +76,7 @@ generateNeuralNetworkAudit = function(){
 	nnet = nnet(auditFormula, auditData, size = 9, decay = 1e-3, maxit = 10000)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkAudit.pmml")
 
-	classes = predict(nnet, type = "class")	
+	classes = predict(nnet, type = "class")
 	writeAudit(classes, NULL, "csv/NeuralNetworkAudit.csv")
 }
 
