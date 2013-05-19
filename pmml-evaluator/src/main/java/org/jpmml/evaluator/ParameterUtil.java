@@ -103,7 +103,7 @@ public class ParameterUtil {
 			return DataType.DOUBLE;
 		} else
 
-		throw new UnsupportedOperationException();
+		throw new UnsupportedFeatureException();
 	}
 
 	static

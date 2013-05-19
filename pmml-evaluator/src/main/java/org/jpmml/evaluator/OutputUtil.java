@@ -35,7 +35,7 @@ public class OutputUtil {
 		// Global scope contains all active, predicted and (soon to be added-) output fields. Here, all fields values must be simple values
 		Map<FieldName, Object> values = new LinkedHashMap<FieldName, Object>();
 		values.putAll(parameters);
-		values.putAll(EvaluatorUtil.simplifyValues(predictions));
+		values.putAll(EvaluatorUtil.decodeValues(predictions));
 
 		EvaluationContext context = new ModelManagerEvaluationContext(modelManager, values);
 
@@ -80,7 +80,7 @@ public class OutputUtil {
 
 			result.put(name, value);
 
-			values.put(name, EvaluatorUtil.simplify(value));
+			values.put(name, EvaluatorUtil.decode(value));
 		}
 
 		return result;

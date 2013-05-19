@@ -66,7 +66,7 @@ public class BatchUtil {
 			Map<FieldName, ?> predictions = evaluator.evaluate(parameters);
 
 			for(FieldName predictedField : predictedFields){
-				Object predictedValue = EvaluatorUtil.simplify(predictions.get(predictedField));
+				Object predictedValue = EvaluatorUtil.decode(predictions.get(predictedField));
 
 				DataType dataType = dataTypes.get(predictedField);
 
