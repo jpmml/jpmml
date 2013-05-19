@@ -30,5 +30,15 @@ generateNeuralNetworkIris = function(){
 	writeIris(classes, probabilities, "csv/NeuralNetworkIris.csv")
 }
 
+generateRegressionIris = function(){
+	multinom = multinom(Species ~ ., data = data)
+	saveXML(pmml(multinom), "pmml/RegressionIris.pmml")
+
+	classes = predict(multinom)
+	probabilities = predict(multinom, type = "probs")
+	writeIris(classes, probabilities, "csv/RegressionIris.csv")
+}
+
 generateDecisionTreeIris()
 generateNeuralNetworkIris()
+generateRegressionIris()

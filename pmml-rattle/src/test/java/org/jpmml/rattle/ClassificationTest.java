@@ -24,4 +24,11 @@ public class ClassificationTest {
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
+
+	@Test
+	public void evaluateRegression() throws Exception {
+		Batch batch = new RattleBatch("Regression", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
 }
