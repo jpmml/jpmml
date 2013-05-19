@@ -25,6 +25,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 	/**
 	 * @see #evaluateRegression(EvaluationContext)
+	 * @see #evaluateClassification(EvaluationContext)
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
