@@ -1,7 +1,8 @@
 library("nnet")
 library("pmml")
 
-data = readCsv("csv/Ozone.csv")
+ozoneData = readCsv("csv/Ozone.csv")
+ozoneFormula = formula(O3 ~ temp + ibh + ibt)
 
 writeOzone = function(values, file){
 	result = data.frame(values)
@@ -11,14 +12,14 @@ writeOzone = function(values, file){
 }
 
 generateNeuralNetworkOzone = function(){
-	nnet = nnet(O3 ~ temp + ibh + ibt, data = data, size = 4, decay = 1e-3, maxit = 10000, linout = TRUE)
+	nnet = nnet(ozoneFormula, ozoneData, size = 4, decay = 1e-3, maxit = 10000, linout = TRUE)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkOzone.pmml")
 
 	writeOzone(predict(nnet), "csv/NeuralNetworkOzone.csv")
 }
 
 generateRegressionOzone = function(){
-	lm = lm(O3 ~ temp + ibh + ibt, data = data)
+	lm = lm(ozoneFormula, ozoneData)
 	saveXML(pmml(lm), "pmml/RegressionOzone.pmml")
 	
 	writeOzone(predict(lm), "csv/RegressionOzone.csv")

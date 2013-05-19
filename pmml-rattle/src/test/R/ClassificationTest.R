@@ -2,7 +2,8 @@ library("nnet")
 library("pmml")
 library("rpart")
 
-data = readCsv("csv/Iris.csv")
+irisData = readCsv("csv/Iris.csv")
+irisFormula = formula(Species ~ .)
 
 writeIris = function(classes, probabilities, file){
 	result = data.frame(classes, probabilities)
@@ -12,7 +13,7 @@ writeIris = function(classes, probabilities, file){
 }
 
 generateDecisionTreeIris = function(){
-	rpart = rpart(Species ~ ., data = data)
+	rpart = rpart(irisFormula, irisData)
 	saveXML(pmml(rpart), "pmml/DecisionTreeIris.pmml")
 
 	classes = predict(rpart, type = "class")
@@ -22,7 +23,7 @@ generateDecisionTreeIris = function(){
 }
 
 generateNeuralNetworkIris = function(){
-	nnet = nnet(Species ~ ., data = data, size = 5)
+	nnet = nnet(irisFormula, irisData, size = 5)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkIris.pmml")
 
 	classes = predict(nnet, type = "class")
@@ -31,7 +32,7 @@ generateNeuralNetworkIris = function(){
 }
 
 generateRegressionIris = function(){
-	multinom = multinom(Species ~ ., data = data)
+	multinom = multinom(irisFormula, irisData)
 	saveXML(pmml(multinom), "pmml/RegressionIris.pmml")
 
 	classes = predict(multinom)
