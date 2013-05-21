@@ -45,7 +45,8 @@ public class TableUtil {
 		rows:
 		for(Map<String, String> row : rows){
 
-			if(values.size() < row.size()){
+			// A table row contains a certain number of input columns, plus an output column
+			if(values.size() < (row.size() - 1)){
 				continue rows;
 			}
 
