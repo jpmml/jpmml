@@ -152,9 +152,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				continue;
 			}
 
-			DataType dataType = ParameterUtil.getDataType(value);
-
-			boolean equals = (ParameterUtil.parse(dataType, categoricalPredictor.getValue())).equals(value);
+			boolean equals = ParameterUtil.equals(value, categoricalPredictor.getValue());
 
 			result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
 		}

@@ -40,7 +40,6 @@ public class TableUtil {
 
 	static
 	public Map<String, String> match(List<Map<String, String>> rows, Map<String, ?> values){
-		Map<String, DataType> dataTypes = new LinkedHashMap<String, DataType>();
 
 		rows:
 		for(Map<String, String> row : rows){
@@ -57,14 +56,7 @@ public class TableUtil {
 					continue rows;
 				}
 
-				DataType dataType = dataTypes.get(entry.getKey());
-				if(dataType == null){
-					dataType = ParameterUtil.getDataType(entry.getValue());
-
-					dataTypes.put(entry.getKey(), dataType);
-				}
-
-				boolean equals = (ParameterUtil.parse(dataType, rowValue)).equals(entry.getValue());
+				boolean equals = ParameterUtil.equals(entry.getValue(), rowValue);
 				if(!equals){
 					continue rows;
 				}

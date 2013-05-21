@@ -58,7 +58,7 @@ public class BatchUtil {
 
 				DataType dataType = ParameterUtil.getDataType(predictedValue);
 
-				// The output data type is usually more relaxed than the input data type
+				// The output data type could be more "relaxed" than the input data type
 				switch(dataType){
 					case INTEGER:
 					case FLOAT:

@@ -70,9 +70,7 @@ public class ExpressionUtil {
 				return normDiscrete.getMapMissingTo();
 			}
 
-			DataType dataType = ParameterUtil.getDataType(value);
-
-			boolean equals = (ParameterUtil.parse(dataType, normDiscrete.getValue())).equals(value);
+			boolean equals = ParameterUtil.equals(value, normDiscrete.getValue());
 
 			return Double.valueOf(equals ? 1.0 : 0.0);
 		} else

@@ -22,6 +22,17 @@ public class ParameterUtil {
 		return parse(dataField.getDataType(), string);
 	}
 
+	/**
+	 * Checks the equality between different value representations.
+	 *
+	 * @param value The {@link #getDataType(Object) runtime data type representation} of the value.
+	 * @param string The String representation of the value.
+	 */
+	static
+	public boolean equals(Object value, String string){
+		return (value).equals(parse(getDataType(value), string));
+	}
+
 	static
 	public Object parse(DataType dataType, String string){
 
@@ -39,6 +50,28 @@ public class ParameterUtil {
 		}
 
 		throw new UnsupportedFeatureException(dataType);
+	}
+
+	static
+	public DataType getDataType(Object value){
+
+		if(value instanceof String){
+			return DataType.STRING;
+		} else
+
+		if(value instanceof Integer){
+			return DataType.INTEGER;
+		} else
+
+		if(value instanceof Float){
+			return DataType.FLOAT;
+		} else
+
+		if(value instanceof Double){
+			return DataType.DOUBLE;
+		}
+
+		throw new EvaluationException();
 	}
 
 	/**
@@ -87,28 +120,6 @@ public class ParameterUtil {
 		}
 
 		throw new EvaluationException();
-	}
-
-	static
-	public DataType getDataType(Object object){
-
-		if(object instanceof String){
-			return DataType.STRING;
-		} else
-
-		if(object instanceof Integer){
-			return DataType.INTEGER;
-		} else
-
-		if(object instanceof Float){
-			return DataType.FLOAT;
-		} else
-
-		if(object instanceof Double){
-			return DataType.DOUBLE;
-		} else
-
-		throw new UnsupportedFeatureException();
 	}
 
 	static
