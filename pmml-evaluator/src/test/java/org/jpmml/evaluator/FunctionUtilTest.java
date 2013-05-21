@@ -5,6 +5,8 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import org.dmg.pmml.*;
+
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -20,36 +22,78 @@ public class FunctionUtilTest {
 
 		assertEquals(null, evaluate("+", 1d, null));
 		assertEquals(null, evaluate("+", null, 1d));
+
+		assertEquals(DataType.INTEGER, ParameterUtil.getDataType(evaluate("*", 1, 1)));
+		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("*", 1f, 1f)));
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("*", 1d, 1d)));
+
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("/", 1, 1)));
+		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("/", 1f, 1f)));
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("/", 1d, 1d)));
 	}
 
 	@Test
 	public void evaluateAggregateFunctions(){
-		List<Double> values = Arrays.asList(2.5d, 5d, 1.5d);
+		List<Integer> values = Arrays.asList(1, 2, 3);
 
-		assertEquals(1.5d, evaluate("min", values));
-		assertEquals(5d, evaluate("max", values));
+		Object min = evaluate("min", values);
+		assertEquals(1, min);
+		assertEquals(DataType.INTEGER, ParameterUtil.getDataType(min));
 
-		assertEquals(3d, evaluate("avg", values));
+		Object max = evaluate("max", values);
+		assertEquals(3, max);
+		assertEquals(DataType.INTEGER, ParameterUtil.getDataType(max));
 
-		assertEquals(9d, evaluate("sum", values));
-		assertEquals(18.75d, evaluate("product", values));
+		Object average = evaluate("avg", values);
+		assertEquals(2d, average);
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(average));
+
+		Object sum = evaluate("sum", values);
+		assertEquals(6, sum);
+		assertEquals(DataType.INTEGER, ParameterUtil.getDataType(sum));
+
+		Object product = evaluate("product", values);
+		assertEquals(6, product);
+		assertEquals(DataType.INTEGER, ParameterUtil.getDataType(product));
 	}
 
 	@Test
 	public void evaluateMathFunctions(){
-		assertEquals(Integer.valueOf(1), evaluate("abs", Integer.valueOf(-1)));
-		assertEquals(Float.valueOf(1f), evaluate("abs", Float.valueOf(-1f)));
-		assertEquals(Double.valueOf(1d), evaluate("abs", Double.valueOf(-1)));
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("log10", 1)));
+		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("log10", 1f)));
+
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("ln", 1)));
+		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("ln", 1f)));
+
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("exp", 1)));
+		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("exp", 1f)));
+
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("sqrt", 1)));
+		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("sqrt", 1f)));
+
+		assertEquals(1, evaluate("abs", -1));
+		assertEquals(1f, evaluate("abs", -1f));
+		assertEquals(1d, evaluate("abs", -1d));
+
+		assertEquals(DataType.INTEGER, ParameterUtil.getDataType(evaluate("pow", 1, 1)));
+		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("pow", 1f, 1f)));
 
 		assertEquals(0, evaluate("threshold", 2, 3));
 		assertEquals(0, evaluate("threshold", 3, 3));
 		assertEquals(1, evaluate("threshold", 3, 2));
 
-		assertEquals(1, evaluate("floor", 1.99d));
-		assertEquals(2, evaluate("round", 1.99d));
+		assertEquals(0f, evaluate("threshold", 2f, 3f));
+		assertEquals(0f, evaluate("threshold", 3f, 3f));
+		assertEquals(1f, evaluate("threshold", 3f, 2f));
 
-		assertEquals(1, evaluate("ceil", 0.01d));
-		assertEquals(0, evaluate("round", 0.01d));
+		assertEquals(1, evaluate("floor", 1));
+		assertEquals(1, evaluate("ceil", 1));
+
+		assertEquals(1f, evaluate("floor", 1.99f));
+		assertEquals(2f, evaluate("round", 1.99f));
+
+		assertEquals(1f, evaluate("ceil", 0.01f));
+		assertEquals(0f, evaluate("round", 0.01f));
 	}
 
 	@Test

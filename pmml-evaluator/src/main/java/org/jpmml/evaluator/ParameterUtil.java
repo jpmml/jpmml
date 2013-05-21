@@ -52,6 +52,9 @@ public class ParameterUtil {
 		throw new UnsupportedFeatureException(dataType);
 	}
 
+	/**
+	 * @return The data type of the value.
+	 */
 	static
 	public DataType getDataType(Object value){
 
@@ -75,7 +78,54 @@ public class ParameterUtil {
 	}
 
 	/**
-	 * Converts the specified value from an unknown data type to String data type.
+	 * @return The least restrictive data type of the data types of two values
+	 *
+	 * @see #getResultDataType(DataType, DataType)
+	 */
+	static
+	public DataType getResultDataType(Object left, Object right){
+		return getResultDataType(getDataType(left), getDataType(right));
+	}
+
+	static
+	public DataType getResultDataType(DataType left, DataType right){
+
+		if((left).equals(right)){
+			return left;
+		} // End if
+
+		DataType[] dataTypes = ParameterUtil.precedenceSequence;
+		for(DataType dataType : dataTypes){
+
+			if((dataType).equals(left) || (dataType).equals(right)){
+				return dataType;
+			}
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	public Object cast(DataType dataType, Object value){
+
+		switch(dataType){
+			case STRING:
+				return toString(value);
+			case INTEGER:
+				return toInteger(value);
+			case FLOAT:
+				return toFloat(value);
+			case DOUBLE:
+				return toDouble(value);
+			default:
+				break;
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * Converts the specified value to String data type.
 	 *
 	 * @see DataType#STRING
 	 */
@@ -96,7 +146,61 @@ public class ParameterUtil {
 	}
 
 	/**
-	 * Converts the specified value from an unknown data type to Double data type.
+	 * Converts the specified value to Integer data type.
+	 *
+	 * @see DataType#INTEGER
+	 */
+	static
+	public Integer toInteger(Object value){
+
+		if(value instanceof String){
+			String string = (String)value;
+
+			return Integer.valueOf(string);
+		} else
+
+		if(value instanceof Integer){
+			return (Integer)value;
+		} else
+
+		if(value instanceof Number){
+			Number number = (Number)value;
+
+			return Integer.valueOf(number.intValue());
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * Converts the specified value to Float data type.
+	 *
+	 * @see DataType#FLOAT
+	 */
+	static
+	public Float toFloat(Object value){
+
+		if(value instanceof String){
+			String string = (String)value;
+
+			return Float.valueOf(string);
+		} else
+
+		if(value instanceof Float){
+			return (Float)value;
+		} else
+
+		if(value instanceof Number){
+			Number number = (Number)value;
+
+			return Float.valueOf(number.floatValue());
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * Converts the specified value to Double data type.
 	 *
 	 * @see DataType#DOUBLE
 	 */
@@ -123,7 +227,7 @@ public class ParameterUtil {
 	}
 
 	static
-	public DataType getDataType(String string){
+	public DataType getConstantDataType(String string){
 
 		try {
 			if(string.indexOf('.') > -1){
@@ -141,4 +245,6 @@ public class ParameterUtil {
 			return DataType.STRING;
 		}
 	}
+
+	private static final DataType[] precedenceSequence = {DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER};
 }

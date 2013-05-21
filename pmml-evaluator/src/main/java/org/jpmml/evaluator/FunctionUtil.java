@@ -12,6 +12,8 @@ import org.apache.commons.math3.stat.descriptive.moment.*;
 import org.apache.commons.math3.stat.descriptive.rank.*;
 import org.apache.commons.math3.stat.descriptive.summary.*;
 
+import org.dmg.pmml.*;
+
 public class FunctionUtil {
 
 	private FunctionUtil(){
@@ -77,6 +79,16 @@ public class FunctionUtil {
 		throw new EvaluationException();
 	}
 
+	static
+	private DataType integerToDouble(DataType dataType){
+
+		if((DataType.INTEGER).equals(dataType)){
+			return DataType.DOUBLE;
+		}
+
+		return dataType;
+	}
+
 	private static final Map<String, Function> functions = new LinkedHashMap<String, Function>();
 
 	public interface Function {
@@ -89,7 +101,11 @@ public class FunctionUtil {
 	public class ArithmeticFunction implements Function {
 
 		abstract
-		public Number evaluate(Number left, Number right);
+		public Double evaluate(Number left, Number right);
+
+		public Number cast(DataType dataType, Double result){
+			return asNumber(ParameterUtil.cast(dataType, result));
+		}
 
 		public Number evaluate(List<?> values){
 
@@ -104,7 +120,9 @@ public class FunctionUtil {
 				return null;
 			}
 
-			return evaluate(asNumber(left), asNumber(right));
+			DataType dataType = ParameterUtil.getResultDataType(left, right);
+
+			return cast(dataType, evaluate(asNumber(left), asNumber(right)));
 		}
 	}
 
@@ -112,7 +130,7 @@ public class FunctionUtil {
 		putFunction("+", new ArithmeticFunction(){
 
 			@Override
-			public Number evaluate(Number left, Number right){
+			public Double evaluate(Number left, Number right){
 				return Double.valueOf(left.doubleValue() + right.doubleValue());
 			}
 		});
@@ -120,7 +138,7 @@ public class FunctionUtil {
 		putFunction("-", new ArithmeticFunction(){
 
 			@Override
-			public Number evaluate(Number left, Number right){
+			public Double evaluate(Number left, Number right){
 				return Double.valueOf(left.doubleValue() - right.doubleValue());
 			}
 		});
@@ -128,7 +146,7 @@ public class FunctionUtil {
 		putFunction("*", new ArithmeticFunction(){
 
 			@Override
-			public Number evaluate(Number left, Number right){
+			public Double evaluate(Number left, Number right){
 				return Double.valueOf(left.doubleValue() * right.doubleValue());
 			}
 		});
@@ -136,7 +154,12 @@ public class FunctionUtil {
 		putFunction("/", new ArithmeticFunction(){
 
 			@Override
-			public Number evaluate(Number left, Number right){
+			public Number cast(DataType dataType, Double result){
+				return super.cast(integerToDouble(dataType), result);
+			}
+
+			@Override
+			public Double evaluate(Number left, Number right){
 				return Double.valueOf(left.doubleValue() / right.doubleValue());
 			}
 		});
@@ -149,8 +172,14 @@ public class FunctionUtil {
 		abstract
 		public StorelessUnivariateStatistic createStatistic();
 
-		public Double evaluate(List<?> values){
+		public Number cast(DataType dataType, Double result){
+			return asNumber(ParameterUtil.cast(dataType, result));
+		}
+
+		public Number evaluate(List<?> values){
 			StorelessUnivariateStatistic statistic = createStatistic();
+
+			DataType dataType = null;
 
 			for(Object value : values){
 
@@ -159,13 +188,21 @@ public class FunctionUtil {
 				}
 
 				statistic.increment(asNumber(value).doubleValue());
+
+				if(dataType != null){
+					dataType = ParameterUtil.getResultDataType(dataType, ParameterUtil.getDataType(value));
+				} else
+
+				{
+					dataType = ParameterUtil.getDataType(value);
+				}
 			}
 
 			if(statistic.getN() == 0){
 				throw new EvaluationException();
 			}
 
-			return Double.valueOf(statistic.getResult());
+			return cast(dataType, statistic.getResult());
 		}
 	}
 
@@ -192,6 +229,11 @@ public class FunctionUtil {
 			public Mean createStatistic(){
 				return new Mean();
 			}
+
+			@Override
+			public Number cast(DataType dataType, Double result){
+				return super.cast(integerToDouble(dataType), result);
+			}
 		});
 
 		putFunction("sum", new AggregateFunction(){
@@ -216,7 +258,11 @@ public class FunctionUtil {
 	public class MathFunction implements Function {
 
 		abstract
-		public Number evaluate(Number value);
+		public Double evaluate(Number value);
+
+		public Number cast(DataType dataType, Number result){
+			return asNumber(ParameterUtil.cast(dataType, result));
+		}
 
 		public Number evaluate(List<?> values){
 
@@ -224,12 +270,26 @@ public class FunctionUtil {
 				throw new EvaluationException();
 			}
 
-			return evaluate(asNumber(values.get(0)));
+			Object value = values.get(0);
+
+			DataType dataType = ParameterUtil.getDataType(value);
+
+			return cast(dataType, evaluate(asNumber(value)));
+		}
+	}
+
+	static
+	abstract
+	public class FpMathFunction extends MathFunction {
+
+		@Override
+		public Number cast(DataType dataType, Number result){
+			return super.cast(integerToDouble(dataType), result);
 		}
 	}
 
 	static {
-		putFunction("log10", new MathFunction(){
+		putFunction("log10", new FpMathFunction(){
 
 			@Override
 			public Double evaluate(Number value){
@@ -237,7 +297,7 @@ public class FunctionUtil {
 			}
 		});
 
-		putFunction("ln", new MathFunction(){
+		putFunction("ln", new FpMathFunction(){
 
 			@Override
 			public Double evaluate(Number value){
@@ -245,7 +305,7 @@ public class FunctionUtil {
 			}
 		});
 
-		putFunction("exp", new MathFunction(){
+		putFunction("exp", new FpMathFunction(){
 
 			@Override
 			public Double evaluate(Number value){
@@ -253,7 +313,7 @@ public class FunctionUtil {
 			}
 		});
 
-		putFunction("sqrt", new MathFunction(){
+		putFunction("sqrt", new FpMathFunction(){
 
 			@Override
 			public Double evaluate(Number value){
@@ -264,24 +324,14 @@ public class FunctionUtil {
 		putFunction("abs", new MathFunction(){
 
 			@Override
-			public Number evaluate(Number value){
-
-				// Attempt to preserve data type
-				if(value instanceof Integer){
-					return Math.abs(value.intValue());
-				} else
-
-				if(value instanceof Float){
-					return Math.abs(value.floatValue());
-				}
-
+			public Double evaluate(Number value){
 				return Math.abs(value.doubleValue());
 			}
 		});
 
 		putFunction("pow", new Function(){
 
-			public Double evaluate(List<?> values){
+			public Number evaluate(List<?> values){
 
 				if(values.size() != 2){
 					throw new EvaluationException();
@@ -290,13 +340,17 @@ public class FunctionUtil {
 				Number left = asNumber(values.get(0));
 				Number right = asNumber(values.get(1));
 
-				return Math.pow(left.doubleValue(), right.doubleValue());
+				DataType dataType = ParameterUtil.getResultDataType(left, right);
+
+				Double result = Math.pow(left.doubleValue(), right.doubleValue());
+
+				return asNumber(ParameterUtil.cast(dataType, result));
 			}
 		});
 
 		putFunction("threshold", new Function(){
 
-			public Integer evaluate(List<?> values){
+			public Number evaluate(List<?> values){
 
 				if(values.size() != 2){
 					throw new EvaluationException();
@@ -305,31 +359,35 @@ public class FunctionUtil {
 				Number left = asNumber(values.get(0));
 				Number right = asNumber(values.get(1));
 
-				return (left.doubleValue() > right.doubleValue()) ? 1 : 0;
+				DataType dataType = ParameterUtil.getResultDataType(left, right);
+
+				Integer result = (left.doubleValue() > right.doubleValue()) ? 1 : 0;
+
+				return asNumber(ParameterUtil.cast(dataType, result));
 			}
 		});
 
 		putFunction("floor", new MathFunction(){
 
 			@Override
-			public Integer evaluate(Number number){
-				return (int)Math.floor(number.doubleValue());
+			public Double evaluate(Number number){
+				return Math.floor(number.doubleValue());
 			}
 		});
 
 		putFunction("ceil", new MathFunction(){
 
 			@Override
-			public Integer evaluate(Number number){
-				return (int)Math.ceil(number.doubleValue());
+			public Double evaluate(Number number){
+				return Math.ceil(number.doubleValue());
 			}
 		});
 
 		putFunction("round", new MathFunction(){
 
 			@Override
-			public Integer evaluate(Number number){
-				return (int)Math.round(number.doubleValue());
+			public Double evaluate(Number number){
+				return (double)Math.round(number.doubleValue());
 			}
 		});
 	}

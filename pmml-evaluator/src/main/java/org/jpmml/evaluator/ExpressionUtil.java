@@ -39,7 +39,7 @@ public class ExpressionUtil {
 
 			DataType dataType = constant.getDataType();
 			if(dataType == null){
-				dataType = ParameterUtil.getDataType(value);
+				dataType = ParameterUtil.getConstantDataType(value);
 			}
 
 			return ParameterUtil.parse(dataType, value);
