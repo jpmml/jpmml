@@ -23,8 +23,8 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		this(parent.getPmml(), parent.getModel());
 	}
 
-	public Object prepare(FieldName name, String string){
-		return ParameterUtil.prepare(getDataField(name), getMiningField(name), string);
+	public Object prepare(FieldName name, Object value){
+		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
 	/**

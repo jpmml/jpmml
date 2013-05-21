@@ -72,17 +72,20 @@ public interface Evaluator extends Consumer {
 	FieldName getTarget();
 
 	/**
-	 * Prepares the input value for a field
+	 * Prepares the input value for a field.
+	 *
+	 * First, the value is converted from the user-supplied representation to internal representation.
+	 * Later on, the value is subjected to missing value treatment, invalid value treatment and outlier treatment.
 	 *
 	 * @param name The name of the field
-	 * @param string The String representation of the input value. Use <code>null</code> to represent missing input value.
+	 * @param string The input value in user-supplied representation. Use <code>null</code> to represent missing input value.
 	 *
 	 * @throws EvaluationException If the input value preparation fails
 	 *
 	 * @see #getDataField(FieldName)
 	 * @see #getMiningField(FieldName)
 	 */
-	Object prepare(FieldName name, String string);
+	Object prepare(FieldName name, Object value);
 
 	/**
 	 * @param parameters Map of {@link #getActiveFields() active field} values.

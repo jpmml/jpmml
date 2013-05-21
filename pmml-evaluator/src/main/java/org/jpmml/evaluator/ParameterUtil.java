@@ -13,13 +13,13 @@ public class ParameterUtil {
 	}
 
 	static
-	public Object prepare(DataField dataField, MiningField miningField, String string){
+	public Object prepare(DataField dataField, MiningField miningField, Object value){
 
-		if(string == null){
+		if(value == null){
 			return null;
 		}
 
-		return parse(dataField.getDataType(), string);
+		return cast(dataField.getDataType(), value);
 	}
 
 	/**
