@@ -19,19 +19,23 @@ public class ExpressionUtilTest {
 
 		Constant integerThree = new Constant("3");
 		integerThree.setDataType(DataType.INTEGER);
-		assertEquals(Integer.valueOf(3), ExpressionUtil.evaluate(integerThree, null));
+		assertEquals(3, ExpressionUtil.evaluate(integerThree, null));
 
 		Constant floatThree = new Constant("3");
 		floatThree.setDataType(DataType.FLOAT);
-		assertEquals(Float.valueOf(3f), ExpressionUtil.evaluate(floatThree, null));
+		assertEquals(3f, ExpressionUtil.evaluate(floatThree, null));
 	}
 
 	@Test
 	public void evaluateFieldRef(){
 		FieldName name = new FieldName("x");
 
-		FieldRef nameRef = new FieldRef(name);
-		assertEquals("3", ExpressionUtil.evaluate(nameRef, new LocalEvaluationContext(name, "3")));
+		FieldRef expression = new FieldRef(name);
+		assertEquals("3", ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, "3")));
+
+		assertEquals(null, ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, null)));
+		expression.setMapMissingTo("Missing");
+		assertEquals("Missing", ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, null)));
 	}
 
 	@Test
@@ -49,8 +53,8 @@ public class ExpressionUtilTest {
 	public void evaluateNormDiscrete(){
 		FieldName name = new FieldName("x");
 
-		Double equals = Double.valueOf(1.0d);
-		Double notEquals = Double.valueOf(0.0d);
+		Double equals = 1d;
+		Double notEquals = 0d;
 
 		NormDiscrete stringThree = new NormDiscrete(name, "3");
 		assertEquals(equals, ExpressionUtil.evaluate(stringThree, new LocalEvaluationContext(name, "3")));
@@ -61,42 +65,42 @@ public class ExpressionUtilTest {
 		assertEquals(5d, ExpressionUtil.evaluate(stringThree, new LocalEvaluationContext(name, null)));
 
 		NormDiscrete integerThree = new NormDiscrete(name, "3");
-		assertEquals(equals, ExpressionUtil.evaluate(integerThree, new LocalEvaluationContext(name, Integer.valueOf(3))));
-		assertEquals(notEquals, ExpressionUtil.evaluate(integerThree, new LocalEvaluationContext(name, Integer.valueOf(1))));
+		assertEquals(equals, ExpressionUtil.evaluate(integerThree, new LocalEvaluationContext(name, 3)));
+		assertEquals(notEquals, ExpressionUtil.evaluate(integerThree, new LocalEvaluationContext(name, 1)));
 
 		NormDiscrete floatThree = new NormDiscrete(name, "3.0");
-		assertEquals(equals, ExpressionUtil.evaluate(floatThree, new LocalEvaluationContext(name, Float.valueOf(3.0f))));
-		assertEquals(notEquals, ExpressionUtil.evaluate(floatThree, new LocalEvaluationContext(name, Float.valueOf(1.0f))));
+		assertEquals(equals, ExpressionUtil.evaluate(floatThree, new LocalEvaluationContext(name, 3f)));
+		assertEquals(notEquals, ExpressionUtil.evaluate(floatThree, new LocalEvaluationContext(name, 1f)));
 	}
 
 	@Test
 	public void evaluateDiscretize(){
 		FieldName name = new FieldName("x");
 
-		Discretize discretize = new Discretize(name);
+		Discretize expression = new Discretize(name);
 
-		assertEquals(null, ExpressionUtil.evaluate(discretize, new LocalEvaluationContext()));
-		discretize.setMapMissingTo("Missing");
-		assertEquals("Missing", ExpressionUtil.evaluate(discretize, new LocalEvaluationContext()));
+		assertEquals(null, ExpressionUtil.evaluate(expression, new LocalEvaluationContext()));
+		expression.setMapMissingTo("Missing");
+		assertEquals("Missing", ExpressionUtil.evaluate(expression, new LocalEvaluationContext()));
 
-		assertEquals(null, ExpressionUtil.evaluate(discretize, new LocalEvaluationContext(name, "3")));
-		discretize.setDefaultValue("Default");
-		assertEquals("Default", ExpressionUtil.evaluate(discretize, new LocalEvaluationContext(name, "3")));
+		assertEquals(null, ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, "3")));
+		expression.setDefaultValue("Default");
+		assertEquals("Default", ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, "3")));
 	}
 
 	@Test
 	public void evaluateMapValues(){
 		FieldName name = new FieldName("x");
 
-		MapValues mapValue = new MapValues(null);
-		(mapValue.getFieldColumnPairs()).add(new FieldColumnPair(name, null));
+		MapValues expression = new MapValues(null);
+		(expression.getFieldColumnPairs()).add(new FieldColumnPair(name, null));
 
-		assertEquals(null, ExpressionUtil.evaluate(mapValue, new LocalEvaluationContext()));
-		mapValue.setMapMissingTo("Missing");
-		assertEquals("Missing", ExpressionUtil.evaluate(mapValue, new LocalEvaluationContext()));
+		assertEquals(null, ExpressionUtil.evaluate(expression, new LocalEvaluationContext()));
+		expression.setMapMissingTo("Missing");
+		assertEquals("Missing", ExpressionUtil.evaluate(expression, new LocalEvaluationContext()));
 
-		assertEquals(null, ExpressionUtil.evaluate(mapValue, new LocalEvaluationContext(name, "3")));
-		mapValue.setDefaultValue("Default");
-		assertEquals("Default", ExpressionUtil.evaluate(mapValue, new LocalEvaluationContext(name, "3")));
+		assertEquals(null, ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, "3")));
+		expression.setDefaultValue("Default");
+		assertEquals("Default", ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, "3")));
 	}
 }

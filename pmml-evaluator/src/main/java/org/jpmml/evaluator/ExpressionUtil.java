@@ -55,7 +55,12 @@ public class ExpressionUtil {
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			return evaluate(fieldRef.getField(), context);
+			Object value = evaluate(fieldRef.getField(), context);
+			if(value == null){
+				return fieldRef.getMapMissingTo();
+			}
+
+			return value;
 		} else
 
 		if(expression instanceof NormContinuous){
@@ -86,32 +91,21 @@ public class ExpressionUtil {
 			Discretize discretize = (Discretize)expression;
 
 			DataType dataType = discretize.getDataType();
-			if(dataType == null){
-				dataType = DataType.STRING; // XXX
-			}
 
 			Object value = evaluate(discretize.getField(), context);
 			if(value == null){
-				String missingValue = discretize.getMapMissingTo();
-				if(missingValue != null){
-					return ParameterUtil.parse(dataType, missingValue);
-				}
-
-				return null;
+				return parseSafely(dataType, discretize.getMapMissingTo());
 			}
 
 			String result = DiscretizationUtil.discretize(discretize, value);
 
-			return ParameterUtil.parse(dataType, result);
+			return parseSafely(dataType, result);
 		} else
 
 		if(expression instanceof MapValues){
 			MapValues mapValues = (MapValues)expression;
 
 			DataType dataType = mapValues.getDataType();
-			if(dataType == null){
-				dataType = DataType.STRING; // XXX
-			}
 
 			Map<String, Object> values = new LinkedHashMap<String, Object>();
 
@@ -119,12 +113,7 @@ public class ExpressionUtil {
 			for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
 				Object value = evaluate(fieldColumnPair.getField(), context);
 				if(value == null){
-					String missingValue = mapValues.getMapMissingTo();
-					if(missingValue != null){
-						return ParameterUtil.parse(dataType, missingValue);
-					}
-
-					return null;
+					return parseSafely(dataType, mapValues.getMapMissingTo());
 				}
 
 				values.put(fieldColumnPair.getColumn(), value);
@@ -132,7 +121,7 @@ public class ExpressionUtil {
 
 			String result = DiscretizationUtil.mapValue(mapValues, values);
 
-			return ParameterUtil.parse(dataType, result);
+			return parseSafely(dataType, result);
 		} else
 
 		if(expression instanceof Apply){
@@ -147,9 +136,27 @@ public class ExpressionUtil {
 				values.add(value);
 			}
 
-			return FunctionUtil.evaluate(apply.getFunction(), values);
+			Object result = FunctionUtil.evaluate(apply.getFunction(), values);
+			if(result == null){
+				return apply.getMapMissingTo();
+			}
+
+			return result;
 		}
 
 		throw new UnsupportedFeatureException(expression);
+	}
+
+	static
+	private Object parseSafely(DataType dataType, String value){
+
+		if(value != null){
+
+			if(dataType != null){
+				return ParameterUtil.parse(dataType, value);
+			}
+		}
+
+		return value;
 	}
 }
