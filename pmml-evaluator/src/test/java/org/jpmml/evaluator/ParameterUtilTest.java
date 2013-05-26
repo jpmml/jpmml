@@ -3,7 +3,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.*;
+
 import org.dmg.pmml.*;
+import org.dmg.pmml.Interval.Closure;
+import org.dmg.pmml.Value.*;
 
 import org.junit.*;
 
@@ -23,10 +27,10 @@ public class ParameterUtilTest {
 		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1f));
 		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
 
-		Value missingValue = new Value("N/A");
-		missingValue.setProperty(Value.Property.MISSING);
+		List<Value> fieldValues = dataField.getValues();
 
-		(dataField.getValues()).add(missingValue);
+		Value missingValue = createValue("N/A", Property.MISSING);
+		fieldValues.add(missingValue);
 
 		assertEquals(null, ParameterUtil.prepare(dataField, miningField, null));
 		assertEquals(null, ParameterUtil.prepare(dataField, miningField, "N/A"));
@@ -35,6 +39,37 @@ public class ParameterUtilTest {
 
 		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, null));
 		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, "N/A"));
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+
+		List<Interval> fieldIntervals = dataField.getIntervals();
+
+		Interval validInterval = new Interval(Closure.CLOSED_CLOSED);
+		validInterval.setLeftMargin(1d);
+		validInterval.setRightMargin(3d);
+		fieldIntervals.add(validInterval);
+
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
+		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, 5d));
+
+		fieldValues.clear();
+		fieldIntervals.clear();
+
+		fieldValues.add(missingValue);
+		fieldValues.add(createValue("1", Value.Property.VALID));
+		fieldValues.add(createValue("2", Value.Property.VALID));
+		fieldValues.add(createValue("3", Value.Property.VALID));
+
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
+		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, 5d));
+
+		fieldValues.clear();
+
+		fieldValues.add(missingValue);
+		fieldValues.add(createValue("1", Value.Property.INVALID));
+
+		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, 1d));
+		assertEquals(5d, ParameterUtil.prepare(dataField, miningField, 5d));
 	}
 
 	@Test
@@ -67,5 +102,13 @@ public class ParameterUtilTest {
 		assertEquals(DataType.INTEGER, ParameterUtil.getConstantDataType("1"));
 		assertEquals(DataType.STRING, ParameterUtil.getConstantDataType("1E0"));
 		assertEquals(DataType.STRING, ParameterUtil.getConstantDataType("1X"));
+	}
+
+	static
+	private Value createValue(String value, Value.Property property){
+		Value result = new Value(value);
+		result.setProperty(property);
+
+		return result;
 	}
 }

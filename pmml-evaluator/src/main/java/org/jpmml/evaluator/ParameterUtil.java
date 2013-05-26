@@ -27,6 +27,29 @@ public class ParameterUtil {
 			return null;
 		}
 
+		invalidValueHandling:
+		if(isInvalid(dataField, value)){
+			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+
+			switch(invalidValueTreatmentMethod){
+				case RETURN_INVALID:
+					throw new EvaluationException();
+				case AS_IS:
+					break invalidValueHandling;
+				case AS_MISSING:
+					{
+						value = miningField.getMissingValueReplacement();
+						if(value != null){
+							break invalidValueHandling;
+						}
+
+						return null;
+					}
+				default:
+					throw new UnsupportedFeatureException(invalidValueTreatmentMethod);
+			}
+		}
+
 		return cast(dataField.getDataType(), value);
 	}
 
@@ -37,15 +60,14 @@ public class ParameterUtil {
 			return true;
 		}
 
-		List<Value> fields = dataField.getValues();
-		for(Value field : fields){
-			Value.Property property = field.getProperty();
+		List<Value> fieldValues = dataField.getValues();
+		for(Value fieldValue : fieldValues){
+			Value.Property property = fieldValue.getProperty();
 
 			switch(property){
 				case MISSING:
 					{
-						boolean equals = (field.getValue()).equals(toString(value));
-
+						boolean equals = equals(DataType.STRING, value, fieldValue.getValue());
 						if(equals){
 							return true;
 						}
@@ -59,6 +81,90 @@ public class ParameterUtil {
 		return false;
 	}
 
+	static
+	private boolean isInvalid(DataField dataField, Object value){
+		return !isValid(dataField, value);
+	}
+
+	@SuppressWarnings (
+		value = "fallthrough"
+	)
+    static
+	private boolean isValid(DataField dataField, Object value){
+		DataType dataType = dataField.getDataType();
+
+		// Speed up subsequent conversions
+		value = cast(dataType, value);
+
+		OpType opType = dataField.getOptype();
+		switch(opType){
+			case CONTINUOUS:
+				{
+					Double doubleValue = toDouble(value);
+
+					int intervalCount = 0;
+
+					List<Interval> fieldIntervals = dataField.getIntervals();
+					for(Interval fieldInterval : fieldIntervals){
+						intervalCount += 1;
+
+						if(DiscretizationUtil.contains(fieldInterval, doubleValue)){
+							return true;
+						}
+					}
+
+					if(intervalCount > 0){
+						return false;
+					}
+				}
+				// Falls through
+			case CATEGORICAL:
+			case ORDINAL:
+				{
+					int validValueCount = 0;
+
+					List<Value> fieldValues = dataField.getValues();
+					for(Value fieldValue : fieldValues){
+						Value.Property property = fieldValue.getProperty();
+
+						switch(property){
+							case VALID:
+								{
+									validValueCount += 1;
+
+									boolean equals = equals(dataType, value, fieldValue.getValue());
+									if(equals){
+										return true;
+									}
+								}
+								break;
+							case INVALID:
+								{
+									boolean equals = equals(dataType, value, fieldValue.getValue());
+									if(equals){
+										return false;
+									}
+								}
+								break;
+							case MISSING:
+								break;
+							default:
+								throw new UnsupportedFeatureException(property);
+						}
+					}
+
+					if(validValueCount > 0){
+						return false;
+					}
+				}
+				break;
+			default:
+				throw new UnsupportedFeatureException(opType);
+		}
+
+		return true;
+	}
+
 	/**
 	 * Checks the equality between different value representations.
 	 *
@@ -67,7 +173,12 @@ public class ParameterUtil {
 	 */
 	static
 	public boolean equals(Object value, String string){
-		return (value).equals(parse(getDataType(value), string));
+		return equals(getDataType(value), value, string);
+	}
+
+	static
+	private boolean equals(DataType dataType, Object left, Object right){
+		return (cast(dataType, left)).equals(cast(dataType, right));
 	}
 
 	static
