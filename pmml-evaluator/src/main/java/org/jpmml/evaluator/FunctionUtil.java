@@ -450,9 +450,16 @@ public class FunctionUtil {
 			Object left = values.get(0);
 			Object right = values.get(1);
 
-			// XXX
-			if(!(left.getClass()).equals(right.getClass())){
+			if(left == null || right == null){
 				throw new EvaluationException();
+			} // End if
+
+			// Cast operands to common data type before comparison
+			if(!(left.getClass()).equals(right.getClass())){
+				DataType dataType = ParameterUtil.getResultDataType(left, right);
+
+				left = ParameterUtil.cast(dataType, left);
+				right = ParameterUtil.cast(dataType, right);
 			}
 
 			return evaluate((Comparable)left, (Comparable)right);
