@@ -69,7 +69,7 @@ public class BatchUtil {
 						break;
 				}
 
-				success &= VerificationUtil.acceptable(ParameterUtil.parse(dataType, outputCell), predictedValue, BatchUtil.precision);
+				success &= VerificationUtil.acceptable(ParameterUtil.parse(dataType, outputCell), predictedValue, BatchUtil.precision, BatchUtil.zeroThreshold);
 			}
 		}
 
@@ -78,4 +78,6 @@ public class BatchUtil {
 
 	// One part per million parts
 	private static final double precision = 1d / (1000 * 1000);
+
+	private static final double zeroThreshold = precision;
 }
