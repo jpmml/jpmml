@@ -50,10 +50,7 @@ public class OutputUtil {
 			switch(resultFeature){
 				case PREDICTED_VALUE:
 					{
-						FieldName target = outputField.getTargetField();
-						if(target == null){
-							target = modelManager.getTarget();
-						} // End if
+						FieldName target = getTarget(modelManager, outputField);
 
 						if(!predictions.containsKey(target)){
 							throw new EvaluationException();
@@ -78,6 +75,17 @@ public class OutputUtil {
 						}
 					}
 					break;
+				case PROBABILITY:
+					{
+						FieldName target = getTarget(modelManager, outputField);
+
+						if(!predictions.containsKey(target)){
+							throw new EvaluationException();
+						}
+
+						value = getProbability(result.get(target), outputField.getValue());
+					}
+					break;
 				default:
 					throw new UnsupportedFeatureException(resultFeature);
 			}
@@ -96,5 +104,27 @@ public class OutputUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private FieldName getTarget(ModelManager<?> modelManager, OutputField outputField){
+		FieldName result = outputField.getTargetField();
+		if(result == null){
+			result = modelManager.getTarget();
+		}
+
+		return result;
+	}
+
+	static
+	private Double getProbability(Object result, String value){
+
+		if(!(result instanceof Classification)){
+			throw new EvaluationException();
+		}
+
+		Classification classification = (Classification)result;
+
+		return classification.getProbability(value);
 	}
 }

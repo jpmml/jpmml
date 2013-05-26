@@ -74,7 +74,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return Collections.singletonMap(name, value);
 	}
 
-	public Map<FieldName, String> evaluateClassification(EvaluationContext context){
+	public Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		List<RegressionTable> regressionTables = getRegressionTables();
@@ -84,14 +84,14 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		double sumExp = 0d;
 
-		Map<RegressionTable, Double> values = new LinkedHashMap<RegressionTable, Double>();
+		ClassificationMap values = new ClassificationMap();
 
 		for(RegressionTable regressionTable : regressionTables){
 			Double value = evaluateRegressionTable(regressionTable, context);
 
 			sumExp += Math.exp(value.doubleValue());
 
-			values.put(regressionTable, value);
+			values.put(regressionTable.getTargetCategory(), value);
 		}
 
 		FieldName name = getTarget();
@@ -108,21 +108,12 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 
-		values = normalizeClassificationResult(regressionNormalizationMethod, values, sumExp);
-
-		Map.Entry<RegressionTable, Double> maxEntry = null;
-
-		Collection<Map.Entry<RegressionTable, Double>> entries = values.entrySet();
-		for(Map.Entry<RegressionTable, Double> entry : entries){
-
-			if(maxEntry == null || (maxEntry.getValue()).compareTo(entry.getValue()) < 0){
-				maxEntry = entry;
-			}
+		Collection<Map.Entry<String, Double>> entries = values.entrySet();
+		for(Map.Entry<String, Double> entry : entries){
+			entry.setValue(normalizeClassificationResult(regressionNormalizationMethod, entry.getValue(), sumExp));
 		}
 
-		RegressionTable regressionTable = maxEntry.getKey();
-
-		return Collections.singletonMap(name, regressionTable.getTargetCategory());
+		return Collections.singletonMap(name, values);
 	}
 
 	static
@@ -179,18 +170,6 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			default:
 				throw new UnsupportedFeatureException(regressionNormalizationMethod);
 		}
-	}
-
-	static
-	private <K> Map<K, Double> normalizeClassificationResult(RegressionNormalizationMethodType regressionNormalizationMethod, Map<K, Double> values, Double sumExp){
-		Map<K, Double> result = new LinkedHashMap<K, Double>();
-
-		Collection<Map.Entry<K, Double>> entries = values.entrySet();
-		for(Map.Entry<K, Double> entry : entries){
-			result.put(entry.getKey(), normalizeClassificationResult(regressionNormalizationMethod, entry.getValue(), sumExp));
-		}
-
-		return result;
 	}
 
 	static

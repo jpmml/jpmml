@@ -34,6 +34,7 @@ public class BatchUtil {
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> predictedFields = evaluator.getPredictedFields();
+		List<FieldName> outputFields = evaluator.getOutputFields();
 
 		boolean success = true;
 
@@ -56,24 +57,29 @@ public class BatchUtil {
 
 				Object predictedValue = EvaluatorUtil.decode(result.get(predictedField));
 
-				DataType dataType = ParameterUtil.getDataType(predictedValue);
+				success &= acceptable(outputCell, predictedValue);
+			}
 
-				// The output data type could be more "relaxed" than the input data type
-				switch(dataType){
-					case INTEGER:
-					case FLOAT:
-					case DOUBLE:
-						dataType = DataType.DOUBLE;
-						break;
-					default:
-						break;
+			for(FieldName outputField : outputFields){
+				String outputCell = outputRow.get(outputField);
+
+				// XXX
+				if(outputCell == null){
+					continue;
 				}
 
-				success &= VerificationUtil.acceptable(ParameterUtil.parse(dataType, outputCell), predictedValue, BatchUtil.precision, BatchUtil.zeroThreshold);
+				Object computedValue = result.get(outputField);
+
+				success &= acceptable(outputCell, computedValue);
 			}
 		}
 
 		return success;
+	}
+
+	static
+	private boolean acceptable(String expected, Object actual){
+		return VerificationUtil.acceptable(ParameterUtil.parse(ParameterUtil.getDataType(actual), expected), actual, BatchUtil.precision, BatchUtil.zeroThreshold);
 	}
 
 	// One part per million parts

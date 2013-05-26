@@ -263,26 +263,4 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 				throw new UnsupportedFeatureException(activationFunction);
 		}
 	}
-
-	static
-	private class ClassificationMap extends LinkedHashMap<String, Double> implements Computable<String> {
-
-		public String getResult(){
-			Map.Entry<String, Double> result = null;
-
-			Collection<Map.Entry<String, Double>> entries = entrySet();
-			for(Map.Entry<String, Double> entry : entries){
-
-				if(result == null || (result.getValue()).compareTo(entry.getValue()) < 0){
-					result = entry;
-				}
-			}
-
-			if(result == null){
-				throw new EvaluationException();
-			}
-
-			return result.getKey();
-		}
-	}
 }

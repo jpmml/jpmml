@@ -33,19 +33,11 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
-		String score = null;
-
 		Node node = evaluateTree(context);
 
-		if(node != null){
-			score = node.getScore();
+		NodeClassificationMap values = new NodeClassificationMap(node);
 
-			if(score == null){
-				score = computeScore(node);
-			}
-		}
-
-		Map<FieldName, String> predictions = Collections.singletonMap(getTarget(), score);
+		Map<FieldName, NodeClassificationMap> predictions = Collections.singletonMap(getTarget(), values);
 
 		return OutputUtil.evaluate(this, parameters, predictions);
 	}
@@ -105,20 +97,6 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 
 		return PredicateUtil.evaluatePredicate(predicate, context);
-	}
-
-	private String computeScore(Node node){
-		ScoreDistribution result = null;
-
-		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
-		for(ScoreDistribution scoreDistribution : scoreDistributions){
-
-			if(result == null || result.getRecordCount() < scoreDistribution.getRecordCount()){
-				result = scoreDistribution;
-			}
-		}
-
-		return result != null ? result.getValue() : null;
 	}
 
 	static

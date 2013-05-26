@@ -26,11 +26,9 @@
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Species" feature="predictedValue"/>
-   <!--
    <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
    <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
    <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
-   -->
   </Output>
   <NeuralInputs numberOfInputs="4">
    <NeuralInput id="1">

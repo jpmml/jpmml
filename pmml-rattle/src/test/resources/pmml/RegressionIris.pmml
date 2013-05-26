@@ -26,11 +26,9 @@
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Species" feature="predictedValue"/>
-   <!--
    <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
    <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
    <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
-   -->
   </Output>
   <RegressionTable intercept="18.6903742570084" targetCategory="versicolor">
    <NumericPredictor name="Sepal.Length" exponent="1" coefficient="-5.4584240070066"/>
