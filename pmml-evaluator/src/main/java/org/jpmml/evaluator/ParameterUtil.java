@@ -3,6 +3,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.*;
+
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
@@ -15,11 +17,46 @@ public class ParameterUtil {
 	static
 	public Object prepare(DataField dataField, MiningField miningField, Object value){
 
-		if(value == null){
+		missingValueHandling:
+		if(isMissing(dataField, value)){
+			value = miningField.getMissingValueReplacement();
+			if(value != null){
+				break missingValueHandling;
+			}
+
 			return null;
 		}
 
 		return cast(dataField.getDataType(), value);
+	}
+
+	static
+	private boolean isMissing(DataField dataField, Object value){
+
+		if(value == null){
+			return true;
+		}
+
+		List<Value> fields = dataField.getValues();
+		for(Value field : fields){
+			Value.Property property = field.getProperty();
+
+			switch(property){
+				case MISSING:
+					{
+						boolean equals = (field.getValue()).equals(toString(value));
+
+						if(equals){
+							return true;
+						}
+					}
+					break;
+				default:
+					break;
+			}
+		}
+
+		return false;
 	}
 
 	/**

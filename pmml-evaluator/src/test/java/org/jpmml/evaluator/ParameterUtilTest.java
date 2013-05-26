@@ -12,6 +12,32 @@ import static org.junit.Assert.*;
 public class ParameterUtilTest {
 
 	@Test
+	public void prepare(){
+		FieldName name = new FieldName("x");
+
+		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
+		MiningField miningField = new MiningField(name);
+
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, "1"));
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1));
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1f));
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
+
+		Value missingValue = new Value("N/A");
+		missingValue.setProperty(Value.Property.MISSING);
+
+		(dataField.getValues()).add(missingValue);
+
+		assertEquals(null, ParameterUtil.prepare(dataField, miningField, null));
+		assertEquals(null, ParameterUtil.prepare(dataField, miningField, "N/A"));
+
+		miningField.setMissingValueReplacement("0");
+
+		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, null));
+		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, "N/A"));
+	}
+
+	@Test
 	public void getDataType(){
 		assertEquals(DataType.STRING, ParameterUtil.getDataType("value"));
 
