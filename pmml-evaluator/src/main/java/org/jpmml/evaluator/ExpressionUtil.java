@@ -26,7 +26,14 @@ public class ExpressionUtil {
 
 	static
 	public Object evaluate(DerivedField derivedField, EvaluationContext context){
-		return evaluate(derivedField.getExpression(), context);
+		Object value = evaluate(derivedField.getExpression(), context);
+
+		DataType dataType = derivedField.getDataType();
+		if(dataType != null){
+			value = ParameterUtil.cast(dataType, value);
+		}
+
+		return value;
 	}
 
 	static

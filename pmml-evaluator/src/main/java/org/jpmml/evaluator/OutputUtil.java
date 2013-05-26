@@ -33,11 +33,11 @@ public class OutputUtil {
 		result.putAll(predictions);
 
 		// Global scope contains all active, predicted and (soon to be added-) output fields. Here, all fields values must be simple values
-		Map<FieldName, Object> values = new LinkedHashMap<FieldName, Object>();
-		values.putAll(parameters);
-		values.putAll(EvaluatorUtil.decodeValues(predictions));
+		Map<FieldName, Object> globalParameters = new LinkedHashMap<FieldName, Object>();
+		globalParameters.putAll(parameters);
+		globalParameters.putAll(EvaluatorUtil.decodeValues(predictions));
 
-		EvaluationContext context = new ModelManagerEvaluationContext(modelManager, values);
+		EvaluationContext context = new ModelManagerEvaluationContext(modelManager, globalParameters);
 
 		Output output = modelManager.getOrCreateOutput();
 
@@ -59,7 +59,8 @@ public class OutputUtil {
 							throw new EvaluationException();
 						}
 
-						value = values.get(target);
+						// Global scope contains simple value, whereas prediction results may contain both complex and simple values
+						value = globalParameters.get(target);
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -70,17 +71,28 @@ public class OutputUtil {
 						}
 
 						value = ExpressionUtil.evaluate(expression, context);
+
+						// Exppression must produce simple value
+						if(value instanceof Computable){
+							throw new EvaluationException();
+						}
 					}
 					break;
 				default:
 					throw new UnsupportedFeatureException(resultFeature);
 			}
 
+			DataType dataType = outputField.getDataType();
+			if(dataType != null){
+				value = ParameterUtil.cast(dataType, value);
+			}
+
 			FieldName name = outputField.getName();
 
 			result.put(name, value);
 
-			values.put(name, EvaluatorUtil.decode(value));
+			// The result of one output field becomes available to other output fields
+			globalParameters.put(name, value);
 		}
 
 		return result;
