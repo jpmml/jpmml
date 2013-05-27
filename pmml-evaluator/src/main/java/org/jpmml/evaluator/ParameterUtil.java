@@ -17,20 +17,33 @@ public class ParameterUtil {
 	static
 	public Object prepare(DataField dataField, MiningField miningField, Object value){
 
+		if(dataField == null){
+			throw new EvaluationException();
+		}
+
 		missingValueHandling:
 		if(isMissing(dataField, value)){
+
+			if(miningField == null){
+				return null;
+			}
+
 			value = miningField.getMissingValueReplacement();
 			if(value != null){
 				break missingValueHandling;
 			}
 
 			return null;
-		}
+		} // End if
 
 		invalidValueHandling:
 		if(isInvalid(dataField, value)){
-			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 
+			if(miningField == null){
+				throw new EvaluationException();
+			}
+
+			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 			switch(invalidValueTreatmentMethod){
 				case RETURN_INVALID:
 					throw new EvaluationException();
