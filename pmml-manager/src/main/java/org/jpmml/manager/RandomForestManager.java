@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-public class RandomForestManager extends SegmentationModelManager {
+public class RandomForestManager extends MiningModelManager {
 
 	public RandomForestManager(){
 	}
@@ -22,20 +22,6 @@ public class RandomForestManager extends SegmentationModelManager {
 
 	public String getSummary(){
 		return "Random forest";
-	}
-
-	public Segment addSegment(TreeModel treeModel){
-		return addSegment(new True(), treeModel);
-	}
-
-	public Segment addSegment(Predicate predicate, TreeModel treeModel){
-		Segment segment = new Segment();
-		segment.setPredicate(predicate);
-		segment.setModel((TreeModel)treeModel);
-
-		getSegments().add(segment);
-
-		return segment;
 	}
 
 	static
