@@ -19,6 +19,13 @@ public class RegressionTest {
 	}
 
 	@Test
+	public void evaluateRandomForestOzone() throws Exception {
+		Batch batch = new RattleBatch("RandomForest", "Ozone");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateRegressionOzone() throws Exception {
 		Batch batch = new RattleBatch("Regression", "Ozone");
 
