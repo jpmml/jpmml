@@ -52,8 +52,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
 
 		this.neuralNetwork = new NeuralNetwork(new MiningSchema(), new NeuralInputs(), miningFunction, activationFunction);
 
-		List<Model> content = getPmml().getContent();
-		content.add(this.neuralNetwork);
+		getModels().add(this.neuralNetwork);
 
 		return this.neuralNetwork;
 	}

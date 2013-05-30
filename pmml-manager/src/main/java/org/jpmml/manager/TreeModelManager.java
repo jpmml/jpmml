@@ -52,8 +52,7 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 		this.treeModel = new TreeModel(new MiningSchema(), new Node(), miningFunction);
 
-		List<Model> content = getPmml().getContent();
-		content.add(this.treeModel);
+		getModels().add(this.treeModel);
 
 		return this.treeModel;
 	}

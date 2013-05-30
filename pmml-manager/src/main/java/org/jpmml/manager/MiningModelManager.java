@@ -52,8 +52,7 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 
 		this.miningModel = new MiningModel(new MiningSchema(), miningFunction);
 
-		List<Model> content = getPmml().getContent();
-		content.add(this.miningModel);
+		getModels().add(this.miningModel);
 
 		return this.miningModel;
 	}

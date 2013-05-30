@@ -50,8 +50,7 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 		this.regressionModel = new RegressionModel(new MiningSchema(), miningFunction);
 
-		List<Model> content = getPmml().getContent();
-		content.add(this.regressionModel);
+		getModels().add(this.regressionModel);
 
 		return this.regressionModel;
 	}
