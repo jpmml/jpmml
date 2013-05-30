@@ -9,17 +9,17 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-public class RandomForestEvaluator extends RandomForestManager implements Evaluator {
+public class MiningModelEvaluator extends MiningModelManager implements Evaluator {
 
-	public RandomForestEvaluator(PMML pmml){
+	public MiningModelEvaluator(PMML pmml){
 		super(pmml);
 	}
 
-	public RandomForestEvaluator(PMML pmml, MiningModel miningModel){
+	public MiningModelEvaluator(PMML pmml, MiningModel miningModel){
 		super(pmml, miningModel);
 	}
 
-	public RandomForestEvaluator(RandomForestManager parent){
+	public MiningModelEvaluator(MiningModelManager parent){
 		this(parent.getPmml(), parent.getModel());
 	}
 
@@ -72,19 +72,21 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 				continue;
 			}
 
-			TreeModel treeModel = (TreeModel)segment.getModel();
-			if(treeModel == null){
+			Model model = segment.getModel();
+			if(model == null){
 				throw new EvaluationException();
 			}
 
-			TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(getPmml(), treeModel);
+			Evaluator evaluator = (Evaluator)MiningModelEvaluator.evaluatorFactory.getModelManager(getPmml(), model);
 
-			Map<FieldName, ?> result = treeModelEvaluator.evaluate(context.getParameters());
+			Map<FieldName, ?> result = evaluator.evaluate(context.getParameters());
 
 			Object score = result.get(target);
 			if(score == null){
 				throw new EvaluationException();
 			}
+
+			score = EvaluatorUtil.decode(score);
 
 			Double value = ParameterUtil.toDouble(score);
 
@@ -113,4 +115,6 @@ public class RandomForestEvaluator extends RandomForestManager implements Evalua
 
 		return Collections.singletonMap(target, result);
 	}
+
+	private static final ModelEvaluatorFactory evaluatorFactory = ModelEvaluatorFactory.getInstance();
 }

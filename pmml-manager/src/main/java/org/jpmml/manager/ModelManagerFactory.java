@@ -25,10 +25,7 @@ public class ModelManagerFactory {
 		} else
 
 		if(model instanceof MiningModel){
-
-			if(RandomForestManager.isRandomForest((MiningModel)model)){
-				return new RandomForestManager(pmml, (MiningModel)model);
-			}
+			return new MiningModelManager(pmml, (MiningModel)model);
 		}
 
 		throw new UnsupportedFeatureException(model);

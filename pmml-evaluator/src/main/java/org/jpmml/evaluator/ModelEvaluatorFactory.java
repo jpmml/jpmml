@@ -28,10 +28,7 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 		} else
 
 		if(model instanceof MiningModel){
-
-			if(RandomForestManager.isRandomForest((MiningModel)model)){
-				return new RandomForestEvaluator(pmml, (MiningModel)model);
-			}
+			return new MiningModelEvaluator(pmml, (MiningModel)model);
 		}
 
 		throw new UnsupportedFeatureException(model);

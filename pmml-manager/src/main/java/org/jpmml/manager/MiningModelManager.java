@@ -7,7 +7,6 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-abstract
 public class MiningModelManager extends ModelManager<MiningModel> {
 
 	private MiningModel miningModel = null;
@@ -24,6 +23,16 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		super(pmml);
 
 		this.miningModel = miningModel;
+	}
+
+	public String getSummary(){
+		MiningModel miningModel = getModel();
+
+		if(isRandomForest(miningModel)){
+			return "Random forest";
+		}
+
+		return "Segmentation model";
 	}
 
 	@Override
@@ -92,5 +101,27 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 
 	public List<Segment> getSegments(){
 		return getSegmentation().getSegments();
+	}
+
+	static
+	private boolean isRandomForest(MiningModel miningModel){
+		Segmentation segmentation = miningModel.getSegmentation();
+
+		if(segmentation == null){
+			return false;
+		}
+
+		List<Segment> segments = segmentation.getSegments();
+
+		// How many trees does it take to make a forest?
+		boolean result = (segments.size() > 3);
+
+		for(Segment segment : segments){
+			Model model = segment.getModel();
+
+			result &= (model instanceof TreeModel);
+		}
+
+		return result;
 	}
 }
