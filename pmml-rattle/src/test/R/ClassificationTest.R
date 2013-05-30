@@ -1,5 +1,6 @@
 library("nnet")
 library("pmml")
+library("randomForest")
 library("rpart")
 
 irisData = readCsv("csv/Iris.csv")
@@ -30,6 +31,15 @@ generateNeuralNetworkIris = function(){
 	writeIris(classes, probabilities, "csv/NeuralNetworkIris.csv")
 }
 
+generateRandomForestIris = function(){
+	randomForest = randomForest(irisFormula, irisData, ntree = 15, mtry = 4, nodesize = 10)
+	saveXML(pmml(randomForest), "pmml/RandomForestIris.pmml")
+
+	classes = predict(randomForest, newdata = irisData, type = "class")
+	probabilities = predict(randomForest, newdata = irisData, type = "prob")
+	writeIris(classes, probabilities, "csv/RandomForestIris.csv")
+}
+
 generateRegressionIris = function(){
 	multinom = multinom(irisFormula, irisData)
 	saveXML(pmml(multinom), "pmml/RegressionIris.pmml")
@@ -41,6 +51,7 @@ generateRegressionIris = function(){
 
 generateDecisionTreeIris()
 generateNeuralNetworkIris()
+generateRandomForestIris()
 generateRegressionIris()
 
 auditData = readCsv("csv/Audit.csv")
@@ -80,5 +91,15 @@ generateNeuralNetworkAudit = function(){
 	writeAudit(classes, NULL, "csv/NeuralNetworkAudit.csv")
 }
 
+generateRandomForestAudit = function(){
+	randomForest = randomForest(auditFormula, auditData, ntree = 15, mtry = 8, nodesize = 10)
+	saveXML(pmml(randomForest), "pmml/RandomForestAudit.pmml")
+	
+	classes = predict(randomForest, newdata = auditData, type = "class")
+	probabilities = predict(randomForest, newdata = auditData, type = "prob")
+	writeAudit(classes, probabilities, "csv/RandomForestAudit.csv")
+}
+
 generateDecisionTreeAudit()
 generateNeuralNetworkAudit()
+generateRandomForestAudit()

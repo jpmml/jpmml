@@ -16,7 +16,7 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Classif
 		Collection<Map.Entry<String, Double>> entries = entrySet();
 		for(Map.Entry<String, Double> entry : entries){
 
-			if(result == null || (result.getValue()).compareTo(entry.getValue()) < 0){
+			if(result == null || (entry.getValue()).compareTo(result.getValue()) > 0){
 				result = entry;
 			}
 		}
@@ -29,6 +29,27 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Classif
 	}
 
 	public Double getProbability(String value){
-		return get(value);
+		Double result = get(value);
+
+		// The specified value was not encountered during scoring
+		if(result == null){
+			result = 0d;
+		}
+
+		return result;
+	}
+
+	void normalizeProbabilities(){
+		double sum = 0;
+
+		Collection<Double> values = values();
+		for(Double value : values){
+			sum += value.doubleValue();
+		}
+
+		Collection<Map.Entry<String, Double>> entries = entrySet();
+		for(Map.Entry<String, Double> entry : entries){
+			entry.setValue(entry.getValue() / sum);
+		}
 	}
 }
