@@ -36,7 +36,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 		Map<FieldName, ?> predictions;
 
-		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		MiningFunctionType miningFunction = model.getFunctionName();
 		switch(miningFunction){
@@ -50,40 +50,50 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 
-		return OutputUtil.evaluate(this, parameters, predictions);
+		return OutputUtil.evaluate(predictions, context);
 	}
 
-	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){
+	public Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+		List<SegmentResult> segmentResults = evaluate(context);
+
 		Segmentation segmentation = getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+			case MODEL_CHAIN:
+				return dispatchSingleResult(segmentResults);
+			case SELECT_ALL:
+				throw new UnsupportedFeatureException(multipleModelMethod);
+			default:
+				break;
+		}
 
-		Map<Segment, ?> resultMap = evaluate(context);
+		Double result;
 
 		double sum = 0d;
 		double weightedSum = 0d;
 
-		Collection<? extends Map.Entry<Segment, ?>> entries = resultMap.entrySet();
-		for(Map.Entry<Segment, ?> entry : entries){
-			Segment segment = entry.getKey();
+		for(SegmentResult segmentResult : segmentResults){
+			Object predictedValue = EvaluatorUtil.decode(segmentResult.getPrediction());
 
-			Double value = ParameterUtil.toDouble(entry.getValue());
+			Double value = ParameterUtil.toDouble(predictedValue);
 
 			sum += value.doubleValue();
-			weightedSum += (segment.getWeight() * value.doubleValue());
+			weightedSum += ((segmentResult.getSegment()).getWeight() * value.doubleValue());
 		}
 
-		Double result;
+		int count = segmentResults.size();
 
 		switch(multipleModelMethod){
 			case SUM:
 				result = sum;
 				break;
 			case AVERAGE:
-				result = (sum / resultMap.size());
+				result = (sum / count);
 				break;
 			case WEIGHTED_AVERAGE:
-				result = (weightedSum / resultMap.size());
+				result = (weightedSum / count);
 				break;
 			default:
 				throw new UnsupportedFeatureException(multipleModelMethod);
@@ -92,20 +102,28 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return Collections.singletonMap(getTarget(), result);
 	}
 
-	public Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context){
+	public Map<FieldName, ?> evaluateClassification(EvaluationContext context){
+		List<SegmentResult> segmentResults = evaluate(context);
+
 		Segmentation segmentation = getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-
-		Map<Segment, ?> resultMap = evaluate(context);
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+			case MODEL_CHAIN:
+				return dispatchSingleResult(segmentResults);
+			case SELECT_ALL:
+				throw new UnsupportedFeatureException(multipleModelMethod);
+			default:
+				break;
+		}
 
 		ClassificationMap result = new ClassificationMap();
 
-		Collection<? extends Map.Entry<Segment, ?>> entries = resultMap.entrySet();
-		for(Map.Entry<Segment, ?> entry : entries){
-			Segment segment = entry.getKey();
+		for(SegmentResult segmentResult : segmentResults){
+			Object predictedValue = EvaluatorUtil.decode(segmentResult.getPrediction());
 
-			String value = ParameterUtil.toString(entry.getValue());
+			String value = ParameterUtil.toString(predictedValue);
 
 			Double vote = result.get(value);
 			if(vote == null){
@@ -117,7 +135,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 					vote += 1d;
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					vote += (segment.getWeight() * 1d);
+					vote += ((segmentResult.getSegment()).getWeight() * 1d);
 					break;
 				default:
 					throw new UnsupportedFeatureException(multipleModelMethod);
@@ -131,14 +149,26 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return Collections.singletonMap(getTarget(), result);
 	}
 
-	private Map<Segment, ?> evaluate(EvaluationContext context){
+	private Map<FieldName, ?> dispatchSingleResult(List<SegmentResult> results){
+
+		if(results.size() < 1 || results.size() > 1){
+			throw new EvaluationException();
+		}
+
+		SegmentResult result = results.get(0);
+
+		return result.getResult();
+	}
+
+	@SuppressWarnings (
+		value = "fallthrough"
+	)
+	private List<SegmentResult> evaluate(EvaluationContext context){
+		List<SegmentResult> results = new ArrayList<SegmentResult>();
+
 		Segmentation segmentation = getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-
-		Map<Segment, Object> resultMap = new LinkedHashMap<Segment, Object>();
-
-		ModelEvaluatorFactory evaluatorFactory = ModelEvaluatorFactory.getInstance();
 
 		List<Segment> segments = segmentation.getSegments();
 		for(Segment segment : segments){
@@ -161,25 +191,80 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 			Map<FieldName, ?> result = evaluator.evaluate(context.getParameters());
 
-			Object targetValue = result.get(target);
-			if(targetValue == null){
-				throw new EvaluationException();
-			}
-
-			// XXX
-			targetValue = EvaluatorUtil.decode(targetValue);
-
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
-					return Collections.singletonMap(segment, targetValue);
+					return Collections.singletonList(new SegmentResult(segment, target, result));
 				case MODEL_CHAIN:
-					throw new UnsupportedFeatureException(multipleModelMethod);
+					{
+						List<FieldName> outputFields = evaluator.getOutputFields();
+
+						for(FieldName outputField : outputFields){
+							Object outputValue = result.get(outputField);
+							if(outputValue == null){
+								throw new EvaluationException();
+							}
+
+							outputValue = EvaluatorUtil.decode(outputValue);
+
+							context.putParameter(outputField, outputValue);
+						}
+
+						results.clear();
+					}
+					// Falls through
 				default:
-					resultMap.put(segment, targetValue);
+					results.add(new SegmentResult(segment, target, result));
 					break;
 			}
 		}
 
-		return resultMap;
+		return results;
+	}
+
+	private static final ModelEvaluatorFactory evaluatorFactory = ModelEvaluatorFactory.getInstance();
+
+	static
+	private class SegmentResult {
+
+		private Segment segment = null;
+
+		private FieldName predictedField = null;
+
+		private Map<FieldName, ?> result = null;
+
+
+		public SegmentResult(Segment segment, FieldName predictedField, Map<FieldName, ?> result){
+			setSegment(segment);
+			setPredictedField(predictedField);
+			setResult(result);
+		}
+
+		public Object getPrediction(){
+			return getResult().get(getPredictedField());
+		}
+
+		public Segment getSegment(){
+			return this.segment;
+		}
+
+		private void setSegment(Segment segment){
+			this.segment = segment;
+		}
+
+		public FieldName getPredictedField(){
+			return this.predictedField;
+		}
+
+		private void setPredictedField(FieldName predictedField){
+			this.predictedField = predictedField;
+		}
+
+		public Map<FieldName, ?> getResult(){
+			return this.result;
+		}
+
+		private void setResult(Map<FieldName, ?> result){
+			this.result = result;
+		}
 	}
 }

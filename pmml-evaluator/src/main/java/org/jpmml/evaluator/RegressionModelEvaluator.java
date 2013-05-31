@@ -36,7 +36,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		Map<FieldName, ?> predictions;
 
-		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		MiningFunctionType miningFunction = regressionModel.getFunctionName();
 		switch(miningFunction){
@@ -50,7 +50,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 
-		return OutputUtil.evaluate(this, parameters, predictions);
+		return OutputUtil.evaluate(predictions, context);
 	}
 
 	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){

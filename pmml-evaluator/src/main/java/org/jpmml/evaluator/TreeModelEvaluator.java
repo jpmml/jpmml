@@ -31,7 +31,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	 * @see #evaluateTree(EvaluationContext)
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
-		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		Node node = evaluateTree(context);
 
@@ -39,7 +39,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		Map<FieldName, NodeClassificationMap> predictions = Collections.singletonMap(getTarget(), values);
 
-		return OutputUtil.evaluate(this, parameters, predictions);
+		return OutputUtil.evaluate(predictions, context);
 	}
 
 	public Node evaluateTree(EvaluationContext context){

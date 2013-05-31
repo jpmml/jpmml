@@ -8,7 +8,7 @@ import java.util.*;
 import org.dmg.pmml.*;
 
 abstract
-public class EvaluationContext {
+public class EvaluationContext implements Cloneable {
 
 	private Map<FieldName, ?> parameters = null;
 
@@ -20,17 +20,42 @@ public class EvaluationContext {
 	abstract
 	public DerivedField resolve(FieldName name);
 
+	@Override
+	public EvaluationContext clone(){
+		try {
+			EvaluationContext result = (EvaluationContext)super.clone();
+
+			// Deep copy parameters
+			Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>(getParameters());
+			result.setParameters(parameters);
+
+			return result;
+		} catch(CloneNotSupportedException cnse){
+			throw new AssertionError(cnse);
+		}
+	}
+
 	public Object getParameter(FieldName name){
 		Map<FieldName, ?> parameters = getParameters();
 
 		return parameters.get(name);
 	}
 
+	@SuppressWarnings (
+		value = {"unchecked"}
+	)
+	void putParameter(FieldName name, Object value){
+		// Use cast to remove the implicit "read-only" protection
+		Map<FieldName, Object> parameters = (Map<FieldName, Object>)getParameters();
+
+		parameters.put(name, value);
+	}
+
 	public Map<FieldName, ?> getParameters(){
 		return this.parameters;
 	}
 
-	private void setParameters(Map<FieldName, ?> parameters){
+	void setParameters(Map<FieldName, ?> parameters){
 		this.parameters = parameters;
 	}
 }
