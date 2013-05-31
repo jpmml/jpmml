@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-public class NeuralNetworkManager extends ModelManager<NeuralNetwork>  {
+public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 
 	private NeuralNetwork neuralNetwork = null;
 

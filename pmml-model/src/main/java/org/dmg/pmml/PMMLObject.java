@@ -22,7 +22,7 @@ public class PMMLObject implements Equals, HashCode, Serializable {
 		return 1;
 	}
 
-    public StringBuilder appendFields(ObjectLocator locator, StringBuilder buffer, ToStringStrategy strategy) {
+	public StringBuilder appendFields(ObjectLocator locator, StringBuilder buffer, ToStringStrategy strategy) {
 		return buffer;
 	}
 }

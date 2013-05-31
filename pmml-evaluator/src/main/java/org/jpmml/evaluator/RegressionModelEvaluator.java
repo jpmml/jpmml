@@ -131,7 +131,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				return null;
 			}
 
-			result +=  numericPredictor.getCoefficient() * Math.pow(((Number)value).doubleValue(), (numericPredictor.getExponent()).doubleValue());
+			result += numericPredictor.getCoefficient() * Math.pow(((Number)value).doubleValue(), (numericPredictor.getExponent()).doubleValue());
 		}
 
 		List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
