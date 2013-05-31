@@ -29,6 +29,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 	/**
 	 * @see #evaluateRegression(EvaluationContext)
+	 * @see #evaluateClassification(EvaluationContext)
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		MiningModel model = getModel();
