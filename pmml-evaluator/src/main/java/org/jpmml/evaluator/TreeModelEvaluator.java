@@ -96,7 +96,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 			throw new EvaluationException();
 		}
 
-		return PredicateUtil.evaluatePredicate(predicate, context);
+		return PredicateUtil.evaluate(predicate, context);
 	}
 
 	static

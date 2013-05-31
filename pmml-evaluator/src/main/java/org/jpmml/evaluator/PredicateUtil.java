@@ -16,7 +16,7 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluatePredicate(Predicate predicate, EvaluationContext context){
+	public Boolean evaluate(Predicate predicate, EvaluationContext context){
 
 		if(predicate instanceof SimplePredicate){
 			return evaluateSimplePredicate((SimplePredicate)predicate, context);
@@ -31,11 +31,11 @@ public class PredicateUtil {
 		} else
 
 		if(predicate instanceof True){
-			return evaluateTruePredicate((True)predicate);
+			return evaluateTrue((True)predicate);
 		} else
 
 		if(predicate instanceof False){
-			return evaluateFalsePredicate((False)predicate);
+			return evaluateFalse((False)predicate);
 		} else
 
 		{
@@ -85,7 +85,7 @@ public class PredicateUtil {
 	public Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, EvaluationContext context){
 		List<Predicate> predicates = compoundPredicate.getContent();
 
-		Boolean result = evaluatePredicate(predicates.get(0), context);
+		Boolean result = evaluate(predicates.get(0), context);
 
 		switch(compoundPredicate.getBooleanOperator()){
 			case AND:
@@ -100,7 +100,7 @@ public class PredicateUtil {
 		}
 
 		for(Predicate predicate : predicates.subList(1, predicates.size())){
-			Boolean value = evaluatePredicate(predicate, context);
+			Boolean value = evaluate(predicate, context);
 
 			switch(compoundPredicate.getBooleanOperator()){
 				case AND:
@@ -144,12 +144,12 @@ public class PredicateUtil {
 	}
 
 	static
-	public Boolean evaluateTruePredicate(True truePredicate){
+	public Boolean evaluateTrue(True truePredicate){
 		return Boolean.TRUE;
 	}
 
 	static
-	public Boolean evaluateFalsePredicate(False falsePredicate){
+	public Boolean evaluateFalse(False falsePredicate){
 		return Boolean.FALSE;
 	}
 
