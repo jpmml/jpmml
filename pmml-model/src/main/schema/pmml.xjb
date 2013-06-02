@@ -465,6 +465,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='MiningField']/xsd:complexType/xsd:attribute[@name='outliers']">
+			<jaxb:property
+				name="outlierTreatment"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='ModelExplanation']/xsd:complexType">
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_0"/>

@@ -21,7 +21,46 @@ public class ParameterUtil {
 			throw new EvaluationException();
 		}
 
-		missingValueHandling:
+		outlierTreatment:
+		if(isOutlier(dataField, value)){
+
+			if(miningField == null){
+				throw new EvaluationException();
+			}
+
+			OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
+			switch(outlierTreatmentMethod){
+				case AS_IS:
+					break;
+				case AS_MISSING_VALUES:
+					value = null;
+					break;
+				case AS_EXTREME_VALUES:
+					{
+						Double lowValue = miningField.getLowValue();
+						Double highValue = miningField.getHighValue();
+
+						if(lowValue == null || highValue == null){
+							throw new EvaluationException();
+						}
+
+						DataType dataType = dataField.getDataType();
+
+						if(compare(dataType, value, lowValue) < 0){
+							value = lowValue;
+						} else
+
+						if(compare(dataType, value, highValue) > 0){
+							value = highValue;
+						}
+					}
+					break;
+				default:
+					throw new UnsupportedFeatureException(outlierTreatmentMethod);
+			}
+		}
+
+		missingValueTreatment:
 		if(isMissing(dataField, value)){
 
 			if(miningField == null){
@@ -30,13 +69,13 @@ public class ParameterUtil {
 
 			value = miningField.getMissingValueReplacement();
 			if(value != null){
-				break missingValueHandling;
+				break missingValueTreatment;
 			}
 
 			return null;
 		} // End if
 
-		invalidValueHandling:
+		invalidValueTreatment:
 		if(isInvalid(dataField, value)){
 
 			if(miningField == null){
@@ -48,12 +87,12 @@ public class ParameterUtil {
 				case RETURN_INVALID:
 					throw new EvaluationException();
 				case AS_IS:
-					break invalidValueHandling;
+					break invalidValueTreatment;
 				case AS_MISSING:
 					{
 						value = miningField.getMissingValueReplacement();
 						if(value != null){
-							break invalidValueHandling;
+							break invalidValueTreatment;
 						}
 
 						return null;
@@ -64,6 +103,65 @@ public class ParameterUtil {
 		}
 
 		return cast(dataField.getDataType(), value);
+	}
+
+	static
+	private boolean isOutlier(DataField dataField, Object value){
+
+		if(value == null){
+			return false;
+		}
+
+		OpType opType = dataField.getOptype();
+		switch(opType){
+			case CONTINUOUS:
+				{
+					List<Double> range = new ArrayList<Double>();
+
+					List<Interval> fieldIntervals = dataField.getIntervals();
+					for(Interval fieldInterval : fieldIntervals){
+						range.add(fieldInterval.getLeftMargin());
+						range.add(fieldInterval.getRightMargin());
+					}
+
+					List<Value> fieldValues = dataField.getValues();
+					for(Value fieldValue : fieldValues){
+						Value.Property property = fieldValue.getProperty();
+
+						switch(property){
+							case VALID:
+								range.add(toDouble(fieldValue.getValue()));
+								break;
+							default:
+								break;
+						}
+					}
+
+					if(range.isEmpty()){
+						return false;
+					}
+
+					Double doubleValue = toDouble(value);
+
+					Double minValue = Collections.min(range);
+					if((doubleValue).compareTo(minValue) < 0){
+						return true;
+					}
+
+					Double maxValue = Collections.max(range);
+					if((doubleValue).compareTo(maxValue) > 0){
+						return true;
+					}
+				}
+				break;
+			case CATEGORICAL:
+			case ORDINAL:
+				break;
+			default:
+				throw new UnsupportedFeatureException(opType);
+		}
+
+		return false;
 	}
 
 	static
@@ -192,6 +290,14 @@ public class ParameterUtil {
 	static
 	private boolean equals(DataType dataType, Object left, Object right){
 		return (cast(dataType, left)).equals(cast(dataType, right));
+	}
+
+	@SuppressWarnings (
+		value = {"cast", "rawtypes", "unchecked"}
+	)
+	static
+	private int compare(DataType dataType, Object left, Object right){
+		return ((Comparable)cast(dataType, left)).compareTo((Comparable)cast(dataType, right));
 	}
 
 	static

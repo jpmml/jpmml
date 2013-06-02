@@ -20,16 +20,22 @@ public class ParameterUtilTest {
 		FieldName name = new FieldName("x");
 
 		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
+
+		List<Value> fieldValues = dataField.getValues();
+		List<Interval> fieldIntervals = dataField.getIntervals();
+
 		MiningField miningField = new MiningField(name);
+
+		miningField.setLowValue(1d);
+		miningField.setHighValue(3d);
 
 		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, "1"));
 		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1));
 		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1f));
 		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
 
-		List<Value> fieldValues = dataField.getValues();
-
 		Value missingValue = createValue("N/A", Property.MISSING);
+
 		fieldValues.add(missingValue);
 
 		assertEquals(null, ParameterUtil.prepare(dataField, miningField, null));
@@ -40,14 +46,33 @@ public class ParameterUtilTest {
 		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, null));
 		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, "N/A"));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		fieldValues.clear();
+		fieldIntervals.clear();
 
-		List<Interval> fieldIntervals = dataField.getIntervals();
+		fieldValues.add(missingValue);
 
 		Interval validInterval = new Interval(Closure.CLOSED_CLOSED);
 		validInterval.setLeftMargin(1d);
 		validInterval.setRightMargin(3d);
+
 		fieldIntervals.add(validInterval);
+
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+
+		assertEquals(-1d, ParameterUtil.prepare(dataField, miningField, -1d));
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
+		assertEquals(5d, ParameterUtil.prepare(dataField, miningField, 5d));
+
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, -1d));
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
+		assertEquals(3d, ParameterUtil.prepare(dataField, miningField, 5d));
+
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
 		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, 5d));
@@ -55,18 +80,39 @@ public class ParameterUtilTest {
 		fieldValues.clear();
 		fieldIntervals.clear();
 
+		List<Value> validValues = new ArrayList<Value>();
+		validValues.add(createValue("1", Value.Property.VALID));
+		validValues.add(createValue("2", Value.Property.VALID));
+		validValues.add(createValue("3", Value.Property.VALID));
+
 		fieldValues.add(missingValue);
-		fieldValues.add(createValue("1", Value.Property.VALID));
-		fieldValues.add(createValue("2", Value.Property.VALID));
-		fieldValues.add(createValue("3", Value.Property.VALID));
+		fieldValues.addAll(validValues);
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
+		assertEquals(5d, ParameterUtil.prepare(dataField, miningField, 5d));
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
 		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, 5d));
 
 		fieldValues.clear();
+		fieldIntervals.clear();
+
+		List<Value> invalidValues = new ArrayList<Value>();
+		invalidValues.add(createValue("1", Value.Property.INVALID));
 
 		fieldValues.add(missingValue);
-		fieldValues.add(createValue("1", Value.Property.INVALID));
+		fieldValues.addAll(invalidValues);
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+
+		assertEquals(1d, ParameterUtil.prepare(dataField, miningField, 1d));
+		assertEquals(5d, ParameterUtil.prepare(dataField, miningField, 5d));
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(0d, ParameterUtil.prepare(dataField, miningField, 1d));
 		assertEquals(5d, ParameterUtil.prepare(dataField, miningField, 5d));
