@@ -32,16 +32,14 @@ class NodeClassificationMap extends ClassificationMap {
 
 			if(result == null || result.getRecordCount() < scoreDistribution.getRecordCount()){
 				result = scoreDistribution;
-			} // End if
-
-			BigDecimal probability = scoreDistribution.getProbability();
-			if(probability != null){
-				put(scoreDistribution.getValue(), Double.valueOf(probability.doubleValue()));
-			} else
-
-			{
-				put(scoreDistribution.getValue(), Double.valueOf(scoreDistribution.getRecordCount() / sum));
 			}
+
+			Double probability = scoreDistribution.getProbability();
+			if(probability == null){
+				probability = (scoreDistribution.getRecordCount() / sum);
+			}
+
+			put(scoreDistribution.getValue(), probability);
 		}
 
 		String score = node.getScore();
