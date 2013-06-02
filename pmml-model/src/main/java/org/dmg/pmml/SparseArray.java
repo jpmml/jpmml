@@ -3,7 +3,6 @@
  */
 package org.dmg.pmml;
 
-import java.math.*;
 import java.util.*;
 
 import javax.xml.bind.annotation.*;
@@ -16,8 +15,8 @@ public class SparseArray extends PMMLObject {
 	public List<Integer> getIndices();
 
 	abstract
-	public BigInteger getN();
+	public Integer getN();
 
 	abstract
-	public void setN(BigInteger n);
+	public void setN(Integer n);
 }

@@ -9,6 +9,14 @@ Copyright (c) 2009 University of Tartu
 			name="java.lang.Double"
 			xmlType="xsd:decimal"
 		/>
+		<jaxb:javaType
+			name="java.lang.Integer"
+			xmlType="xsd:integer"
+		/>
+		<jaxb:javaType
+			name="java.lang.Integer"
+			xmlType="xsd:nonNegativeInteger"
+		/>
 	</jaxb:globalBindings>
 
 	<jaxb:bindings schemaLocation="pmml.xsd" node="/xsd:schema">
