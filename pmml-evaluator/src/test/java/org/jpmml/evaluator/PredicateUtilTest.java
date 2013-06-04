@@ -3,27 +3,11 @@
  */
 package org.jpmml.evaluator;
 
-import java.math.*;
-
 import org.junit.*;
 
 import static org.junit.Assert.*;
 
 public class PredicateUtilTest {
-
-	@Test
-	public void compareAsNumber(){
-		assertTrue(PredicateUtil.compare(new BigDecimal("2"), "10") < 0);
-		assertTrue(PredicateUtil.compare(new BigDecimal("1"), "1") == 0);
-		assertTrue(PredicateUtil.compare(new BigDecimal("10"), "2") > 0);
-	}
-
-	@Test
-	public void compareAsString(){
-		assertTrue(PredicateUtil.compare("2", "10") > 0);
-		assertTrue(PredicateUtil.compare("1", "1") == 0);
-		assertTrue(PredicateUtil.compare("10", "2") < 0);
-	}
 
 	@Test
 	public void binaryAnd(){

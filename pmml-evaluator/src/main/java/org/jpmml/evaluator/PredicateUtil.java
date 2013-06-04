@@ -3,7 +3,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.math.*;
 import java.util.*;
 
 import org.jpmml.manager.*;
@@ -60,22 +59,22 @@ public class PredicateUtil {
 			return null;
 		}
 
-		String refValue = simplePredicate.getValue();
+		int order = ParameterUtil.compare(value, simplePredicate.getValue());
 
 		SimplePredicate.Operator operator = simplePredicate.getOperator();
 		switch(operator){
 			case EQUAL:
-				return Boolean.valueOf(PredicateUtil.compare(value, refValue) == 0);
+				return Boolean.valueOf(order == 0);
 			case NOT_EQUAL:
-				return Boolean.valueOf(PredicateUtil.compare(value, refValue) != 0);
+				return Boolean.valueOf(order != 0);
 			case LESS_THAN:
-				return Boolean.valueOf(PredicateUtil.compare(value, refValue) < 0);
+				return Boolean.valueOf(order < 0);
 			case LESS_OR_EQUAL:
-				return Boolean.valueOf(PredicateUtil.compare(value, refValue) <= 0);
+				return Boolean.valueOf(order <= 0);
 			case GREATER_THAN:
-				return Boolean.valueOf(PredicateUtil.compare(value, refValue) > 0);
+				return Boolean.valueOf(order > 0);
 			case GREATER_OR_EQUAL:
-				return Boolean.valueOf(PredicateUtil.compare(value, refValue) >= 0);
+				return Boolean.valueOf(order >= 0);
 			default:
 				throw new UnsupportedFeatureException(operator);
 		}
@@ -151,18 +150,6 @@ public class PredicateUtil {
 	static
 	public Boolean evaluateFalse(False falsePredicate){
 		return Boolean.FALSE;
-	}
-
-	static
-	public int compare(Object left, String right){
-
-		if(left instanceof Number){
-			return (new BigDecimal(String.valueOf(left))).compareTo(new BigDecimal(right));
-		} else
-
-		{
-			return (String.valueOf(left)).compareTo(right);
-		}
 	}
 
 	static

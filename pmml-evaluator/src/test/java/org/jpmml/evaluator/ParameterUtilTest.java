@@ -119,6 +119,36 @@ public class ParameterUtilTest {
 	}
 
 	@Test
+	public void equals(){
+		assertTrue(ParameterUtil.equals("1", "1"));
+
+		assertTrue(ParameterUtil.equals(1, "1"));
+
+		assertTrue(ParameterUtil.equals(1f, "1"));
+		assertTrue(ParameterUtil.equals(1.0f, "1"));
+		assertTrue(ParameterUtil.equals(1f, "1.0"));
+
+		assertTrue(ParameterUtil.equals(1d, "1"));
+		assertTrue(ParameterUtil.equals(1.0d, "1"));
+		assertTrue(ParameterUtil.equals(1d, "1.0"));
+	}
+
+	@Test
+	public void compare(){
+		assertTrue(ParameterUtil.compare("1", "1") == 0);
+
+		assertTrue(ParameterUtil.compare(1, "1") == 0);
+
+		assertTrue(ParameterUtil.compare(1f, "1") == 0);
+		assertTrue(ParameterUtil.compare(1.0f, "1") == 0);
+		assertTrue(ParameterUtil.compare(1f, "1.0") == 0);
+
+		assertTrue(ParameterUtil.compare(1d, "1") == 0);
+		assertTrue(ParameterUtil.compare(1.0d, "1") == 0);
+		assertTrue(ParameterUtil.compare(1d, "1.0") == 0);
+	}
+
+	@Test
 	public void getDataType(){
 		assertEquals(DataType.STRING, ParameterUtil.getDataType("value"));
 

@@ -19,11 +19,11 @@ public class NoTrueChildStrategyTest {
 
 		FieldName name = new FieldName("prob1");
 
-		Node node = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 0));
+		Node node = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 0d));
 
 		assertNull(node);
 
-		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1));
+		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1d));
 
 		assertNotNull(t1);
 		assertEquals("T1", t1.getId());
@@ -35,12 +35,12 @@ public class NoTrueChildStrategyTest {
 
 		FieldName name = new FieldName("prob1");
 
-		Node n1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 0));
+		Node n1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 0d));
 
 		assertNotNull(n1);
 		assertEquals("N1", n1.getId());
 
-		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1));
+		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1d));
 
 		assertNotNull(t1);
 		assertEquals("T1", t1.getId());

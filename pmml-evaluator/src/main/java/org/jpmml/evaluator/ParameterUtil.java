@@ -14,6 +14,9 @@ public class ParameterUtil {
 	private ParameterUtil(){
 	}
 
+	@SuppressWarnings (
+		value = {"unused"}
+	)
 	static
 	public Object prepare(DataField dataField, MiningField miningField, Object value){
 
@@ -290,6 +293,19 @@ public class ParameterUtil {
 	static
 	private boolean equals(DataType dataType, Object left, Object right){
 		return (cast(dataType, left)).equals(cast(dataType, right));
+	}
+
+	/**
+	 * Calculates the order between the value and the reference value.
+	 *
+	 * @param value The {@link #getDataType(Object) runtime data type representation} of the value.
+	 * @param string The String representation of the reference value.
+	 *
+	 * @see Comparable#compareTo(Object)
+	 */
+	static
+	public int compare(Object value, String string){
+		return compare(getDataType(value), value, string);
 	}
 
 	@SuppressWarnings (
