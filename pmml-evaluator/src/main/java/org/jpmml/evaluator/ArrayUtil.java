@@ -18,6 +18,8 @@ public class ArrayUtil {
 	public Boolean isIn(Array array, Object value){
 		List<String> values = getContent(array);
 
+		validateDataType(value);
+
 		boolean result = values.contains(ParameterUtil.toString(value));
 
 		return Boolean.valueOf(result);
@@ -26,6 +28,8 @@ public class ArrayUtil {
 	static
 	public Boolean isNotIn(Array array, Object value){
 		List<String> values = getContent(array);
+
+		validateDataType(value);
 
 		boolean result = !values.contains(ParameterUtil.toString(value));
 
@@ -156,5 +160,21 @@ public class ArrayUtil {
 		sb.setLength(0);
 
 		return result;
+	}
+
+	static
+	private void validateDataType(Object value){
+		DataType dataType = ParameterUtil.getDataType(value);
+
+		switch(dataType){
+			case STRING:
+			case INTEGER:
+				break;
+			case FLOAT:
+			case DOUBLE:
+				throw new UnsupportedFeatureException(dataType);
+			default:
+				throw new EvaluationException();
+		}
 	}
 }
