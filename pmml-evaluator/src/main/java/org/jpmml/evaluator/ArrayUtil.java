@@ -15,7 +15,7 @@ public class ArrayUtil {
 	}
 
 	static
-	public Boolean isIn(ArrayType array, Object value){
+	public Boolean isIn(Array array, Object value){
 		List<String> values = tokenize(array);
 
 		boolean result = values.contains(String.valueOf(value));
@@ -24,7 +24,7 @@ public class ArrayUtil {
 	}
 
 	static
-	public Boolean isNotIn(ArrayType array, Object value){
+	public Boolean isNotIn(Array array, Object value){
 		List<String> values = tokenize(array);
 
 		boolean result = !values.contains(String.valueOf(value));
@@ -33,17 +33,17 @@ public class ArrayUtil {
 	}
 
 	static
-	public List<String> tokenize(ArrayType array){
+	public List<String> tokenize(Array array){
 		List<String> result;
 
-		ArrayType.Type type = array.getType();
+		Array.Type type = array.getType();
 		switch(type){
 			case INT:
 			case REAL:
-				result = tokenize(array.getContent(), false);
+				result = tokenize(array.getValue(), false);
 				break;
 			case STRING:
-				result = tokenize(array.getContent(), true);
+				result = tokenize(array.getValue(), true);
 				break;
 			default:
 				throw new UnsupportedFeatureException(type);

@@ -129,7 +129,7 @@ public class PredicateUtil {
 			throw new MissingParameterException(simpleSetPredicate.getField());
 		}
 
-		ArrayType array = simpleSetPredicate.getArray();
+		Array array = simpleSetPredicate.getArray();
 
 		SimpleSetPredicate.BooleanOperator operator = simpleSetPredicate.getBooleanOperator();
 		switch(operator){

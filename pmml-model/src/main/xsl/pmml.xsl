@@ -10,6 +10,26 @@ Copyright (c) 2009 University of Tartu
 		</xsl:copy>
 	</xsl:template>
 
+	<!--
+	Simplified Array type definition
+	-->
+	<xsl:template match="xsd:element[@name='Array']">
+	</xsl:template>
+
+	<xsl:template match="xsd:complexType[@name='ArrayType']">
+		<xsl:element name="xsd:element">
+			<xsl:attribute name="name">Array</xsl:attribute>
+			<xsl:element name="xsd:complexType">
+				<xsl:element name="xsd:simpleContent">
+					<xsl:element name="xsd:extension">
+						<xsl:attribute name="base">xsd:string</xsl:attribute>
+						<xsl:copy-of select="*"/>
+					</xsl:element>
+				</xsl:element>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
+
 	<!-- 
 	Model types have one Extension list in the beginning and another Extension list in the end, which is too complex for the XJC to handle.
 	-->

@@ -34,11 +34,11 @@ public class ArrayUtilTest {
 
 	static
 	private List<String> tokenizeIntArray(String content){
-		return ArrayUtil.tokenize(new ArrayType(content, ArrayType.Type.INT));
+		return ArrayUtil.tokenize(new Array(content, Array.Type.INT));
 	}
 
 	static
 	private List<String> tokenizeStringArray(String content){
-		return ArrayUtil.tokenize(new ArrayType(content, ArrayType.Type.STRING));
+		return ArrayUtil.tokenize(new Array(content, Array.Type.STRING));
 	}
 }
