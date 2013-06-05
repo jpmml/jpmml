@@ -16,20 +16,33 @@ public class ArrayUtil {
 
 	static
 	public Boolean isIn(Array array, Object value){
-		List<String> values = tokenize(array);
+		List<String> values = getContent(array);
 
-		boolean result = values.contains(String.valueOf(value));
+		boolean result = values.contains(ParameterUtil.toString(value));
 
 		return Boolean.valueOf(result);
 	}
 
 	static
 	public Boolean isNotIn(Array array, Object value){
-		List<String> values = tokenize(array);
+		List<String> values = getContent(array);
 
-		boolean result = !values.contains(String.valueOf(value));
+		boolean result = !values.contains(ParameterUtil.toString(value));
 
 		return Boolean.valueOf(result);
+	}
+
+	static
+	public List<String> getContent(Array array){
+		List<String> values = array.getContent();
+
+		if(values == null){
+			values = tokenize(array);
+
+			array.setContent(values);
+		}
+
+		return values;
 	}
 
 	static
@@ -58,7 +71,7 @@ public class ArrayUtil {
 	}
 
 	static
-	private List<String> tokenize(String string, boolean enableQuotes){
+	public List<String> tokenize(String string, boolean enableQuotes){
 		List<String> result = new ArrayList<String>();
 
 		StringBuffer sb = new StringBuffer();
