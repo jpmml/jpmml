@@ -50,12 +50,12 @@ public class BatchUtil {
 				parameters.put(activeField, evaluator.prepare(activeField, inputCell));
 			}
 
-			Map<FieldName, ?> result = evaluator.evaluate(parameters);
+			IPMMLResult result = evaluator.evaluate(parameters);
 
 			for(FieldName predictedField : predictedFields){
 				String outputCell = outputRow.get(predictedField);
 
-				Object predictedValue = EvaluatorUtil.decode(result.get(predictedField));
+				Object predictedValue = EvaluatorUtil.decode(result.getValue(predictedField));
 
 				success &= acceptable(outputCell, predictedValue);
 			}
@@ -68,7 +68,7 @@ public class BatchUtil {
 					continue;
 				}
 
-				Object computedValue = result.get(outputField);
+				Object computedValue = result.getValue(outputField);
 
 				success &= acceptable(outputCell, computedValue);
 			}

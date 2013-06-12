@@ -58,7 +58,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 
-		IPMMLResult res = new IPMMLResult();
+		PMMLResult res = new PMMLResult();
 		res.merge(OutputUtil.evaluate(predictions, context));
 		return res;
 	}
@@ -126,46 +126,49 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return Collections.singletonMap(name, values);
 	}
 
-	// static
-	// private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
-	// 	double result = 0D;
+	 static
+	 private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
+	 	double result = 0D;
 
-	// 	result += regressionTable.getIntercept();
+	 	result += regressionTable.getIntercept();
 
-	// 	List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
+	 	List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 
-	// 	for(NumericPredictor numericPredictor : numericPredictors){
-	// 		Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
+	 	for(NumericPredictor numericPredictor : numericPredictors){
+	 		Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
 
-	// 		// "if the input value is missing then the result evaluates to a missing value"
-	// 		if(value == null){
-	// 			return null;
-	// 		}
+	 		// "if the input value is missing then the result evaluates to a missing value"
+	 		if(value == null){
+	 			return null;
+	 		}
 
-	// 		result += numericPredictor.getCoefficient() * Math.pow(((Number)value).doubleValue(), numericPredictor.getExponent());
-	// 	}
+	 		result += numericPredictor.getCoefficient() * Math.pow(((Number)value).doubleValue(), numericPredictor.getExponent());
+	 	}
 
-	// 	List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
-	// 	for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-	// 		Object value = ExpressionUtil.evaluate(categoricalPredictor.getName(), context);
+	 	List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
+	 	for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
+	 		Object value = ExpressionUtil.evaluate(categoricalPredictor.getName(), context);
 
-	// 		// "if the input value is missing then the product is ignored"
-	// 		if(value == null){
-	// 			continue;
-	// 		}
+	 		// "if the input value is missing then the product is ignored"
+	 		if(value == null){
+	 			continue;
+	 		}
 
-	// 		boolean equals = ParameterUtil.equals(value, categoricalPredictor.getValue());
+	 		boolean equals = ParameterUtil.equals(value, categoricalPredictor.getValue());
 
-	// 		result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
-	// 	}
+	 		result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
+	 	}
 
-	// 	List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
-	// 	for(PredictorTerm predictorTerm : predictorTerms){
-	// 		throw new UnsupportedFeatureException(predictorTerm);
-	// 	}
+	 	List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
+	 	for(PredictorTerm predictorTerm : predictorTerms){
+	 		throw new UnsupportedFeatureException(predictorTerm);
+	 	}
+
+	 return result;
+  }
 	// 	String result = new String();
 	// 	if (targetCategoryToScore.isEmpty()) return null;
-
+	//
 	// 	TreeMap<Double, String> scoreToCategory = new TreeMap<Double, String>();
 	// 	switch (getNormalizationMethodType()) {
 	// 		case NONE:
@@ -180,7 +183,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	// 			for (Map.Entry<String, Double> categoryScore : targetCategoryToScore.entrySet()) {
 	// 				double yj = categoryScore.getValue();
 	// 				double pj = 1.0/(1.0 + Math.exp(yj));
-
+	//
 	// 				scoreToCategory.put(pj, categoryScore.getKey());
 	// 			}
 	// 			result = scoreToCategory.lastEntry().getValue();
@@ -227,17 +230,14 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	// 			result = scoreToCategory.lastEntry().getValue();
 	// 			break;
 	// 		default:
-
 	// 			result = null;
 	// 	}
-
 	// 	IPMMLResult res = new PMMLResult();
 	// 	try {
 	// 		res.put(getOutputField(this).getName(), result);
 	// 	} catch (Exception e) {
 	// 		throw new EvaluationException(e.getMessage());
 	// 	}
-
 	// 	return res;
 	// }
 
@@ -353,7 +353,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		// only way that works I have found.
 		Object blobValue = null;
 		try {
-			blobValue = ParameterUtil.getValue(parameters, categoricalPredictor.getName());
+			blobValue = parameters.get(categoricalPredictor.getName());
 		} catch (EvaluationException e) {
 			return 0.0;
 		}

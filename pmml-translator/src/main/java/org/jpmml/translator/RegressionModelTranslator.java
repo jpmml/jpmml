@@ -87,7 +87,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 	 * @param outputField The name of the output variable.
 	 */
 	private void translateRegression(StringBuilder sb, TranslationContext context, DataField outputField) {
-		RegressionTable rt = getOrCreateRegressionTable();
+		RegressionTable rt = getRegressionTables().get(0);
 		CodeFormatter cf = context.getFormatter();
 
 		translateRegressionTable(sb, context, outputField.getName().getValue(), rt, cf, true);
@@ -109,7 +109,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 				+ " = new TreeMap<String, Double>();");
 
 		TreeMap<String, String> categoryNameToVariable = new TreeMap<String, String>();
-		for (RegressionTable rt : getOrCreateRegressionTables()) {
+		for (RegressionTable rt : getRegressionTables()) {
 			categoryNameToVariable.put(rt.getTargetCategory(),
 					translateRegressionTable(sb, context, targetCategoryToScoreVariable, rt, cf, false));
 		}
@@ -123,7 +123,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			// Pick the category with top score.
 			String entryName = context.generateLocalVariableName("entry");
 			cf.declareVariable(sb, context, new Variable(VariableType.DOUBLE, entryName));
-			for (RegressionTable rt : getOrCreateRegressionTables()) {
+			for (RegressionTable rt : getRegressionTables()) {
 				cf.assignVariable(sb, context, entryName, categoryNameToVariable.get(rt.getTargetCategory()));
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
 						entryName + ", \"" + rt.getTargetCategory() + "\");");
@@ -131,7 +131,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			break;
 		case LOGIT:
 			// pick the max of pj = 1 / ( 1 + exp( -yj ) )
-			for (RegressionTable rt : getOrCreateRegressionTables()) {
+			for (RegressionTable rt : getRegressionTables()) {
 				String expression = "1.0 / (1.0 + Math.exp(-" + categoryNameToVariable.get(rt.getTargetCategory()) + "))";
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
 						expression + ", \"" + rt.getTargetCategory() + "\");");
@@ -141,7 +141,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			// pick the max of exp(yj)
 			// FIXME: Since this is classification, and since exponential is growing, we may want to
 			// only take the max without computing the exp.
-			for (RegressionTable rt : getOrCreateRegressionTables()) {
+			for (RegressionTable rt : getRegressionTables()) {
 				String expression = "Math.exp(" + categoryNameToVariable.get(rt.getTargetCategory()) + ")";
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
 						expression + ", \"" + rt.getTargetCategory() + "\");");
@@ -151,12 +151,12 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			// pj = exp(yj) / (Sum[i = 1 to N](exp(yi) ) )
 			String sumName = context.generateLocalVariableName("sum");
 			cf.declareVariable(sb, context, new Variable(Variable.VariableType.DOUBLE, sumName));
-			for (RegressionTable rt : getOrCreateRegressionTables()) {
+			for (RegressionTable rt : getRegressionTables()) {
 				cf.assignVariable(sb, context, Operator.PLUS_EQUAL, sumName, "Math.exp("
 						+ categoryNameToVariable.get(rt.getTargetCategory()) + ")");
 			}
 
-			for (RegressionTable rt : getOrCreateRegressionTables()) {
+			for (RegressionTable rt : getRegressionTables()) {
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(Math.exp("
 						+ categoryNameToVariable.get(rt.getTargetCategory()) + ") / "
 						+ sumName + ", \"" + rt.getTargetCategory() + "\");");
@@ -165,7 +165,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		case CLOGLOG:
 			// pick the max of pj = 1 - exp( -exp( yj ) )
 
-			for (RegressionTable rt : getOrCreateRegressionTables()) {
+			for (RegressionTable rt : getRegressionTables()) {
 				String expression = "1.0 - Math.exp(-Math.exp("
 							+ categoryNameToVariable.get(rt.getTargetCategory()) + "))";
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
@@ -174,7 +174,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 			break;
 		case LOGLOG:
 			// pick the max of pj = exp( -exp( -yj ) )
-			for (RegressionTable rt : getOrCreateRegressionTables()) {
+			for (RegressionTable rt : getRegressionTables()) {
 				String expression = "Math.exp(-Math.exp(-"
 							+ categoryNameToVariable.get(rt.getTargetCategory()) + "))";
 				cf.addLine(sb, context, scoreToCategoryVariable + ".put(" +
@@ -206,12 +206,12 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 	 */
 	private String translateRegressionTable(StringBuilder sb, TranslationContext context, String variableName,
 			RegressionTable rt, CodeFormatter cf, boolean storeResultInVariable) {
-		List<NumericPredictor> lnp = getNumericPredictors(rt);
-		List<CategoricalPredictor> lcp = getCategoricalPredictors(rt);
+		List<NumericPredictor> lnp = rt.getNumericPredictors();
+		List<CategoricalPredictor> lcp = rt.getCategoricalPredictors();
 
 		String categoryVariableName = context.generateLocalVariableName(rt.getTargetCategory());
 		cf.declareVariable(sb, context, new Variable(Variable.VariableType.DOUBLE,
-				categoryVariableName), getIntercept(rt).toString());
+				categoryVariableName), new Double(rt.getIntercept()).toString());
 
 		for (NumericPredictor np : lnp) {
 			translateNumericPredictor(sb, context, categoryVariableName, np, cf);
@@ -285,7 +285,7 @@ public class RegressionModelTranslator extends RegressionModelManager implements
 		cf.assignVariable(code, context, Operator.PLUS_EQUAL, outputVariableName,
 				numericPredictor.getCoefficient()
 				+ " * Math.pow(" + context.formatVariableName(this, numericPredictor.getName()) + ", "
-				+ numericPredictor.getExponent().doubleValue() + ")");
+				+ new Integer(numericPredictor.getExponent()).doubleValue() + ")");
 		cf.endControlFlowStructure(code, context);
 	}
 

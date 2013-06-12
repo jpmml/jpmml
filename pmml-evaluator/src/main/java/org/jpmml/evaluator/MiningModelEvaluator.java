@@ -31,6 +31,10 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		super(pmml, miningModel);
 	}
 
+	public Object prepare(FieldName name, Object value){
+		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
+	}
+
 	public MiningModelEvaluator(MiningModelManager parent){
 		this(parent.getPmml(), parent.getModel());
 	}
@@ -126,11 +130,12 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			TreeMap<String, Object> results, TreeMap<String, Double> idToWeight) throws Exception {
 
 		Object result = null;
+		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		ModelEvaluatorFactory factory = new ModelEvaluatorFactory();
 
-		for (Segment s : getSegment()) {
-			if (PredicateUtil.evaluatePredicate(s.getPredicate(), parameters)) {
+		for (Segment s : getSegments()) {
+			if (PredicateUtil.evaluate(s.getPredicate(), context)) {
 				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
 				PMMLResult tmpObj = (PMMLResult) m.evaluate(parameters);
 

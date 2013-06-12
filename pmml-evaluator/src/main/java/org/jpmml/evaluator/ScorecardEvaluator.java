@@ -24,6 +24,10 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 		super(pmml, scorecard);
 	}
 
+	public Object prepare(FieldName name, Object value){
+		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
+	}
+
 	public ScorecardEvaluator(ScoreCardModelManager parent){
 		this(parent.getPmml(), parent.getModel());
 	}
@@ -31,6 +35,7 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 	// Evaluate the parameters on the score card.
 	public IPMMLResult evaluate(Map<FieldName, ?> parameters) {
 		Double score = 0.0;
+		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 		TreeMap<Double, String> diffToReasonCode = new TreeMap<Double, String>();
 		List<Characteristic> cl
 			= scorecard.getCharacteristics().getCharacteristics();
@@ -39,8 +44,8 @@ public class ScorecardEvaluator extends ScoreCardModelManager implements Evaluat
 			for (Attribute a : al) {
 				// Evaluate the predicate.
 				Boolean predicateValue = PredicateUtil
-										.evaluatePredicate(a.getPredicate(),
-															parameters);
+										.evaluate(a.getPredicate(),
+														   context);
 				// If it is valid, and the value is true, update the score.
 				if (predicateValue != null && predicateValue.booleanValue()) {
 					score += a.getPartialScore();

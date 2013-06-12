@@ -18,7 +18,7 @@ import org.dmg.pmml.RegressionTable;
 
 /**
  * Provide an interface to the regressionModel class.
- * 
+ *
  * The regression functions are used to determine the relationship between the
  * dependent variable (target field) and one or more independent variables. The
  * dependent variable is the one whose values you want to predict, whereas the
@@ -27,10 +27,10 @@ import org.dmg.pmml.RegressionTable;
  * the PMML element RegressionModel can also be used for classification. This is
  * due to the fact that multiple regression equations can be combined in order
  * to predict categorical values.
- * 
- * 
+ *
+ *
  * @author tbadie
- * 
+ *
  */
 public class RegressionModelManager extends ModelManager<RegressionModel> {
 
@@ -67,7 +67,7 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 	/**
 	 * @throws ModelManagerException
 	 *             If the Model already exists
-	 * 
+	 *
 	 * @see #getModel()
 	 */
 	public RegressionModel createModel(MiningFunctionType miningFunction) {
@@ -120,7 +120,7 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	/**
 	 * Get a particular categoricalPredictor.
-	 * 
+	 *
 	 * @param rt The regressionTable used.
 	 * @param name The name of the categoricalPredictor wanted.
 	 * @return The categorical predictor wanted if found, null otherwise.
@@ -143,5 +143,20 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		(regressionTable.getCategoricalPredictors()).add(categoricalPredictor);
 
 		return categoricalPredictor;
+	}
+
+
+	/**
+	 * Get the type of normalization of the model.
+	 *
+	 * @return The type of normalization.
+	 */
+	public RegressionNormalizationMethodType getNormalizationMethodType() {
+
+		return regressionModel.getNormalizationMethod();
+	}
+
+	public MiningFunctionType getFunctionName() {
+		return regressionModel.getFunctionName();
 	}
 }

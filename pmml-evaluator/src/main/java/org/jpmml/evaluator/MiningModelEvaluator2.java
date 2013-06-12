@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012 University of Tartu
- */
+ *
 package org.jpmml.evaluator;
 
 import java.util.*;
@@ -9,17 +9,17 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-public class MiningModelEvaluator extends MiningModelManager implements Evaluator {
+public class MiningModelEvaluator2 extends MiningModelManager implements Evaluator {
 
-	public MiningModelEvaluator(PMML pmml){
+	public MiningModelEvaluator2(PMML pmml){
 		super(pmml);
 	}
 
-	public MiningModelEvaluator(PMML pmml, MiningModel miningModel){
+	public MiningModelEvaluator2(PMML pmml, MiningModel miningModel){
 		super(pmml, miningModel);
 	}
 
-	public MiningModelEvaluator(MiningModelManager parent){
+	public MiningModelEvaluator2(MiningModelManager parent){
 		this(parent.getPmml(), parent.getModel());
 	}
 
@@ -30,8 +30,8 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	/**
 	 * @see #evaluateRegression(EvaluationContext)
 	 * @see #evaluateClassification(EvaluationContext)
-	 */
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+	 *
+	public IPMMLResult evaluate(Map<FieldName, ?> parameters){
 		MiningModel model = getModel();
 
 		Map<FieldName, ?> predictions;
@@ -50,7 +50,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 
-		return OutputUtil.evaluate(predictions, context);
+		PMMLResult res = new PMMLResult();
+		res.merge(OutputUtil.evaluate(predictions, context));
+		return res;
 	}
 
 	public Map<FieldName, ?> evaluateRegression(EvaluationContext context){
@@ -189,7 +191,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 			FieldName target = evaluator.getTarget();
 
-			Map<FieldName, ?> result = evaluator.evaluate(context.getParameters());
+			IPMMLResult result = evaluator.evaluate(context.getParameters());
 
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
@@ -199,7 +201,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 						List<FieldName> outputFields = evaluator.getOutputFields();
 
 						for(FieldName outputField : outputFields){
-							Object outputValue = result.get(outputField);
+							Object outputValue = result.getValue(outputField);
 							if(outputValue == null){
 								throw new EvaluationException();
 							}
@@ -269,3 +271,4 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	}
 }
 
+*/

@@ -98,7 +98,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 		}
 
 		// FIXME: Here we are in trouble because there is two Predicted results.
-		for (Segment s : getSegment()) {
+		for (Segment s : getSegments()) {
 			Translator t = (Translator) factory.getModelManager(getPmml(), s.getModel());
 			DataField out = getOutputField((ModelManager<?>) t);
 			OpType op = out.getOptype();
@@ -159,7 +159,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			String counterName = context.generateLocalVariableName("counter");
 			cf.declareVariable(code, context, new Variable(VariableType.INTEGER, counterName));
 
-			for (Segment s : getSegment()) {
+			for (Segment s : getSegments()) {
 				// This following line is equivalent to add this to the code:
 				// 'result += value == null ? value * weight : 0;' Where
 				// the '* weight' is only done when we weighted is true.
@@ -188,8 +188,8 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			context.addRequiredImport("java.util.ArrayList");
 			context.addRequiredImport("java.util.Collections");
 			String listName = context.generateLocalVariableName("list");
-			cf.addLine(code, context, "ArrayList<Double>" + listName + " = new ArrayList<Double>(" + getSegment().size() + ");");
-			for (Segment s : getSegment()) {
+			cf.addLine(code, context, "ArrayList<Double>" + listName + " = new ArrayList<Double>(" + getSegments().size() + ");");
+			for (Segment s : getSegments()) {
 				cf.beginControlFlowStructure(code, context, "if", namify(s, context) + "!= null");
 				cf.addLine(code, context, listName + ".add(" + namify(s, context) + ");");
 				cf.endControlFlowStructure(code, context);
@@ -224,7 +224,7 @@ public class MiningModelTranslator extends MiningModelManager implements Transla
 			String nameToVoteName = context.generateLocalVariableName("nameToVote");
 			cf.declareVariable(code, context,
 					new Variable(VariableType.OBJECT, "TreeMap<String, Double>", nameToVoteName));
-			for (Segment s : getSegment()) {
+			for (Segment s : getSegments()) {
 				String name = namify(s, context);
 				Double weight = getMultipleMethodModel() == MultipleModelMethodType.WEIGHTED_MAJORITY_VOTE
 						? s.getWeight()
