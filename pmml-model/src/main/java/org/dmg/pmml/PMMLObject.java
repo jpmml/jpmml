@@ -12,17 +12,21 @@ import org.jvnet.jaxb2_commons.locator.*;
 
 @XmlTransient
 abstract
-public class PMMLObject implements Equals, HashCode, Serializable {
+public class PMMLObject implements Equals, HashCode, ToString, Serializable {
 
 	public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object that, EqualsStrategy equalsStrategy){
 		return true;
 	}
 
-	public int hashCode(ObjectLocator thisLocator, HashCodeStrategy hashCodeStrategy){
+	public int hashCode(ObjectLocator locator, HashCodeStrategy hashCodeStrategy){
 		return 1;
 	}
 
-	public StringBuilder appendFields(ObjectLocator locator, StringBuilder buffer, ToStringStrategy strategy) {
-		return buffer;
+	public StringBuilder append(ObjectLocator locator, StringBuilder builder, ToStringStrategy toStringStrategy){
+		return builder;
+	}
+
+	public StringBuilder appendFields(ObjectLocator locator, StringBuilder builder, ToStringStrategy toStringStrategy) {
+		return builder;
 	}
 }
