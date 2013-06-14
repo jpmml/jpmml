@@ -53,6 +53,12 @@ public class PMMLResult implements IPMMLResult {
 		}
 	}
 
+	public void absorb(Map<FieldName, Object> m) {
+		for (Map.Entry<FieldName, Object> e : m.entrySet()) {
+				results.put(e.getKey(), e.getValue());
+		}
+	}
+
 	public Object getResult() throws NoSuchElementException {
 		if (results.size() == 1) {
 			for (Map.Entry<FieldName, Object> e : results.entrySet()) {

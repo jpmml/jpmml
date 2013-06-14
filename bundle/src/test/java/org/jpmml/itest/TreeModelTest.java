@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 
 @Test
 public class TreeModelTest extends BaseModelTest {
-	/*
+
 	@Test
 	public void testTroubledScenario() throws Exception {
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree.xml"));
@@ -29,9 +29,9 @@ public class TreeModelTest extends BaseModelTest {
 			new GolfModel(),
 			variableToValues);
 	}
-	*/
 
-	/* @Test
+
+	@Test
 	public void testGolfModel() throws Exception {
 
 		PMML pmmlDoc = IOUtil.unmarshal(getClass().getResourceAsStream("/golf_tree.xml"));
@@ -98,8 +98,8 @@ public class TreeModelTest extends BaseModelTest {
 			variableToValues,
 			20);
 
-	}*/
-	
+	}
+
 	protected double getMissingVarProbability() {
 		return 0.01;
 	}

@@ -130,12 +130,13 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			TreeMap<String, Object> results, TreeMap<String, Double> idToWeight) throws Exception {
 
 		Object result = null;
-		EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		ModelEvaluatorFactory factory = new ModelEvaluatorFactory();
 
 		for (Segment s : getSegments()) {
-			if (PredicateUtil.evaluate(s.getPredicate(), context)) {
+			EvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+
+			if (PredicateUtil.evaluate(s.getPredicate(), context) == true) {
 				Evaluator m = (Evaluator) factory.getModelManager(getPmml(), s.getModel());
 				PMMLResult tmpObj = (PMMLResult) m.evaluate(parameters);
 
