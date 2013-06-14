@@ -19,18 +19,18 @@ public class BatchUtil {
 	 */
 	static
 	public boolean evaluate(Batch batch) throws Exception {
+		PMML pmml = IOUtil.unmarshal(batch.getModel());
+
+		PMMLManager pmmlManager = new PMMLManager(pmml);
+
+		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+
 		List<Map<FieldName, String>> input = CsvUtil.load(batch.getInput());
 		List<Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 
 		if(input.size() != output.size()){
 			throw new RuntimeException();
 		}
-
-		PMML pmml = PmmlUtil.load(batch.getModel());
-
-		PMMLManager pmmlManager = new PMMLManager(pmml);
-
-		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> predictedFields = evaluator.getPredictedFields();
