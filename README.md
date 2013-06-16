@@ -18,6 +18,7 @@ JPMML library JAR files (together with accompanying Java source and Javadocs JAR
 Release history:
 <table>
 	<tr><th>Date</th><th>Version</th></tr>
+	<tr><td>16 Jun, 2013</td><td>1.0.6</td></tr>
 	<tr><td>5 Jun, 2013</td><td>1.0.5</td></tr>
 	<tr><td>2 Jun, 2013</td><td>1.0.4</td></tr>
 	<tr><td>27 May, 2013</td><td>1.0.3</td></tr>
@@ -32,26 +33,26 @@ The latest versions of public API modules can be incorporated using the followin
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-model</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 </dependency>
 
 <!-- medium-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-manager</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 </dependency>
 
 <!-- high-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 </dependency>
 ```
 Please note that higher API levels depend on lower API levels.
