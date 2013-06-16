@@ -1,17 +1,17 @@
 Java API for producing and scoring models in Predictive Model Markup Language (PMML).
 
-# Features
+# Features #
 
 Supported model types:
 <table>
 	<tr><th>Description</th><th>PMML element</th></tr>
-	<tr><td>Linear regression</td><td>[RegressionModel] (http://www.dmg.org/v4-1/Regression.html)</td></tr>
-	<tr><td>Decision tree</td><td>[TreeModel] (http://www.dmg.org/v4-1/TreeModel.html)</td></tr>
-	<tr><td>Neural network</td><td>[NeuralNetwork] (http://www.dmg.org/v4-1/NeuralNetwork.html)</td></tr>
-	<tr><td>Ensembles</td><td>[MiningModel] (http://www.dmg.org/v4-1/MultipleModels.html)</td></tr>
+	<tr><td>Linear regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
+	<tr><td>Decision tree</td><td>http://www.dmg.org/v4-1/TreeModel.html</td></tr>
+	<tr><td>Neural network</td><td>http://www.dmg.org/v4-1/NeuralNetwork.html</td></tr>
+	<tr><td>Ensembles models</td><td>http://www.dmg.org/v4-1/MultipleModels.html</td></tr>
 </table>
 
-# Usage
+# Usage #
 
 JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
 
@@ -56,9 +56,9 @@ The latest versions of public API modules can be incorporated using the followin
 ```
 Please note that higher API levels depend on lower API levels.
 
-# Modules
+# Modules #
 
-### Class model
+## Class model (1/3) ##
 
 Low-level API module. Provides JAXB-driven class model, which corresponds to the latest [PMML XML Schema version 4.1] (http://www.dmg.org/v4-1/pmml-4-1.xsd).
 
@@ -66,7 +66,7 @@ Different PMML XML Schema versions are compatible with one another. Older PMML v
 
 Conversely, the latest PMML version 4.1 documents can be converted to older PMML version documents by similar means. The minimum supported version is determined by `org.dmg.pmml.Schema` class model annotations.
 
-#### Module specifications
+### Components
 
 ##### pmml-model (public)
 
@@ -86,16 +86,16 @@ Class model annotations.
 
 JAXB compiler (XJC) plugins.
 
-#### Example applications
+### Example applications
 
 * Copying a live `org.dmg.pmml.PMML` instance from one file to another file: [CopyExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/CopyExample.java)
 
 
-### PMML document and model manipulation
+## PMML document and model manipulation (2/3) ##
 
 Medium-level API module. Provides manager classes for dealing with class model classes.
 
-#### Module specifications
+### Components
 
 ##### pmml-manager (public)
 
@@ -103,7 +103,7 @@ Provides class `org.jpmml.manager.PMMLManager`. Additionally, provides a subclas
 
 PMML model producers must work with the specific model manager class. PMML model consumers may choose to work with interface `org.jpmml.manager.Consumer` instead.
 
-#### Example code
+### Example code
 
 Constructing an instance of `org.jpmml.manager.TreeModelManager` for a PMML document that **is known to contain** a decision tree model:
 ```
@@ -122,16 +122,16 @@ PMMLManager pmmlManager = new PMMLManager(pmml);
 ModelManager modelManager = pmmlManager.getModelManager(null, ModelManagerFactory.getInstance());
 ```
 
-#### Example applications
+### Example applications
 
 * Printing the control structure of a TreeModel in a Java-like pseudocode: [TreeModelTranslationExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/TreeModelTranslationExample.java)
 
 
-### PMML model evaluation
+## PMML model evaluation (3/3) ##
 
 High-level API module. Provides evaluator classes for scoring models in "interpreted mode".
 
-#### Module specifications
+### Components
 
 ##### pmml-evaluator (public)
 
@@ -164,7 +164,7 @@ Tested model types:
 	<tr><td>Random forest</td><td>`randomForest()` (package `randomForest`)</td></tr>
 </table>
 
-#### Example code
+### Example code
 
 Constructing an instance of `org.jpmml.evaluator.TreeModelEvaluator` for a PMML document that **is known to contain** a decision tree model:
 ```
@@ -205,11 +205,11 @@ for(FieldName activeField : activeFields){
 Map<FieldName, ?> result = evaluator.evaluate(parameters);
 ```
 
-#### Example applications
+### Example applications
 
 * Evaluating a PMML file interactively: [EvaluationExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/EvaluationExample.java)
 * Evaluating a PMML file non-interactively with CSV file input: [CsvEvaluationExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/CsvEvaluationExample.java)
 
-# Contact and Support
+# Contact and Support #
 
 Please use the e-mail displayed at [GitHub profile page] (https://github.com/jpmml)
