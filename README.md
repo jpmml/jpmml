@@ -3,26 +3,28 @@ Java API for producing and scoring models in Predictive Model Markup Language (P
 # Features
 
 Supported model types:
-|Description|PMML element|
-|---|---|
-|Linear regression|[RegressionModel] (http://www.dmg.org/v4-1/Regression.html)|
-|Decision tree|[TreeModel] (http://www.dmg.org/v4-1/TreeModel.html)|
-|Neural network|[NeuralNetwork] (http://www.dmg.org/v4-1/NeuralNetwork.html)|
-|Ensembles|[MiningModel] (http://www.dmg.org/v4-1/MultipleModels.html)|
+<table>
+	<tr><th>Description</th><th>PMML element</th></tr>
+	<tr><td>Linear regression</td><td>[RegressionModel] (http://www.dmg.org/v4-1/Regression.html)</td></tr>
+	<tr><td>Decision tree</td><td>[TreeModel] (http://www.dmg.org/v4-1/TreeModel.html)</td></tr>
+	<tr><td>Neural network</td><td>[NeuralNetwork] (http://www.dmg.org/v4-1/NeuralNetwork.html)</td></tr>
+	<tr><td>Ensembles</td><td>[MiningModel] (http://www.dmg.org/v4-1/MultipleModels.html)</td></tr>
+</table>
 
 # Usage
 
 JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
 
 Release history:
-|Date|Version|
-|---|---|
-|5 Jun, 2013|1.0.5|
-|2 Jun, 2013|1.0.4|
-|27 May, 2013|1.0.3|
-|21 May, 2013|1.0.2|
-|20 May, 2013|1.0.1|
-|2 Dec, 2012|1.0.0|
+<table>
+	<tr><th>Date</th><th>Version</th></tr>
+	<tr><td>5 Jun, 2013</td><td>1.0.5</td></tr>
+	<tr><td>2 Jun, 2013</td><td>1.0.4</td></tr>
+	<tr><td>27 May, 2013</td><td>1.0.3</td></tr>
+	<tr><td>21 May, 2013</td><td>1.0.2</td></tr>
+	<tr><td>20 May, 2013</td><td>1.0.1</td></tr>
+	<tr><td>2 Dec, 2012</td><td>1.0.0</td></tr>
+</table>
 
 The latest versions of public API modules can be incorporated using the following dependency declarations:
 ```
@@ -142,23 +144,25 @@ PMML model consumers may choose to work with interface `org.jpmml.evaluator.Eval
 Functional tests for [KNIME] (http://www.knime.org/) open source software.
 
 Tested model types:
-|Description|
-|---|
-|Linear regression|
-|Decision tree|
-|Neural network|
+<table>
+	<tr><th>Description</th></tr>
+	<tr><td>Linear regression</td></tr>
+	<tr><td>Decision tree</td></tr>
+	<tr><td>Neural network</td></tr>
+</table>
 
 ##### pmml-rattle (internal)
 
 Functional tests for R (http://www.r-project.org/) and Rattle (http://rattle.togaware.com/) open source software.
 
 Tested model types:
-|Description|R function(s)|
-|---|---|
-|Linear regression|`lm()` and `multinom()`|
-|Decision tree|`rpart()` (package `rpart`)|
-|Neural network|`nnet()` (package `nnet`)|
-|Random forest|`randomForest()` (package `randomForest`)|
+<table>
+	<tr><th>Description</th><th>R function(s)</th></tr>
+	<tr><td>Linear regression</td><td>`lm()` and `multinom()`</td></tr>
+	<tr><td>Decision tree</td><td>`rpart()` (package `rpart`)</td></tr>
+	<tr><td>Neural network</td><td>`nnet()` (package `nnet`)</td></tr>
+	<tr><td>Random forest</td><td>`randomForest()` (package `randomForest`)</td></tr>
+</table>
 
 #### Example code
 
