@@ -7,6 +7,8 @@ import org.dmg.pmml.*;
 
 public class ModelManagerFactory {
 
+	protected boolean alternateImplementation = false;
+
 	protected ModelManagerFactory(){
 	}
 
@@ -34,5 +36,9 @@ public class ModelManagerFactory {
 	static
 	public ModelManagerFactory getInstance(){
 		return new ModelManagerFactory();
+	}
+
+	public void setAlternateImplementation(boolean alternateImplementation) {
+		this.alternateImplementation = alternateImplementation;
 	}
 }

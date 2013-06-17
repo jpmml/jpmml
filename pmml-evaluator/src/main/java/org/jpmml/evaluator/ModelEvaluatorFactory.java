@@ -20,7 +20,12 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 		} else
 
 		if(model instanceof TreeModel){
-			return new TreeModelEvaluator(pmml, (TreeModel)model);
+			if (alternateImplementation) {
+				return new TreeModelEvaluator(pmml, (TreeModel)model);
+			}
+			else {
+				return new TreeModelEvaluator2(pmml, (TreeModel)model);
+			}
 		} else
 
 		if(model instanceof NeuralNetwork){
@@ -28,7 +33,12 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 		} else
 
 		if(model instanceof MiningModel){
-			return new MiningModelEvaluator(pmml, (MiningModel)model);
+			if (alternateImplementation) {
+				return new MiningModelEvaluator(pmml, (MiningModel)model);
+			}
+			else {
+				return new MiningModelEvaluator2(pmml, (MiningModel)model);
+			}
 		}
 		if (model instanceof Scorecard) {
 			return new ScorecardEvaluator(pmml, (Scorecard) model);
