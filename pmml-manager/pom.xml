@@ -24,7 +24,6 @@
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-schema</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

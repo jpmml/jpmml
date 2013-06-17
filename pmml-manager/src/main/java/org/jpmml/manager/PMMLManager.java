@@ -3,6 +3,7 @@
  */
 package org.jpmml.manager;
 
+import java.io.*;
 import java.util.*;
 
 import org.dmg.pmml.*;
@@ -14,7 +15,7 @@ import org.dmg.pmml.*;
  * <li><code>getOrCreateXXX()</code> - Optional schema elements. When <code>null</code> then a new element instance is created. For example {@link #getOrCreateTransformationDictionary()}
  * </ul>
  */
-public class PMMLManager {
+public class PMMLManager implements Serializable {
 
 	private PMML pmml = null;
 

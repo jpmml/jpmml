@@ -48,7 +48,7 @@
 		<module>pmml-model</module>
 		<module>pmml-rattle</module>
 		<module>pmml-schema</module>
- 		<module>pmml-translator</module>
+		<module>pmml-translator</module>
 		<module>xjc</module>
 	</modules>
 
@@ -65,11 +65,11 @@
 
 	<dependencyManagement>
 		<dependencies>
- 			<dependency>
-                                <groupId>org.jpmml</groupId>
-                                <artifactId>pmml-translator</artifactId>
-                                <version>1.0-SNAPSHOT</version>
-                        </dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-translator</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator</artifactId>
@@ -106,10 +106,10 @@
 			</dependency>
 
 			<dependency>
-			  <groupId>junit</groupId>
-			  <artifactId>junit</artifactId>
-			  <version>4.4</version>
-			  <scope>test</scope>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.4</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 			  <groupId>org.apache.commons</groupId>
@@ -140,3 +140,4 @@
 		</plugins>
 	</build>
 </project>
+

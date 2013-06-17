@@ -3,11 +3,12 @@
  */
 package org.jpmml.manager;
 
+import java.io.*;
 import java.util.*;
 
 import org.dmg.pmml.*;
 
-public interface Consumer {
+public interface Consumer extends Serializable {
 
 	/**
 	 * Returns a short description of the underlying {@link Model}
