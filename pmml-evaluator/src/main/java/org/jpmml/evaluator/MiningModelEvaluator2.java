@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2012 University of Tartu
  *
+ */
 package org.jpmml.evaluator;
 
 import java.util.*;
@@ -30,11 +31,11 @@ public class MiningModelEvaluator2 extends MiningModelManager implements Evaluat
 	/**
 	 * @see #evaluateRegression(EvaluationContext)
 	 * @see #evaluateClassification(EvaluationContext)
-	 *
+	 */
 	public IPMMLResult evaluate(Map<FieldName, ?> parameters){
 		MiningModel model = getModel();
 
-		Map<FieldName, ?> predictions;
+		IPMMLResult predictions;
 
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
@@ -51,11 +52,11 @@ public class MiningModelEvaluator2 extends MiningModelManager implements Evaluat
 		}
 
 		PMMLResult res = new PMMLResult();
-		res.merge(OutputUtil.evaluate(predictions, context));
+		res = OutputUtil.evaluate((PMMLResult)predictions, context);
 		return res;
 	}
 
-	public Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	public IPMMLResult evaluateRegression(EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluate(context);
 
 		Segmentation segmentation = getSegmentation();
@@ -101,10 +102,13 @@ public class MiningModelEvaluator2 extends MiningModelManager implements Evaluat
 				throw new UnsupportedFeatureException(multipleModelMethod);
 		}
 
-		return Collections.singletonMap(getTarget(), result);
+		PMMLResult res = new PMMLResult();
+		res.put(getTarget(), result);
+
+		return res;
 	}
 
-	public Map<FieldName, ?> evaluateClassification(EvaluationContext context){
+	public IPMMLResult evaluateClassification(EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluate(context);
 
 		Segmentation segmentation = getSegmentation();
@@ -148,10 +152,15 @@ public class MiningModelEvaluator2 extends MiningModelManager implements Evaluat
 
 		result.normalizeProbabilities();
 
-		return Collections.singletonMap(getTarget(), result);
+		PMMLResult res = new PMMLResult();
+		res.put(getTarget(), result);
+
+		return res;
+
+		//return Collections.singletonMap(getTarget(), result);
 	}
 
-	private Map<FieldName, ?> dispatchSingleResult(List<SegmentResult> results){
+	private IPMMLResult dispatchSingleResult(List<SegmentResult> results){
 
 		if(results.size() < 1 || results.size() > 1){
 			throw new EvaluationException();
@@ -232,17 +241,17 @@ public class MiningModelEvaluator2 extends MiningModelManager implements Evaluat
 
 		private FieldName predictedField = null;
 
-		private Map<FieldName, ?> result = null;
+		private IPMMLResult result = null;
 
 
-		public SegmentResult(Segment segment, FieldName predictedField, Map<FieldName, ?> result){
+		public SegmentResult(Segment segment, FieldName predictedField, IPMMLResult result){
 			setSegment(segment);
 			setPredictedField(predictedField);
 			setResult(result);
 		}
 
 		public Object getPrediction(){
-			return getResult().get(getPredictedField());
+			return getResult().getValue(getPredictedField());
 		}
 
 		public Segment getSegment(){
@@ -261,14 +270,15 @@ public class MiningModelEvaluator2 extends MiningModelManager implements Evaluat
 			this.predictedField = predictedField;
 		}
 
-		public Map<FieldName, ?> getResult(){
-			return this.result;
+		public IPMMLResult getResult() {
+			return result;
 		}
 
-		private void setResult(Map<FieldName, ?> result){
+		public void setResult(IPMMLResult result) {
 			this.result = result;
 		}
+
+
 	}
 }
 
-*/

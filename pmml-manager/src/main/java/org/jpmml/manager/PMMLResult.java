@@ -22,12 +22,20 @@ public class PMMLResult implements IPMMLResult {
 		results = new HashMap<FieldName, Object>();
 	}
 
+	public PMMLResult(PMMLResult other) {
+		results = (HashMap<FieldName, Object>) other.results.clone();
+	}
+
 	public Object getValue(FieldName key) throws NoSuchElementException {
 		if (!results.containsKey(key)) {
 			throw new NoSuchElementException("There is no field " + key.getValue() + " in the result.");
 		}
 
 		return results.get(key);
+	}
+
+	public boolean containsKey(FieldName key) {
+		return results.containsKey(key);
 	}
 
     /**
@@ -40,6 +48,8 @@ public class PMMLResult implements IPMMLResult {
 	public void put(FieldName key, Object value) {
 		results.put(key, value);
 	}
+
+
 
 	/**
 	 * Take a map and add all the content of the result to this map.

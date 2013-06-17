@@ -59,7 +59,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		}
 
 		PMMLResult res = new PMMLResult();
-		res.absorb(OutputUtil.evaluate(predictions, context));
+		res = OutputUtil.evaluate(predictions, context);
 		// FIXME: Dirty hack: Remove all the content of the result, and keep only the real result.
 		// ( { foo => 1.0, bar => 0.5, baz => 0.0 } becomes foo ).
 		if (res.getValue(getTarget()) instanceof ClassificationMap) {

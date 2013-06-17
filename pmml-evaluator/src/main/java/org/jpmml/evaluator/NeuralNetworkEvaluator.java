@@ -51,7 +51,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		}
 
 		PMMLResult result = new PMMLResult();
-		result.merge(OutputUtil.evaluate(predictions, context));
+		result = OutputUtil.evaluate(predictions, context);
 
 		return result;
 	}

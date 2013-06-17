@@ -14,6 +14,18 @@ public class OutputUtil {
 	private OutputUtil(){
 	}
 
+
+	static public PMMLResult evaluate(
+			Map<FieldName, ?> predictions, ModelManagerEvaluationContext context) {
+		PMMLResult res = new PMMLResult();
+		for (Map.Entry<FieldName, ?> e : predictions.entrySet()) {
+			res.put(e.getKey(), e.getValue());
+		}
+
+
+		return evaluate(res, context);
+	}
+
 	/**
 	 * Evaluates the {@link Output} element.
 	 *
@@ -22,8 +34,8 @@ public class OutputUtil {
 	 * @return Map of {@link Evaluator#getPredictedFields() predicted field} values together with {@link Evaluator#getOutputFields() output field} values.
 	 */
 	static
-	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelManagerEvaluationContext context){
-		Map<FieldName, Object> result = new LinkedHashMap<FieldName, Object>(predictions);
+	public PMMLResult evaluate(PMMLResult predictions, ModelManagerEvaluationContext context){
+		PMMLResult result = new PMMLResult(predictions);
 
 		// Create a modifiable context instance
 		context = context.clone();
@@ -48,7 +60,7 @@ public class OutputUtil {
 						}
 
 						// Prediction results may be either simple or complex values
-						value = EvaluatorUtil.decode(predictions.get(target));
+						value = EvaluatorUtil.decode(predictions.getValue(target));
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -69,7 +81,7 @@ public class OutputUtil {
 							throw new EvaluationException();
 						}
 
-						value = getProbability(predictions.get(target), outputField.getValue());
+						value = getProbability(predictions.getValue(target), outputField.getValue());
 					}
 					break;
 				default:
@@ -113,4 +125,5 @@ public class OutputUtil {
 
 		return classification.getProbability(value);
 	}
+
 }
