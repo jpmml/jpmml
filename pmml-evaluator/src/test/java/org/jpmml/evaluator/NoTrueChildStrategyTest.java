@@ -15,7 +15,7 @@ public class NoTrueChildStrategyTest {
 
 	@Test
 	public void returnNullPrediction(){
-	/*	TreeModelEvaluator treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_NULL_PREDICTION);
+		TreeModelEvaluator2 treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_NULL_PREDICTION);
 
 		FieldName name = new FieldName("prob1");
 
@@ -26,12 +26,12 @@ public class NoTrueChildStrategyTest {
 		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1d));
 
 		assertNotNull(t1);
-		assertEquals("T1", t1.getId()); */
+		assertEquals("T1", t1.getId());
 	}
 
 	@Test
 	public void returnLastPrediction(){
-		/*TreeModelEvaluator treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_LAST_PREDICTION);
+		TreeModelEvaluator2 treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_LAST_PREDICTION);
 
 		FieldName name = new FieldName("prob1");
 
@@ -43,11 +43,11 @@ public class NoTrueChildStrategyTest {
 		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1d));
 
 		assertNotNull(t1);
-		assertEquals("T1", t1.getId());*/
+		assertEquals("T1", t1.getId());
 	}
 
 	static
-	private TreeModelEvaluator prepareModel(NoTrueChildStrategyType noTrueChildStrategy){
+	private TreeModelEvaluator2 prepareModel(NoTrueChildStrategyType noTrueChildStrategy){
 		TreeModelManager treeModelManager = new TreeModelManager();
 
 		TreeModel treeModel = treeModelManager.createClassificationModel();
@@ -67,6 +67,6 @@ public class NoTrueChildStrategyTest {
 		t1.setId("T1");
 		t1.setScore("1");
 
-		return new TreeModelEvaluator(treeModelManager);
+		return new TreeModelEvaluator2(treeModelManager);
 	}
 }
