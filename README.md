@@ -138,7 +138,7 @@ High-level API module. Provides evaluator classes for scoring models in "interpr
 
 Provides a subclass of `org.jpmml.manager.ModelManager` for every supported model type.
 
-PMML model consumers may choose to work with interface `org.jpmml.evaluator.Evaluator` instead. 
+PMML model consumers may choose to work with interface `org.jpmml.evaluator.Evaluator` instead.
 
 ##### pmml-knime (internal)
 
@@ -172,7 +172,7 @@ Constructing an instance of `org.jpmml.evaluator.TreeModelEvaluator` for a PMML 
 PMML pmml = ...
 
 TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(pmml);
-``` 
+```
 
 Obtaining an instance of `org.jpmml.manager.ModelManager`, which is then immediately cast to an instance of `org.jpmml.evaluator.Evaluator`, for a PMML document whose contents is unknown:
 ```

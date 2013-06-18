@@ -13,6 +13,8 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 	private Node root = null;
 
+	private Set<String> ids = null;
+
 
 	public TreeModelManager(){
 	}
@@ -121,4 +123,29 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 		return scoreDistribution;
 	}
+
+	public Set<String> getAllNodesId() {
+		if (ids == null) {
+			// Fill ids
+			Node root = getOrCreateRoot();
+			ids = new HashSet<String>();
+			// This function fills ids.
+			getAllNodesIdFrom(root);
+		}
+
+
+		return ids;
+	}
+
+	private void getAllNodesIdFrom(Node current) {
+		if (current != null) {
+			if (current.getId() != null) {
+				ids.add(current.getId());
+			}
+			for (Node child : current.getNodes()) {
+				getAllNodesIdFrom(child);
+			}
+		}
+	}
+
 }

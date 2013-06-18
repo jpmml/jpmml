@@ -25,21 +25,15 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		this.miningModel = miningModel;
 	}
 
-	public String getSummary(){
-		MiningModel miningModel = getModel();
-
-		if(isRandomForest(miningModel)){
-			return "Random forest";
-		}
-
-		return "Segmentation model";
-	}
-
 	@Override
 	public MiningModel getModel(){
 		ensureNotNull(this.miningModel);
 
 		return this.miningModel;
+	}
+
+	public String getSummary() {
+		return "MiningModel";
 	}
 
 	/**
@@ -122,5 +116,14 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		}
 
 		return result;
+	}
+
+	public MiningFunctionType getFunctionType() {
+		return miningModel.getFunctionName();
+	}
+
+
+	public MultipleModelMethodType  getMultipleMethodModel() {
+		return miningModel.getSegmentation().getMultipleModelMethod();
 	}
 }

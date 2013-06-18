@@ -9,6 +9,14 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+/**
+ * This class evaluates the variables on the model. It reads the pmml object
+ * to return a result.
+ * For information about the regression model, see {@link RegressionModelManager}.
+ *
+ * @author tbadie
+ *
+ */
 public class RegressionModelEvaluator extends RegressionModelManager implements Evaluator {
 
 	public RegressionModelEvaluator(PMML pmml){
@@ -31,7 +39,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	 * @see #evaluateRegression(EvaluationContext)
 	 * @see #evaluateClassification(EvaluationContext)
 	 */
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+	public IPMMLResult evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
 
 		Map<FieldName, ?> predictions;
@@ -50,7 +58,14 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				throw new UnsupportedFeatureException(miningFunction);
 		}
 
-		return OutputUtil.evaluate(predictions, context);
+		PMMLResult res = new PMMLResult();
+		res = OutputUtil.evaluate(predictions, context);
+		// FIXME: Dirty hack: Remove all the content of the result, and keep only the real result.
+		// ( { foo => 1.0, bar => 0.5, baz => 0.0 } becomes foo ).
+		if (res.getValue(getTarget()) instanceof ClassificationMap) {
+			res.put(getTarget(), ((ClassificationMap)res.getValue(getTarget())).getResult());
+		}
+		return res;
 	}
 
 	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){
@@ -116,49 +131,49 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return Collections.singletonMap(name, values);
 	}
 
-	static
-	private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
-		double result = 0D;
+	 static
+	 private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
+	 	double result = 0D;
 
-		result += regressionTable.getIntercept();
+	 	result += regressionTable.getIntercept();
 
-		List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
-		for(NumericPredictor numericPredictor : numericPredictors){
-			Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
+	 	List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 
-			// "if the input value is missing then the result evaluates to a missing value"
-			if(value == null){
-				return null;
-			}
+	 	for(NumericPredictor numericPredictor : numericPredictors){
+	 		Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
 
-			result += numericPredictor.getCoefficient() * Math.pow(((Number)value).doubleValue(), numericPredictor.getExponent());
-		}
+	 		// "if the input value is missing then the result evaluates to a missing value"
+	 		if(value == null){
+	 			return null;
+	 		}
 
-		List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
-		for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-			Object value = ExpressionUtil.evaluate(categoricalPredictor.getName(), context);
+	 		result += numericPredictor.getCoefficient() * Math.pow(((Number)value).doubleValue(), numericPredictor.getExponent());
+	 	}
 
-			// "if the input value is missing then the product is ignored"
-			if(value == null){
-				continue;
-			}
+	 	List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
+	 	for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
+	 		Object value = ExpressionUtil.evaluate(categoricalPredictor.getName(), context);
 
-			boolean equals = ParameterUtil.equals(value, categoricalPredictor.getValue());
+	 		// "if the input value is missing then the product is ignored"
+	 		if(value == null){
+	 			continue;
+	 		}
 
-			result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
-		}
+	 		boolean equals = ParameterUtil.equals(value, categoricalPredictor.getValue());
 
-		List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
-		for(PredictorTerm predictorTerm : predictorTerms){
-			throw new UnsupportedFeatureException(predictorTerm);
-		}
+	 		result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
+	 	}
 
-		return Double.valueOf(result);
-	}
+	 	List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
+	 	for(PredictorTerm predictorTerm : predictorTerms){
+	 		throw new UnsupportedFeatureException(predictorTerm);
+	 	}
+
+	 return result;
+  }
 
 	static
 	private Double normalizeRegressionResult(RegressionNormalizationMethodType regressionNormalizationMethod, Double value){
-
 		switch(regressionNormalizationMethod){
 			case NONE:
 				return value;

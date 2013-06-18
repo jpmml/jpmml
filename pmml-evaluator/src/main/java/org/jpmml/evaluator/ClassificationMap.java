@@ -15,8 +15,7 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Classif
 
 		Collection<Map.Entry<String, Double>> entries = entrySet();
 		for(Map.Entry<String, Double> entry : entries){
-
-			if(result == null || (entry.getValue()).compareTo(result.getValue()) > 0){
+			if(result == null || (entry.getValue()).compareTo(result.getValue()) >= 0){
 				result = entry;
 			}
 		}
