@@ -8,6 +8,7 @@ import org.dmg.pmml.*;
 public class UnsupportedFeatureException extends ModelManagerException {
 
 	public UnsupportedFeatureException(){
+		super();
 	}
 
 	public UnsupportedFeatureException(String message){
@@ -15,10 +16,10 @@ public class UnsupportedFeatureException extends ModelManagerException {
 	}
 
 	public UnsupportedFeatureException(PMMLObject element){
-		this((element.getClass()).getName());
+		super((element.getClass()).getName(), element);
 	}
 
-	public UnsupportedFeatureException(Enum<?> attribute){
-		this((attribute.getClass()).getName() + "#" + attribute.name());
+	public UnsupportedFeatureException(PMMLObject element, Enum<?> attribute){
+		super((attribute.getClass()).getName() + "#" + attribute.name(), element);
 	}
 }

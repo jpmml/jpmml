@@ -43,6 +43,8 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	}
 
 	public Node evaluateTree(EvaluationContext context){
+		TreeModel treeModel = getModel();
+
 		Node root = getOrCreateRoot();
 
 		Prediction prediction = findTrueChild(root, root, context); // XXX
@@ -52,14 +54,14 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		} else
 
 		{
-			NoTrueChildStrategyType noTrueChildStrategy = getModel().getNoTrueChildStrategy();
+			NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
 			switch(noTrueChildStrategy){
 				case RETURN_NULL_PREDICTION:
 					return null;
 				case RETURN_LAST_PREDICTION:
 					return prediction.getLastTrueNode();
 				default:
-					throw new UnsupportedFeatureException(noTrueChildStrategy);
+					throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
 			}
 		}
 	}

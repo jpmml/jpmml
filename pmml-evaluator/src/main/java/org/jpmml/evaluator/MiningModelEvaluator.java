@@ -32,13 +32,13 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	 * @see #evaluateClassification(EvaluationContext)
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
-		MiningModel model = getModel();
+		MiningModel miningModel = getModel();
 
 		Map<FieldName, ?> predictions;
 
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
-		MiningFunctionType miningFunction = model.getFunctionName();
+		MiningFunctionType miningFunction = miningModel.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(context);
@@ -47,7 +47,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				predictions = evaluateClassification(context);
 				break;
 			default:
-				throw new UnsupportedFeatureException(miningFunction);
+				throw new UnsupportedFeatureException(miningModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -64,7 +64,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			case MODEL_CHAIN:
 				return dispatchSingleResult(segmentResults);
 			case SELECT_ALL:
-				throw new UnsupportedFeatureException(multipleModelMethod);
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			default:
 				break;
 		}
@@ -96,7 +96,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				result = (weightedSum / count);
 				break;
 			default:
-				throw new UnsupportedFeatureException(multipleModelMethod);
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 		}
 
 		return Collections.singletonMap(getTarget(), result);
@@ -113,7 +113,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			case MODEL_CHAIN:
 				return dispatchSingleResult(segmentResults);
 			case SELECT_ALL:
-				throw new UnsupportedFeatureException(multipleModelMethod);
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			default:
 				break;
 		}
@@ -138,7 +138,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 					vote += ((segmentResult.getSegment()).getWeight() * 1d);
 					break;
 				default:
-					throw new UnsupportedFeatureException(multipleModelMethod);
+					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			}
 
 			result.put(value, vote);

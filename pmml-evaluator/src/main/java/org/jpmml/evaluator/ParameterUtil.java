@@ -59,7 +59,7 @@ public class ParameterUtil {
 					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(outlierTreatmentMethod);
+					throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
 			}
 		}
 
@@ -101,7 +101,7 @@ public class ParameterUtil {
 						return null;
 					}
 				default:
-					throw new UnsupportedFeatureException(invalidValueTreatmentMethod);
+					throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
 			}
 		}
 
@@ -161,7 +161,7 @@ public class ParameterUtil {
 			case ORDINAL:
 				break;
 			default:
-				throw new UnsupportedFeatureException(opType);
+				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
 		return false;
@@ -263,7 +263,7 @@ public class ParameterUtil {
 							case MISSING:
 								break;
 							default:
-								throw new UnsupportedFeatureException(property);
+								throw new UnsupportedFeatureException(fieldValue, property);
 						}
 					}
 
@@ -273,7 +273,7 @@ public class ParameterUtil {
 				}
 				break;
 			default:
-				throw new UnsupportedFeatureException(opType);
+				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
 		return true;
@@ -332,7 +332,7 @@ public class ParameterUtil {
 				break;
 		}
 
-		throw new UnsupportedFeatureException(dataType);
+		throw new EvaluationException();
 	}
 
 	/**

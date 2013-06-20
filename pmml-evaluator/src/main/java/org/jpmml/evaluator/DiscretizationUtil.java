@@ -46,7 +46,7 @@ public class DiscretizationUtil {
 			case CLOSED_CLOSED:
 				return greaterOrEqual(left, value) && lessOrEqual(right, value);
 			default:
-				throw new UnsupportedFeatureException(closure);
+				throw new UnsupportedFeatureException(interval, closure);
 		}
 	}
 

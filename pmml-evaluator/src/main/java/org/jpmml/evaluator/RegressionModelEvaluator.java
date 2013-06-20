@@ -47,7 +47,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				predictions = evaluateClassification(context);
 				break;
 			default:
-				throw new UnsupportedFeatureException(miningFunction);
+				throw new UnsupportedFeatureException(regressionModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -67,9 +67,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		FieldName name = getTarget();
 
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
-
-		value = normalizeRegressionResult(regressionNormalizationMethod, value);
+		value = normalizeRegressionResult(regressionModel, value);
 
 		return Collections.singletonMap(name, value);
 	}
@@ -103,14 +101,12 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			case CATEGORICAL:
 				break;
 			default:
-				throw new UnsupportedFeatureException(opType);
+				throw new UnsupportedFeatureException(dataField, opType);
 		}
-
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 
 		Collection<Map.Entry<String, Double>> entries = values.entrySet();
 		for(Map.Entry<String, Double> entry : entries){
-			entry.setValue(normalizeClassificationResult(regressionNormalizationMethod, entry.getValue(), sumExp));
+			entry.setValue(normalizeClassificationResult(regressionModel, entry.getValue(), sumExp));
 		}
 
 		return Collections.singletonMap(name, values);
@@ -157,7 +153,8 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	}
 
 	static
-	private Double normalizeRegressionResult(RegressionNormalizationMethodType regressionNormalizationMethod, Double value){
+	private Double normalizeRegressionResult(RegressionModel regressionModel, Double value){
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 
 		switch(regressionNormalizationMethod){
 			case NONE:
@@ -168,12 +165,13 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			case EXP:
 				return Math.exp(value);
 			default:
-				throw new UnsupportedFeatureException(regressionNormalizationMethod);
+				throw new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod);
 		}
 	}
 
 	static
-	private Double normalizeClassificationResult(RegressionNormalizationMethodType regressionNormalizationMethod, Double value, Double sumExp){
+	private Double normalizeClassificationResult(RegressionModel regressionModel, Double value, Double sumExp){
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 
 		switch(regressionNormalizationMethod){
 			case NONE:
@@ -187,7 +185,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			case LOGLOG:
 				return Math.exp(-Math.exp(-value));
 			default:
-				throw new UnsupportedFeatureException(regressionNormalizationMethod);
+				throw new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod);
 		}
 	}
 }

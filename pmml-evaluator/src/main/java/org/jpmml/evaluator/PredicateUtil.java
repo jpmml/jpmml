@@ -76,7 +76,7 @@ public class PredicateUtil {
 			case GREATER_OR_EQUAL:
 				return Boolean.valueOf(order >= 0);
 			default:
-				throw new UnsupportedFeatureException(operator);
+				throw new UnsupportedFeatureException(simplePredicate, operator);
 		}
 	}
 
@@ -138,7 +138,7 @@ public class PredicateUtil {
 			case IS_NOT_IN:
 				return ArrayUtil.isNotIn(array, value);
 			default:
-				throw new UnsupportedFeatureException(operator);
+				throw new UnsupportedFeatureException(simpleSetPredicate, operator);
 		}
 	}
 

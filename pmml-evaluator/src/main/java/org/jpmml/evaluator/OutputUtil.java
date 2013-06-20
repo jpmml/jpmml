@@ -73,7 +73,7 @@ public class OutputUtil {
 					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(resultFeature);
+					throw new UnsupportedFeatureException(outputField, resultFeature);
 			}
 
 			FieldName name = outputField.getName();

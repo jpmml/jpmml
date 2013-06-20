@@ -47,7 +47,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 				predictions = evaluateClassification(context);
 				break;
 			default:
-				throw new UnsupportedFeatureException(miningFunction);
+				throw new UnsupportedFeatureException(neuralNetwork, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -163,7 +163,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		}
 
 		List<NeuralLayer> neuralLayers = getNeuralLayers();
-		for (NeuralLayer neuralLayer: neuralLayers) {
+		for (NeuralLayer neuralLayer : neuralLayers) {
 			List<Neuron> neurons = neuralLayer.getNeurons();
 
 			for (Neuron neuron : neurons) {
@@ -188,11 +188,15 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Map<String, Double> neuronOutputs) {
-		NeuralNetwork model = getModel();
+		NeuralNetwork neuralNetwork = getModel();
+
+		PMMLObject locatable = neuralLayer;
 
 		NnNormalizationMethodType normalizationMethod = neuralLayer.getNormalizationMethod();
 		if (normalizationMethod == null) {
-			normalizationMethod = model.getNormalizationMethod();
+			locatable = neuralNetwork;
+
+			normalizationMethod = neuralNetwork.getNormalizationMethod();
 		} // End if
 
 		if (normalizationMethod == NnNormalizationMethodType.NONE) {
@@ -218,23 +222,27 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		} else
 
 		{
-			throw new UnsupportedFeatureException(normalizationMethod);
+			throw new UnsupportedFeatureException(locatable, normalizationMethod);
 		}
 	}
 
-	private double activation(double z, NeuralLayer layer) {
-		NeuralNetwork model = getModel();
+	private double activation(double z, NeuralLayer neuralLayer) {
+		NeuralNetwork neuralNetwork = getModel();
 
-		ActivationFunctionType activationFunction = layer.getActivationFunction();
+		PMMLObject locatable = neuralLayer;
+
+		ActivationFunctionType activationFunction = neuralLayer.getActivationFunction();
 		if (activationFunction == null) {
-			activationFunction = model.getActivationFunction();
+			locatable = neuralLayer;
+
+			activationFunction = neuralNetwork.getActivationFunction();
 		}
 
 		switch (activationFunction) {
 			case THRESHOLD:
-				Double threshold = layer.getThreshold();
+				Double threshold = neuralLayer.getThreshold();
 				if (threshold == null) {
-					threshold = Double.valueOf(model.getThreshold());
+					threshold = Double.valueOf(neuralNetwork.getThreshold());
 				}
 				return z > threshold.doubleValue() ? 1.0 : 0.0;
 			case LOGISTIC:
@@ -260,7 +268,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			case ARCTAN:
 				return Math.atan(z);
 			default:
-				throw new UnsupportedFeatureException(activationFunction);
+				throw new UnsupportedFeatureException(locatable, activationFunction);
 		}
 	}
 }

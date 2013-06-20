@@ -63,7 +63,7 @@ public class ArrayUtil {
 				result = tokenize(array.getValue(), true);
 				break;
 			default:
-				throw new UnsupportedFeatureException(type);
+				throw new UnsupportedFeatureException(array, type);
 		}
 
 		Number n = array.getN();
@@ -172,7 +172,7 @@ public class ArrayUtil {
 				break;
 			case FLOAT:
 			case DOUBLE:
-				throw new UnsupportedFeatureException(dataType);
+				// Falls through
 			default:
 				throw new EvaluationException();
 		}
