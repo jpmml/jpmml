@@ -90,7 +90,9 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		for(RegressionTable regressionTable : regressionTables){
 			Double value = evaluateRegressionTable(regressionTable, context);
 
-			sumExp += Math.exp(value.doubleValue());
+			if(value != null){
+				sumExp += Math.exp(value.doubleValue());
+			}
 
 			values.put(regressionTable.getTargetCategory(), value);
 		}
@@ -157,8 +159,12 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 	static
 	private Double normalizeRegressionResult(RegressionModel regressionModel, Double value){
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 
+		if(value == null){
+			return null;
+		}
+
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 		switch(regressionNormalizationMethod){
 			case NONE:
 				return value;
@@ -174,8 +180,12 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 	static
 	private Double normalizeClassificationResult(RegressionModel regressionModel, Double value, Double sumExp){
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 
+		if(value == null){
+			return null;
+		}
+
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 		switch(regressionNormalizationMethod){
 			case NONE:
 				return value;
