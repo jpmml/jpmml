@@ -43,8 +43,6 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 	}
 
 	/**
-	 * @throws ModelManagerException If the Model already exists
-	 *
 	 * @see #getModel()
 	 */
 	public MiningModel createModel(MiningFunctionType miningFunction){
@@ -57,9 +55,6 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		return this.miningModel;
 	}
 
-	/**
-	 * @throws ModelManagerException If the Segmentation does not exist
-	 */
 	public Segmentation getSegmentation(){
 		MiningModel miningModel = getModel();
 
@@ -69,9 +64,6 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		return segmentation;
 	}
 
-	/**
-	 * @throws ModelManagerException If the Segmentation already exists
-	 */
 	public Segmentation createSegmentation(MultipleModelMethodType multipleModelMethod){
 		MiningModel miningModel = getModel();
 

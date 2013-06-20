@@ -43,8 +43,6 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	}
 
 	/**
-	 * @throws ModelManagerException If the Model already exists
-	 *
 	 * @see #getModel()
 	 */
 	public TreeModel createModel(MiningFunctionType miningFunction){

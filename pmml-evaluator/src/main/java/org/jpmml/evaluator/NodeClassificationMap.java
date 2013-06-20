@@ -3,7 +3,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.math.*;
 import java.util.*;
 
 import org.dmg.pmml.*;

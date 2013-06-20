@@ -55,7 +55,7 @@ public class OutputUtil {
 					{
 						Expression expression = outputField.getExpression();
 						if(expression == null){
-							throw new EvaluationException(outputField);
+							throw new InvalidFeatureException(outputField);
 						}
 
 						value = ExpressionUtil.evaluate(expression, context);

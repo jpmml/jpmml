@@ -41,8 +41,6 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 	}
 
 	/**
-	 * @throws ModelManagerException If the Model already exists
-	 *
 	 * @see #getModel()
 	 */
 	public RegressionModel createModel(MiningFunctionType miningFunction){

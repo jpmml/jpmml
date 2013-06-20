@@ -43,8 +43,6 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 	}
 
 	/**
-	 * @throws ModelManagerException If the Model already exists
-	 *
 	 * @see #getModel()
 	 */
 	public NeuralNetwork createModel(MiningFunctionType miningFunction, ActivationFunctionType activationFunction) {

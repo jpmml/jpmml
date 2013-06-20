@@ -7,6 +7,7 @@ import com.sun.xml.bind.*;
 
 import org.xml.sax.*;
 
+abstract
 public class PMMLException extends RuntimeException {
 
 	private Locatable locatable = null;

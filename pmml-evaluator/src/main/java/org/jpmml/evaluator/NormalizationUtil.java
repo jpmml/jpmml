@@ -5,6 +5,8 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import org.jpmml.manager.*;
+
 import org.dmg.pmml.*;
 
 public class NormalizationUtil {
@@ -42,7 +44,7 @@ public class NormalizationUtil {
 				case AS_MISSING_VALUES:
 					Double missing = normContinuous.getMapMissingTo();
 					if (missing == null) {
-						throw new EvaluationException(normContinuous);
+						throw new InvalidFeatureException(normContinuous);
 					}
 					return missing;
 				case AS_IS:

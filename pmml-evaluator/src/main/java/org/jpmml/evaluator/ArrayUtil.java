@@ -68,7 +68,7 @@ public class ArrayUtil {
 
 		Number n = array.getN();
 		if(n != null && n.intValue() != result.size()){
-			throw new EvaluationException(array);
+			throw new InvalidFeatureException(array);
 		}
 
 		return result;

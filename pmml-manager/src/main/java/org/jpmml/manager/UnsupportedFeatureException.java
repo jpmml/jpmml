@@ -5,12 +5,17 @@ package org.jpmml.manager;
 
 import org.dmg.pmml.*;
 
-public class UnsupportedFeatureException extends ModelManagerException {
+/**
+ * Signals that the specified PMML content is not supported (but is probably valid).
+ */
+public class UnsupportedFeatureException extends PMMLException {
 
+	@Deprecated
 	public UnsupportedFeatureException(){
 		super();
 	}
 
+	@Deprecated
 	public UnsupportedFeatureException(String message){
 		super(message);
 	}

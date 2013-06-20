@@ -65,7 +65,7 @@ public interface Evaluator extends Consumer {
 	 *
 	 * @return The predicted field
 	 *
-	 * @throws ModelManagerException If the number of predicted fields is not exactly one
+	 * @throws InvalidFeatureException If the number of predicted fields is not exactly one
 	 *
 	 * @see Consumer#getPredictedFields()
 	 */

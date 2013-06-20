@@ -22,9 +22,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		super(pmml);
 	}
 
-	/**
-	 * @throws ModelManagerException If the Model does not exist
-	 */
 	abstract
 	public M getModel();
 
@@ -47,11 +44,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		List<FieldName> fields = getPredictedFields();
 
 		if(fields.size() < 1){
-			throw new ModelManagerException("No predicted fields");
+			throw new InvalidFeatureException("No predicted fields", getMiningSchema());
 		} else
 
 		if(fields.size() > 1){
-			throw new ModelManagerException("Too many predicted fields");
+			throw new InvalidFeatureException("Too many predicted fields", getMiningSchema());
 		}
 
 		return fields.get(0);
@@ -167,18 +164,18 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	static
-	protected void ensureNull(Object object) throws ModelManagerException {
+	protected void ensureNull(Object object){
 
 		if(object != null){
-			throw new ModelManagerException();
+			throw new IllegalStateException();
 		}
 	}
 
 	static
-	protected void ensureNotNull(Object object) throws ModelManagerException {
+	protected void ensureNotNull(Object object){
 
 		if(object == null){
-			throw new ModelManagerException();
+			throw new IllegalStateException();
 		}
 	}
 }

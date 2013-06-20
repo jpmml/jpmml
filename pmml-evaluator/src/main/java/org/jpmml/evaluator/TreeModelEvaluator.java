@@ -95,7 +95,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	private Boolean evaluateNode(Node node, EvaluationContext context){
 		Predicate predicate = node.getPredicate();
 		if(predicate == null){
-			throw new ModelManagerException(node);
+			throw new InvalidFeatureException(node);
 		}
 
 		return PredicateUtil.evaluate(predicate, context);
