@@ -5,8 +5,6 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
-import com.sun.xml.bind.*;
-
 public class EvaluationException extends PMMLException {
 
 	public EvaluationException(){
@@ -17,11 +15,11 @@ public class EvaluationException extends PMMLException {
 		super(message);
 	}
 
-	public EvaluationException(Locatable locatable){
-		super(locatable);
+	public EvaluationException(PMMLObject context){
+		super(context);
 	}
 
-	public EvaluationException(String message, Locatable locatable){
-		super(message, locatable);
+	public EvaluationException(String message, PMMLObject context){
+		super(message, context);
 	}
 }

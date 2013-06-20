@@ -5,8 +5,6 @@ package org.jpmml.manager;
 
 import org.dmg.pmml.*;
 
-import com.sun.xml.bind.*;
-
 /**
  * Signals that the specified PMML content is invalid.
  */
@@ -22,11 +20,11 @@ public class InvalidFeatureException extends PMMLException {
 		super(message);
 	}
 
-	public InvalidFeatureException(Locatable locatable){
-		super(locatable);
+	public InvalidFeatureException(PMMLObject context){
+		super(context);
 	}
 
-	public InvalidFeatureException(String message, Locatable locatable){
-		super(message, locatable);
+	public InvalidFeatureException(String message, PMMLObject context){
+		super(message, context);
 	}
 }

@@ -10,7 +10,7 @@ import org.xml.sax.*;
 abstract
 public class PMMLException extends RuntimeException {
 
-	private Locatable locatable = null;
+	private PMMLObject context = null;
 
 
 	public PMMLException(){
@@ -21,16 +21,16 @@ public class PMMLException extends RuntimeException {
 		super(message);
 	}
 
-	public PMMLException(Locatable locatable){
+	public PMMLException(PMMLObject context){
 		super();
 
-		setLocatable(locatable);
+		setContext(context);
 	}
 
-	public PMMLException(String message, Locatable locatable){
+	public PMMLException(String message, PMMLObject context){
 		super(message);
 
-		setLocatable(locatable);
+		setContext(context);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class PMMLException extends RuntimeException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getClass().getName());
 
-		Locatable locatable = getLocatable();
+		Locatable locatable = getContext();
 		if(locatable != null){
 			Locator locator = locatable.sourceLocation();
 
@@ -55,11 +55,11 @@ public class PMMLException extends RuntimeException {
 		return sb.toString();
 	}
 
-	public Locatable getLocatable(){
-		return this.locatable;
+	public PMMLObject getContext(){
+		return this.context;
 	}
 
-	private void setLocatable(Locatable locatable){
-		this.locatable = locatable;
+	private void setContext(PMMLObject context){
+		this.context = context;
 	}
 }
