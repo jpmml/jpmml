@@ -58,7 +58,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		List<RegressionTable> regressionTables = getRegressionTables();
 		if(regressionTables.size() != 1){
-			throw new EvaluationException();
+			throw new ModelManagerException(regressionModel);
 		}
 
 		RegressionTable regressionTable = regressionTables.get(0);
@@ -77,7 +77,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		List<RegressionTable> regressionTables = getRegressionTables();
 		if(regressionTables.size() < 1){
-			throw new EvaluationException();
+			throw new ModelManagerException(regressionModel);
 		}
 
 		double sumExp = 0d;

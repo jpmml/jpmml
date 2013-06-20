@@ -70,7 +70,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		Boolean value = evaluateNode(node, context);
 
 		if(value == null){
-			throw new EvaluationException();
+			throw new EvaluationException(node);
 		} // End if
 
 		if(value.booleanValue()){
@@ -95,7 +95,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	private Boolean evaluateNode(Node node, EvaluationContext context){
 		Predicate predicate = node.getPredicate();
 		if(predicate == null){
-			throw new EvaluationException();
+			throw new ModelManagerException(node);
 		}
 
 		return PredicateUtil.evaluate(predicate, context);

@@ -160,7 +160,7 @@ public class ExpressionUtil {
 			values.add(value);
 		}
 
-		Object result = FunctionUtil.evaluate(apply.getFunction(), values);
+		Object result = FunctionUtil.evaluate(apply, values);
 		if(result == null){
 			return apply.getMapMissingTo();
 		}

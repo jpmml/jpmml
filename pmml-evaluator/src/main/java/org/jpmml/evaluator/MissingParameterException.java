@@ -8,10 +8,10 @@ import org.dmg.pmml.*;
 public class MissingParameterException extends EvaluationException {
 
 	public MissingParameterException(FieldName name){
-		super(name != null ? name.getValue() : "(empty)");
+		super(name);
 	}
 
 	public MissingParameterException(DerivedField derivedField){
-		this(derivedField.getName());
+		super(derivedField);
 	}
 }

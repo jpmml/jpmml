@@ -182,12 +182,14 @@ public class FunctionUtilTest {
 	}
 
 	static
-	private Object evaluate(String name, Object... values){
-		return evaluate(name, Arrays.asList(values));
+	private Object evaluate(String function, Object... values){
+		return evaluate(function, Arrays.asList(values));
 	}
 
 	static
-	private Object evaluate(String name, List<?> values){
-		return FunctionUtil.evaluate(name, values);
+	private Object evaluate(String function, List<?> values){
+		Apply apply = new Apply(function);
+
+		return FunctionUtil.evaluate(apply, values);
 	}
 }

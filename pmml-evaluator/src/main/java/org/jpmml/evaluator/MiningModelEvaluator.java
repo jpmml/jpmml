@@ -176,7 +176,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 			Boolean selectable = PredicateUtil.evaluate(predicate, context);
 			if(selectable == null){
-				throw new EvaluationException();
+				throw new EvaluationException(predicate);
 			} // End if
 
 			if(!selectable.booleanValue()){

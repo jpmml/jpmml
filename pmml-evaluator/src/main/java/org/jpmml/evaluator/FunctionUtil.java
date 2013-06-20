@@ -20,10 +20,10 @@ public class FunctionUtil {
 	}
 
 	static
-	public Object evaluate(String name, List<?> values){
-		Function function = getFunction(name);
+	public Object evaluate(Apply apply, List<?> values){
+		Function function = getFunction(apply.getFunction());
 		if(function == null){
-			throw new UnsupportedFeatureException(name);
+			throw new UnsupportedFeatureException(apply);
 		}
 
 		return function.evaluate(values);

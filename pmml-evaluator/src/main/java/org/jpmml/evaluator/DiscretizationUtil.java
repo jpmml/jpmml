@@ -81,7 +81,7 @@ public class DiscretizationUtil {
 			if(row != null){
 				String result = row.get(mapValues.getOutputColumn());
 				if(result == null){
-					throw new EvaluationException();
+					throw new EvaluationException(mapValues);
 				}
 
 				return result;

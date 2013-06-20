@@ -42,7 +42,7 @@ public class NormalizationUtil {
 				case AS_MISSING_VALUES:
 					Double missing = normContinuous.getMapMissingTo();
 					if (missing == null) {
-						throw new EvaluationException();
+						throw new EvaluationException(normContinuous);
 					}
 					return missing;
 				case AS_IS:
