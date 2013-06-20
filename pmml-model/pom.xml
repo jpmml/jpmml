@@ -27,6 +27,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.6</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.jvnet.jaxb2_commons</groupId>
 			<artifactId>jaxb2-basics-runtime</artifactId>
 			<version>0.6.4</version>
@@ -75,6 +81,7 @@
 						<arg>-Xannotate</arg>
 						<arg>-Xequals</arg>
 						<arg>-XhashCode</arg>
+						<arg>-Xlocator</arg>
 						<arg>-Xpmml</arg>
 						<arg>-XsuperClass</arg>
 						<arg>-XsuperClass-defaultName=org.dmg.pmml.PMMLObject</arg>
