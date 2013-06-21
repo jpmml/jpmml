@@ -27,10 +27,6 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	/**
-	 * @see #evaluateRegression(EvaluationContext)
-	 * @see #evaluateClassification(EvaluationContext)
-	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
 		if(!regressionModel.isScorable()){
@@ -56,7 +52,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	public Map<FieldName, Double> evaluateRegression(EvaluationContext context){
+	Map<FieldName, Double> evaluateRegression(EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		List<RegressionTable> regressionTables = getRegressionTables();
@@ -75,7 +71,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return Collections.singletonMap(name, value);
 	}
 
-	public Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context){
+	Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		List<RegressionTable> regressionTables = getRegressionTables();

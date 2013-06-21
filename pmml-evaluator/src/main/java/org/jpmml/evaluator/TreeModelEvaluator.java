@@ -27,9 +27,6 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	/**
-	 * @see #evaluateTree(EvaluationContext)
-	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		TreeModel treeModel = getModel();
 		if(!treeModel.isScorable()){
@@ -47,7 +44,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	public Node evaluateTree(EvaluationContext context){
+	Node evaluateTree(EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		Node root = getOrCreateRoot();

@@ -27,10 +27,6 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	/**
-	 * @see #evaluateRegression(EvaluationContext)
-	 * @see #evaluateClassification(EvaluationContext)
-	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters) {
 		NeuralNetwork neuralNetwork = getModel();
 		if(!neuralNetwork.isScorable()){
@@ -56,7 +52,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	public Map<FieldName, Double> evaluateRegression(EvaluationContext context) {
+	Map<FieldName, Double> evaluateRegression(EvaluationContext context) {
 		Map<FieldName, Double> result = new LinkedHashMap<FieldName, Double>();
 
 		Map<String, Double> neuronOutputs = evaluateRaw(context);
@@ -92,7 +88,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return result;
 	}
 
-	public Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context) {
+	Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context) {
 		Map<FieldName, ClassificationMap> result = new LinkedHashMap<FieldName, ClassificationMap>();
 
 		Map<String, Double> neuronOutputs = evaluateRaw(context);

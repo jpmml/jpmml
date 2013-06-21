@@ -27,10 +27,6 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	/**
-	 * @see #evaluateRegression(EvaluationContext)
-	 * @see #evaluateClassification(EvaluationContext)
-	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		MiningModel miningModel = getModel();
 		if(!miningModel.isScorable()){
@@ -56,7 +52,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	public Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	Map<FieldName, ?> evaluateRegression(EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluate(context);
 
 		Segmentation segmentation = getSegmentation();
@@ -105,7 +101,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return Collections.singletonMap(getTarget(), result);
 	}
 
-	public Map<FieldName, ?> evaluateClassification(EvaluationContext context){
+	Map<FieldName, ?> evaluateClassification(EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluate(context);
 
 		Segmentation segmentation = getSegmentation();
