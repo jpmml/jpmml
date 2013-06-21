@@ -16,13 +16,17 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Classif
 		Collection<Map.Entry<String, Double>> entries = entrySet();
 		for(Map.Entry<String, Double> entry : entries){
 
+			if(entry.getValue() == null){
+				continue;
+			} // End if
+
 			if(result == null || (entry.getValue()).compareTo(result.getValue()) > 0){
 				result = entry;
 			}
 		}
 
 		if(result == null){
-			throw new EvaluationException();
+			throw new MissingResultException(null);
 		}
 
 		return result.getKey();

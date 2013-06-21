@@ -65,7 +65,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		switch(multipleModelMethod){
 			case SELECT_FIRST:
 			case MODEL_CHAIN:
-				return dispatchSingleResult(segmentResults);
+				return dispatchSingleResult(segmentation, segmentResults);
 			case SELECT_ALL:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			default:
@@ -114,7 +114,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		switch(multipleModelMethod){
 			case SELECT_FIRST:
 			case MODEL_CHAIN:
-				return dispatchSingleResult(segmentResults);
+				return dispatchSingleResult(segmentation, segmentResults);
 			case SELECT_ALL:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			default:
@@ -152,10 +152,10 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return Collections.singletonMap(getTarget(), result);
 	}
 
-	private Map<FieldName, ?> dispatchSingleResult(List<SegmentResult> results){
+	private Map<FieldName, ?> dispatchSingleResult(Segmentation segmentation, List<SegmentResult> results){
 
 		if(results.size() < 1 || results.size() > 1){
-			throw new EvaluationException();
+			throw new MissingResultException(segmentation);
 		}
 
 		SegmentResult result = results.get(0);
