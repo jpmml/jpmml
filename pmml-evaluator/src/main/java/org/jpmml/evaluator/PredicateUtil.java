@@ -14,6 +14,9 @@ public class PredicateUtil {
 	private PredicateUtil(){
 	}
 
+	/**
+	 * @return The {@link Boolean} value of the predicate, or <code>null</code> if the value is unknown
+	 */
 	static
 	public Boolean evaluate(Predicate predicate, EvaluationContext context){
 
@@ -46,7 +49,8 @@ public class PredicateUtil {
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
 		Object value = ExpressionUtil.evaluate(simplePredicate.getField(), context);
 
-		switch(simplePredicate.getOperator()){
+		SimplePredicate.Operator operator = simplePredicate.getOperator();
+		switch(operator){
 			case IS_MISSING:
 				return Boolean.valueOf(value == null);
 			case IS_NOT_MISSING:
@@ -55,13 +59,13 @@ public class PredicateUtil {
 				break;
 		}
 
+		// "A SimplePredicate evaluates to unknwon if the input value is missing"
 		if(value == null){
 			return null;
 		}
 
 		int order = ParameterUtil.compare(value, simplePredicate.getValue());
 
-		SimplePredicate.Operator operator = simplePredicate.getOperator();
 		switch(operator){
 			case EQUAL:
 				return Boolean.valueOf(order == 0);
@@ -89,7 +93,8 @@ public class PredicateUtil {
 
 		Boolean result = evaluate(predicates.get(0), context);
 
-		switch(compoundPredicate.getBooleanOperator()){
+		CompoundPredicate.BooleanOperator booleanOperator = compoundPredicate.getBooleanOperator();
+		switch(booleanOperator){
 			case AND:
 			case OR:
 			case XOR:
@@ -99,12 +104,16 @@ public class PredicateUtil {
 					return result;
 				}
 				break;
+			default:
+				throw new UnsupportedFeatureException(compoundPredicate, booleanOperator);
 		}
 
-		for(Predicate predicate : predicates.subList(1, predicates.size())){
+		predicates = predicates.subList(1, predicates.size());
+
+		for(Predicate predicate : predicates){
 			Boolean value = evaluate(predicate, context);
 
-			switch(compoundPredicate.getBooleanOperator()){
+			switch(booleanOperator){
 				case AND:
 					result = PredicateUtil.binaryAnd(result, value);
 					break;
@@ -119,6 +128,8 @@ public class PredicateUtil {
 						return value;
 					}
 					break;
+				default:
+					throw new UnsupportedFeatureException(compoundPredicate, booleanOperator);
 			}
 		}
 
@@ -134,14 +145,14 @@ public class PredicateUtil {
 
 		Array array = simpleSetPredicate.getArray();
 
-		SimpleSetPredicate.BooleanOperator operator = simpleSetPredicate.getBooleanOperator();
-		switch(operator){
+		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
+		switch(booleanOperator){
 			case IS_IN:
 				return ArrayUtil.isIn(array, value);
 			case IS_NOT_IN:
 				return ArrayUtil.isNotIn(array, value);
 			default:
-				throw new UnsupportedFeatureException(simpleSetPredicate, operator);
+				throw new UnsupportedFeatureException(simpleSetPredicate, booleanOperator);
 		}
 	}
 
