@@ -154,9 +154,11 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();
 		for (NeuralInput neuralInput: neuralInputs) {
-			Double value = (Double)ExpressionUtil.evaluate(neuralInput.getDerivedField(), context);
+			DerivedField derivedField = neuralInput.getDerivedField();
+
+			Double value = (Double)ExpressionUtil.evaluate(derivedField, context);
 			if(value == null){
-				throw new MissingParameterException(neuralInput.getDerivedField());
+				throw new MissingParameterException(derivedField.getName(), derivedField);
 			}
 
 			result.put(neuralInput.getId(), value);

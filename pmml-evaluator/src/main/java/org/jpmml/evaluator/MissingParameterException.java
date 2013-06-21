@@ -7,11 +7,12 @@ import org.dmg.pmml.*;
 
 public class MissingParameterException extends EvaluationException {
 
+	@Deprecated
 	public MissingParameterException(FieldName name){
-		super(name);
+		super(name.getValue());
 	}
 
-	public MissingParameterException(DerivedField derivedField){
-		super(derivedField);
+	public MissingParameterException(FieldName name, PMMLObject context){
+		super(name.getValue(), context);
 	}
 }
