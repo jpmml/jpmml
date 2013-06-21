@@ -158,7 +158,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 			Double value = (Double)ExpressionUtil.evaluate(derivedField, context);
 			if(value == null){
-				throw new MissingParameterException(derivedField.getName(), derivedField);
+				throw new MissingFieldException(derivedField.getName(), derivedField);
 			}
 
 			result.put(neuralInput.getId(), value);

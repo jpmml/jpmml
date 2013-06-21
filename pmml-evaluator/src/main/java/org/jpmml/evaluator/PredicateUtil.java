@@ -140,7 +140,7 @@ public class PredicateUtil {
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
 		Object value = ExpressionUtil.evaluate(simpleSetPredicate.getField(), context);
 		if(value == null){
-			throw new MissingParameterException(simpleSetPredicate.getField(), simpleSetPredicate);
+			throw new MissingFieldException(simpleSetPredicate.getField(), simpleSetPredicate);
 		}
 
 		Array array = simpleSetPredicate.getArray();

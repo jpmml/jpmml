@@ -44,7 +44,7 @@ public class OutputUtil {
 						FieldName target = getTarget(modelManager, outputField);
 
 						if(!predictions.containsKey(target)){
-							throw new EvaluationException(outputField);
+							throw new MissingFieldException(target, outputField);
 						}
 
 						// Prediction results may be either simple or complex values
@@ -66,7 +66,7 @@ public class OutputUtil {
 						FieldName target = getTarget(modelManager, outputField);
 
 						if(!predictions.containsKey(target)){
-							throw new EvaluationException(outputField);
+							throw new MissingFieldException(target, outputField);
 						}
 
 						value = getProbability(predictions.get(target), outputField.getValue());

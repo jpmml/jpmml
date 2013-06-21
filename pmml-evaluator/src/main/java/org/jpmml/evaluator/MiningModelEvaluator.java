@@ -204,7 +204,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 						for(FieldName outputField : outputFields){
 							Object outputValue = result.get(outputField);
 							if(outputValue == null){
-								throw new EvaluationException();
+								throw new MissingFieldException(outputField, segment);
 							}
 
 							outputValue = EvaluatorUtil.decode(outputValue);
