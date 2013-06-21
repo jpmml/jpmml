@@ -101,9 +101,9 @@ public class FunctionUtil {
 	public class ArithmeticFunction implements Function {
 
 		abstract
-		public Double evaluate(Number left, Number right);
+		public Number evaluate(Number left, Number right);
 
-		public Number cast(DataType dataType, Double result){
+		public Number cast(DataType dataType, Number result){
 			return asNumber(ParameterUtil.cast(dataType, result));
 		}
 
@@ -122,7 +122,7 @@ public class FunctionUtil {
 
 			DataType dataType = ParameterUtil.getResultDataType(left, right);
 
-			Double result;
+			Number result;
 
 			try {
 				result = evaluate(asNumber(left), asNumber(right));
@@ -162,12 +162,12 @@ public class FunctionUtil {
 		putFunction("/", new ArithmeticFunction(){
 
 			@Override
-			public Number cast(DataType dataType, Double result){
-				return super.cast(integerToDouble(dataType), result);
-			}
+			public Number evaluate(Number left, Number right){
 
-			@Override
-			public Double evaluate(Number left, Number right){
+				if(left instanceof Integer && right instanceof Integer){
+					return Integer.valueOf(left.intValue() / right.intValue());
+				}
+
 				return Double.valueOf(left.doubleValue() / right.doubleValue());
 			}
 		});

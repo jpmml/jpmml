@@ -27,9 +27,33 @@ public class FunctionUtilTest {
 		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("*", 1f, 1f)));
 		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("*", 1d, 1d)));
 
-		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("/", 1, 1)));
+		assertEquals(DataType.INTEGER, ParameterUtil.getDataType(evaluate("/", 1, 1)));
+
+		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("/", 1, 1f)));
 		assertEquals(DataType.FLOAT, ParameterUtil.getDataType(evaluate("/", 1f, 1f)));
+
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("/", 1, 1d)));
+		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("/", 1f, 1d)));
 		assertEquals(DataType.DOUBLE, ParameterUtil.getDataType(evaluate("/", 1d, 1d)));
+	}
+
+	@Test
+	public void evaluateInvalidArithmenticFunctions(){
+
+		try {
+			evaluate("/", 1, 0);
+
+			Assert.fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
+		try {
+			evaluate("/", 1f, 0);
+			evaluate("/", 1d, 0);
+		} catch(InvalidResultException ire){
+			Assert.fail();
+		}
 	}
 
 	@Test
