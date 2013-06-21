@@ -173,6 +173,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		List<Segment> segments = segmentation.getSegments();
 		for(Segment segment : segments){
 			Predicate predicate = segment.getPredicate();
+			if(predicate == null){
+				throw new InvalidFeatureException(segment);
+			}
 
 			Boolean selectable = PredicateUtil.evaluate(predicate, context);
 			if(selectable == null){
