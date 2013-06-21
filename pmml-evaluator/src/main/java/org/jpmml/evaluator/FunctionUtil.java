@@ -207,7 +207,7 @@ public class FunctionUtil {
 			}
 
 			if(statistic.getN() == 0){
-				throw new EvaluationException();
+				throw new MissingResultException(null);
 			}
 
 			return cast(dataType, statistic.getResult());

@@ -21,14 +21,14 @@ public class ParameterUtil {
 	public Object prepare(DataField dataField, MiningField miningField, Object value){
 
 		if(dataField == null){
-			throw new EvaluationException();
+			throw new InvalidFeatureException(dataField);
 		}
 
 		outlierTreatment:
 		if(isOutlier(dataField, value)){
 
 			if(miningField == null){
-				throw new EvaluationException();
+				throw new InvalidFeatureException(miningField);
 			}
 
 			OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
@@ -44,7 +44,7 @@ public class ParameterUtil {
 						Double highValue = miningField.getHighValue();
 
 						if(lowValue == null || highValue == null){
-							throw new EvaluationException();
+							throw new InvalidFeatureException(miningField);
 						}
 
 						DataType dataType = dataField.getDataType();
@@ -82,7 +82,7 @@ public class ParameterUtil {
 		if(isInvalid(dataField, value)){
 
 			if(miningField == null){
-				throw new EvaluationException();
+				throw new InvalidFeatureException(miningField);
 			}
 
 			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
