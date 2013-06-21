@@ -33,6 +33,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		MiningModel miningModel = getModel();
+		if(!miningModel.isScorable()){
+			throw new InvalidResultException(miningModel);
+		}
 
 		Map<FieldName, ?> predictions;
 

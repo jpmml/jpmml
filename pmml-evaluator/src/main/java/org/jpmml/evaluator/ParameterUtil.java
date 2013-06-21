@@ -88,7 +88,7 @@ public class ParameterUtil {
 			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 			switch(invalidValueTreatmentMethod){
 				case RETURN_INVALID:
-					throw new EvaluationException();
+					throw new InvalidResultException(miningField);
 				case AS_IS:
 					break invalidValueTreatment;
 				case AS_MISSING:

@@ -33,6 +33,9 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		RegressionModel regressionModel = getModel();
+		if(!regressionModel.isScorable()){
+			throw new InvalidResultException(regressionModel);
+		}
 
 		Map<FieldName, ?> predictions;
 

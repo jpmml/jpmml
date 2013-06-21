@@ -160,7 +160,26 @@ public class ExpressionUtil {
 			values.add(value);
 		}
 
-		Object result = FunctionUtil.evaluate(apply, values);
+		Object result;
+
+		try {
+			result = FunctionUtil.evaluate(apply, values);
+		} catch(InvalidResultException ire){
+			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
+
+			switch(invalidValueTreatmentMethod){
+				case RETURN_INVALID:
+					throw new InvalidResultException(apply);
+				case AS_IS:
+					// Re-throw the given InvalidResultException instance
+					throw ire;
+				case AS_MISSING:
+					return apply.getMapMissingTo();
+				default:
+					throw new UnsupportedFeatureException(apply, invalidValueTreatmentMethod);
+			}
+		}
+
 		if(result == null){
 			return apply.getMapMissingTo();
 		}

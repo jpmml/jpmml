@@ -122,7 +122,15 @@ public class FunctionUtil {
 
 			DataType dataType = ParameterUtil.getResultDataType(left, right);
 
-			return cast(dataType, evaluate(asNumber(left), asNumber(right)));
+			Double result;
+
+			try {
+				result = evaluate(asNumber(left), asNumber(right));
+			} catch(ArithmeticException ae){
+				throw new InvalidResultException(null);
+			}
+
+			return cast(dataType, result);
 		}
 	}
 

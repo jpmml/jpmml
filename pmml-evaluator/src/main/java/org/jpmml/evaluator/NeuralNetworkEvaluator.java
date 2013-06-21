@@ -33,6 +33,9 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters) {
 		NeuralNetwork neuralNetwork = getModel();
+		if(!neuralNetwork.isScorable()){
+			throw new InvalidResultException(neuralNetwork);
+		}
 
 		Map<FieldName, ?> predictions;
 

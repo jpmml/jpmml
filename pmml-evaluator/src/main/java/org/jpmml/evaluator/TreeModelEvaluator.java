@@ -31,6 +31,11 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	 * @see #evaluateTree(EvaluationContext)
 	 */
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+		TreeModel treeModel = getModel();
+		if(!treeModel.isScorable()){
+			throw new InvalidResultException(treeModel);
+		}
+
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
 		Node node = evaluateTree(context);
