@@ -109,7 +109,7 @@ public class ParameterUtil {
 	}
 
 	static
-	private boolean isOutlier(DataField dataField, Object value){
+	public boolean isOutlier(DataField dataField, Object value){
 
 		if(value == null){
 			return false;
@@ -168,7 +168,7 @@ public class ParameterUtil {
 	}
 
 	static
-	private boolean isMissing(DataField dataField, Object value){
+	public boolean isMissing(DataField dataField, Object value){
 
 		if(value == null){
 			return true;
@@ -196,7 +196,12 @@ public class ParameterUtil {
 	}
 
 	static
-	private boolean isInvalid(DataField dataField, Object value){
+	public boolean isInvalid(DataField dataField, Object value){
+
+		if(value == null){
+			return false;
+		}
+
 		return !isValid(dataField, value);
 	}
 
@@ -204,7 +209,12 @@ public class ParameterUtil {
 		value = "fallthrough"
 	)
 	static
-	private boolean isValid(DataField dataField, Object value){
+	public boolean isValid(DataField dataField, Object value){
+
+		if(value == null){
+			return false;
+		}
+
 		DataType dataType = dataField.getDataType();
 
 		// Speed up subsequent conversions

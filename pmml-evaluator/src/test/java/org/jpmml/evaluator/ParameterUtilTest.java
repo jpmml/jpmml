@@ -119,6 +119,16 @@ public class ParameterUtilTest {
 	}
 
 	@Test
+	public void isInvalid(){
+		assertFalse(ParameterUtil.isInvalid(null, null));
+	}
+
+	@Test
+	public void isValid(){
+		assertFalse(ParameterUtil.isValid(null, null));
+	}
+
+	@Test
 	public void equals(){
 		assertTrue(ParameterUtil.equals("1", "1"));
 
