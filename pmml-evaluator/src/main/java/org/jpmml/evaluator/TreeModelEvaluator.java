@@ -37,7 +37,11 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		Node node = evaluateTree(context);
 
-		NodeClassificationMap values = new NodeClassificationMap(node);
+		NodeClassificationMap values = null;
+
+		if(node != null){
+			values = new NodeClassificationMap(node);
+		}
 
 		Map<FieldName, NodeClassificationMap> predictions = Collections.singletonMap(getTarget(), values);
 
@@ -49,49 +53,52 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		Node root = getOrCreateRoot();
 
-		Prediction prediction = findTrueChild(root, root, context); // XXX
+		LinkedList<Node> trail = new LinkedList<Node>();
 
-		if(prediction.getLastTrueNode() != null && prediction.getTrueNode() != null && !(prediction.getLastTrueNode()).equals(prediction.getTrueNode())){
-			return prediction.getTrueNode();
-		} else
+		Node trueChild = null;
 
-		{
+		Boolean status = evaluateNode(root, context);
+		if(status != null && status.booleanValue()){
+			trueChild = findTrueChild(root, trail, context);
+		} // End if
+
+		if(trueChild == null){
 			NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
+
 			switch(noTrueChildStrategy){
 				case RETURN_NULL_PREDICTION:
-					return null;
+					break;
 				case RETURN_LAST_PREDICTION:
-					return prediction.getLastTrueNode();
+					trueChild = trail.peekLast();
+					break;
 				default:
 					throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
 			}
 		}
+
+		return trueChild;
 	}
 
-	private Prediction findTrueChild(Node lastNode, Node node, EvaluationContext context){
-		Boolean value = evaluateNode(node, context);
+	private Node findTrueChild(Node node, List<Node> trail, EvaluationContext context){
+		List<Node> children = node.getNodes();
 
-		if(value == null){
-			throw new EvaluationException(node);
-		} // End if
-
-		if(value.booleanValue()){
-			List<Node> children = node.getNodes();
-
-			for(Node child : children){
-				Prediction childPrediction = findTrueChild(node, child, context);
-
-				if(childPrediction.getTrueNode() != null){
-					return childPrediction;
-				}
-			}
-
-			return new Prediction(lastNode, node);
-		} else
-
-		{
-			return new Prediction(lastNode, null);
+		// A "true" leaf node
+		if(children.isEmpty()){
+			return node;
 		}
+
+		trail.add(node);
+
+		for(Node child : children){
+			Boolean status = evaluateNode(child, context);
+
+			if(status != null && status.booleanValue()){
+				return findTrueChild(child, trail, context);
+			}
+		}
+
+		// A branch node with no "true" leaf nodes
+		return null;
 	}
 
 	private Boolean evaluateNode(Node node, EvaluationContext context){
@@ -101,27 +108,5 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 
 		return PredicateUtil.evaluate(predicate, context);
-	}
-
-	static
-	private class Prediction {
-
-		private Node lastTrueNode = null;
-
-		private Node trueNode = null;
-
-
-		public Prediction(Node lastTrueNode, Node trueNode){
-			this.lastTrueNode = lastTrueNode;
-			this.trueNode = trueNode;
-		}
-
-		public Node getLastTrueNode(){
-			return this.lastTrueNode;
-		}
-
-		public Node getTrueNode(){
-			return this.trueNode;
-		}
 	}
 }

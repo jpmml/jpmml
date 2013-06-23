@@ -19,9 +19,9 @@ public class NoTrueChildStrategyTest {
 
 		FieldName name = new FieldName("prob1");
 
-		Node node = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 0d));
+		Node n1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 0d));
 
-		assertNull(node);
+		assertNull(n1);
 
 		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1d));
 

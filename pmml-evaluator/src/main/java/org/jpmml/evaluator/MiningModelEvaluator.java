@@ -176,8 +176,8 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				throw new InvalidFeatureException(segment);
 			}
 
-			Boolean selectable = PredicateUtil.evaluate(predicate, context);
-			if(selectable == null || !selectable.booleanValue()){
+			Boolean status = PredicateUtil.evaluate(predicate, context);
+			if(status == null || !status.booleanValue()){
 				continue;
 			}
 
