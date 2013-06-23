@@ -3,7 +3,12 @@
  */
 package org.jpmml.evaluator;
 
-public interface Classification extends Computable<String> {
+import org.dmg.pmml.*;
+
+/**
+ * @see ResultFeatureType#PROBABILITY
+ */
+public interface HasProbability {
 
 	Double getProbability(String value);
 }

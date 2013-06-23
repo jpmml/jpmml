@@ -5,7 +5,7 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-class ClassificationMap extends LinkedHashMap<String, Double> implements Classification {
+class ClassificationMap extends LinkedHashMap<String, Double> implements Computable<String>, HasProbability {
 
 	ClassificationMap(){
 	}

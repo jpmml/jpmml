@@ -105,12 +105,12 @@ public class OutputUtil {
 	static
 	private Double getProbability(Object result, String value){
 
-		if(!(result instanceof Classification)){
+		if(!(result instanceof HasProbability)){
 			throw new EvaluationException();
 		}
 
-		Classification classification = (Classification)result;
+		HasProbability hasProbability = (HasProbability)result;
 
-		return classification.getProbability(value);
+		return hasProbability.getProbability(value);
 	}
 }
