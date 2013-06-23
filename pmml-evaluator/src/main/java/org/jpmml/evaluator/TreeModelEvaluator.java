@@ -55,36 +55,60 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		LinkedList<Node> trail = new LinkedList<Node>();
 
-		Node trueChild = null;
+		NodeResult result = new NodeResult(null);
 
 		Boolean status = evaluateNode(root, context);
-		if(status != null && status.booleanValue()){
-			trueChild = findTrueChild(root, trail, context);
+		if(status == null){
+			result = handleMissingValue(root, trail, context);
+		} else
+
+		if(status.booleanValue()){
+			result = handleTrue(root, trail, context);
 		} // End if
 
-		if(trueChild == null){
-			NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
-
-			switch(noTrueChildStrategy){
-				case RETURN_NULL_PREDICTION:
-					break;
-				case RETURN_LAST_PREDICTION:
-					trueChild = trail.peekLast();
-					break;
-				default:
-					throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
-			}
+		if(result == null){
+			throw new MissingResultException(root);
 		}
 
-		return trueChild;
+		Node node = result.getNode();
+
+		if(node != null || result.isFinal()){
+			return node;
+		}
+
+		NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
+		switch(noTrueChildStrategy){
+			case RETURN_NULL_PREDICTION:
+				return null;
+			case RETURN_LAST_PREDICTION:
+				return lastPrediction(root, trail);
+			default:
+				throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
+		}
 	}
 
-	private Node findTrueChild(Node node, List<Node> trail, EvaluationContext context){
+	private NodeResult handleMissingValue(Node node, LinkedList<Node> trail, EvaluationContext context){
+		TreeModel treeModel = getModel();
+
+		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
+		switch(missingValueStrategy){
+			case NULL_PREDICTION:
+				return new FinalNodeResult(null);
+			case LAST_PREDICTION:
+				return new FinalNodeResult(lastPrediction(node, trail));
+			case NONE:
+				return null;
+			default:
+				throw new UnsupportedFeatureException(treeModel, missingValueStrategy);
+		}
+	}
+
+	private NodeResult handleTrue(Node node, LinkedList<Node> trail, EvaluationContext context){
 		List<Node> children = node.getNodes();
 
 		// A "true" leaf node
 		if(children.isEmpty()){
-			return node;
+			return new NodeResult(node);
 		}
 
 		trail.add(node);
@@ -92,13 +116,29 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		for(Node child : children){
 			Boolean status = evaluateNode(child, context);
 
-			if(status != null && status.booleanValue()){
-				return findTrueChild(child, trail, context);
+			if(status == null){
+				NodeResult result = handleMissingValue(child, trail, context);
+				if(result != null){
+					return result;
+				}
+			} else
+
+			if(status.booleanValue()){
+				return handleTrue(child, trail, context);
 			}
 		}
 
 		// A branch node with no "true" leaf nodes
-		return null;
+		return new NodeResult(null);
+	}
+
+	private Node lastPrediction(Node node, LinkedList<Node> trail){
+
+		try {
+			return trail.getLast();
+		} catch(NoSuchElementException nsee){
+			throw new MissingResultException(node);
+		}
 	}
 
 	private Boolean evaluateNode(Node node, EvaluationContext context){
@@ -108,5 +148,44 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 
 		return PredicateUtil.evaluate(predicate, context);
+	}
+
+	static
+	private class NodeResult {
+
+		private Node node = null;
+
+
+		public NodeResult(Node node){
+			setNode(node);
+		}
+
+		/**
+		 * @return <code>true</code> if the result should be exempt from any post-processing (eg. "no true child strategy" treatment), <code>false</code> otherwise.
+		 */
+		public boolean isFinal(){
+			return false;
+		}
+
+		public Node getNode(){
+			return this.node;
+		}
+
+		private void setNode(Node node){
+			this.node = node;
+		}
+	}
+
+	static
+	private class FinalNodeResult extends NodeResult {
+
+		public FinalNodeResult(Node node){
+			super(node);
+		}
+
+		@Override
+		public boolean isFinal(){
+			return true;
+		}
 	}
 }

@@ -3,70 +3,53 @@
  */
 package org.jpmml.evaluator;
 
-import org.jpmml.manager.*;
-
 import org.dmg.pmml.*;
 
 import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class NoTrueChildStrategyTest {
+public class NoTrueChildStrategyTest extends TreeModelEvaluatorTest {
 
 	@Test
-	public void returnNullPrediction(){
-		TreeModelEvaluator treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_NULL_PREDICTION);
+	public void returnNullPrediction() throws Exception {
+		TreeModelEvaluator treeModelEvaluator = createEvaluator(NoTrueChildStrategyType.RETURN_NULL_PREDICTION);
 
-		FieldName name = new FieldName("prob1");
+		FieldName name = new FieldName("probability");
 
-		Node n1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 0d));
+		Node node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(name, 0d));
 
-		assertNull(n1);
+		assertNull(node);
 
-		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1d));
+		node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(name, 1d));
 
-		assertNotNull(t1);
-		assertEquals("T1", t1.getId());
+		assertEquals("T1", node.getId());
 	}
 
 	@Test
-	public void returnLastPrediction(){
-		TreeModelEvaluator treeModelManager = prepareModel(NoTrueChildStrategyType.RETURN_LAST_PREDICTION);
+	public void returnLastPrediction() throws Exception {
+		TreeModelEvaluator treeModelEvaluator = createEvaluator(NoTrueChildStrategyType.RETURN_LAST_PREDICTION);
 
-		FieldName name = new FieldName("prob1");
+		FieldName name = new FieldName("probability");
 
-		Node n1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 0d));
+		Node node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(name, 0d));
 
-		assertNotNull(n1);
-		assertEquals("N1", n1.getId());
+		assertEquals("N1", node.getId());
 
-		Node t1 = treeModelManager.evaluateTree(new LocalEvaluationContext(name, 1d));
+		node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(name, 1d));
 
-		assertNotNull(t1);
-		assertEquals("T1", t1.getId());
+		assertEquals("T1", node.getId());
 	}
 
 	static
-	private TreeModelEvaluator prepareModel(NoTrueChildStrategyType noTrueChildStrategy){
-		TreeModelManager treeModelManager = new TreeModelManager();
+	private TreeModelEvaluator createEvaluator(NoTrueChildStrategyType noTrueChildStrategy) throws Exception {
+		PMML pmml = loadPMML(NoTrueChildStrategyTest.class);
 
-		TreeModel treeModel = treeModelManager.createClassificationModel();
+		TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(pmml);
+
+		TreeModel treeModel = treeModelEvaluator.getModel();
 		treeModel.setNoTrueChildStrategy(noTrueChildStrategy);
 
-		FieldName prob1 = new FieldName("prob1");
-		treeModelManager.addField(prob1, null, OpType.CONTINUOUS, DataType.DOUBLE, FieldUsageType.ACTIVE);
-
-		Node n1 = treeModelManager.getOrCreateRoot();
-		n1.setId("N1");
-		n1.setScore("0");
-
-		SimplePredicate t1Predicate = new SimplePredicate(prob1, SimplePredicate.Operator.GREATER_THAN);
-		t1Predicate.setValue("0.33");
-
-		Node t1 = treeModelManager.addNode(n1, t1Predicate);
-		t1.setId("T1");
-		t1.setScore("1");
-
-		return new TreeModelEvaluator(treeModelManager);
+		return treeModelEvaluator;
 	}
 }
