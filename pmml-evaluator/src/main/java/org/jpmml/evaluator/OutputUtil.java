@@ -34,21 +34,35 @@ public class OutputUtil {
 
 		List<OutputField> outputFields = output.getOutputFields();
 		for(OutputField outputField : outputFields){
+			Object value = null;
+
 			ResultFeatureType resultFeature = outputField.getFeature();
-
-			Object value;
-
 			switch(resultFeature){
 				case PREDICTED_VALUE:
+				case PROBABILITY:
+				case ENTITY_ID:
 					{
-						FieldName target = getTarget(modelManager, outputField);
+						FieldName target = outputField.getTargetField();
+						if(target == null){
+							target = modelManager.getTarget();
+						} // End if
 
 						if(!predictions.containsKey(target)){
 							throw new MissingFieldException(target, outputField);
 						}
 
-						// Prediction results may be either simple or complex values
-						value = EvaluatorUtil.decode(predictions.get(target));
+						// Prediction results could be either simple or complex values
+						value = predictions.get(target);
+					}
+					break;
+				default:
+					break;
+			} // End switch
+
+			switch(resultFeature){
+				case PREDICTED_VALUE:
+					{
+						value = getResult(value);
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -63,13 +77,12 @@ public class OutputUtil {
 					break;
 				case PROBABILITY:
 					{
-						FieldName target = getTarget(modelManager, outputField);
-
-						if(!predictions.containsKey(target)){
-							throw new MissingFieldException(target, outputField);
-						}
-
-						value = getProbability(predictions.get(target), outputField.getValue());
+						value = getProbability(value, outputField.getValue());
+					}
+					break;
+				case ENTITY_ID:
+					{
+						value = getEntityId(value);
 					}
 					break;
 				default:
@@ -93,24 +106,31 @@ public class OutputUtil {
 	}
 
 	static
-	private FieldName getTarget(ModelManager<?> modelManager, OutputField outputField){
-		FieldName result = outputField.getTargetField();
-		if(result == null){
-			result = modelManager.getTarget();
-		}
-
-		return result;
+	private Object getResult(Object object){
+		return EvaluatorUtil.decode(object);
 	}
 
 	static
-	private Double getProbability(Object result, String value){
+	private Double getProbability(Object object, String value){
 
-		if(!(result instanceof HasProbability)){
+		if(!(object instanceof HasProbability)){
 			throw new EvaluationException();
 		}
 
-		HasProbability hasProbability = (HasProbability)result;
+		HasProbability hasProbability = (HasProbability)object;
 
 		return hasProbability.getProbability(value);
+	}
+
+	static
+	private String getEntityId(Object object){
+
+		if(!(object instanceof HasEntityId)){
+			throw new EvaluationException();
+		}
+
+		HasEntityId hasEntityId = (HasEntityId)object;
+
+		return hasEntityId.getEntityId();
 	}
 }

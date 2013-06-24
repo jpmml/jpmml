@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-class NodeClassificationMap extends ClassificationMap {
+class NodeClassificationMap extends ClassificationMap implements HasEntityId {
 
 	private Node node = null;
 
@@ -52,6 +52,12 @@ class NodeClassificationMap extends ClassificationMap {
 	@Override
 	public String getResult(){
 		return getScore();
+	}
+
+	public String getEntityId(){
+		Node node = getNode();
+
+		return node.getId();
 	}
 
 	public Node getNode(){
