@@ -33,9 +33,19 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 			throw new InvalidResultException(treeModel);
 		}
 
+		Node node;
+
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
 
-		Node node = evaluateTree(context);
+		MiningFunctionType miningFunction = treeModel.getFunctionName();
+		switch(miningFunction){
+			case REGRESSION:
+			case CLASSIFICATION:
+				node = evaluateTree(context);
+				break;
+			default:
+				throw new UnsupportedFeatureException(treeModel, miningFunction);
+		}
 
 		NodeClassificationMap values = null;
 
