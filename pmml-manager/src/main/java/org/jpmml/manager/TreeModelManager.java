@@ -48,7 +48,10 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	public TreeModel createModel(MiningFunctionType miningFunction){
 		ensureNull(this.treeModel);
 
-		this.treeModel = new TreeModel(new MiningSchema(), new Node(), miningFunction);
+		Node root = new Node();
+		root.setPredicate(new True());
+
+		this.treeModel = new TreeModel(new MiningSchema(), root, miningFunction);
 
 		getModels().add(this.treeModel);
 
@@ -58,23 +61,15 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	/**
 	 * @return The root Node
 	 */
-	public Node getOrCreateRoot(){
+	public Node getRoot(){
 
 		if(this.root == null){
 			TreeModel treeModel = getModel();
 
 			this.root = treeModel.getNode();
-			if(this.root == null){
-				this.root = new Node();
-
-				treeModel.setNode(this.root);
-			}
-
-			Predicate predicate = this.root.getPredicate();
-			if(predicate == null){
-				this.root.setPredicate(new True());
-			}
 		}
+
+		ensureNotNull(this.root);
 
 		return this.root;
 	}
@@ -84,10 +79,10 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	 *
 	 * @return The newly added Node
 	 *
-	 * @see #getOrCreateRoot()
+	 * @see #getRoot()
 	 */
 	public Node addNode(Predicate predicate){
-		return addNode(getOrCreateRoot(), predicate);
+		return addNode(getRoot(), predicate);
 	}
 
 	/**

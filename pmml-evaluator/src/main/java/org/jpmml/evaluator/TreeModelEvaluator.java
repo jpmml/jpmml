@@ -51,7 +51,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	Node evaluateTree(EvaluationContext context){
 		TreeModel treeModel = getModel();
 
-		Node root = getOrCreateRoot();
+		Node root = getRoot();
 
 		LinkedList<Node> trail = new LinkedList<Node>();
 
