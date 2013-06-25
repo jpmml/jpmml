@@ -19,8 +19,6 @@ public class PMMLManager implements Serializable {
 
 	private PMML pmml = null;
 
-	private TransformationDictionary transformationDictionary = null;
-
 
 	public PMMLManager(){
 		this(new PMML(new Header(), new DataDictionary(), "4.1"));
@@ -71,21 +69,16 @@ public class PMMLManager implements Serializable {
 	}
 
 	public TransformationDictionary getOrCreateTransformationDictionary(){
+		PMML pmml = getPmml();
 
-		if(this.transformationDictionary == null){
-			PMML pmml = getPmml();
+		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
+		if(transformationDictionary == null){
+			transformationDictionary = new TransformationDictionary();
 
-			TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
-			if(transformationDictionary == null){
-				transformationDictionary = new TransformationDictionary();
-
-				pmml.setTransformationDictionary(transformationDictionary);
-			}
-
-			this.transformationDictionary = transformationDictionary;
+			pmml.setTransformationDictionary(transformationDictionary);
 		}
 
-		return this.transformationDictionary;
+		return transformationDictionary;
 	}
 
 	public List<Model> getModels(){

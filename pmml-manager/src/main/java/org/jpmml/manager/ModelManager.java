@@ -10,11 +10,6 @@ import org.dmg.pmml.*;
 abstract
 public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 
-	private LocalTransformations localTransformations = null;
-
-	private Output output = null;
-
-
 	public ModelManager(){
 	}
 
@@ -128,39 +123,29 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public LocalTransformations getOrCreateLocalTransformations(){
+		M model = getModel();
 
-		if(this.localTransformations == null){
-			M model = getModel();
+		LocalTransformations localTransformations = model.getLocalTransformations();
+		if(localTransformations == null){
+			localTransformations = new LocalTransformations();
 
-			LocalTransformations localTransformations = model.getLocalTransformations();
-			if(localTransformations == null){
-				localTransformations = new LocalTransformations();
-
-				model.setLocalTransformations(localTransformations);
-			}
-
-			this.localTransformations = localTransformations;
+			model.setLocalTransformations(localTransformations);
 		}
 
-		return this.localTransformations;
+		return localTransformations;
 	}
 
 	public Output getOrCreateOutput(){
+		M model = getModel();
 
-		if(this.output == null){
-			M model = getModel();
+		Output output = model.getOutput();
+		if(output == null){
+			output = new Output();
 
-			Output output = model.getOutput();
-			if(output == null){
-				output = new Output();
-
-				model.setOutput(output);
-			}
-
-			this.output = output;
+			model.setOutput(output);
 		}
 
-		return this.output;
+		return output;
 	}
 
 	static

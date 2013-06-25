@@ -11,8 +11,6 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 
 	private TreeModel treeModel = null;
 
-	private Node root = null;
-
 
 	public TreeModelManager(){
 	}
@@ -62,16 +60,12 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 	 * @return The root Node
 	 */
 	public Node getRoot(){
+		TreeModel treeModel = getModel();
 
-		if(this.root == null){
-			TreeModel treeModel = getModel();
+		Node root = treeModel.getNode();
+		ensureNotNull(root);
 
-			this.root = treeModel.getNode();
-		}
-
-		ensureNotNull(this.root);
-
-		return this.root;
+		return root;
 	}
 
 	/**
