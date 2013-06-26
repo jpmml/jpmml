@@ -63,10 +63,11 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		RegressionTable regressionTable = regressionTables.get(0);
 
 		Double value = evaluateRegressionTable(regressionTable, context);
+		if(value != null){
+			value = normalizeRegressionResult(regressionModel, value);
+		}
 
 		FieldName name = getTarget();
-
-		value = normalizeRegressionResult(regressionModel, value);
 
 		return Collections.singletonMap(name, value);
 	}
@@ -85,10 +86,11 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		for(RegressionTable regressionTable : regressionTables){
 			Double value = evaluateRegressionTable(regressionTable, context);
-
-			if(value != null){
-				sumExp += Math.exp(value.doubleValue());
+			if(value == null){
+				throw new MissingResultException(regressionTable);
 			}
+
+			sumExp += Math.exp(value.doubleValue());
 
 			values.put(regressionTable.getTargetCategory(), value);
 		}
@@ -155,12 +157,8 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 	static
 	private Double normalizeRegressionResult(RegressionModel regressionModel, Double value){
-
-		if(value == null){
-			return null;
-		}
-
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
+
 		switch(regressionNormalizationMethod){
 			case NONE:
 				return value;
@@ -176,12 +174,8 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 	static
 	private Double normalizeClassificationResult(RegressionModel regressionModel, Double value, Double sumExp){
-
-		if(value == null){
-			return null;
-		}
-
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
+
 		switch(regressionNormalizationMethod){
 			case NONE:
 				return value;
