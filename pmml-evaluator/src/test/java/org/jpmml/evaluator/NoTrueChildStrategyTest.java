@@ -9,7 +9,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class NoTrueChildStrategyTest extends TreeModelEvaluatorTest {
+public class NoTrueChildStrategyTest extends ModelManagerTest {
 
 	@Test
 	public void returnNullPrediction() throws Exception {

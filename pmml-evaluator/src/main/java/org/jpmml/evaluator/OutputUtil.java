@@ -41,6 +41,7 @@ public class OutputUtil {
 				case PREDICTED_VALUE:
 				case PROBABILITY:
 				case ENTITY_ID:
+				case REASON_CODE:
 					{
 						FieldName target = outputField.getTargetField();
 						if(target == null){
@@ -83,6 +84,11 @@ public class OutputUtil {
 				case ENTITY_ID:
 					{
 						value = getEntityId(value);
+					}
+					break;
+				case REASON_CODE:
+					{
+						value = getReasonCode(value, outputField.getRank());
 					}
 					break;
 				default:
@@ -132,5 +138,17 @@ public class OutputUtil {
 		HasEntityId hasEntityId = (HasEntityId)object;
 
 		return hasEntityId.getEntityId();
+	}
+
+	static
+	public String getReasonCode(Object object, int rank){
+
+		if(!(object instanceof HasReasonCode)){
+			throw new EvaluationException();
+		}
+
+		HasReasonCode hasReasonCode = (HasReasonCode)object;
+
+		return hasReasonCode.getReasonCode(rank);
 	}
 }

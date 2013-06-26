@@ -11,7 +11,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
+public class MissingValueStrategyTest extends ModelManagerTest {
 
 	@Test
 	public void nullPrediction() throws Exception {

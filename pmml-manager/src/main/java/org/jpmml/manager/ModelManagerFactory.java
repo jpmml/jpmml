@@ -26,6 +26,10 @@ public class ModelManagerFactory {
 
 		if(model instanceof MiningModel){
 			return new MiningModelManager(pmml, (MiningModel)model);
+		} else
+
+		if(model instanceof Scorecard){
+			return new ScorecardManager(pmml, (Scorecard)model);
 		}
 
 		throw new UnsupportedFeatureException(model);
