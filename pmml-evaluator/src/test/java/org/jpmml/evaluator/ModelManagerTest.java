@@ -4,7 +4,6 @@
 package org.jpmml.evaluator;
 
 import java.io.*;
-import java.util.*;
 
 import org.dmg.pmml.*;
 

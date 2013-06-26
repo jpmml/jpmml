@@ -9,7 +9,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class NoTrueChildStrategyTest extends ModelManagerTest {
+public class NoTrueChildStrategyTest extends TreeModelEvaluatorTest {
 
 	@Test
 	public void returnNullPrediction() throws Exception {
@@ -41,11 +41,8 @@ public class NoTrueChildStrategyTest extends ModelManagerTest {
 		assertEquals("T1", node.getId());
 	}
 
-	static
 	private TreeModelEvaluator createEvaluator(NoTrueChildStrategyType noTrueChildStrategy) throws Exception {
-		PMML pmml = loadPMML(NoTrueChildStrategyTest.class);
-
-		TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(pmml);
+		TreeModelEvaluator treeModelEvaluator = createEvaluator();
 
 		TreeModel treeModel = treeModelEvaluator.getModel();
 		treeModel.setNoTrueChildStrategy(noTrueChildStrategy);

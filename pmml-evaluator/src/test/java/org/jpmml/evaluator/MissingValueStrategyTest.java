@@ -11,7 +11,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class MissingValueStrategyTest extends ModelManagerTest {
+public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
 
 	@Test
 	public void nullPrediction() throws Exception {
@@ -41,11 +41,8 @@ public class MissingValueStrategyTest extends ModelManagerTest {
 		return new LocalEvaluationContext(parameters);
 	}
 
-	static
 	private TreeModelEvaluator createEvaluator(MissingValueStrategyType missingValueStrategy) throws Exception {
-		PMML pmml = loadPMML(MissingValueStrategyTest.class);
-
-		TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(pmml);
+		TreeModelEvaluator treeModelEvaluator = createEvaluator();
 
 		TreeModel treeModel = treeModelEvaluator.getModel();
 		treeModel.setMissingValueStrategy(missingValueStrategy);
