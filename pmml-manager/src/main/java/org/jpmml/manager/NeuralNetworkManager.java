@@ -11,8 +11,6 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 
 	private NeuralNetwork neuralNetwork = null;
 
-	private int neuronCount = 0;
-
 
 	public NeuralNetworkManager() {
 	}
@@ -25,10 +23,6 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 		super(pmml);
 
 		this.neuralNetwork = neuralNetwork;
-
-		if(this.neuralNetwork != null){
-			this.neuronCount = getNeuronCount();
-		}
 	}
 
 	public String getSummary(){
@@ -61,11 +55,11 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 		return neuralNetwork.getNeuralInputs().getNeuralInputs();
 	}
 
-	public NeuralInput addNeuralInput(NormContinuous normContinuous) {
+	public NeuralInput addNeuralInput(String id, NormContinuous normContinuous) {
 		DerivedField derivedField = new DerivedField(OpType.CONTINUOUS, DataType.DOUBLE);
 		derivedField.setExpression(normContinuous);
 
-		NeuralInput neuralInput = new NeuralInput(derivedField, nextId());
+		NeuralInput neuralInput = new NeuralInput(derivedField, id);
 
 		getNeuralInputs().add(neuralInput);
 
@@ -86,24 +80,12 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 		return neuralLayer;
 	}
 
-	public int getNeuronCount(){
-		int count = 0;
-
-		count += (getNeuralInputs()).size();
-
-		List<NeuralLayer> neuralLayers = getNeuralLayers();
-		for(NeuralLayer neuralLayer : neuralLayers){
-			count += (neuralLayer.getNeurons()).size();
-		}
-
-		return count;
-	}
-
-	public Neuron addNeuron(NeuralLayer neuralLayer, Double bias) {
-		Neuron neuron = new Neuron(nextId());
+	static
+	public Neuron addNeuron(NeuralLayer neuralLayer, String id, Double bias) {
+		Neuron neuron = new Neuron(id);
 		neuron.setBias(bias);
 
-		neuralLayer.getNeurons().add(neuron);
+		(neuralLayer.getNeurons()).add(neuron);
 
 		return neuron;
 	}
@@ -144,9 +126,5 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 		getOrCreateNeuralOutputs().add(output);
 
 		return output;
-	}
-
-	private String nextId(){
-		return String.valueOf(this.neuronCount++);
 	}
 }
