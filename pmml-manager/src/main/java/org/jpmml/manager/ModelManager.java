@@ -149,6 +149,16 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	static
+	protected <E extends Entity> void putEntity(E entity, Map<String, E> map){
+		String id = entity.getId();
+		if(id == null || map.containsKey(id)){
+			throw new InvalidFeatureException(entity);
+		}
+
+		map.put(id, entity);
+	}
+
+	static
 	protected void ensureNull(Object object){
 
 		if(object != null){

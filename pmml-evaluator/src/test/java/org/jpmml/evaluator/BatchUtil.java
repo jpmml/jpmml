@@ -23,7 +23,14 @@ public class BatchUtil {
 
 		PMMLManager pmmlManager = new PMMLManager(pmml);
 
-		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+		ModelManager<?> modelManager = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+
+		if(modelManager instanceof EntityRegistry){
+			EntityRegistry<?> entityRegistry = (EntityRegistry<?>)modelManager;
+
+			// Just for kicks
+			entityRegistry.getEntities();
+		}
 
 		List<Map<FieldName, String>> input = CsvUtil.load(batch.getInput());
 		List<Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
@@ -31,6 +38,8 @@ public class BatchUtil {
 		if(input.size() != output.size()){
 			throw new RuntimeException();
 		}
+
+		Evaluator evaluator = (Evaluator)modelManager;
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> predictedFields = evaluator.getPredictedFields();

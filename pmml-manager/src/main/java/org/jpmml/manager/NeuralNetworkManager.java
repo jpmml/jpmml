@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
+public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements EntityRegistry<Entity> {
 
 	private NeuralNetwork neuralNetwork = null;
 
@@ -52,7 +52,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 	public List<NeuralInput> getNeuralInputs() {
 		NeuralNetwork neuralNetwork = getModel();
 
-		return neuralNetwork.getNeuralInputs().getNeuralInputs();
+		return (neuralNetwork.getNeuralInputs()).getNeuralInputs();
 	}
 
 	public NeuralInput addNeuralInput(String id, NormContinuous normContinuous) {
@@ -78,6 +78,26 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> {
 		getNeuralLayers().add(neuralLayer);
 
 		return neuralLayer;
+	}
+
+	public Map<String, Entity> getEntities(){
+		Map<String, Entity> result = new LinkedHashMap<String, Entity>();
+
+		List<NeuralInput> neuralInputs = getNeuralInputs();
+		for(NeuralInput neuralInput : neuralInputs){
+			putEntity(neuralInput, result);
+		}
+
+		List<NeuralLayer> neuralLayers = getNeuralLayers();
+		for(NeuralLayer neuralLayer : neuralLayers){
+			List<Neuron> neurons = neuralLayer.getNeurons();
+
+			for(Neuron neuron : neurons){
+				putEntity(neuron, result);
+			}
+		}
+
+		return result;
 	}
 
 	static

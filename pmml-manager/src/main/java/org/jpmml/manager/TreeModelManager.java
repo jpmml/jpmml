@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-public class TreeModelManager extends ModelManager<TreeModel> {
+public class TreeModelManager extends ModelManager<TreeModel> implements EntityRegistry<Node> {
 
 	private TreeModel treeModel = null;
 
@@ -68,6 +68,14 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 		return root;
 	}
 
+	public Map<String, Node> getEntities(){
+		Map<String, Node> result = new LinkedHashMap<String, Node>();
+
+		collectNodes(getRoot(), result);
+
+		return result;
+	}
+
 	/**
 	 * Adds a new Node to the root Node.
 	 *
@@ -107,5 +115,15 @@ public class TreeModelManager extends ModelManager<TreeModel> {
 		scoreDistributions.add(scoreDistribution);
 
 		return scoreDistribution;
+	}
+
+	static
+	private void collectNodes(Node node, Map<String, Node> map){
+		putEntity(node, map);
+
+		List<Node> children = node.getNodes();
+		for(Node child : children){
+			collectNodes(child, map);
+		}
 	}
 }
