@@ -122,9 +122,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		for(SegmentResult segmentResult : segmentResults){
 			Object predictedValue = EvaluatorUtil.decode(segmentResult.getPrediction());
 
-			String value = ParameterUtil.toString(predictedValue);
+			String category = ParameterUtil.toString(predictedValue);
 
-			Double vote = result.get(value);
+			Double vote = result.get(category);
 			if(vote == null){
 				vote = 0d;
 			}
@@ -140,7 +140,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			}
 
-			result.put(value, vote);
+			result.put(category, vote);
 		}
 
 		result.normalizeProbabilities();

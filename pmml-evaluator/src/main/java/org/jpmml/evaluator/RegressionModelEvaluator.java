@@ -82,9 +82,14 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		double sumExp = 0d;
 
-		ClassificationMap values = new ClassificationMap();
+		ClassificationMap result = new ClassificationMap();
 
 		for(RegressionTable regressionTable : regressionTables){
+			String category = regressionTable.getTargetCategory();
+			if(category == null){
+				throw new InvalidFeatureException(regressionTable);
+			}
+
 			Double value = evaluateRegressionTable(regressionTable, context);
 			if(value == null){
 				throw new MissingResultException(regressionTable);
@@ -92,7 +97,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 			sumExp += Math.exp(value.doubleValue());
 
-			values.put(regressionTable.getTargetCategory(), value);
+			result.put(category, value);
 		}
 
 		FieldName name = getTarget();
@@ -107,12 +112,12 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-		Collection<Map.Entry<String, Double>> entries = values.entrySet();
+		Collection<Map.Entry<String, Double>> entries = result.entrySet();
 		for(Map.Entry<String, Double> entry : entries){
 			entry.setValue(normalizeClassificationResult(regressionModel, entry.getValue(), sumExp));
 		}
 
-		return Collections.singletonMap(name, values);
+		return Collections.singletonMap(name, result);
 	}
 
 	static
