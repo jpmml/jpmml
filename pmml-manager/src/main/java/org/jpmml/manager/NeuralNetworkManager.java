@@ -55,6 +55,11 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 		return (neuralNetwork.getNeuralInputs()).getNeuralInputs();
 	}
 
+	/**
+	 * @param id Unique identifier
+	 *
+	 * @see #getEntities()
+	 */
 	public NeuralInput addNeuralInput(String id, NormContinuous normContinuous) {
 		DerivedField derivedField = new DerivedField(OpType.CONTINUOUS, DataType.DOUBLE);
 		derivedField.setExpression(normContinuous);
@@ -100,6 +105,11 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 		return result;
 	}
 
+	/**
+	 * @param id Unique identifier
+	 *
+	 * @see #getEntities()
+	 */
 	static
 	public Neuron addNeuron(NeuralLayer neuralLayer, String id, Double bias) {
 		Neuron neuron = new Neuron(id);

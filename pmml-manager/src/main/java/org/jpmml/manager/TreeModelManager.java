@@ -79,21 +79,28 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 	/**
 	 * Adds a new Node to the root Node.
 	 *
+	 * @param id Unique identifier
+	 *
 	 * @return The newly added Node
 	 *
-	 * @see #getRoot()
+	 * @see #getEntities()
 	 */
-	public Node addNode(Predicate predicate){
-		return addNode(getRoot(), predicate);
+	public Node addNode(String id, Predicate predicate){
+		return addNode(getRoot(), id, predicate);
 	}
 
 	/**
 	 * Adds a new Node to the specified Node.
 	 *
+	 * @param id Unique identifier
+	 *
 	 * @return The newly added Node
+	 *
+	 * @see #getEntities()
 	 */
-	public Node addNode(Node parentNode, Predicate predicate){
+	public Node addNode(Node parentNode, String id, Predicate predicate){
 		Node node = new Node();
+		node.setId(id);
 		node.setPredicate(predicate);
 
 		parentNode.getNodes().add(node);
