@@ -125,7 +125,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		for(NumericPredictor numericPredictor : numericPredictors){
 			Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
 
-			// "if the input value is missing then the result evaluates to a missing value"
+			// "if the input value is missing, then the result evaluates to a missing value"
 			if(value == null){
 				return null;
 			}
@@ -137,7 +137,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
 			Object value = ExpressionUtil.evaluate(categoricalPredictor.getName(), context);
 
-			// "if the input value is missing then the product is ignored"
+			// "if the input value is missing, then the product is ignored"
 			if(value == null){
 				continue;
 			}
@@ -149,7 +149,25 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
 		for(PredictorTerm predictorTerm : predictorTerms){
-			throw new UnsupportedFeatureException(predictorTerm);
+			double product = predictorTerm.getCoefficient();
+
+			List<FieldRef> fieldRefs = predictorTerm.getFieldRefs();
+			if(fieldRefs.size() < 1){
+				throw new InvalidFeatureException(predictorTerm);
+			}
+
+			for(FieldRef fieldRef : fieldRefs){
+				Object value = ExpressionUtil.evaluateFieldRef(fieldRef, context);
+
+				// "if the input value is missing, then the result evaluates to a missing value"
+				if(value == null){
+					return null;
+				}
+
+				product *= ((Number)value).doubleValue();
+			}
+
+			result += product;
 		}
 
 		return Double.valueOf(result);

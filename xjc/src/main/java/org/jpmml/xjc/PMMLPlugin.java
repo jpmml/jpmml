@@ -65,6 +65,11 @@ public class PMMLPlugin extends Plugin {
 							privateName += "s";
 						} else
 
+						if(privateName.endsWith("ref") || privateName.endsWith("Ref")){
+							publicName += "s";
+							privateName += "s";
+						} else
+
 						{
 							publicName = JJavaName.getPluralForm(publicName);
 							privateName = JJavaName.getPluralForm(privateName);
