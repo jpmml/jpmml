@@ -15,7 +15,9 @@ public class AttributeReasonCodeTest extends ScorecardEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Map<FieldName, ?> result = evaluateExample();
+		ScorecardEvaluator evaluator = createEvaluator();
+
+		Map<FieldName, ?> result = evaluator.evaluate(ScorecardEvaluatorTest.parameters);
 
 		assertEquals(29d, result.get(new FieldName("Final Score")));
 
