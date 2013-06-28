@@ -5,10 +5,11 @@ Java API for producing and scoring models in Predictive Model Markup Language (P
 Supported model types:
 <table>
 	<tr><th>Description</th><th>PMML element</th></tr>
-	<tr><td>Linear regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
 	<tr><td>Decision tree</td><td>http://www.dmg.org/v4-1/TreeModel.html</td></tr>
+	<tr><td>Linear regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
 	<tr><td>Neural network</td><td>http://www.dmg.org/v4-1/NeuralNetwork.html</td></tr>
-	<tr><td>Ensembles models</td><td>http://www.dmg.org/v4-1/MultipleModels.html</td></tr>
+	<tr><td>Scorecard</td><td>http://www.dmg.org/v4-1/Scorecard.html</td></tr>
+	<tr><td>Ensembles models (all of the above)</td><td>http://www.dmg.org/v4-1/MultipleModels.html</td></tr>
 </table>
 
 # Usage #
@@ -18,6 +19,7 @@ JPMML library JAR files (together with accompanying Java source and Javadocs JAR
 Release history:
 <table>
 	<tr><th>Date</th><th>Version</th></tr>
+	<tr><td>28 Jun, 2013</td><td>1.0.8</td></tr>
 	<tr><td>22 Jun, 2013</td><td>1.0.7</td></tr>
 	<tr><td>16 Jun, 2013</td><td>1.0.6</td></tr>
 	<tr><td>5 Jun, 2013</td><td>1.0.5</td></tr>
@@ -34,26 +36,26 @@ The latest versions of public API modules can be incorporated using the followin
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-model</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 </dependency>
 
 <!-- medium-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-manager</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 </dependency>
 
 <!-- high-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 </dependency>
 ```
 Please note that higher API levels depend on lower API levels.
