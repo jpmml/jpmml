@@ -50,7 +50,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		NodeClassificationMap values = null;
 
 		if(node != null){
-			values = new NodeClassificationMap(node);
+			values = createNodeClassificationMap(node);
 		}
 
 		Map<FieldName, NodeClassificationMap> predictions = Collections.singletonMap(getTarget(), values);
@@ -158,6 +158,30 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		}
 
 		return PredicateUtil.evaluate(predicate, context);
+	}
+
+	static
+	private NodeClassificationMap createNodeClassificationMap(Node node){
+		NodeClassificationMap result = new NodeClassificationMap(node);
+
+		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
+
+		double sum = 0;
+
+		for(ScoreDistribution scoreDistribution : scoreDistributions){
+			sum += scoreDistribution.getRecordCount();
+		} // End for
+
+		for(ScoreDistribution scoreDistribution : scoreDistributions){
+			Double value = scoreDistribution.getProbability();
+			if(value == null){
+				value = (scoreDistribution.getRecordCount() / sum);
+			}
+
+			result.put(scoreDistribution.getValue(), value);
+		}
+
+		return result;
 	}
 
 	static

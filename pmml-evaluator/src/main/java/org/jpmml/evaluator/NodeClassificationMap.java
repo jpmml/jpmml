@@ -3,76 +3,23 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
 import org.dmg.pmml.*;
 
-class NodeClassificationMap extends ClassificationMap implements HasEntityId {
-
-	private Node node = null;
-
-	private String score = null;
-
+class NodeClassificationMap extends EntityClassificationMap<Node> {
 
 	NodeClassificationMap(Node node){
-		setNode(node);
-
-		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
-
-		double sum = 0;
-
-		for(ScoreDistribution scoreDistribution : scoreDistributions){
-			sum += scoreDistribution.getRecordCount();
-		}
-
-		ScoreDistribution result = null;
-
-		for(ScoreDistribution scoreDistribution : scoreDistributions){
-
-			if(result == null || result.getRecordCount() < scoreDistribution.getRecordCount()){
-				result = scoreDistribution;
-			}
-
-			Double probability = scoreDistribution.getProbability();
-			if(probability == null){
-				probability = (scoreDistribution.getRecordCount() / sum);
-			}
-
-			put(scoreDistribution.getValue(), probability);
-		}
-
-		String score = node.getScore();
-		if(score == null){
-			score = result.getValue();
-		}
-
-		setScore(score);
+		super(node);
 	}
 
 	@Override
 	public String getResult(){
-		return getScore();
-	}
+		Node node = getEntity();
 
-	public String getEntityId(){
-		Node node = getNode();
+		String score = node.getScore();
+		if(score != null){
+			return score;
+		}
 
-		return node.getId();
-	}
-
-	public Node getNode(){
-		return this.node;
-	}
-
-	private void setNode(Node node){
-		this.node = node;
-	}
-
-	public String getScore(){
-		return this.score;
-	}
-
-	private void setScore(String score){
-		this.score = score;
+		return super.getResult();
 	}
 }

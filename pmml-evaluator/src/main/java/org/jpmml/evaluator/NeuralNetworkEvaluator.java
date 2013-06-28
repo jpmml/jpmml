@@ -55,7 +55,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	Map<FieldName, Double> evaluateRegression(EvaluationContext context) {
 		Map<FieldName, Double> result = new LinkedHashMap<FieldName, Double>();
 
-		Map<String, Double> neuronOutputs = evaluateRaw(context);
+		Map<String, Double> entityOutputs = evaluateRaw(context);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
 		for (NeuralOutput neuralOutput : neuralOutputs) {
@@ -67,7 +67,9 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 				FieldName field = fieldRef.getField();
 
-				result.put(field, neuronOutputs.get(id));
+				Double value = entityOutputs.get(id);
+
+				result.put(field, value);
 			} else
 
 			if(expression instanceof NormContinuous){
@@ -75,7 +77,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 				FieldName field = normContinuous.getField();
 
-				Double value = NormalizationUtil.denormalize(normContinuous, neuronOutputs.get(id));
+				Double value = NormalizationUtil.denormalize(normContinuous, entityOutputs.get(id));
 
 				result.put(field, value);
 			} else
@@ -88,10 +90,12 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return result;
 	}
 
-	Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context) {
-		Map<FieldName, ClassificationMap> result = new LinkedHashMap<FieldName, ClassificationMap>();
+	Map<FieldName, NeuronClassificationMap> evaluateClassification(EvaluationContext context) {
+		Map<FieldName, NeuronClassificationMap> result = new LinkedHashMap<FieldName, NeuronClassificationMap>();
 
-		Map<String, Double> neuronOutputs = evaluateRaw(context);
+		Map<String, Entity> entities = getEntities();
+
+		Map<String, Double> entityOutputs = evaluateRaw(context);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
 		for (NeuralOutput neuralOutput : neuralOutputs) {
@@ -103,16 +107,18 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 				FieldName field = normDiscrete.getField();
 
-				ClassificationMap values = result.get(field);
+				NeuronClassificationMap values = result.get(field);
 				if(values == null){
-					values = new ClassificationMap();
+					values = new NeuronClassificationMap();
 
 					result.put(field, values);
 				}
 
-				Double value = neuronOutputs.get(id);
+				Entity entity = entities.get(id);
 
-				values.put(normDiscrete.getValue(), value);
+				Double value = entityOutputs.get(id);
+
+				values.put(entity, normDiscrete.getValue(), value);
 			} else
 
 			{
@@ -143,7 +149,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	/**
 	 * Evaluates neural network.
 	 *
-	 * @return Mapping between Neuron identifiers and their outputs
+	 * @return Mapping between Entity identifiers and their outputs
 	 *
 	 * @see NeuralInput#getId()
 	 * @see Neuron#getId()
