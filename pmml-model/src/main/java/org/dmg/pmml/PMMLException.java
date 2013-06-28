@@ -44,7 +44,7 @@ public class PMMLException extends RuntimeException {
 
 			int lineNumber = locator.getLineNumber();
 			if(lineNumber != -1){
-				sb.append(" ").append("(at around line ").append(lineNumber).append(")");
+				sb.append(" ").append("(at or around line ").append(lineNumber).append(")");
 			}
 		}
 
