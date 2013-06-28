@@ -56,7 +56,9 @@ public class BatchUtil {
 			for(FieldName activeField : activeFields){
 				String inputCell = inputRow.get(activeField);
 
-				parameters.put(activeField, evaluator.prepare(activeField, inputCell));
+				Object inputValue = evaluator.prepare(activeField, inputCell);
+
+				parameters.put(activeField, inputValue);
 			}
 
 			Map<FieldName, ?> result = evaluator.evaluate(parameters);
@@ -72,18 +74,18 @@ public class BatchUtil {
 			for(FieldName outputField : outputFields){
 				String outputCell = outputRow.get(outputField);
 
-				// XXX
-				if(outputCell == null){
-					continue;
-				}
-
 				Object computedValue = result.get(outputField);
 
-				success &= acceptable(outputCell, computedValue);
+				success &= (outputCell != null ? acceptable(outputCell, computedValue) : acceptable(computedValue));
 			}
 		}
 
 		return success;
+	}
+
+	static
+	private boolean acceptable(Object actual){
+		return (actual != null);
 	}
 
 	static

@@ -29,6 +29,8 @@
    <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
    <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
    <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
+   <!-- Custom output field -->
+   <OutputField name="Node_Id" optype="categorical" dataType="string" feature="entityId"/>
   </Output>
   <Node id="1" score="setosa" recordCount="150" defaultChild="3">
    <True/>

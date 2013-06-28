@@ -85,6 +85,8 @@
    <OutputField name="Predicted_Adjusted" optype="categorical" dataType="string" feature="predictedValue"/>
    <OutputField name="Probability_0" optype="continuous" dataType="double" feature="probability" value="0"/>
    <OutputField name="Probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
+   <!-- Custom output field -->
+   <OutputField name="Node_Id" optype="categorical" dataType="string" feature="entityId"/>
   </Output>
   <Node id="1" score="0" recordCount="1859" defaultChild="2">
    <True/>

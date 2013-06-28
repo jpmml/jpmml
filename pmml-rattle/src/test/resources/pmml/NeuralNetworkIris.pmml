@@ -29,6 +29,8 @@
    <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
    <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
    <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
+   <!-- Custom output field -->
+   <OutputField name="Entity_Id" optype="categorical" dataType="string" feature="entityId"/>
   </Output>
   <NeuralInputs numberOfInputs="4">
    <NeuralInput id="1">
