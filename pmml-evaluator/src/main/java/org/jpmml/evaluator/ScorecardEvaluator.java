@@ -30,7 +30,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
 		Scorecard scorecard = getModel();
 		if(!scorecard.isScorable()){
-			throw new MissingResultException(scorecard);
+			throw new InvalidResultException(scorecard);
 		}
 
 		Map<FieldName, ?> predictions;
