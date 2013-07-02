@@ -18,11 +18,11 @@ public class ScorecardEvaluatorTest extends ModelManagerTest {
 		return evaluator;
 	}
 
-	protected static final Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
+	protected static final Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
 
 	static {
-		parameters.put(new FieldName("department"), "engineering");
-		parameters.put(new FieldName("age"), 25);
-		parameters.put(new FieldName("income"), 500d);
+		arguments.put(new FieldName("department"), "engineering");
+		arguments.put(new FieldName("age"), 25);
+		arguments.put(new FieldName("income"), 500d);
 	}
 }

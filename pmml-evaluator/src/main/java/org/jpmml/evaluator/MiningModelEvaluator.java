@@ -27,7 +27,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		MiningModel miningModel = getModel();
 		if(!miningModel.isScorable()){
 			throw new InvalidResultException(miningModel);
@@ -35,7 +35,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
 		switch(miningFunction){
@@ -187,7 +187,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 			FieldName target = evaluator.getTarget();
 
-			Map<FieldName, ?> result = evaluator.evaluate(context.getParameters());
+			Map<FieldName, ?> result = evaluator.evaluate(context.getArguments());
 
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
@@ -204,7 +204,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 							outputValue = EvaluatorUtil.decode(outputValue);
 
-							context.putParameter(outputField, outputValue);
+							context.putArgument(outputField, outputValue);
 						}
 
 						results.clear();

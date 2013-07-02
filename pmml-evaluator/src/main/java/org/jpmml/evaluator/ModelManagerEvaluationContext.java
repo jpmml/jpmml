@@ -14,8 +14,8 @@ public class ModelManagerEvaluationContext extends EvaluationContext {
 	private ModelManager<?> modelManager = null;
 
 
-	public ModelManagerEvaluationContext(ModelManager<?> modelManager, Map<FieldName, ?> parameters){
-		super(parameters);
+	public ModelManagerEvaluationContext(ModelManager<?> modelManager, Map<FieldName, ?> arguments){
+		super(arguments);
 
 		setModelManager(modelManager);
 	}

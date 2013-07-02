@@ -17,8 +17,8 @@ public class LocalEvaluationContext extends EvaluationContext {
 		super(Collections.<FieldName, Object>singletonMap(name, value));
 	}
 
-	public LocalEvaluationContext(Map<FieldName, ?> parameters){
-		super(parameters);
+	public LocalEvaluationContext(Map<FieldName, ?> arguments){
+		super(arguments);
 	}
 
 	@Override

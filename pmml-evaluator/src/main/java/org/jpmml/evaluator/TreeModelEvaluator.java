@@ -27,7 +27,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		TreeModel treeModel = getModel();
 		if(!treeModel.isScorable()){
 			throw new InvalidResultException(treeModel);
@@ -35,7 +35,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		Node node;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
 
 		MiningFunctionType miningFunction = treeModel.getFunctionName();
 		switch(miningFunction){

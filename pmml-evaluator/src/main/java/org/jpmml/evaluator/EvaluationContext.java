@@ -10,11 +10,11 @@ import org.dmg.pmml.*;
 abstract
 public class EvaluationContext implements Cloneable {
 
-	private Map<FieldName, ?> parameters = null;
+	private Map<FieldName, ?> arguments = null;
 
 
-	public EvaluationContext(Map<FieldName, ?> parameters){
-		setParameters(parameters);
+	public EvaluationContext(Map<FieldName, ?> arguments){
+		setArguments(arguments);
 	}
 
 	abstract
@@ -25,9 +25,9 @@ public class EvaluationContext implements Cloneable {
 		try {
 			EvaluationContext result = (EvaluationContext)super.clone();
 
-			// Deep copy parameters
-			Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>(getParameters());
-			result.setParameters(parameters);
+			// Deep copy arguments
+			Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>(getArguments());
+			result.setArguments(arguments);
 
 			return result;
 		} catch(CloneNotSupportedException cnse){
@@ -35,27 +35,27 @@ public class EvaluationContext implements Cloneable {
 		}
 	}
 
-	public Object getParameter(FieldName name){
-		Map<FieldName, ?> parameters = getParameters();
+	public Object getArgument(FieldName name){
+		Map<FieldName, ?> arguments = getArguments();
 
-		return parameters.get(name);
+		return arguments.get(name);
 	}
 
 	@SuppressWarnings (
 		value = {"unchecked"}
 	)
-	void putParameter(FieldName name, Object value){
+	void putArgument(FieldName name, Object value){
 		// Use cast to remove the implicit "read-only" protection
-		Map<FieldName, Object> parameters = (Map<FieldName, Object>)getParameters();
+		Map<FieldName, Object> arguments = (Map<FieldName, Object>)getArguments();
 
-		parameters.put(name, value);
+		arguments.put(name, value);
 	}
 
-	public Map<FieldName, ?> getParameters(){
-		return this.parameters;
+	public Map<FieldName, ?> getArguments(){
+		return this.arguments;
 	}
 
-	void setParameters(Map<FieldName, ?> parameters){
-		this.parameters = parameters;
+	void setArguments(Map<FieldName, ?> arguments){
+		this.arguments = arguments;
 	}
 }

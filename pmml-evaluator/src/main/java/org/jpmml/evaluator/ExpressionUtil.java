@@ -21,7 +21,7 @@ public class ExpressionUtil {
 			return evaluate(derivedField, context);
 		}
 
-		return context.getParameter(name);
+		return context.getArgument(name);
 	}
 
 	static

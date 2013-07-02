@@ -105,7 +105,7 @@ public class OutputUtil {
 			result.put(name, value);
 
 			// The result of one output field becomes available to other output fields
-			context.putParameter(name, value);
+			context.putArgument(name, value);
 		}
 
 		return result;

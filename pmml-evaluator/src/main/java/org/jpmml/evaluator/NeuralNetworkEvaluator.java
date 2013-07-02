@@ -27,7 +27,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters) {
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments) {
 		NeuralNetwork neuralNetwork = getModel();
 		if(!neuralNetwork.isScorable()){
 			throw new InvalidResultException(neuralNetwork);
@@ -35,7 +35,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
 
 		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
 		switch(miningFunction){

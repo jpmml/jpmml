@@ -27,7 +27,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		Scorecard scorecard = getModel();
 		if(!scorecard.isScorable()){
 			throw new InvalidResultException(scorecard);
@@ -35,7 +35,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
 
 		MiningFunctionType miningFunction = scorecard.getFunctionName();
 		switch(miningFunction){

@@ -27,7 +27,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters){
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		RegressionModel regressionModel = getModel();
 		if(!regressionModel.isScorable()){
 			throw new InvalidResultException(regressionModel);
@@ -35,7 +35,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, parameters);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
 
 		MiningFunctionType miningFunction = regressionModel.getFunctionName();
 		switch(miningFunction){

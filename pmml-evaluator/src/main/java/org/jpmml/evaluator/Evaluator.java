@@ -23,16 +23,16 @@ import org.dmg.pmml.*;
  *
  * Preparing {@link Evaluator#getActiveFields() active fields}:
  * <pre>
- * Map&lt;FieldName, Object&gt; parameters = new LinkedHashMap&lt;FieldName, Object&gt;();
+ * Map&lt;FieldName, Object&gt; arguments = new LinkedHashMap&lt;FieldName, Object&gt;();
  * List&lt;FieldName&gt; activeFields = evaluator.getActiveFields();
  * for(FieldName activeField : activeFields){
- *   parameters.put(activeField, evaluator.prepare(activeField, ...));
+ *   arguments.put(activeField, evaluator.prepare(activeField, ...));
  * }
  * </pre>
  *
  * Performing the {@link Evaluator#evaluate(Map) evaluation}:
  * <pre>
- * Map&lt;FieldName, ?&gt; result = evaluator.evaluate(parameters);
+ * Map&lt;FieldName, ?&gt; result = evaluator.evaluate(arguments);
  * </pre>
  *
  * Retrieving the value of the {@link Evaluator#getTarget() predicted field} and {@link Evaluator#getOutputFields() output fields}:
@@ -88,7 +88,7 @@ public interface Evaluator extends Consumer {
 	Object prepare(FieldName name, Object value);
 
 	/**
-	 * @param parameters Map of {@link #getActiveFields() active field} values.
+	 * @param arguments Map of {@link #getActiveFields() active field} values.
 	 *
 	 * @return Map of {@link #getPredictedFields() predicted field} and {@link #getOutputFields() output field} values.
 	 * Simple values are represented using the Java equivalents of PMML data types (eg. String, Integer, Float, Double etc.).
@@ -98,5 +98,5 @@ public interface Evaluator extends Consumer {
 	 *
 	 * @see Computable
 	 */
-	Map<FieldName, ?> evaluate(Map<FieldName, ?> parameters);
+	Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments);
 }

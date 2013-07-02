@@ -51,17 +51,17 @@ public class BatchUtil {
 			Map<FieldName, String> inputRow = input.get(i);
 			Map<FieldName, String> outputRow = output.get(i);
 
-			Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
+			Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
 
 			for(FieldName activeField : activeFields){
 				String inputCell = inputRow.get(activeField);
 
 				Object inputValue = evaluator.prepare(activeField, inputCell);
 
-				parameters.put(activeField, inputValue);
+				arguments.put(activeField, inputValue);
 			}
 
-			Map<FieldName, ?> result = evaluator.evaluate(parameters);
+			Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
 			for(FieldName predictedField : predictedFields){
 				String outputCell = outputRow.get(predictedField);
