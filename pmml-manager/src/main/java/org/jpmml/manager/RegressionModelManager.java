@@ -53,16 +53,10 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 		return this.regressionModel;
 	}
 
-	@Override
 	public FieldName getTarget(){
 		RegressionModel regressionModel = getModel();
 
-		FieldName name = regressionModel.getTargetFieldName();
-		if(name != null){
-			return name;
-		}
-
-		return super.getTarget();
+		return regressionModel.getTargetFieldName();
 	}
 
 	public RegressionModel setTarget(FieldName name){

@@ -35,9 +35,9 @@ import org.dmg.pmml.*;
  * Map&lt;FieldName, ?&gt; result = evaluator.evaluate(arguments);
  * </pre>
  *
- * Retrieving the value of the {@link Evaluator#getTarget() predicted field} and {@link Evaluator#getOutputFields() output fields}:
+ * Retrieving the value of the {@link Evaluator#getTargetField() predicted field} and {@link Evaluator#getOutputFields() output fields}:
  * <pre>
- * FieldName targetField = evaluator.getTarget();
+ * FieldName targetField = evaluator.getTargetField();
  * Object targetValue = result.get(targetField);
  *
  * List&lt;FieldName&gt; outputFields = evaluator.getOutputFields();
@@ -59,17 +59,6 @@ import org.dmg.pmml.*;
  * @see EvaluatorUtil
  */
 public interface Evaluator extends Consumer {
-
-	/**
-	 * Convenience method for retrieving the predicted field.
-	 *
-	 * @return The predicted field
-	 *
-	 * @throws InvalidFeatureException If the number of predicted fields is not exactly one
-	 *
-	 * @see Consumer#getPredictedFields()
-	 */
-	FieldName getTarget();
 
 	/**
 	 * Prepares the input value for a field.

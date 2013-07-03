@@ -157,6 +157,6 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 			result = new Score(score, reasonCodeRanking);
 		}
 
-		return Collections.singletonMap(getTarget(), result);
+		return Collections.singletonMap(getTargetField(), result);
 	}
 }

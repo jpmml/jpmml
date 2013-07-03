@@ -43,17 +43,17 @@ public class OutputUtil {
 				case ENTITY_ID:
 				case REASON_CODE:
 					{
-						FieldName target = outputField.getTargetField();
-						if(target == null){
-							target = modelManager.getTarget();
+						FieldName targetField = outputField.getTargetField();
+						if(targetField == null){
+							targetField = modelManager.getTargetField();
 						} // End if
 
-						if(!predictions.containsKey(target)){
-							throw new MissingFieldException(target, outputField);
+						if(!predictions.containsKey(targetField)){
+							throw new MissingFieldException(targetField, outputField);
 						}
 
 						// Prediction results could be either simple or complex values
-						value = predictions.get(target);
+						value = predictions.get(targetField);
 					}
 					break;
 				default:

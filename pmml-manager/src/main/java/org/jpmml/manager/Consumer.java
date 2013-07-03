@@ -30,6 +30,17 @@ public interface Consumer extends Serializable {
 	List<FieldName> getActiveFields();
 
 	/**
+	 * Convenience method for retrieving the sole predicted field.
+	 *
+	 * @return The sole predicted field
+	 *
+	 * @throws InvalidFeatureException If the number of predicted fields is not exactly one
+	 *
+	 * @see ModelManager#getTargetField()
+	 */
+	FieldName getTargetField();
+
+	/**
 	 * Gets the dependent (ie. output) field(s) of a {@link Model} from its {@link MiningSchema}.
 	 *
 	 * @see ModelManager#getPredictedFields()

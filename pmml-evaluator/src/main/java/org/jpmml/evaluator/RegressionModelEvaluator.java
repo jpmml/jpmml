@@ -67,9 +67,9 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			value = normalizeRegressionResult(regressionModel, value);
 		}
 
-		FieldName name = getTarget();
+		FieldName targetField = getTargetField();
 
-		return Collections.singletonMap(name, value);
+		return Collections.singletonMap(targetField, value);
 	}
 
 	Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context){
@@ -100,9 +100,9 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			result.put(category, value);
 		}
 
-		FieldName name = getTarget();
+		FieldName targetField = getTargetField();
 
-		DataField dataField = getDataField(name);
+		DataField dataField = getDataField(targetField);
 
 		OpType opType = dataField.getOptype();
 		switch(opType){
@@ -117,7 +117,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			entry.setValue(normalizeClassificationResult(regressionModel, entry.getValue(), sumExp));
 		}
 
-		return Collections.singletonMap(name, result);
+		return Collections.singletonMap(targetField, result);
 	}
 
 	static

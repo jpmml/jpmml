@@ -35,7 +35,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return getMiningFields(FieldUsageType.ACTIVE);
 	}
 
-	public FieldName getTarget(){
+	public FieldName getTargetField(){
 		List<FieldName> fields = getPredictedFields();
 
 		if(fields.size() < 1){

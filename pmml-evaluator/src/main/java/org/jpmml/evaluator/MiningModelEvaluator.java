@@ -74,9 +74,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		double weightedSum = 0d;
 
 		for(SegmentResult segmentResult : segmentResults){
-			Object predictedValue = EvaluatorUtil.decode(segmentResult.getPrediction());
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			Double value = ParameterUtil.toDouble(predictedValue);
+			Double value = ParameterUtil.toDouble(targetValue);
 
 			sum += value.doubleValue();
 			weightedSum += ((segmentResult.getSegment()).getWeight() * value.doubleValue());
@@ -98,7 +98,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 		}
 
-		return Collections.singletonMap(getTarget(), result);
+		return Collections.singletonMap(getTargetField(), result);
 	}
 
 	Map<FieldName, ?> evaluateClassification(EvaluationContext context){
@@ -120,9 +120,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		ClassificationMap result = new ClassificationMap();
 
 		for(SegmentResult segmentResult : segmentResults){
-			Object predictedValue = EvaluatorUtil.decode(segmentResult.getPrediction());
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			String category = ParameterUtil.toString(predictedValue);
+			String category = ParameterUtil.toString(targetValue);
 
 			Double vote = result.get(category);
 			if(vote == null){
@@ -145,7 +145,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 		result.normalizeProbabilities();
 
-		return Collections.singletonMap(getTarget(), result);
+		return Collections.singletonMap(getTargetField(), result);
 	}
 
 	private Map<FieldName, ?> dispatchSingleResult(Segmentation segmentation, List<SegmentResult> results){
@@ -185,13 +185,13 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 			Evaluator evaluator = (Evaluator)evaluatorFactory.getModelManager(getPmml(), model);
 
-			FieldName target = evaluator.getTarget();
+			FieldName targetField = evaluator.getTargetField();
 
 			Map<FieldName, ?> result = evaluator.evaluate(context.getArguments());
 
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
-					return Collections.singletonList(new SegmentResult(segment, target, result));
+					return Collections.singletonList(new SegmentResult(segment, targetField, result));
 				case MODEL_CHAIN:
 					{
 						List<FieldName> outputFields = evaluator.getOutputFields();
@@ -211,7 +211,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 					}
 					// Falls through
 				default:
-					results.add(new SegmentResult(segment, target, result));
+					results.add(new SegmentResult(segment, targetField, result));
 					break;
 			}
 		}
@@ -226,19 +226,19 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 		private Segment segment = null;
 
-		private FieldName predictedField = null;
+		private FieldName targetField = null;
 
 		private Map<FieldName, ?> result = null;
 
 
-		public SegmentResult(Segment segment, FieldName predictedField, Map<FieldName, ?> result){
+		public SegmentResult(Segment segment, FieldName targetField, Map<FieldName, ?> result){
 			setSegment(segment);
-			setPredictedField(predictedField);
+			setTargetField(targetField);
 			setResult(result);
 		}
 
-		public Object getPrediction(){
-			return getResult().get(getPredictedField());
+		public Object getTargetValue(){
+			return getResult().get(getTargetField());
 		}
 
 		public Segment getSegment(){
@@ -249,12 +249,12 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			this.segment = segment;
 		}
 
-		public FieldName getPredictedField(){
-			return this.predictedField;
+		public FieldName getTargetField(){
+			return this.targetField;
 		}
 
-		private void setPredictedField(FieldName predictedField){
-			this.predictedField = predictedField;
+		private void setTargetField(FieldName targetField){
+			this.targetField = targetField;
 		}
 
 		public Map<FieldName, ?> getResult(){
