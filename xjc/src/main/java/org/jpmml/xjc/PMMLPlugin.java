@@ -81,6 +81,7 @@ public class PMMLPlugin extends Plugin {
 				} else
 
 				{
+					// This attribute is common to all Model subclasses. Here, programmatic customization is better than manual customization
 					if((privateName).equals("isScorable")){
 						propertyInfo.setName(true, "Scorable");
 						propertyInfo.setName(false, "scorable");
