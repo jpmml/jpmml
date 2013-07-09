@@ -162,10 +162,10 @@ Functional tests for R (http://www.r-project.org/) and Rattle (http://rattle.tog
 Tested model types:
 <table>
 	<tr><th>Description</th><th>R function(s)</th></tr>
-	<tr><td>Linear regression</td><td>`lm()` and `multinom()`</td></tr>
-	<tr><td>Decision tree</td><td>`rpart()` (package `rpart`)</td></tr>
-	<tr><td>Neural network</td><td>`nnet()` (package `nnet`)</td></tr>
-	<tr><td>Random forest</td><td>`randomForest()` (package `randomForest`)</td></tr>
+	<tr><td>Linear regression</td><td><code>lm()</code> and <code>multinom()</code></td></tr>
+	<tr><td>Decision tree</td><td><code>rpart()</code> (package <code>rpart</code>)</td></tr>
+	<tr><td>Neural network</td><td><code>nnet()</code> (package <code>nnet</code>)</td></tr>
+	<tr><td>Random forest</td><td><code>randomForest()</code> (package <code>randomForest<code>)</td></tr>
 </table>
 
 ### Example code
@@ -193,7 +193,7 @@ Using the instance of `org.jpmml.evaluator.Evaluator` for the preparation of inp
 ```
 Evaluator evaluator = ...
 
-Map<FieldName, Object> parameters = new LinkedHashMap<FieldName, Object>();
+Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
 
 List<FieldName> activeFields = evaluator.getActiveFields();
 for(FieldName activeField : activeFields){
@@ -203,10 +203,10 @@ for(FieldName activeField : activeFields){
 	// The raw value is passed through: 1) outlier treatment, 2) missing value treatment, 3) invalid value treatment and 4) type conversion
 	Object activeValue = evaluator.prepare(activeField, rawValue);
 
-	parameters.put(activeField, activeValue);
+	arguments.put(activeField, activeValue);
 }
 
-Map<FieldName, ?> result = evaluator.evaluate(parameters);
+Map<FieldName, ?> result = evaluator.evaluate(arguments);
 ```
 
 ### Example applications
