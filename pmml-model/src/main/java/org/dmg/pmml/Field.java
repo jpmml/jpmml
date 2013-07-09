@@ -20,4 +20,10 @@ public class Field extends PMMLObject implements HasName {
 
 	abstract
 	public void setOptype(OpType opType);
+
+	abstract
+	public DataType getDataType();
+
+	abstract
+	public void setDataType(DataType dataType);
 }

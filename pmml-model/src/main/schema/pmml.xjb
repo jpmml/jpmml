@@ -488,6 +488,10 @@ Copyright (c) 2009 University of Tartu
 			<java:superClass
 				name="org.dmg.pmml.Field"
 			/>
+			<java:unsupportedProperty
+				property="dataType"
+				name="org.dmg.pmml.DataType"
+			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='MiningModel']/xsd:complexType">

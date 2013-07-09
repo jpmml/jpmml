@@ -14,10 +14,4 @@ public class DictionaryField extends Field {
 
 	abstract
 	public void setDisplayName(String displayName);
-
-	abstract
-	public DataType getDataType();
-
-	abstract
-	public void setDataType(DataType dataType);
 }
