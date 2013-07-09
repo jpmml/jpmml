@@ -165,7 +165,7 @@ Tested model types:
 	<tr><td>Linear regression</td><td><code>lm()</code> and <code>multinom()</code></td></tr>
 	<tr><td>Decision tree</td><td><code>rpart()</code> (package <code>rpart</code>)</td></tr>
 	<tr><td>Neural network</td><td><code>nnet()</code> (package <code>nnet</code>)</td></tr>
-	<tr><td>Random forest</td><td><code>randomForest()</code> (package <code>randomForest<code>)</td></tr>
+	<tr><td>Random forest</td><td><code>randomForest()</code> (package <code>randomForest</code>)</td></tr>
 </table>
 
 ### Example code
