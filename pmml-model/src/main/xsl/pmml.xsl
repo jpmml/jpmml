@@ -30,6 +30,13 @@ Copyright (c) 2009 University of Tartu
 		</xsl:element>
 	</xsl:template>
 
+	<!--
+	The type of Field name needs to be restricted from xsd:string to FIELD-NAME. Here, an XSL transformation feels more elegant than a property-level JAXB customization.
+	-->
+	<xsl:template match="xsd:element[@name='ParameterField']/xsd:complexType/xsd:attribute[@name='name']/@type">
+		<xsl:attribute name="type">FIELD-NAME</xsl:attribute>
+	</xsl:template>
+
 	<!-- 
 	Model types have one Extension list in the beginning and another Extension list in the end, which is too complex for the XJC to handle.
 	-->
