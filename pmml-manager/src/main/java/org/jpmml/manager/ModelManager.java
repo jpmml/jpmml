@@ -105,14 +105,14 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	@Override
-	public DerivedField resolve(FieldName name){
+	public DerivedField resolveField(FieldName name){
 		LocalTransformations localTransformations = getOrCreateLocalTransformations();
 
 		List<DerivedField> derivedFields = localTransformations.getDerivedFields();
 
 		DerivedField derivedField = find(derivedFields, name);
 		if(derivedField == null){
-			derivedField = super.resolve(name);
+			derivedField = super.resolveField(name);
 		}
 
 		return derivedField;

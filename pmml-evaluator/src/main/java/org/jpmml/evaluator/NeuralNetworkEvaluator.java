@@ -135,7 +135,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			derivedField = resolve(fieldRef.getField());
+			derivedField = resolveField(fieldRef.getField());
 			if(derivedField != null){
 				return getExpression(derivedField);
 			}

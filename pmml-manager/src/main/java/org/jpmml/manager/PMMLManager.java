@@ -44,7 +44,7 @@ public class PMMLManager implements Serializable {
 		return dataField;
 	}
 
-	public DerivedField resolve(FieldName name){
+	public DerivedField resolveField(FieldName name){
 		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
 
 		List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();

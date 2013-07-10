@@ -21,10 +21,10 @@ public class ModelManagerEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DerivedField resolve(FieldName name){
+	public DerivedField resolveField(FieldName name){
 		ModelManager<?> modelManager = getModelManager();
 
-		return modelManager.resolve(name);
+		return modelManager.resolveField(name);
 	}
 
 	public ModelManager<?> getModelManager(){

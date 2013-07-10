@@ -16,7 +16,7 @@ public class ExpressionUtil {
 
 	static
 	public Object evaluate(FieldName name, EvaluationContext context){
-		DerivedField derivedField = context.resolve(name);
+		DerivedField derivedField = context.resolveField(name);
 		if(derivedField != null){
 			return evaluate(derivedField, context);
 		}

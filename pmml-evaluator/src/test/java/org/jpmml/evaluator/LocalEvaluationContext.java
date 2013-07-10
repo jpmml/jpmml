@@ -22,7 +22,7 @@ public class LocalEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DerivedField resolve(FieldName name){
+	public DerivedField resolveField(FieldName name){
 		return null;
 	}
 }
