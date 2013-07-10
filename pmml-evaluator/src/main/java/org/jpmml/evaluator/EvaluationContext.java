@@ -8,54 +8,59 @@ import java.util.*;
 import org.dmg.pmml.*;
 
 abstract
-public class EvaluationContext implements Cloneable {
+public class EvaluationContext {
 
-	private Map<FieldName, ?> arguments = null;
+	private Deque<Map<FieldName, ?>> stack = new ArrayDeque<Map<FieldName, ?>>();
 
 
 	public EvaluationContext(Map<FieldName, ?> arguments){
-		setArguments(arguments);
+		pushFrame(arguments);
 	}
 
 	abstract
 	public DerivedField resolve(FieldName name);
 
-	@Override
-	public EvaluationContext clone(){
-		try {
-			EvaluationContext result = (EvaluationContext)super.clone();
+	public Map<FieldName, ?> getArguments(){
+		Map<FieldName, Object> result = new LinkedHashMap<FieldName, Object>();
 
-			// Deep copy arguments
-			Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>(getArguments());
-			result.setArguments(arguments);
+		Deque<Map<FieldName, ?>> stack = getStack();
 
-			return result;
-		} catch(CloneNotSupportedException cnse){
-			throw new AssertionError(cnse);
+		// Iterate from last (ie. oldest) to first (ie. newest)
+		Iterator<Map<FieldName, ?>> it = stack.descendingIterator();
+		while(it.hasNext()){
+			Map<FieldName, ?> frame = it.next();
+
+			result.putAll(frame);
 		}
+
+		return result;
 	}
 
 	public Object getArgument(FieldName name){
-		Map<FieldName, ?> arguments = getArguments();
+		Deque<Map<FieldName, ?>> stack = getStack();
 
-		return arguments.get(name);
+		// Iterate from first to last
+		Iterator<Map<FieldName, ?>> it = stack.iterator();
+		while(it.hasNext()){
+			Map<FieldName, ?> frame = it.next();
+
+			if(frame.containsKey(name)){
+				return frame.get(name);
+			}
+		}
+
+		return null;
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
-	void putArgument(FieldName name, Object value){
-		// Use cast to remove the implicit "read-only" protection
-		Map<FieldName, Object> arguments = (Map<FieldName, Object>)getArguments();
-
-		arguments.put(name, value);
+	public Map<FieldName, ?> popFrame(){
+		return getStack().pop();
 	}
 
-	public Map<FieldName, ?> getArguments(){
-		return this.arguments;
+	public void pushFrame(Map<FieldName, ?> frame){
+		getStack().push(frame);
 	}
 
-	void setArguments(Map<FieldName, ?> arguments){
-		this.arguments = arguments;
+	Deque<Map<FieldName, ?>> getStack(){
+		return this.stack;
 	}
 }

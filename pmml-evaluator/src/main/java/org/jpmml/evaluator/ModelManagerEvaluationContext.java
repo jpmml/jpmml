@@ -27,11 +27,6 @@ public class ModelManagerEvaluationContext extends EvaluationContext {
 		return modelManager.resolve(name);
 	}
 
-	@Override
-	public ModelManagerEvaluationContext clone(){
-		return (ModelManagerEvaluationContext)super.clone();
-	}
-
 	public ModelManager<?> getModelManager(){
 		return this.modelManager;
 	}

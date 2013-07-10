@@ -194,6 +194,8 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 					return Collections.singletonList(new SegmentResult(segment, targetField, result));
 				case MODEL_CHAIN:
 					{
+						Map<FieldName, Object> frame = new LinkedHashMap<FieldName, Object>();
+
 						List<FieldName> outputFields = evaluator.getOutputFields();
 
 						for(FieldName outputField : outputFields){
@@ -204,8 +206,10 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 							outputValue = EvaluatorUtil.decode(outputValue);
 
-							context.putArgument(outputField, outputValue);
+							frame.put(outputField, outputValue);
 						}
+
+						context.pushFrame(frame);
 
 						results.clear();
 					}

@@ -23,12 +23,11 @@ public class OutputUtil {
 	 */
 	static
 	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelManagerEvaluationContext context){
-		Map<FieldName, Object> result = new LinkedHashMap<FieldName, Object>(predictions);
-
-		// Create a modifiable context instance
-		context = context.clone();
-
 		ModelManager<?> modelManager = context.getModelManager();
+
+		Map<FieldName, Object> frame = new LinkedHashMap<FieldName, Object>();
+
+		context.pushFrame(frame);
 
 		Output output = modelManager.getOrCreateOutput();
 
@@ -63,7 +62,7 @@ public class OutputUtil {
 			switch(resultFeature){
 				case PREDICTED_VALUE:
 					{
-						value = getResult(value);
+						value = EvaluatorUtil.decode(value);
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -102,18 +101,16 @@ public class OutputUtil {
 				value = ParameterUtil.cast(dataType, value);
 			}
 
-			result.put(name, value);
-
 			// The result of one output field becomes available to other output fields
-			context.putArgument(name, value);
+			frame.put(name, value);
 		}
 
-		return result;
-	}
+		context.popFrame();
 
-	static
-	private Object getResult(Object object){
-		return EvaluatorUtil.decode(object);
+		Map<FieldName, Object> result = new LinkedHashMap<FieldName, Object>(predictions);
+		result.putAll(frame);
+
+		return result;
 	}
 
 	static
