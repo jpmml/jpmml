@@ -516,15 +516,8 @@ public class FunctionUtil {
 	public class ComparisonFunction implements Function {
 
 		abstract
-		public Boolean evaluate(int diff);
+		public Boolean evaluate(int order);
 
-		public <C extends Comparable<C>> Boolean evaluate(C left, C right){
-			return evaluate((left).compareTo(right));
-		}
-
-		@SuppressWarnings (
-			value = {"rawtypes", "unchecked"}
-		)
 		public Boolean evaluate(List<?> values){
 
 			if(values.size() != 2){
@@ -536,17 +529,13 @@ public class FunctionUtil {
 
 			if(left == null || right == null){
 				throw new EvaluationException();
-			} // End if
-
-			// Cast operands to common data type before comparison
-			if(!(left.getClass()).equals(right.getClass())){
-				DataType dataType = ParameterUtil.getResultDataType(left, right);
-
-				left = ParameterUtil.cast(dataType, left);
-				right = ParameterUtil.cast(dataType, right);
 			}
 
-			return evaluate((Comparable)left, (Comparable)right);
+			DataType dataType = ParameterUtil.getResultDataType(left, right);
+
+			int order = ParameterUtil.compare(dataType, left, right);
+
+			return evaluate(order);
 		}
 	}
 
@@ -554,48 +543,48 @@ public class FunctionUtil {
 		putFunction("equal", new ComparisonFunction(){
 
 			@Override
-			public Boolean evaluate(int diff){
-				return Boolean.valueOf(diff == 0);
+			public Boolean evaluate(int order){
+				return Boolean.valueOf(order == 0);
 			}
 		});
 
 		putFunction("notEqual", new ComparisonFunction(){
 
 			@Override
-			public Boolean evaluate(int diff){
-				return Boolean.valueOf(diff != 0);
+			public Boolean evaluate(int order){
+				return Boolean.valueOf(order != 0);
 			}
 		});
 
 		putFunction("lessThan", new ComparisonFunction(){
 
 			@Override
-			public Boolean evaluate(int diff){
-				return Boolean.valueOf(diff < 0);
+			public Boolean evaluate(int order){
+				return Boolean.valueOf(order < 0);
 			}
 		});
 
 		putFunction("lessOrEqual", new ComparisonFunction(){
 
 			@Override
-			public Boolean evaluate(int diff){
-				return Boolean.valueOf(diff <= 0);
+			public Boolean evaluate(int order){
+				return Boolean.valueOf(order <= 0);
 			}
 		});
 
 		putFunction("greaterThan", new ComparisonFunction(){
 
 			@Override
-			public Boolean evaluate(int diff){
-				return Boolean.valueOf(diff > 0);
+			public Boolean evaluate(int order){
+				return Boolean.valueOf(order > 0);
 			}
 		});
 
 		putFunction("greaterOrEqual", new ComparisonFunction(){
 
 			@Override
-			public Boolean evaluate(int diff){
-				return Boolean.valueOf(diff >= 0);
+			public Boolean evaluate(int order){
+				return Boolean.valueOf(order >= 0);
 			}
 		});
 	}

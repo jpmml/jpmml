@@ -301,7 +301,7 @@ public class ParameterUtil {
 	}
 
 	static
-	private boolean equals(DataType dataType, Object left, Object right){
+	boolean equals(DataType dataType, Object left, Object right){
 		return (cast(dataType, left)).equals(cast(dataType, right));
 	}
 
@@ -322,7 +322,7 @@ public class ParameterUtil {
 		value = {"cast", "rawtypes", "unchecked"}
 	)
 	static
-	private int compare(DataType dataType, Object left, Object right){
+	int compare(DataType dataType, Object left, Object right){
 		return ((Comparable)cast(dataType, left)).compareTo((Comparable)cast(dataType, right));
 	}
 
@@ -387,7 +387,7 @@ public class ParameterUtil {
 			return left;
 		} // End if
 
-		DataType[] dataTypes = ParameterUtil.precedenceSequence;
+		List<DataType> dataTypes = ParameterUtil.precedenceSequence;
 		for(DataType dataType : dataTypes){
 
 			if((dataType).equals(left) || (dataType).equals(right)){
@@ -536,5 +536,5 @@ public class ParameterUtil {
 		}
 	}
 
-	private static final DataType[] precedenceSequence = {DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER};
+	private static final List<DataType> precedenceSequence = Arrays.asList(DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER);
 }
