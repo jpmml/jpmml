@@ -131,10 +131,39 @@ public class FunctionUtil {
 	}
 
 	static
+	private Number cast(DataType dataType, Number number){
+
+		switch(dataType){
+			case INTEGER:
+				if(number instanceof Integer){
+					return number;
+				}
+				return Integer.valueOf(number.intValue());
+			case FLOAT:
+				if(number instanceof Float){
+					return number;
+				}
+				return Float.valueOf(number.floatValue());
+			case DOUBLE:
+				if(number instanceof Double){
+					return number;
+				}
+				return Double.valueOf(number.doubleValue());
+			default:
+				break;
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
 	private DataType integerToDouble(DataType dataType){
 
-		if((DataType.INTEGER).equals(dataType)){
-			return DataType.DOUBLE;
+		switch(dataType){
+			case INTEGER:
+				return DataType.DOUBLE;
+			default:
+				break;
 		}
 
 		return dataType;
@@ -153,10 +182,6 @@ public class FunctionUtil {
 
 		abstract
 		public Number evaluate(Number left, Number right);
-
-		public Number cast(DataType dataType, Number result){
-			return asNumber(ParameterUtil.cast(dataType, result));
-		}
 
 		public Number evaluate(List<?> values){
 
@@ -231,8 +256,8 @@ public class FunctionUtil {
 		abstract
 		public StorelessUnivariateStatistic createStatistic();
 
-		public Number cast(DataType dataType, Double result){
-			return asNumber(ParameterUtil.cast(dataType, result));
+		public DataType getResultType(DataType dataType){
+			return dataType;
 		}
 
 		public Number evaluate(List<?> values){
@@ -261,7 +286,7 @@ public class FunctionUtil {
 				throw new MissingResultException(null);
 			}
 
-			return cast(dataType, statistic.getResult());
+			return cast(getResultType(dataType), statistic.getResult());
 		}
 	}
 
@@ -290,8 +315,8 @@ public class FunctionUtil {
 			}
 
 			@Override
-			public Number cast(DataType dataType, Double result){
-				return super.cast(integerToDouble(dataType), result);
+			public DataType getResultType(DataType dataType){
+				return integerToDouble(dataType);
 			}
 		});
 
@@ -319,8 +344,8 @@ public class FunctionUtil {
 		abstract
 		public Double evaluate(Number value);
 
-		public Number cast(DataType dataType, Number result){
-			return asNumber(ParameterUtil.cast(dataType, result));
+		public DataType getResultType(DataType dataType){
+			return dataType;
 		}
 
 		public Number evaluate(List<?> values){
@@ -333,7 +358,7 @@ public class FunctionUtil {
 
 			DataType dataType = ParameterUtil.getDataType(value);
 
-			return cast(dataType, evaluate(asNumber(value)));
+			return cast(getResultType(dataType), evaluate(asNumber(value)));
 		}
 	}
 
@@ -342,8 +367,8 @@ public class FunctionUtil {
 	public class FpMathFunction extends MathFunction {
 
 		@Override
-		public Number cast(DataType dataType, Number result){
-			return super.cast(integerToDouble(dataType), result);
+		public DataType getResultType(DataType dataType){
+			return integerToDouble(dataType);
 		}
 	}
 
@@ -403,7 +428,7 @@ public class FunctionUtil {
 
 				Double result = Math.pow(left.doubleValue(), right.doubleValue());
 
-				return asNumber(ParameterUtil.cast(dataType, result));
+				return cast(dataType, result);
 			}
 		});
 
@@ -422,7 +447,7 @@ public class FunctionUtil {
 
 				Integer result = (left.doubleValue() > right.doubleValue()) ? 1 : 0;
 
-				return asNumber(ParameterUtil.cast(dataType, result));
+				return cast(dataType, result);
 			}
 		});
 

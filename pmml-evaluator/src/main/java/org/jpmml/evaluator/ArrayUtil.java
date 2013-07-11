@@ -20,7 +20,9 @@ public class ArrayUtil {
 
 		validateDataType(value);
 
-		boolean result = values.contains(ParameterUtil.toString(value));
+		String stringValue = (String)ParameterUtil.cast(DataType.STRING, value);
+
+		boolean result = values.contains(stringValue);
 
 		return Boolean.valueOf(result);
 	}
@@ -31,7 +33,9 @@ public class ArrayUtil {
 
 		validateDataType(value);
 
-		boolean result = !values.contains(ParameterUtil.toString(value));
+		String stringValue = (String)ParameterUtil.cast(DataType.STRING, value);
+
+		boolean result = !values.contains(stringValue);
 
 		return Boolean.valueOf(result);
 	}

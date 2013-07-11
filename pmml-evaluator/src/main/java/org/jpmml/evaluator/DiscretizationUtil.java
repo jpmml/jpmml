@@ -16,7 +16,7 @@ public class DiscretizationUtil {
 
 	static
 	public String discretize(Discretize discretize, Object value){
-		Double doubleValue = ParameterUtil.toDouble(value);
+		Double doubleValue = (Double)ParameterUtil.cast(DataType.DOUBLE, value);
 
 		List<DiscretizeBin> bins = discretize.getDiscretizeBins();
 		for(DiscretizeBin bin : bins){

@@ -333,11 +333,11 @@ public class ParameterUtil {
 			case STRING:
 				return string;
 			case INTEGER:
-				return new Integer(string);
+				return Integer.valueOf(string);
 			case FLOAT:
-				return new Float(string);
+				return Float.valueOf(string);
 			case DOUBLE:
-				return new Double(string);
+				return Double.valueOf(string);
 			default:
 				break;
 		}
@@ -423,13 +423,13 @@ public class ParameterUtil {
 	 * @see DataType#STRING
 	 */
 	static
-	public String toString(Object value){
+	private String toString(Object value){
 
 		if(value instanceof String){
 			return (String)value;
 		} else
 
-		if(value instanceof Number){
+		if((value instanceof Double) || (value instanceof Float) || (value instanceof Integer)){
 			Number number = (Number)value;
 
 			return number.toString();
@@ -444,8 +444,9 @@ public class ParameterUtil {
 	 * @see DataType#INTEGER
 	 */
 	static
-	public Integer toInteger(Object value){
+	private Integer toInteger(Object value){
 
+		// XXX
 		if(value instanceof String){
 			String string = (String)value;
 
@@ -454,12 +455,6 @@ public class ParameterUtil {
 
 		if(value instanceof Integer){
 			return (Integer)value;
-		} else
-
-		if(value instanceof Number){
-			Number number = (Number)value;
-
-			return Integer.valueOf(number.intValue());
 		}
 
 		throw new EvaluationException();
@@ -471,8 +466,9 @@ public class ParameterUtil {
 	 * @see DataType#FLOAT
 	 */
 	static
-	public Float toFloat(Object value){
+	private Float toFloat(Object value){
 
+		// XXX
 		if(value instanceof String){
 			String string = (String)value;
 
@@ -483,7 +479,7 @@ public class ParameterUtil {
 			return (Float)value;
 		} else
 
-		if(value instanceof Number){
+		if(value instanceof Integer){
 			Number number = (Number)value;
 
 			return Float.valueOf(number.floatValue());
@@ -498,8 +494,9 @@ public class ParameterUtil {
 	 * @see DataType#DOUBLE
 	 */
 	static
-	public Double toDouble(Object value){
+	private Double toDouble(Object value){
 
+		// XXX
 		if(value instanceof String){
 			String string = (String)value;
 
@@ -510,7 +507,7 @@ public class ParameterUtil {
 			return (Double)value;
 		} else
 
-		if(value instanceof Number){
+		if((value instanceof Float) || (value instanceof Integer)){
 			Number number = (Number)value;
 
 			return Double.valueOf(number.doubleValue());
