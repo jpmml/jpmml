@@ -27,6 +27,13 @@ public class ModelManagerEvaluationContext extends EvaluationContext {
 		return modelManager.resolveField(name);
 	}
 
+	@Override
+	public DefineFunction resolveFunction(String name){
+		ModelManager<?> modelManager = getModelManager();
+
+		return modelManager.resolveFunction(name);
+	}
+
 	public ModelManager<?> getModelManager(){
 		return this.modelManager;
 	}

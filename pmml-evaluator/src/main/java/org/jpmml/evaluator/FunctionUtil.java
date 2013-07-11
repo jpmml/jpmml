@@ -20,13 +20,64 @@ public class FunctionUtil {
 	}
 
 	static
-	public Object evaluate(Apply apply, List<?> values){
-		Function function = getFunction(apply.getFunction());
+	public Object evaluate(Apply apply, List<?> values, EvaluationContext context){
+		String name = apply.getFunction();
+
+		Function function = getFunction(name);
 		if(function == null){
-			throw new UnsupportedFeatureException(apply);
+			DefineFunction defineFunction = context.resolveFunction(name);
+			if(defineFunction == null){
+				throw new UnsupportedFeatureException(apply);
+			}
+
+			return evaluate(defineFunction, values, context);
 		}
 
 		return function.evaluate(values);
+	}
+
+	static
+	public Object evaluate(DefineFunction defineFunction, List<?> values, EvaluationContext context){
+		List<ParameterField> parameterFields = defineFunction.getParameterFields();
+
+		if(parameterFields.size() < 1){
+			throw new InvalidFeatureException(defineFunction);
+		} // End if
+
+		if(parameterFields.size() != values.size()){
+			throw new EvaluationException();
+		}
+
+		Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
+
+		for(int i = 0; i < parameterFields.size(); i++){
+			ParameterField parameterField = parameterFields.get(i);
+
+			Object value = values.get(i);
+
+			DataType dataType = parameterField.getDataType();
+			if(dataType != null){
+				value = ParameterUtil.cast(dataType, value);
+			}
+
+			arguments.put(parameterField.getName(), value);
+		}
+
+		Expression expression = defineFunction.getExpression();
+		if(expression == null){
+			throw new InvalidFeatureException(defineFunction);
+		}
+
+		FunctionEvaluationContext functionContext = new FunctionEvaluationContext(context, arguments);
+
+		Object result = ExpressionUtil.evaluate(expression, functionContext);
+
+		DataType dataType = defineFunction.getDataType();
+		if(dataType != null){
+			result = ParameterUtil.cast(dataType, result);
+		}
+
+		return result;
 	}
 
 	static

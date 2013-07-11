@@ -25,4 +25,9 @@ public class LocalEvaluationContext extends EvaluationContext {
 	public DerivedField resolveField(FieldName name){
 		return null;
 	}
+
+	@Override
+	public DefineFunction resolveFunction(String name){
+		return null;
+	}
 }

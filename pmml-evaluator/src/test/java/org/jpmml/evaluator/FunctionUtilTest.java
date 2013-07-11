@@ -214,6 +214,6 @@ public class FunctionUtilTest {
 	private Object evaluate(String function, List<?> values){
 		Apply apply = new Apply(function);
 
-		return FunctionUtil.evaluate(apply, values);
+		return FunctionUtil.evaluate(apply, values, new LocalEvaluationContext());
 	}
 }

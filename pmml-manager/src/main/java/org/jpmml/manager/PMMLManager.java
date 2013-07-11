@@ -52,6 +52,20 @@ public class PMMLManager implements Serializable {
 		return find(derivedFields, name);
 	}
 
+	public DefineFunction resolveFunction(String name){
+		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
+
+		List<DefineFunction> defineFunctions = transformationDictionary.getDefineFunctions();
+		for(DefineFunction defineFunction : defineFunctions){
+
+			if((defineFunction.getName()).equals(name)){
+				return defineFunction;
+			}
+		}
+
+		return null;
+	}
+
 	public PMML getPmml(){
 		return this.pmml;
 	}

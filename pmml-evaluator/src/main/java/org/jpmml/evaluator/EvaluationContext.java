@@ -20,6 +20,9 @@ public class EvaluationContext {
 	abstract
 	public DerivedField resolveField(FieldName name);
 
+	abstract
+	public DefineFunction resolveFunction(String name);
+
 	public Map<FieldName, ?> getArguments(){
 		Map<FieldName, Object> result = new LinkedHashMap<FieldName, Object>();
 

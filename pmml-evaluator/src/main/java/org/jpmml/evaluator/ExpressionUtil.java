@@ -163,7 +163,7 @@ public class ExpressionUtil {
 		Object result;
 
 		try {
-			result = FunctionUtil.evaluate(apply, values);
+			result = FunctionUtil.evaluate(apply, values, context);
 		} catch(InvalidResultException ire){
 			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
 
