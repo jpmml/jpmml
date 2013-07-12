@@ -6,7 +6,7 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.*;
 
 abstract
-public class TreeModelEvaluatorTest extends ModelManagerTest {
+public class TreeModelEvaluatorTest extends PMMLTest {
 
 	public TreeModelEvaluator createEvaluator() throws Exception {
 		PMML pmml = loadPMML(getClass());

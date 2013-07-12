@@ -10,11 +10,11 @@ import org.dmg.pmml.*;
 public class LocalEvaluationContext extends EvaluationContext {
 
 	public LocalEvaluationContext(){
-		super(Collections.<FieldName, Object>emptyMap());
+		super();
 	}
 
 	public LocalEvaluationContext(FieldName name, Object value){
-		super(Collections.<FieldName, Object>singletonMap(name, value));
+		this(Collections.<FieldName, Object>singletonMap(name, value));
 	}
 
 	public LocalEvaluationContext(Map<FieldName, ?> arguments){

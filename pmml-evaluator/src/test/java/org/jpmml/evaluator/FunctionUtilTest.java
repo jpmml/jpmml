@@ -207,13 +207,18 @@ public class FunctionUtilTest {
 
 	static
 	private Object evaluate(String function, Object... values){
-		return evaluate(function, Arrays.asList(values));
+		return apply(function, Arrays.asList(values), new LocalEvaluationContext());
 	}
 
 	static
 	private Object evaluate(String function, List<?> values){
+		return apply(function, values, new LocalEvaluationContext());
+	}
+
+	static
+	private Object apply(String function, List<?> values, EvaluationContext context){
 		Apply apply = new Apply(function);
 
-		return FunctionUtil.evaluate(apply, values, new LocalEvaluationContext());
+		return FunctionUtil.evaluate(apply, values, context);
 	}
 }

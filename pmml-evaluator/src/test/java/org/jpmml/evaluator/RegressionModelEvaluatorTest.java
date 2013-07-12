@@ -6,7 +6,7 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.*;
 
 abstract
-public class RegressionModelEvaluatorTest extends ModelManagerTest {
+public class RegressionModelEvaluatorTest extends PMMLTest {
 
 	public RegressionModelEvaluator createEvaluator() throws Exception {
 		PMML pmml = loadPMML(getClass());

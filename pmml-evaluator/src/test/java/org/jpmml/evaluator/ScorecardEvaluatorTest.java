@@ -8,7 +8,7 @@ import java.util.*;
 import org.dmg.pmml.*;
 
 abstract
-public class ScorecardEvaluatorTest extends ModelManagerTest {
+public class ScorecardEvaluatorTest extends PMMLTest {
 
 	public ScorecardEvaluator createEvaluator() throws Exception {
 		PMML pmml = loadPMML(getClass());

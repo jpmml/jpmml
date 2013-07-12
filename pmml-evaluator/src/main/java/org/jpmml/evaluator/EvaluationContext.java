@@ -13,6 +13,9 @@ public class EvaluationContext {
 	private Deque<Map<FieldName, ?>> stack = new ArrayDeque<Map<FieldName, ?>>();
 
 
+	public EvaluationContext(){
+	}
+
 	public EvaluationContext(Map<FieldName, ?> arguments){
 		pushFrame(arguments);
 	}

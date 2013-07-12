@@ -21,15 +21,17 @@ public class FunctionEvaluationContext extends EvaluationContext {
 	@Override
 	public DerivedField resolveField(FieldName name){
 		// "The function body must not refer to fields other than the parameter fields"
-		throw new EvaluationException();
+		return null;
 	}
 
 	@Override
 	public DefineFunction resolveFunction(String name){
-		return getParent().resolveFunction(name);
+		EvaluationContext parent = getParent();
+
+		return parent.resolveFunction(name);
 	}
 
-	EvaluationContext getParent(){
+	public EvaluationContext getParent(){
 		return this.parent;
 	}
 

@@ -8,10 +8,10 @@ import java.io.*;
 import org.dmg.pmml.*;
 
 abstract
-public class ModelManagerTest {
+public class PMMLTest {
 
 	static
-	public PMML loadPMML(Class<? extends ModelManagerTest> clazz) throws Exception {
+	public PMML loadPMML(Class<? extends PMMLTest> clazz) throws Exception {
 		InputStream is = clazz.getResourceAsStream("/pmml/" + clazz.getSimpleName() + ".pmml");
 
 		try {
