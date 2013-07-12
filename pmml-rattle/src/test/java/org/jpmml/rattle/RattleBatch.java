@@ -3,18 +3,11 @@
  */
 package org.jpmml.rattle;
 
-import java.io.*;
-
 import org.jpmml.evaluator.*;
 
-public class RattleBatch extends LocalBatch {
+public class RattleBatch extends ArchiveBatch {
 
 	public RattleBatch(String name, String dataset){
 		super(name, dataset);
-	}
-
-	@Override
-	public InputStream open(String path){
-		return (RattleBatch.class).getResourceAsStream(path);
 	}
 }

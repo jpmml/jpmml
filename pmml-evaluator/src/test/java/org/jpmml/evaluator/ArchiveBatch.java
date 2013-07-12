@@ -6,20 +6,23 @@ package org.jpmml.evaluator;
 import java.io.*;
 
 abstract
-public class LocalBatch implements Batch {
+public class ArchiveBatch implements Batch {
 
 	private String name = null;
 
 	private String dataset = null;
 
 
-	public LocalBatch(String name, String dataset){
+	public ArchiveBatch(String name, String dataset){
 		setName(name);
 		setDataset(dataset);
 	}
 
-	abstract
-	public InputStream open(String path);
+	public InputStream open(String path){
+		Class<?> clazz = getClass();
+
+		return clazz.getResourceAsStream(path);
+	}
 
 	public InputStream getModel(){
 		return open("/pmml/" + (getName() + getDataset()) + ".pmml");
