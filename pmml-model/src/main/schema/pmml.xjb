@@ -1029,12 +1029,6 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
-		<jaxb:bindings node="//xsd:simpleType[@name='ELEMENT-ID']">
-			<jaxb:class
-				name="ElementId"
-			/>
-		</jaxb:bindings>
-
 		<jaxb:bindings node="//xsd:simpleType[@name='FIELD-NAME']">
 			<jaxb:class
 				name="FieldName"
