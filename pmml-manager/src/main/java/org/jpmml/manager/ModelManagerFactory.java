@@ -12,24 +12,24 @@ public class ModelManagerFactory {
 
 	public ModelManager<? extends Model> getModelManager(PMML pmml, Model model){
 
-		if(model instanceof RegressionModel){
-			return new RegressionModelManager(pmml, (RegressionModel)model);
-		} else
-
-		if(model instanceof TreeModel){
-			return new TreeModelManager(pmml, (TreeModel)model);
+		if(model instanceof MiningModel){
+			return new MiningModelManager(pmml, (MiningModel)model);
 		} else
 
 		if(model instanceof NeuralNetwork){
 			return new NeuralNetworkManager(pmml, (NeuralNetwork)model);
 		} else
 
-		if(model instanceof MiningModel){
-			return new MiningModelManager(pmml, (MiningModel)model);
+		if(model instanceof RegressionModel){
+			return new RegressionModelManager(pmml, (RegressionModel)model);
 		} else
 
 		if(model instanceof Scorecard){
 			return new ScorecardManager(pmml, (Scorecard)model);
+		} else
+
+		if(model instanceof TreeModel){
+			return new TreeModelManager(pmml, (TreeModel)model);
 		}
 
 		throw new UnsupportedFeatureException(model);
