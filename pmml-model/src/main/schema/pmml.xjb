@@ -102,6 +102,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='AssociationRule']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Entity"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='Attribute']/xsd:complexType">
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_1"/>
@@ -753,6 +759,12 @@ Copyright (c) 2009 University of Tartu
 			<java:unsupportedProperty
 				property="output"
 				name="org.dmg.pmml.Output"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='SequenceRule']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Entity"
 			/>
 		</jaxb:bindings>
 
