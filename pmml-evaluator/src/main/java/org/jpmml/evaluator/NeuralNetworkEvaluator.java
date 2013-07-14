@@ -11,6 +11,9 @@ import org.dmg.pmml.*;
 
 public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Evaluator {
 
+	private Map<String, Entity> entities = null;
+
+
 	public NeuralNetworkEvaluator(PMML pmml){
 		super(pmml);
 	}
@@ -21,6 +24,16 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 	public NeuralNetworkEvaluator(NeuralNetworkManager parent){
 		this(parent.getPmml(), parent.getModel());
+	}
+
+	@Override
+	public Map<String, Entity> getEntities(){
+
+		if(this.entities == null){
+			this.entities = super.getEntities();
+		}
+
+		return this.entities;
 	}
 
 	public Object prepare(FieldName name, Object value){

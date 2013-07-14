@@ -11,6 +11,9 @@ import org.dmg.pmml.*;
 
 public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
+	private Map<String, Node> entities = null;
+
+
 	public TreeModelEvaluator(PMML pmml){
 		super(pmml);
 	}
@@ -21,6 +24,16 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 	public TreeModelEvaluator(TreeModelManager parent){
 		this(parent.getPmml(), parent.getModel());
+	}
+
+	@Override
+	public Map<String, Node> getEntities(){
+
+		if(this.entities == null){
+			this.entities = super.getEntities();
+		}
+
+		return this.entities;
 	}
 
 	public Object prepare(FieldName name, Object value){
