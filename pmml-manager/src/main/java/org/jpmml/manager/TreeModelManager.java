@@ -36,10 +36,6 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 		return this.treeModel;
 	}
 
-	public TreeModel createClassificationModel(){
-		return createModel(MiningFunctionType.CLASSIFICATION);
-	}
-
 	/**
 	 * @see #getModel()
 	 */
