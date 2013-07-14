@@ -6,13 +6,13 @@
   <Timestamp>2013-07-13 23:24:29</Timestamp>
  </Header>
  <DataDictionary numberOfFields="2">
-  <DataField name="transaction" optype="categorical" dataType="string"/>
-  <DataField name="item" optype="categorical" dataType="string"/>
+  <DataField name="Transaction" optype="categorical" dataType="string"/>
+  <DataField name="Product" optype="categorical" dataType="string"/>
  </DataDictionary>
  <AssociationModel functionName="associationRules" numberOfTransactions="939" numberOfItems="11" minimumSupport="0.005" minimumConfidence="0.8" numberOfItemsets="124" numberOfRules="128">
   <MiningSchema>
-   <MiningField name="transaction"/>
-   <MiningField name="item"/>
+   <MiningField name="Transaction" usageType="group"/>
+   <MiningField name="Product"/>
   </MiningSchema>
   <Item id="1" value="beer"/>
   <Item id="2" value="cannedmeat"/>
