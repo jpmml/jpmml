@@ -12,6 +12,10 @@ public class ModelManagerFactory {
 
 	public ModelManager<? extends Model> getModelManager(PMML pmml, Model model){
 
+		if(model instanceof AssociationModel){
+			return new AssociationModelManager(pmml, (AssociationModel)model);
+		} else
+
 		if(model instanceof MiningModel){
 			return new MiningModelManager(pmml, (MiningModel)model);
 		} else

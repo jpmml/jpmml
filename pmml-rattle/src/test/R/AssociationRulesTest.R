@@ -6,8 +6,10 @@ shoppingData = readCsv("csv/Shopping.csv")
 # Remove 2 duplicate rows
 shoppingData = unique(shoppingData)
 
-transactions = as(split(shoppingData[, "Product"], shoppingData[, "Transaction"]), "transactions")
+baskets = split(shoppingData[, "Product"], shoppingData[, "Transaction"])
 
-apriori = apriori(transactions, parameter = list(support = 5 / 1000))
+transactions = as(baskets, "transactions")
 
-saveXML(pmml(apriori), "pmml/AssociationRulesShopping.pmml")
+rules = apriori(transactions, parameter = list(support = 5 / 1000))
+
+saveXML(pmml(rules), "pmml/AssociationRulesShopping.pmml")

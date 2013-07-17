@@ -14,6 +14,11 @@
    <MiningField name="Transaction" usageType="group"/>
    <MiningField name="Product"/>
   </MiningSchema>
+  <Output>
+   <OutputField name="Recommendation" rankBasis="lift" isMultiValued="1" rank="0" algorithm="recommendation" feature="ruleValue" ruleFeature="ruleId"/>
+   <OutputField name="Exclusive_Recommendation" rankBasis="lift" isMultiValued="1" rank="0" algorithm="exclusiveRecommendation" feature="ruleValue" ruleFeature="ruleId"/>
+   <OutputField name="Rule_Association" rankBasis="lift" isMultiValued="1" rank="0" algorithm="ruleAssociation" feature="ruleValue" ruleFeature="ruleId"/>
+  </Output>
   <Item id="1" value="beer"/>
   <Item id="2" value="cannedmeat"/>
   <Item id="3" value="cannedveg"/>

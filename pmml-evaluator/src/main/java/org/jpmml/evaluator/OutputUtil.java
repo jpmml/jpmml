@@ -41,6 +41,7 @@ public class OutputUtil {
 				case PROBABILITY:
 				case ENTITY_ID:
 				case REASON_CODE:
+				case RULE_VALUE:
 					{
 						FieldName targetField = outputField.getTargetField();
 						if(targetField == null){
@@ -78,7 +79,7 @@ public class OutputUtil {
 					break;
 				case PROBABILITY:
 					{
-						value = getProbability(value, outputField.getValue());
+						value = getProbability(value, outputField);
 					}
 					break;
 				case ENTITY_ID:
@@ -88,7 +89,12 @@ public class OutputUtil {
 					break;
 				case REASON_CODE:
 					{
-						value = getReasonCode(value, outputField.getRank());
+						value = getReasonCode(value, outputField);
+					}
+					break;
+				case RULE_VALUE:
+					{
+						value = getRuleValue(value, outputField);
 					}
 					break;
 				default:
@@ -115,7 +121,7 @@ public class OutputUtil {
 	}
 
 	static
-	private Double getProbability(Object object, String value){
+	private Double getProbability(Object object, final OutputField outputField){
 
 		if(!(object instanceof HasProbability)){
 			throw new EvaluationException();
@@ -123,7 +129,7 @@ public class OutputUtil {
 
 		HasProbability hasProbability = (HasProbability)object;
 
-		return hasProbability.getProbability(value);
+		return hasProbability.getProbability(outputField.getValue());
 	}
 
 	static
@@ -139,7 +145,7 @@ public class OutputUtil {
 	}
 
 	static
-	public String getReasonCode(Object object, int rank){
+	public String getReasonCode(Object object, final OutputField outputField){
 
 		if(!(object instanceof HasReasonCode)){
 			throw new EvaluationException();
@@ -147,6 +153,143 @@ public class OutputUtil {
 
 		HasReasonCode hasReasonCode = (HasReasonCode)object;
 
+		int rank = outputField.getRank();
+		if(rank <= 0){
+			throw new InvalidFeatureException(outputField);
+		}
+
 		return hasReasonCode.getReasonCode(rank);
+	}
+
+	static
+	public Object getRuleValue(Object object, final OutputField outputField){
+
+		if(!(object instanceof HasAssociationRules)){
+			throw new EvaluationException();
+		}
+
+		HasAssociationRules hasAssociationRules = (HasAssociationRules)object;
+
+		List<AssociationRule> associationRules = hasAssociationRules.getAssociationRules(outputField.getAlgorithm());
+
+		Comparator<AssociationRule> comparator = new Comparator<AssociationRule>(){
+
+			private OutputField.RankBasis rankBasis = outputField.getRankBasis();
+
+			private OutputField.RankOrder rankOrder = outputField.getRankOrder();
+
+
+			public int compare(AssociationRule left, AssociationRule right){
+				int order;
+
+				switch(this.rankBasis){
+					case CONFIDENCE:
+						order = (left.getConfidence()).compareTo(right.getConfidence());
+						break;
+					case SUPPORT:
+						order = (left.getSupport()).compareTo(right.getSupport());
+						break;
+					case LIFT:
+						order = (left.getLift()).compareTo(right.getLift());
+						break;
+					case LEVERAGE:
+						order = (left.getLeverage()).compareTo(right.getLeverage());
+						break;
+					case AFFINITY:
+						order = (left.getAffinity()).compareTo(right.getAffinity());
+						break;
+					default:
+						throw new UnsupportedFeatureException(outputField, this.rankBasis);
+				} // End switch
+
+				switch(this.rankOrder){
+					case ASCENDING:
+						return order;
+					case DESCENDING:
+						return -order;
+					default:
+						throw new UnsupportedFeatureException(outputField, this.rankOrder);
+				}
+			}
+		};
+		Collections.sort(associationRules, comparator);
+
+		String isMultiValued = outputField.getIsMultiValued();
+
+		// Return a single result
+		if("0".equals(isMultiValued)){
+
+			int rank = outputField.getRank();
+			if(rank <= 0){
+				throw new InvalidFeatureException(outputField);
+			}
+
+			int index = (rank - 1);
+			if(index < associationRules.size()){
+				AssociationRule associationRule = associationRules.get(index);
+
+				return getRuleFeature(associationRule, outputField);
+			} else
+
+			{
+				return null;
+			}
+		} else
+
+		// Return multiple results
+		if("1".equals(isMultiValued)){
+			int size;
+
+			int rank = outputField.getRank();
+			if(rank < 0){
+				throw new InvalidFeatureException(outputField);
+			} else
+
+			// "a zero value indicates that all output values are to be returned"
+			if(rank == 0){
+				size = associationRules.size();
+			} else
+
+			// "a positive value indicates the number of output values to be returned"
+			{
+				size = Math.min(rank, associationRules.size());
+			}
+
+			List<Object> result = new ArrayList<Object>();
+
+			associationRules = associationRules.subList(0, size);
+			for(AssociationRule associationRule : associationRules){
+				result.add(getRuleFeature(associationRule, outputField));
+			}
+
+			return result;
+		} else
+
+		{
+			throw new InvalidFeatureException(outputField);
+		}
+	}
+
+	static
+	private Object getRuleFeature(AssociationRule associationRule, OutputField outputField){
+		RuleFeatureType ruleFeature = outputField.getRuleFeature();
+
+		switch(ruleFeature){
+			case RULE_ID:
+				// XXX
+				return associationRule.getId();
+			case CONFIDENCE:
+				return associationRule.getConfidence();
+			case SUPPORT:
+				return associationRule.getSupport();
+			case LIFT:
+				return associationRule.getLift();
+			case LEVERAGE:
+				return associationRule.getLeverage();
+			case AFFINITY:
+				return associationRule.getAffinity();
+			default:
+				throw new UnsupportedFeatureException(outputField, ruleFeature);
+		}
 	}
 }

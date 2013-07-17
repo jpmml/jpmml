@@ -35,52 +35,88 @@ public class BatchUtil {
 		List<Map<FieldName, String>> input = CsvUtil.load(batch.getInput());
 		List<Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 
-		if(input.size() != output.size()){
-			throw new RuntimeException();
-		}
-
 		Evaluator evaluator = (Evaluator)modelManager;
 
+		List<Map<FieldName, Object>> table = new ArrayList<Map<FieldName, Object>>();
+
 		List<FieldName> activeFields = evaluator.getActiveFields();
+		List<FieldName> groupFields = evaluator.getGroupFields();
 		List<FieldName> predictedFields = evaluator.getPredictedFields();
 		List<FieldName> outputFields = evaluator.getOutputFields();
 
-		boolean success = true;
+		List<FieldName> inputFields = new ArrayList<FieldName>();
+		inputFields.addAll(activeFields);
+		inputFields.addAll(groupFields);
 
 		for(int i = 0; i < input.size(); i++){
 			Map<FieldName, String> inputRow = input.get(i);
-			Map<FieldName, String> outputRow = output.get(i);
 
 			Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
 
-			for(FieldName activeField : activeFields){
-				String inputCell = inputRow.get(activeField);
+			for(FieldName inputField : inputFields){
+				String inputCell = inputRow.get(inputField);
 
-				Object inputValue = evaluator.prepare(activeField, inputCell);
+				Object inputValue = evaluator.prepare(inputField, inputCell);
 
-				arguments.put(activeField, inputValue);
+				arguments.put(inputField, inputValue);
 			}
 
-			Map<FieldName, ?> result = evaluator.evaluate(arguments);
-
-			for(FieldName predictedField : predictedFields){
-				String outputCell = outputRow.get(predictedField);
-
-				Object predictedValue = EvaluatorUtil.decode(result.get(predictedField));
-
-				success &= acceptable(outputCell, predictedValue);
-			}
-
-			for(FieldName outputField : outputFields){
-				String outputCell = outputRow.get(outputField);
-
-				Object computedValue = result.get(outputField);
-
-				success &= (outputCell != null ? acceptable(outputCell, computedValue) : acceptable(computedValue));
-			}
+			table.add(arguments);
 		}
 
-		return success;
+		if(groupFields.size() == 1){
+			FieldName groupField = groupFields.get(0);
+
+			table = EvaluatorUtil.groupRows(groupField, table);
+		} else
+
+		if(groupFields.size() > 1){
+			throw new EvaluationException();
+		} // End if
+
+		if(output.isEmpty()){
+
+			for(int i = 0; i < table.size(); i++){
+				Map<FieldName, ?> arguments = table.get(i);
+
+				evaluator.evaluate(arguments);
+			}
+
+			return true;
+		} else
+
+		{
+			if(table.size() != output.size()){
+				throw new EvaluationException();
+			}
+
+			boolean success = true;
+
+			for(int i = 0; i < output.size(); i++){
+				Map<FieldName, String> outputRow = output.get(i);
+
+				Map<FieldName, ?> arguments = table.get(i);
+
+				Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+				for(FieldName predictedField : predictedFields){
+					String outputCell = outputRow.get(predictedField);
+
+					Object predictedValue = EvaluatorUtil.decode(result.get(predictedField));
+
+					success &= acceptable(outputCell, predictedValue);
+				}
+
+				for(FieldName outputField : outputFields){
+					String outputCell = outputRow.get(outputField);
+
+					Object computedValue = result.get(outputField);
+
+					success &= (outputCell != null ? acceptable(outputCell, computedValue) : acceptable(computedValue));
+				}
+			}
+			return success;
+		}
 	}
 
 	static

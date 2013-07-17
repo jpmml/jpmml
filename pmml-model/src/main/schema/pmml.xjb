@@ -623,6 +623,24 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='OutputField']/xsd:complexType/xsd:attribute[@name='algorithm']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				name="Algorithm"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='OutputField']/xsd:complexType/xsd:attribute[@name='rankBasis']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				name="RankBasis"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='OutputField']/xsd:complexType/xsd:attribute[@name='rankOrder']/xsd:simpleType">
+			<jaxb:typesafeEnumClass
+				name="RankOrder"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='ParameterField']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Field"

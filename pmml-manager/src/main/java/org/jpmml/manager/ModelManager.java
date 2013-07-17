@@ -35,18 +35,22 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return getMiningFields(FieldUsageType.ACTIVE);
 	}
 
-	public FieldName getTargetField(){
-		List<FieldName> fields = getPredictedFields();
+	public List<FieldName> getGroupFields(){
+		return getMiningFields(FieldUsageType.GROUP);
+	}
 
-		if(fields.size() < 1){
+	public FieldName getTargetField(){
+		List<FieldName> predictedFields = getPredictedFields();
+
+		if(predictedFields.size() < 1){
 			throw new InvalidFeatureException("No predicted fields", getMiningSchema());
 		} else
 
-		if(fields.size() > 1){
+		if(predictedFields.size() > 1){
 			throw new InvalidFeatureException("Too many predicted fields", getMiningSchema());
 		}
 
-		return fields.get(0);
+		return predictedFields.get(0);
 	}
 
 	public List<FieldName> getPredictedFields(){

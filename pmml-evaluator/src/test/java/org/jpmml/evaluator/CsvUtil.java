@@ -19,10 +19,14 @@ public class CsvUtil {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
 
+		table:
 		try {
 			List<FieldName> keys = new ArrayList<FieldName>();
 
 			String headerLine = reader.readLine();
+			if(headerLine == null){
+				break table;
+			}
 
 			List<String> headerCells = parseLine(headerLine);
 			for(int i = 0; i < headerCells.size(); i++){

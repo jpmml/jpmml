@@ -86,4 +86,54 @@ public class EvaluatorUtil {
 
 		return result;
 	}
+
+	@SuppressWarnings (
+		value = {"rawtypes", "unchecked"}
+	)
+	static
+	public List<Map<FieldName, Object>> groupRows(FieldName groupField, List<Map<FieldName, Object>> table){
+		Map<Object, Map<FieldName, List<Object>>> groupedRows = new LinkedHashMap<Object, Map<FieldName, List<Object>>>();
+
+		for(int i = 0; i < table.size(); i++){
+			Map<FieldName, ?> row = table.get(i);
+
+			Object groupValue = row.get(groupField);
+
+			Map<FieldName, List<Object>> groupedRow = groupedRows.get(groupValue);
+			if(groupedRow == null){
+				groupedRow = new LinkedHashMap<FieldName, List<Object>>();
+
+				groupedRows.put(groupValue, groupedRow);
+			}
+
+			Collection<? extends Map.Entry<FieldName, ?>> entries = row.entrySet();
+			for(Map.Entry<FieldName, ?> entry : entries){
+				FieldName key = entry.getKey();
+				Object value = entry.getValue();
+
+				// Drop the group column from the table
+				if((groupField).equals(key)){
+					continue;
+				}
+
+				List<Object> values = groupedRow.get(key);
+				if(values == null){
+					values = new ArrayList<Object>();
+
+					groupedRow.put(key, values);
+				}
+
+				values.add(value);
+			}
+		}
+
+		List<Map<FieldName, Object>> result = new ArrayList<Map<FieldName, Object>>();
+
+		Collection<Map<FieldName, List<Object>>> values = groupedRows.values();
+		for(Map<FieldName, List<Object>> value : values){
+			result.add((Map)value);
+		}
+
+		return result;
+	}
 }

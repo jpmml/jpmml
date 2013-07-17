@@ -30,6 +30,15 @@ public interface Consumer extends Serializable {
 	List<FieldName> getActiveFields();
 
 	/**
+	 * Gets the grouping fields of a {@link Model} from its {@link MiningSchema}.
+	 *
+	 * A model should have no more than 1 grouping field.
+	 *
+	 * @see ModelManager#getGroupFields()
+	 */
+	List<FieldName> getGroupFields();
+
+	/**
 	 * Convenience method for retrieving the sole predicted field.
 	 *
 	 * @return The sole predicted field
