@@ -14,6 +14,8 @@ import org.apache.commons.math3.stat.descriptive.summary.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class FunctionUtil {
 
 	private FunctionUtil(){
@@ -48,7 +50,7 @@ public class FunctionUtil {
 			throw new EvaluationException();
 		}
 
-		Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
+		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
 
 		for(int i = 0; i < parameterFields.size(); i++){
 			ParameterField parameterField = parameterFields.get(i);
@@ -169,7 +171,7 @@ public class FunctionUtil {
 		return dataType;
 	}
 
-	private static final Map<String, Function> functions = new LinkedHashMap<String, Function>();
+	private static final Map<String, Function> functions = Maps.newLinkedHashMap();
 
 	public interface Function {
 

@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class BatchUtil {
 
 	private BatchUtil(){
@@ -37,21 +39,21 @@ public class BatchUtil {
 
 		Evaluator evaluator = (Evaluator)modelManager;
 
-		List<Map<FieldName, Object>> table = new ArrayList<Map<FieldName, Object>>();
+		List<Map<FieldName, Object>> table = Lists.newArrayList();
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();
 		List<FieldName> predictedFields = evaluator.getPredictedFields();
 		List<FieldName> outputFields = evaluator.getOutputFields();
 
-		List<FieldName> inputFields = new ArrayList<FieldName>();
+		List<FieldName> inputFields = Lists.newArrayList();
 		inputFields.addAll(activeFields);
 		inputFields.addAll(groupFields);
 
 		for(int i = 0; i < input.size(); i++){
 			Map<FieldName, String> inputRow = input.get(i);
 
-			Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
+			Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
 
 			for(FieldName inputField : inputFields){
 				String inputCell = inputRow.get(inputField);

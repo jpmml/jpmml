@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class OutputUtil {
 
 	private OutputUtil(){
@@ -25,7 +27,7 @@ public class OutputUtil {
 	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelManagerEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
-		Map<FieldName, Object> frame = new LinkedHashMap<FieldName, Object>();
+		Map<FieldName, Object> frame = Maps.newLinkedHashMap();
 
 		context.pushFrame(frame);
 
@@ -114,7 +116,7 @@ public class OutputUtil {
 
 		context.popFrame();
 
-		Map<FieldName, Object> result = new LinkedHashMap<FieldName, Object>(predictions);
+		Map<FieldName, Object> result = Maps.newLinkedHashMap(predictions);
 		result.putAll(frame);
 
 		return result;
@@ -256,7 +258,7 @@ public class OutputUtil {
 				size = Math.min(rank, associationRules.size());
 			}
 
-			List<Object> result = new ArrayList<Object>();
+			List<Object> result = Lists.newArrayList();
 
 			associationRules = associationRules.subList(0, size);
 			for(AssociationRule associationRule : associationRules){

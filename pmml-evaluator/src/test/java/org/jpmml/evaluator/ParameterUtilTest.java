@@ -11,6 +11,8 @@ import org.dmg.pmml.Value.*;
 
 import org.junit.*;
 
+import com.google.common.collect.*;
+
 import static org.junit.Assert.*;
 
 public class ParameterUtilTest {
@@ -80,7 +82,7 @@ public class ParameterUtilTest {
 		fieldValues.clear();
 		fieldIntervals.clear();
 
-		List<Value> validValues = new ArrayList<Value>();
+		List<Value> validValues = Lists.newArrayList();
 		validValues.add(createValue("1", Value.Property.VALID));
 		validValues.add(createValue("2", Value.Property.VALID));
 		validValues.add(createValue("3", Value.Property.VALID));
@@ -101,7 +103,7 @@ public class ParameterUtilTest {
 		fieldValues.clear();
 		fieldIntervals.clear();
 
-		List<Value> invalidValues = new ArrayList<Value>();
+		List<Value> invalidValues = Lists.newArrayList();
 		invalidValues.add(createValue("1", Value.Property.INVALID));
 
 		fieldValues.add(missingValue);

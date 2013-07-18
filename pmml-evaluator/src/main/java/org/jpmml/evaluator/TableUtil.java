@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 import org.w3c.dom.*;
 
 public class TableUtil {
@@ -16,11 +18,11 @@ public class TableUtil {
 
 	static
 	public List<Map<String, String>> parse(InlineTable table){
-		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		List<Map<String, String>> result = Lists.newArrayList();
 
 		List<Row> rows = table.getRows();
 		for(Row row : rows){
-			Map<String, String> map = new LinkedHashMap<String, String>();
+			Map<String, String> map = Maps.newLinkedHashMap();
 
 			List<Object> cells = row.getContent();
 			for(Object cell : cells){
@@ -35,7 +37,7 @@ public class TableUtil {
 			result.add(map);
 		}
 
-		return result;
+		return Collections.unmodifiableList(result);
 	}
 
 	static

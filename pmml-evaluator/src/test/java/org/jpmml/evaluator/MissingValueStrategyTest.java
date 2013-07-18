@@ -9,6 +9,8 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
+import com.google.common.collect.*;
+
 import static org.junit.Assert.*;
 
 public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
@@ -40,7 +42,7 @@ public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
 		return treeModelEvaluator;
 	}
 
-	protected static final Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
+	protected static final Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
 
 	static {
 		arguments.put(new FieldName("outlook"), "sunny");

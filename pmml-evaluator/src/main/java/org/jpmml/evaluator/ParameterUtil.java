@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class ParameterUtil {
 
 	private ParameterUtil(){
@@ -119,7 +121,7 @@ public class ParameterUtil {
 		switch(opType){
 			case CONTINUOUS:
 				{
-					List<Double> range = new ArrayList<Double>();
+					List<Double> range = Lists.newArrayList();
 
 					List<Interval> fieldIntervals = dataField.getIntervals();
 					for(Interval fieldInterval : fieldIntervals){

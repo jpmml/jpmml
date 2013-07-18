@@ -8,6 +8,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class CsvUtil {
 
 	private CsvUtil(){
@@ -15,18 +17,18 @@ public class CsvUtil {
 
 	static
 	public List<Map<FieldName, String>> load(InputStream is) throws IOException {
-		List<Map<FieldName, String>> table = new ArrayList<Map<FieldName, String>>();
+		List<Map<FieldName, String>> table = Lists.newArrayList();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
 
 		table:
 		try {
-			List<FieldName> keys = new ArrayList<FieldName>();
-
 			String headerLine = reader.readLine();
 			if(headerLine == null){
 				break table;
 			}
+
+			List<FieldName> keys = Lists.newArrayList();
 
 			List<String> headerCells = parseLine(headerLine);
 			for(int i = 0; i < headerCells.size(); i++){
@@ -39,7 +41,7 @@ public class CsvUtil {
 					break;
 				}
 
-				Map<FieldName, String> row = new LinkedHashMap<FieldName, String>();
+				Map<FieldName, String> row = Maps.newLinkedHashMap();
 
 				List<String> bodyCells = parseLine(bodyLine);
 

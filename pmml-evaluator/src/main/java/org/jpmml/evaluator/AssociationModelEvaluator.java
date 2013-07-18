@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class AssociationModelEvaluator extends AssociationModelManager implements Evaluator {
 
 	private Map<String, AssociationRule> entities = null;
@@ -78,7 +80,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 		Set<String> input = createInput((Collection<?>)value, items);
 
-		Map<String, Boolean> flags = new LinkedHashMap<String, Boolean>();
+		Map<String, Boolean> flags = Maps.newLinkedHashMap();
 
 		List<Itemset> itemsets = getItemsets();
 		for(Itemset itemset : itemsets){
@@ -114,9 +116,9 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 	}
 
 	private Set<String> createInput(Collection<?> values, Collection<Item> items){
-		Set<String> result = new LinkedHashSet<String>();
+		Set<String> result = Sets.newLinkedHashSet();
 
-		Map<String, Item> valueMap = new LinkedHashMap<String, Item>();
+		Map<String, Item> valueMap = Maps.newLinkedHashMap();
 
 		for(Item item : items){
 			valueMap.put(item.getValue(), item);

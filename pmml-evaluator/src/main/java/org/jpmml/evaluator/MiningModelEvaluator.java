@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class MiningModelEvaluator extends MiningModelManager implements Evaluator {
 
 	public MiningModelEvaluator(PMML pmml){
@@ -165,7 +167,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		value = "fallthrough"
 	)
 	private List<SegmentResult> evaluate(EvaluationContext context){
-		List<SegmentResult> results = new ArrayList<SegmentResult>();
+		List<SegmentResult> results = Lists.newArrayList();
 
 		Segmentation segmentation = getSegmentation();
 
@@ -196,7 +198,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 					return Collections.singletonList(new SegmentResult(segment, targetField, result));
 				case MODEL_CHAIN:
 					{
-						Map<FieldName, Object> frame = new LinkedHashMap<FieldName, Object>();
+						Map<FieldName, Object> frame = Maps.newLinkedHashMap();
 
 						List<FieldName> outputFields = evaluator.getOutputFields();
 

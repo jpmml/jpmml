@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 class Association implements Computable<Object>, HasAssociationRules {
 
 	private List<AssociationRule> associationRules = null;
@@ -55,7 +57,7 @@ class Association implements Computable<Object>, HasAssociationRules {
 				throw new UnsupportedFeatureException(null, algorithm);
 		}
 
-		List<AssociationRule> result = new ArrayList<AssociationRule>();
+		List<AssociationRule> result = Lists.newArrayList();
 
 		for(int i = flags.nextSetBit(0); i > -1; i = flags.nextSetBit(i + 1)){
 			AssociationRule associationRule = associationRules.get(i);

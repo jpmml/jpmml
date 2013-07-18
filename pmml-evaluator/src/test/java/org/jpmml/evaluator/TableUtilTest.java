@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.junit.*;
 
+import com.google.common.collect.*;
+
 import static org.junit.Assert.*;
 
 public class TableUtilTest {
@@ -42,7 +44,7 @@ public class TableUtilTest {
 
 	static
 	private Map<String, String> createRow(String[][] strings){
-		Map<String, String> result = new LinkedHashMap<String, String>();
+		Map<String, String> result = Maps.newLinkedHashMap();
 
 		for(int i = 0; i < strings.length; i++){
 			result.put(strings[i][0], strings[i][1]);

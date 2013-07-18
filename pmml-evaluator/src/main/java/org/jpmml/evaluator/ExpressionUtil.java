@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class ExpressionUtil {
 
 	private ExpressionUtil(){
@@ -132,7 +134,7 @@ public class ExpressionUtil {
 	public Object evaluateMapValues(MapValues mapValues, EvaluationContext context){
 		DataType dataType = mapValues.getDataType();
 
-		Map<String, Object> values = new LinkedHashMap<String, Object>();
+		Map<String, Object> values = Maps.newLinkedHashMap();
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
@@ -151,7 +153,7 @@ public class ExpressionUtil {
 
 	static
 	public Object evaluateApply(Apply apply, EvaluationContext context){
-		List<Object> values = new ArrayList<Object>();
+		List<Object> values = Lists.newArrayList();
 
 		List<Expression> arguments = apply.getExpressions();
 		for(Expression argument : arguments){

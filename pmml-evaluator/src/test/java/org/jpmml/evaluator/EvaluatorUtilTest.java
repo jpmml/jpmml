@@ -9,6 +9,8 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
+import com.google.common.collect.*;
+
 import static org.junit.Assert.*;
 
 public class EvaluatorUtilTest {
@@ -28,7 +30,7 @@ public class EvaluatorUtilTest {
 
 	@Test
 	public void groupRows(){
-		List<Map<FieldName, Object>> table = new ArrayList<Map<FieldName, Object>>();
+		List<Map<FieldName, Object>> table = Lists.newArrayList();
 		table.add(createRow("1", "Cracker"));
 		table.add(createRow("2", "Cracker"));
 		table.add(createRow("1", "Coke"));
@@ -46,7 +48,7 @@ public class EvaluatorUtilTest {
 
 	static
 	private Map<FieldName, Object> createRow(String transaction, String item){
-		Map<FieldName, Object> result = new LinkedHashMap<FieldName, Object>();
+		Map<FieldName, Object> result = Maps.newLinkedHashMap();
 		result.put(new FieldName("transaction"), transaction);
 		result.put(new FieldName("item"), item);
 

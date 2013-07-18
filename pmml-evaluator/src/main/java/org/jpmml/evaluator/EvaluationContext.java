@@ -7,10 +7,12 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 abstract
 public class EvaluationContext {
 
-	private Deque<Map<FieldName, ?>> stack = new ArrayDeque<Map<FieldName, ?>>();
+	private Deque<Map<FieldName, ?>> stack = Queues.newArrayDeque();
 
 
 	public EvaluationContext(){
@@ -27,7 +29,7 @@ public class EvaluationContext {
 	public DefineFunction resolveFunction(String name);
 
 	public Map<FieldName, ?> getArguments(){
-		Map<FieldName, Object> result = new LinkedHashMap<FieldName, Object>();
+		Map<FieldName, Object> result = Maps.newLinkedHashMap();
 
 		Deque<Map<FieldName, ?>> stack = getStack();
 

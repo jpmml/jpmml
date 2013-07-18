@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 abstract
 public class ScorecardEvaluatorTest extends PMMLTest {
 
@@ -18,7 +20,7 @@ public class ScorecardEvaluatorTest extends PMMLTest {
 		return evaluator;
 	}
 
-	protected static final Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
+	protected static final Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
 
 	static {
 		arguments.put(new FieldName("department"), "engineering");

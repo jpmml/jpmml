@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class ArrayUtil {
 
 	private ArrayUtil(){
@@ -80,7 +82,7 @@ public class ArrayUtil {
 
 	static
 	public List<String> tokenize(String string, boolean enableQuotes){
-		List<String> result = new ArrayList<String>();
+		List<String> result = Lists.newArrayList();
 
 		StringBuffer sb = new StringBuffer();
 
@@ -146,7 +148,7 @@ public class ArrayUtil {
 			result.add(createToken(sb, enableQuotes));
 		}
 
-		return result;
+		return Collections.unmodifiableList(result);
 	}
 
 	static

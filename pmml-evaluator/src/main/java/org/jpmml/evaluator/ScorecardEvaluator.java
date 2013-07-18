@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 
 	public ScorecardEvaluator(PMML pmml){
@@ -58,7 +60,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
-		Map<String, Double> reasonCodePoints = new LinkedHashMap<String, Double>();
+		Map<String, Double> reasonCodePoints = Maps.newLinkedHashMap();
 
 		List<Characteristic> characteristics = getCharacteristics();
 		for(Characteristic characteristic : characteristics){
@@ -133,7 +135,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 		Object result = score;
 
 		if(useReasonCodes){
-			List<Map.Entry<String, Double>> entries = new ArrayList<Map.Entry<String, Double>>(reasonCodePoints.entrySet());
+			List<Map.Entry<String, Double>> entries = Lists.newArrayList(reasonCodePoints.entrySet());
 
 			// Sort highest score entries first, lowest score entries last
 			Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>(){
@@ -145,7 +147,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 			};
 			Collections.sort(entries, comparator);
 
-			List<String> reasonCodeRanking = new ArrayList<String>();
+			List<String> reasonCodeRanking = Lists.newArrayList();
 
 			for(Map.Entry<String, Double> entry : entries){
 

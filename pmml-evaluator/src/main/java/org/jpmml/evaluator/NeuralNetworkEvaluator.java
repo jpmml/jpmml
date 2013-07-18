@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Evaluator {
 
 	private Map<String, Entity> entities = null;
@@ -68,7 +70,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	Map<FieldName, Double> evaluateRegression(EvaluationContext context) {
-		Map<FieldName, Double> result = new LinkedHashMap<FieldName, Double>();
+		Map<FieldName, Double> result = Maps.newLinkedHashMap();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 
@@ -106,7 +108,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	Map<FieldName, NeuronClassificationMap> evaluateClassification(EvaluationContext context) {
-		Map<FieldName, NeuronClassificationMap> result = new LinkedHashMap<FieldName, NeuronClassificationMap>();
+		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
 
 		Map<String, Entity> entities = getEntities();
 
@@ -170,7 +172,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	 * @see Neuron#getId()
 	 */
 	public Map<String, Double> evaluateRaw(EvaluationContext context) {
-		Map<String, Double> result = new LinkedHashMap<String, Double>();
+		Map<String, Double> result = Maps.newLinkedHashMap();
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();
 		for (NeuralInput neuralInput: neuralInputs) {

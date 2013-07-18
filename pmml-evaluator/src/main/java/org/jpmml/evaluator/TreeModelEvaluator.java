@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 	private Map<String, Node> entities = null;
@@ -78,7 +80,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		Node root = getRoot();
 
-		LinkedList<Node> trail = new LinkedList<Node>();
+		LinkedList<Node> trail = Lists.newLinkedList();
 
 		NodeResult result = new NodeResult(null);
 

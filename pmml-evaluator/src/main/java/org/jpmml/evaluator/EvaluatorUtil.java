@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class EvaluatorUtil {
 
 	private EvaluatorUtil(){
@@ -43,7 +45,7 @@ public class EvaluatorUtil {
 	 */
 	static
 	public <V> Map<FieldName, V> encodeKeys(Map<String, V> map){
-		Map<FieldName, V> result = new LinkedHashMap<FieldName, V>();
+		Map<FieldName, V> result = Maps.newLinkedHashMap();
 
 		Collection<Map.Entry<String, V>> entries = map.entrySet();
 		for(Map.Entry<String, V> entry : entries){
@@ -60,7 +62,7 @@ public class EvaluatorUtil {
 	 */
 	static
 	public <V> Map<String, V> decodeKeys(Map<FieldName, V> map){
-		Map<String, V> result = new LinkedHashMap<String, V>();
+		Map<String, V> result = Maps.newLinkedHashMap();
 
 		Collection<Map.Entry<FieldName, V>> entries = map.entrySet();
 		for(Map.Entry<FieldName, V> entry : entries){
@@ -77,7 +79,7 @@ public class EvaluatorUtil {
 	 */
 	static
 	public <K> Map<K, ?> decodeValues(Map<K, ?> map){
-		Map<K, Object> result = new LinkedHashMap<K, Object>();
+		Map<K, Object> result = Maps.newLinkedHashMap();
 
 		Collection<? extends Map.Entry<K, ?>> entries = map.entrySet();
 		for(Map.Entry<K, ?> entry : entries){
@@ -92,16 +94,16 @@ public class EvaluatorUtil {
 	)
 	static
 	public List<Map<FieldName, Object>> groupRows(FieldName groupField, List<Map<FieldName, Object>> table){
-		Map<Object, Map<FieldName, List<Object>>> groupedRows = new LinkedHashMap<Object, Map<FieldName, List<Object>>>();
+		Map<Object, ListMultimap<FieldName, Object>> groupedRows = Maps.newLinkedHashMap();
 
 		for(int i = 0; i < table.size(); i++){
 			Map<FieldName, ?> row = table.get(i);
 
 			Object groupValue = row.get(groupField);
 
-			Map<FieldName, List<Object>> groupedRow = groupedRows.get(groupValue);
+			ListMultimap<FieldName, Object> groupedRow = groupedRows.get(groupValue);
 			if(groupedRow == null){
-				groupedRow = new LinkedHashMap<FieldName, List<Object>>();
+				groupedRow = ArrayListMultimap.create();
 
 				groupedRows.put(groupValue, groupedRow);
 			}
@@ -116,22 +118,15 @@ public class EvaluatorUtil {
 					continue;
 				}
 
-				List<Object> values = groupedRow.get(key);
-				if(values == null){
-					values = new ArrayList<Object>();
-
-					groupedRow.put(key, values);
-				}
-
-				values.add(value);
+				groupedRow.put(key, value);
 			}
 		}
 
-		List<Map<FieldName, Object>> result = new ArrayList<Map<FieldName, Object>>();
+		List<Map<FieldName, Object>> result = Lists.newArrayList();
 
-		Collection<Map<FieldName, List<Object>>> values = groupedRows.values();
-		for(Map<FieldName, List<Object>> value : values){
-			result.add((Map)value);
+		Collection<ListMultimap<FieldName, Object>> values = groupedRows.values();
+		for(ListMultimap<FieldName, Object> value : values){
+			result.add((Map)value.asMap());
 		}
 
 		return result;
