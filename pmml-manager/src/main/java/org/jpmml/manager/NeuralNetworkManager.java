@@ -25,6 +25,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 		this.neuralNetwork = neuralNetwork;
 	}
 
+	@Override
 	public String getSummary(){
 		return "Neural network";
 	}
@@ -85,6 +86,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 		return neuralLayer;
 	}
 
+	@Override
 	public Map<String, Entity> getEntities(){
 		Map<String, Entity> result = new LinkedHashMap<String, Entity>();
 

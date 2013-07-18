@@ -25,6 +25,7 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		this.miningModel = miningModel;
 	}
 
+	@Override
 	public String getSummary(){
 		MiningModel miningModel = getModel();
 

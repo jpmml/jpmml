@@ -183,6 +183,7 @@ public class FunctionUtil {
 		abstract
 		public Number evaluate(Number left, Number right);
 
+		@Override
 		public Number evaluate(List<?> values){
 
 			if(values.size() != 2){
@@ -260,6 +261,7 @@ public class FunctionUtil {
 			return dataType;
 		}
 
+		@Override
 		public Number evaluate(List<?> values){
 			StorelessUnivariateStatistic statistic = createStatistic();
 
@@ -348,6 +350,7 @@ public class FunctionUtil {
 			return dataType;
 		}
 
+		@Override
 		public Number evaluate(List<?> values){
 
 			if(values.size() != 1){
@@ -415,6 +418,7 @@ public class FunctionUtil {
 
 		putFunction("pow", new Function(){
 
+			@Override
 			public Number evaluate(List<?> values){
 
 				if(values.size() != 2){
@@ -434,6 +438,7 @@ public class FunctionUtil {
 
 		putFunction("threshold", new Function(){
 
+			@Override
 			public Number evaluate(List<?> values){
 
 				if(values.size() != 2){
@@ -483,6 +488,7 @@ public class FunctionUtil {
 		abstract
 		public Boolean evaluate(Object value);
 
+		@Override
 		public Boolean evaluate(List<?> values){
 
 			if(values.size() != 1){
@@ -518,6 +524,7 @@ public class FunctionUtil {
 		abstract
 		public Boolean evaluate(int order);
 
+		@Override
 		public Boolean evaluate(List<?> values){
 
 			if(values.size() != 2){
@@ -596,6 +603,7 @@ public class FunctionUtil {
 		abstract
 		public Boolean evaluate(Boolean left, Boolean right);
 
+		@Override
 		public Boolean evaluate(List<?> values){
 
 			if(values.size() < 2){
@@ -637,6 +645,7 @@ public class FunctionUtil {
 		abstract
 		public Boolean evaluate(Boolean value);
 
+		@Override
 		public Boolean evaluate(List<?> values){
 
 			if(values.size() != 1){
@@ -664,6 +673,7 @@ public class FunctionUtil {
 		abstract
 		public Boolean evaluate(Object value, List<?> values);
 
+		@Override
 		public Boolean evaluate(List<?> values){
 
 			if(values.size() < 2){
@@ -695,6 +705,7 @@ public class FunctionUtil {
 	static {
 		putFunction("if", new Function(){
 
+			@Override
 			public Object evaluate(List<?> values){
 
 				if(values.size() < 2 || values.size() > 3){
@@ -726,6 +737,7 @@ public class FunctionUtil {
 		abstract
 		public String evaluate(String value);
 
+		@Override
 		public String evaluate(List<?> values){
 
 			if(values.size() != 1){
@@ -755,6 +767,7 @@ public class FunctionUtil {
 
 		putFunction("substring", new Function(){
 
+			@Override
 			public String evaluate(List<?> values){
 
 				if(values.size() != 3){

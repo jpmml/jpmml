@@ -36,10 +36,12 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		return this.entities;
 	}
 
+	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
+	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		TreeModel treeModel = getModel();
 		if(!treeModel.isScorable()){

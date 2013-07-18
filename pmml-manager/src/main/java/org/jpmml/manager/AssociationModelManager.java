@@ -25,6 +25,7 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 		this.associationModel = associationModel;
 	}
 
+	@Override
 	public String getSummary(){
 		return "Association rules model";
 	}
@@ -74,6 +75,7 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 		return this.associationModel;
 	}
 
+	@Override
 	public Map<String, AssociationRule> getEntities(){
 		Map<String, AssociationRule> result = new LinkedHashMap<String, AssociationRule>();
 

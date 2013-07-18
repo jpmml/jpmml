@@ -25,6 +25,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 		this.treeModel = treeModel;
 	}
 
+	@Override
 	public String getSummary(){
 		return "Tree";
 	}
@@ -64,6 +65,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 		return root;
 	}
 
+	@Override
 	public Map<String, Node> getEntities(){
 		Map<String, Node> result = new LinkedHashMap<String, Node>();
 

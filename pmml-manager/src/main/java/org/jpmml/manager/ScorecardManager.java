@@ -25,6 +25,7 @@ public class ScorecardManager extends ModelManager<Scorecard> {
 		this.scorecard = scorecard;
 	}
 
+	@Override
 	public String getSummary(){
 		return "Scorecard";
 	}

@@ -23,10 +23,12 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		this(parent.getPmml(), parent.getModel());
 	}
 
+	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
+	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		RegressionModel regressionModel = getModel();
 		if(!regressionModel.isScorable()){

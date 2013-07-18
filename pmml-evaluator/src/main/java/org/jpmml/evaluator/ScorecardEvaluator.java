@@ -23,10 +23,12 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 		super(parent.getPmml(), parent.getModel());
 	}
 
+	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
+	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		Scorecard scorecard = getModel();
 		if(!scorecard.isScorable()){
@@ -136,6 +138,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 			// Sort highest score entries first, lowest score entries last
 			Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>(){
 
+				@Override
 				public int compare(Map.Entry<String, Double> left, Map.Entry<String, Double> right){
 					return -(left.getValue()).compareTo(right.getValue());
 				}

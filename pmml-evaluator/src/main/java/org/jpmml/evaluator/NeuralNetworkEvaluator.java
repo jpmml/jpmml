@@ -36,10 +36,12 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return this.entities;
 	}
 
+	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
+	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments) {
 		NeuralNetwork neuralNetwork = getModel();
 		if(!neuralNetwork.isScorable()){

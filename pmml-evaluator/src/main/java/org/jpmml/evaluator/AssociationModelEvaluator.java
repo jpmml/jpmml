@@ -36,10 +36,12 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 		return this.entities;
 	}
 
+	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
+	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		AssociationModel associationModel = getModel();
 		if(!associationModel.isScorable()){

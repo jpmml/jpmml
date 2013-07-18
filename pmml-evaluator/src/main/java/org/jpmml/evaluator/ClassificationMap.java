@@ -10,6 +10,7 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 	ClassificationMap(){
 	}
 
+	@Override
 	public String getResult(){
 		Map.Entry<String, Double> result = null;
 
@@ -28,6 +29,7 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 		return result.getKey();
 	}
 
+	@Override
 	public Double getProbability(String value){
 		Double result = get(value);
 

@@ -179,6 +179,7 @@ public class OutputUtil {
 			private OutputField.RankOrder rankOrder = outputField.getRankOrder();
 
 
+			@Override
 			public int compare(AssociationRule left, AssociationRule right){
 				int order;
 

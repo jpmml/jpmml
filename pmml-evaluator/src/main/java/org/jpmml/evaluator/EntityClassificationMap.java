@@ -18,6 +18,7 @@ class EntityClassificationMap<E extends Entity> extends ClassificationMap implem
 		setEntity(entity);
 	}
 
+	@Override
 	public String getEntityId(){
 		E entity = getEntity();
 

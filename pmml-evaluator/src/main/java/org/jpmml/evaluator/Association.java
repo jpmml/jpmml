@@ -25,10 +25,12 @@ class Association implements Computable<Object>, HasAssociationRules {
 		setConsequentFlags(consequentFlags);
 	}
 
+	@Override
 	public Object getResult(){
 		throw new MissingResultException(null);
 	}
 
+	@Override
 	public List<AssociationRule> getAssociationRules(OutputField.Algorithm algorithm){
 		List<AssociationRule> associationRules = getAssociationRules();
 

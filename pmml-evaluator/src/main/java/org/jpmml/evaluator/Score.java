@@ -17,10 +17,12 @@ class Score implements Computable<Double>, HasReasonCode {
 		setReasonCodeRanking(reasonCodeRanking);
 	}
 
+	@Override
 	public Double getResult(){
 		return getValue();
 	}
 
+	@Override
 	public String getReasonCode(int rank){
 
 		if(rank < 1){

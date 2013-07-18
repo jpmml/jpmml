@@ -16,18 +16,22 @@ import org.jvnet.jaxb2_commons.locator.*;
 abstract
 public class PMMLObject implements Equals, HashCode, Locatable, ToString, Serializable {
 
+	@Override
 	public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object that, EqualsStrategy equalsStrategy){
 		return true;
 	}
 
+	@Override
 	public int hashCode(ObjectLocator locator, HashCodeStrategy hashCodeStrategy){
 		return 1;
 	}
 
+	@Override
 	public StringBuilder append(ObjectLocator locator, StringBuilder builder, ToStringStrategy toStringStrategy){
 		return builder;
 	}
 
+	@Override
 	public StringBuilder appendFields(ObjectLocator locator, StringBuilder builder, ToStringStrategy toStringStrategy) {
 		return builder;
 	}

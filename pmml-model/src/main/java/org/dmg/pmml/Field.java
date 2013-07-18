@@ -9,9 +9,11 @@ import javax.xml.bind.annotation.*;
 abstract
 public class Field extends PMMLObject implements HasName {
 
+	@Override
 	abstract
 	public FieldName getName();
 
+	@Override
 	abstract
 	public void setName(FieldName name);
 

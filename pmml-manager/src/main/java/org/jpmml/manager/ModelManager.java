@@ -31,14 +31,17 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		addMiningField(name, fieldUsageType);
 	}
 
+	@Override
 	public List<FieldName> getActiveFields(){
 		return getMiningFields(FieldUsageType.ACTIVE);
 	}
 
+	@Override
 	public List<FieldName> getGroupFields(){
 		return getMiningFields(FieldUsageType.GROUP);
 	}
 
+	@Override
 	public FieldName getTargetField(){
 		List<FieldName> predictedFields = getPredictedFields();
 
@@ -53,6 +56,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return predictedFields.get(0);
 	}
 
+	@Override
 	public List<FieldName> getPredictedFields(){
 		return getMiningFields(FieldUsageType.PREDICTED);
 	}
@@ -71,6 +75,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return result;
 	}
 
+	@Override
 	public MiningField getMiningField(FieldName name){
 		List<MiningField> miningFields = getMiningSchema().getMiningFields();
 
@@ -87,6 +92,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return miningField;
 	}
 
+	@Override
 	public List<FieldName> getOutputFields(){
 		List<FieldName> result = new ArrayList<FieldName>();
 
@@ -100,6 +106,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return result;
 	}
 
+	@Override
 	public OutputField getOutputField(FieldName name){
 		Output output = getOrCreateOutput();
 
