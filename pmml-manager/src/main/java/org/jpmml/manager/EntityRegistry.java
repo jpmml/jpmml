@@ -3,14 +3,14 @@
  */
 package org.jpmml.manager;
 
-import java.util.*;
-
 import org.dmg.pmml.*;
+
+import com.google.common.collect.*;
 
 public interface EntityRegistry<E extends Entity> {
 
 	/**
 	 * @return Map of all known {@link Entity} instances.
 	 */
-	Map<String, E> getEntities();
+	BiMap<String, E> getEntities();
 }

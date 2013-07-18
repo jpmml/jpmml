@@ -13,7 +13,7 @@ import com.google.common.collect.*;
 
 public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Evaluator {
 
-	private Map<String, Entity> entities = null;
+	private BiMap<String, Entity> entities = null;
 
 
 	public NeuralNetworkEvaluator(PMML pmml){
@@ -29,7 +29,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	@Override
-	public Map<String, Entity> getEntities(){
+	public BiMap<String, Entity> getEntities(){
 
 		if(this.entities == null){
 			this.entities = super.getEntities();

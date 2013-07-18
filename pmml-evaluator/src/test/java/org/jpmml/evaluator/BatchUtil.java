@@ -27,13 +27,6 @@ public class BatchUtil {
 
 		ModelManager<?> modelManager = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 
-		if(modelManager instanceof EntityRegistry){
-			EntityRegistry<?> entityRegistry = (EntityRegistry<?>)modelManager;
-
-			// Just for kicks
-			entityRegistry.getEntities();
-		}
-
 		List<Map<FieldName, String>> input = CsvUtil.load(batch.getInput());
 		List<Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 

@@ -13,7 +13,7 @@ import com.google.common.collect.*;
 
 public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
-	private Map<String, Node> entities = null;
+	private BiMap<String, Node> entities = null;
 
 
 	public TreeModelEvaluator(PMML pmml){
@@ -29,7 +29,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	}
 
 	@Override
-	public Map<String, Node> getEntities(){
+	public BiMap<String, Node> getEntities(){
 
 		if(this.entities == null){
 			this.entities = super.getEntities();

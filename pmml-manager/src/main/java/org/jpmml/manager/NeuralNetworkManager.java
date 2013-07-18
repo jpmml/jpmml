@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements EntityRegistry<Entity> {
 
 	private NeuralNetwork neuralNetwork = null;
@@ -87,8 +89,8 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 	}
 
 	@Override
-	public Map<String, Entity> getEntities(){
-		Map<String, Entity> result = new LinkedHashMap<String, Entity>();
+	public BiMap<String, Entity> getEntities(){
+		BiMap<String, Entity> result = HashBiMap.create();
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();
 		for(NeuralInput neuralInput : neuralInputs){

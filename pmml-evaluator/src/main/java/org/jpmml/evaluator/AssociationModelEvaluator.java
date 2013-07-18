@@ -13,7 +13,7 @@ import com.google.common.collect.*;
 
 public class AssociationModelEvaluator extends AssociationModelManager implements Evaluator {
 
-	private Map<String, AssociationRule> entities = null;
+	private BiMap<String, AssociationRule> entities = null;
 
 
 	public AssociationModelEvaluator(PMML pmml){
@@ -29,7 +29,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 	}
 
 	@Override
-	public Map<String, AssociationRule> getEntities(){
+	public BiMap<String, AssociationRule> getEntities(){
 
 		if(this.entities == null){
 			this.entities = super.getEntities();

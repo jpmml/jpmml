@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class AssociationModelManager extends ModelManager<AssociationModel> implements EntityRegistry<AssociationRule> {
 
 	private AssociationModel associationModel = null;
@@ -76,8 +78,8 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 	}
 
 	@Override
-	public Map<String, AssociationRule> getEntities(){
-		Map<String, AssociationRule> result = new LinkedHashMap<String, AssociationRule>();
+	public BiMap<String, AssociationRule> getEntities(){
+		BiMap<String, AssociationRule> result = HashBiMap.create();
 
 		List<AssociationRule> associationRules = getAssociationRules();
 		for(int i = 0, j = 1; i < associationRules.size(); i++, j++){

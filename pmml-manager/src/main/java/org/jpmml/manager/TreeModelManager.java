@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class TreeModelManager extends ModelManager<TreeModel> implements EntityRegistry<Node> {
 
 	private TreeModel treeModel = null;
@@ -66,8 +68,8 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 	}
 
 	@Override
-	public Map<String, Node> getEntities(){
-		Map<String, Node> result = new LinkedHashMap<String, Node>();
+	public BiMap<String, Node> getEntities(){
+		BiMap<String, Node> result = HashBiMap.create();
 
 		collectNodes(getRoot(), result);
 
@@ -123,7 +125,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 	}
 
 	static
-	private void collectNodes(Node node, Map<String, Node> map){
+	private void collectNodes(Node node, BiMap<String, Node> map){
 		putEntity(node, map);
 
 		List<Node> children = node.getNodes();
