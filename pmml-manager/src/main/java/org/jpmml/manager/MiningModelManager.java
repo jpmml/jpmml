@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import static com.google.common.base.Preconditions.*;
+
 public class MiningModelManager extends ModelManager<MiningModel> {
 
 	private MiningModel miningModel = null;
@@ -38,7 +40,7 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 
 	@Override
 	public MiningModel getModel(){
-		ensureNotNull(this.miningModel);
+		checkState(this.miningModel != null);
 
 		return this.miningModel;
 	}
@@ -47,7 +49,7 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 	 * @see #getModel()
 	 */
 	public MiningModel createModel(MiningFunctionType miningFunction){
-		ensureNull(this.miningModel);
+		checkState(this.miningModel == null);
 
 		this.miningModel = new MiningModel(new MiningSchema(), miningFunction);
 
@@ -60,7 +62,7 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
-		ensureNotNull(segmentation);
+		checkState(segmentation != null);
 
 		return segmentation;
 	}
@@ -69,7 +71,7 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
-		ensureNull(segmentation);
+		checkState(segmentation == null);
 
 		segmentation = new Segmentation(multipleModelMethod);
 		miningModel.setSegmentation(segmentation);

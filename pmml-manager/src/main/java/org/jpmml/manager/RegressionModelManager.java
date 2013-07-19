@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import static com.google.common.base.Preconditions.*;
+
 public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	private RegressionModel regressionModel = null;
@@ -32,7 +34,7 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 
 	@Override
 	public RegressionModel getModel(){
-		ensureNotNull(this.regressionModel);
+		checkState(this.regressionModel != null);
 
 		return this.regressionModel;
 	}
@@ -41,7 +43,7 @@ public class RegressionModelManager extends ModelManager<RegressionModel> {
 	 * @see #getModel()
 	 */
 	public RegressionModel createModel(MiningFunctionType miningFunction){
-		ensureNull(this.regressionModel);
+		checkState(this.regressionModel == null);
 
 		this.regressionModel = new RegressionModel(new MiningSchema(), miningFunction);
 

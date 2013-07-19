@@ -9,6 +9,8 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
+import static com.google.common.base.Preconditions.*;
+
 public class AssociationModelManager extends ModelManager<AssociationModel> implements HasEntityRegistry<AssociationRule> {
 
 	private AssociationModel associationModel = null;
@@ -59,7 +61,7 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 
 	@Override
 	public AssociationModel getModel(){
-		ensureNotNull(this.associationModel);
+		checkState(this.associationModel != null);
 
 		return this.associationModel;
 	}
@@ -68,7 +70,7 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 	 * @see #getModel()
 	 */
 	public AssociationModel createModel(Double minimumSupport, Double minimumConfidence){
-		ensureNull(this.associationModel);
+		checkState(this.associationModel == null);
 
 		this.associationModel = new AssociationModel(new MiningSchema(), MiningFunctionType.ASSOCIATION_RULES, 0, minimumSupport, minimumConfidence, 0, 0, 0);
 

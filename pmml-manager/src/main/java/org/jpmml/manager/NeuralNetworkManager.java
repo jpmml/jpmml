@@ -9,6 +9,8 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
+import static com.google.common.base.Preconditions.*;
+
 public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
 	private NeuralNetwork neuralNetwork = null;
@@ -34,7 +36,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 
 	@Override
 	public NeuralNetwork getModel() {
-		ensureNotNull(this.neuralNetwork);
+		checkState(this.neuralNetwork != null);
 
 		return this.neuralNetwork;
 	}
@@ -43,7 +45,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 	 * @see #getModel()
 	 */
 	public NeuralNetwork createModel(MiningFunctionType miningFunction, ActivationFunctionType activationFunction) {
-		ensureNull(this.neuralNetwork);
+		checkState(this.neuralNetwork == null);
 
 		this.neuralNetwork = new NeuralNetwork(new MiningSchema(), new NeuralInputs(), miningFunction, activationFunction);
 

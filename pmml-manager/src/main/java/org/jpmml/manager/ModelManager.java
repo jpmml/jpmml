@@ -170,20 +170,4 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		map.put(id, entity);
 	}
-
-	static
-	protected void ensureNull(Object object){
-
-		if(object != null){
-			throw new IllegalStateException();
-		}
-	}
-
-	static
-	protected void ensureNotNull(Object object){
-
-		if(object == null){
-			throw new IllegalStateException();
-		}
-	}
 }

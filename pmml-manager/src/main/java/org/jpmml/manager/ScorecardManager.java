@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import static com.google.common.base.Preconditions.*;
+
 public class ScorecardManager extends ModelManager<Scorecard> {
 
 	private Scorecard scorecard = null;
@@ -32,7 +34,7 @@ public class ScorecardManager extends ModelManager<Scorecard> {
 
 	@Override
 	public Scorecard getModel(){
-		ensureNotNull(this.scorecard);
+		checkState(this.scorecard != null);
 
 		return this.scorecard;
 	}
@@ -41,7 +43,7 @@ public class ScorecardManager extends ModelManager<Scorecard> {
 	 * @see #getModel
 	 */
 	public Scorecard createModel(){
-		ensureNull(this.scorecard);
+		checkState(this.scorecard == null);
 
 		this.scorecard = new Scorecard(new MiningSchema(), new Characteristics(), MiningFunctionType.REGRESSION);
 
@@ -54,7 +56,6 @@ public class ScorecardManager extends ModelManager<Scorecard> {
 		Scorecard scorecard = getModel();
 
 		Characteristics characteristics = scorecard.getCharacteristics();
-		ensureNotNull(characteristics);
 
 		return characteristics.getCharacteristics();
 	}

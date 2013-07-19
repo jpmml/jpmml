@@ -9,6 +9,8 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
+import static com.google.common.base.Preconditions.*;
+
 public class TreeModelManager extends ModelManager<TreeModel> implements HasEntityRegistry<Node> {
 
 	private TreeModel treeModel = null;
@@ -34,7 +36,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 
 	@Override
 	public TreeModel getModel(){
-		ensureNotNull(this.treeModel);
+		checkState(this.treeModel != null);
 
 		return this.treeModel;
 	}
@@ -43,7 +45,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 	 * @see #getModel()
 	 */
 	public TreeModel createModel(MiningFunctionType miningFunction){
-		ensureNull(this.treeModel);
+		checkState(this.treeModel == null);
 
 		Node root = new Node();
 		root.setPredicate(new True());
@@ -61,10 +63,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 	public Node getRoot(){
 		TreeModel treeModel = getModel();
 
-		Node root = treeModel.getNode();
-		ensureNotNull(root);
-
-		return root;
+		return treeModel.getNode();
 	}
 
 	@Override
