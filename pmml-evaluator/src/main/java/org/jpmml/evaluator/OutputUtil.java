@@ -300,7 +300,7 @@ public class OutputUtil {
 				{
 					Joiner joiner = Joiner.on(',');
 
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 
 					String left = joiner.join(getItemValues(hasRuleValues, associationRule.getAntecedent()));
 					sb.append('{').append(left).append('}');

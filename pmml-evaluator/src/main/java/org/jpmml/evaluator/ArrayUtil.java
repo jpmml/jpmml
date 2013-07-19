@@ -84,7 +84,7 @@ public class ArrayUtil {
 	public List<String> tokenize(String string, boolean enableQuotes){
 		List<String> result = Lists.newArrayList();
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		boolean quoted = false;
 
@@ -152,7 +152,7 @@ public class ArrayUtil {
 	}
 
 	static
-	private String createToken(StringBuffer sb, boolean enableQuotes){
+	private String createToken(StringBuilder sb, boolean enableQuotes){
 		String result;
 
 		if(sb.length() > 1 && (sb.charAt(0) == '\"' && sb.charAt(sb.length() - 1) == '\"') && enableQuotes){
