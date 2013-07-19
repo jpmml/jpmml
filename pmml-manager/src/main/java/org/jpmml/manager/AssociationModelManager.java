@@ -77,6 +77,34 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 		return this.associationModel;
 	}
 
+	/**
+	 * @return A bidirectional map between {@link Item#getId Item identifiers} and {@link Item instances}.
+	 */
+	public BiMap<String, Item> getItemRegistry(){
+		BiMap<String, Item> result = HashBiMap.create();
+
+		List<Item> items = getItems();
+		for(Item item : items){
+			result.put(item.getId(), item);
+		}
+
+		return result;
+	}
+
+	/**
+	 * @return A bidirectional map between {@link Itemset#getId() Itemset identifiers} and {@link Itemset instances}.
+	 */
+	public BiMap<String, Itemset> getItemsetRegistry(){
+		BiMap<String, Itemset> result = HashBiMap.create();
+
+		List<Itemset> itemsets = getItemsets();
+		for(Itemset itemset : itemsets){
+			result.put(itemset.getId(), itemset);
+		}
+
+		return result;
+	}
+
 	@Override
 	public BiMap<String, AssociationRule> getEntityRegistry(){
 		BiMap<String, AssociationRule> result = HashBiMap.create();

@@ -13,6 +13,10 @@ import com.google.common.collect.*;
 
 public class AssociationModelEvaluator extends AssociationModelManager implements Evaluator {
 
+	private BiMap<String, Item> items = null;
+
+	private BiMap<String, Itemset> itemsets = null;
+
 	private BiMap<String, AssociationRule> entities = null;
 
 	private BiMap<String, String> itemValues = null;
@@ -28,6 +32,26 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 	public AssociationModelEvaluator(AssociationModelManager parent){
 		super(parent.getPmml(), parent.getModel());
+	}
+
+	@Override
+	public BiMap<String, Item> getItemRegistry(){
+
+		if(this.items == null){
+			this.items = super.getItemRegistry();
+		}
+
+		return this.items;
+	}
+
+	@Override
+	public BiMap<String, Itemset> getItemsetRegistry(){
+
+		if(this.itemsets == null){
+			this.itemsets = super.getItemsetRegistry();
+		}
+
+		return this.itemsets;
 	}
 
 	@Override
