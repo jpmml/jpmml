@@ -23,6 +23,6 @@ public class CharacteristicReasonCodeTest extends ScorecardEvaluatorTest {
 
 		assertEquals("RC2", result.get(new FieldName("Reason Code 1")));
 		assertEquals("RC1", result.get(new FieldName("Reason Code 2")));
-		assertEquals("RC1", result.get(new FieldName("Reason Code 3")));
+		assertEquals(null, result.get(new FieldName("Reason Code 3")));
 	}
 }

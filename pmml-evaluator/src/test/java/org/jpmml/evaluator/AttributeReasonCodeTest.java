@@ -23,6 +23,6 @@ public class AttributeReasonCodeTest extends ScorecardEvaluatorTest {
 
 		assertEquals("RC2_3", result.get(new FieldName("Reason Code 1")));
 		assertEquals("RC1", result.get(new FieldName("Reason Code 2")));
-		assertEquals("RC1", result.get(new FieldName("Reason Code 3")));
+		assertEquals(null, result.get(new FieldName("Reason Code 3")));
 	}
 }

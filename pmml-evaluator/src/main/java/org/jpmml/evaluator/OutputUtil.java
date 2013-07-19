@@ -108,7 +108,11 @@ public class OutputUtil {
 
 			DataType dataType = outputField.getDataType();
 			if(dataType != null){
-				value = ParameterUtil.cast(dataType, value);
+
+				// output fields may be null (ie. indicating a missing value)
+				if(value != null){
+					value = ParameterUtil.cast(dataType, value);
+				}
 			}
 
 			// The result of one output field becomes available to other output fields
@@ -164,14 +168,8 @@ public class OutputUtil {
 		int index = (rank - 1);
 
 		List<String> reasonCodes = hasReasonCodes.getReasonCodes();
-		if(reasonCodes.size() > 0){
-
-			if(index < reasonCodes.size()){
-				return reasonCodes.get(index);
-			}
-
-			// The last meaningful explanation
-			return reasonCodes.get(reasonCodes.size() - 1);
+		if(index < reasonCodes.size()){
+			return reasonCodes.get(index);
 		}
 
 		return null;
@@ -242,6 +240,7 @@ public class OutputUtil {
 			}
 
 			int index = (rank - 1);
+
 			if(index < associationRules.size()){
 				AssociationRule associationRule = associationRules.get(index);
 
