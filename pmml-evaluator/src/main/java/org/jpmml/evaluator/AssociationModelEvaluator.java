@@ -15,6 +15,8 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 	private BiMap<String, AssociationRule> entities = null;
 
+	private BiMap<String, String> itemValues = null;
+
 
 	public AssociationModelEvaluator(PMML pmml){
 		super(pmml);
@@ -76,9 +78,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 			throw new MissingFieldException(activeField, associationModel);
 		}
 
-		List<Item> items = getItems();
-
-		Set<String> input = createInput((Collection<?>)value, items);
+		Set<String> input = createInput((Collection<?>)value);
 
 		Map<String, Boolean> flags = Maps.newLinkedHashMap();
 
@@ -115,25 +115,47 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 		return Collections.singletonMap(getTargetField(), association);
 	}
 
-	private Set<String> createInput(Collection<?> values, Collection<Item> items){
+	/**
+	 * @return A set of {@link Item#getId() Item identifiers}.
+	 */
+	private Set<String> createInput(Collection<?> values){
 		Set<String> result = Sets.newLinkedHashSet();
 
-		Map<String, Item> valueMap = Maps.newLinkedHashMap();
-
-		for(Item item : items){
-			valueMap.put(item.getValue(), item);
-		}
+		Map<String, String> valueItems = (getItemValues()).inverse();
 
 		values:
 		for(Object value : values){
 			String stringValue = (String)ParameterUtil.cast(DataType.STRING, value);
 
-			Item item = valueMap.get(stringValue);
-			if(item == null){
+			String id = valueItems.get(stringValue);
+			if(id == null){
 				continue values;
 			}
 
-			result.add(item.getId());
+			result.add(id);
+		}
+
+		return result;
+	}
+
+	/**
+	 * @return A bidirectional map between {@link Item#getId() Item identifiers} and {@link Item#getValue() Item values}.
+	 */
+	private BiMap<String, String> getItemValues(){
+
+		if(this.itemValues == null){
+			this.itemValues = createItemValues();
+		}
+
+		return this.itemValues;
+	}
+
+	private BiMap<String, String> createItemValues(){
+		BiMap<String, String> result = HashBiMap.create();
+
+		List<Item> items = getItems();
+		for(Item item : items){
+			result.put(item.getId(), item.getValue());
 		}
 
 		return result;
@@ -152,6 +174,6 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 			}
 		}
 
-		return true;
+		return result;
 	}
 }
