@@ -11,6 +11,7 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
+abstract
 class Association implements Computable<Object>, HasAssociationRules {
 
 	private List<AssociationRule> associationRules = null;

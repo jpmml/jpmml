@@ -41,10 +41,10 @@
             <ItemRef itemRef="5"/>
             <ItemRef itemRef="6"/>
         </Itemset>
-        <AssociationRule antecedent="1" consequent="2" support="1.0" confidence="1.0" lift="1.0" id="1"/>
-        <AssociationRule antecedent="2" consequent="1" support="1.0" confidence="1.0" lift="1.0" id="2"/>
-        <AssociationRule antecedent="1" consequent="3" support="1.0" confidence="1.0" lift="1.0" id="3"/>
-        <AssociationRule antecedent="5" consequent="4" support="1.0" confidence="1.0" lift="1.0" id="4"/>
-        <AssociationRule antecedent="2" consequent="6" support="1.0" confidence="1.0" lift="1.0" id="5"/>
+        <AssociationRule antecedent="1" consequent="2" support="1.0" confidence="1.0" lift="1.0"/>
+        <AssociationRule antecedent="2" consequent="1" support="1.0" confidence="1.0" lift="1.0"/>
+        <AssociationRule antecedent="1" consequent="3" support="1.0" confidence="1.0" lift="1.0"/>
+        <AssociationRule antecedent="5" consequent="4" support="1.0" confidence="1.0" lift="1.0"/>
+        <AssociationRule antecedent="2" consequent="6" support="1.0" confidence="1.0" lift="1.0"/>
     </AssociationModel>
 </PMML>

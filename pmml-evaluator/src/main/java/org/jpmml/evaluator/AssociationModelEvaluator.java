@@ -134,7 +134,23 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 			consequentFlags.set(i, consequentFlag);
 		}
 
-		Association association = new Association(associationRules, antecedentFlags, consequentFlags);
+		Association association = new Association(associationRules, antecedentFlags, consequentFlags){
+
+			@Override
+			public BiMap<String, Item> getItemRegistry(){
+				return AssociationModelEvaluator.this.getItemRegistry();
+			}
+
+			@Override
+			public BiMap<String, Itemset> getItemsetRegistry(){
+				return AssociationModelEvaluator.this.getItemsetRegistry();
+			}
+
+			@Override
+			public BiMap<String, AssociationRule> getAssociationRuleRegistry(){
+				return AssociationModelEvaluator.this.getEntityRegistry();
+			}
+		};
 
 		return Collections.singletonMap(getTargetField(), association);
 	}
@@ -145,7 +161,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 	private Set<String> createInput(Collection<?> values){
 		Set<String> result = Sets.newLinkedHashSet();
 
-		Map<String, String> valueItems = (getItemValues()).inverse();
+		Map<String, String> valueItems = (getItemValues().inverse());
 
 		values:
 		for(Object value : values){

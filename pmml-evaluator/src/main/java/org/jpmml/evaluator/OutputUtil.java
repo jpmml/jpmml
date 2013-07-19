@@ -9,6 +9,7 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 public class OutputUtil {
@@ -231,7 +232,7 @@ public class OutputUtil {
 			if(index < associationRules.size()){
 				AssociationRule associationRule = associationRules.get(index);
 
-				return getRuleFeature(associationRule, outputField);
+				return getRuleFeature(hasAssociationRules, associationRule, outputField);
 			} else
 
 			{
@@ -258,11 +259,12 @@ public class OutputUtil {
 				size = Math.min(rank, associationRules.size());
 			}
 
+			associationRules = associationRules.subList(0, size);
+
 			List<Object> result = Lists.newArrayList();
 
-			associationRules = associationRules.subList(0, size);
 			for(AssociationRule associationRule : associationRules){
-				result.add(getRuleFeature(associationRule, outputField));
+				result.add(getRuleFeature(hasAssociationRules, associationRule, outputField));
 			}
 
 			return result;
@@ -274,13 +276,41 @@ public class OutputUtil {
 	}
 
 	static
-	private Object getRuleFeature(AssociationRule associationRule, OutputField outputField){
+	private Object getRuleFeature(HasAssociationRules hasAssociationRules, AssociationRule associationRule, OutputField outputField){
 		RuleFeatureType ruleFeature = outputField.getRuleFeature();
 
 		switch(ruleFeature){
+			case ANTECEDENT:
+				return getItemValues(hasAssociationRules, associationRule.getAntecedent());
+			case CONSEQUENT:
+				return getItemValues(hasAssociationRules, associationRule.getConsequent());
+			case RULE:
+				{
+					Joiner joiner = Joiner.on(',');
+
+					StringBuffer sb = new StringBuffer();
+
+					String left = joiner.join(getItemValues(hasAssociationRules, associationRule.getAntecedent()));
+					sb.append('{').append(left).append('}');
+
+					sb.append("->");
+
+					String right = joiner.join(getItemValues(hasAssociationRules, associationRule.getConsequent()));
+					sb.append('{').append(right).append('}');
+
+					return sb.toString();
+				}
 			case RULE_ID:
-				// XXX
-				return associationRule.getId();
+				{
+					String id = associationRule.getId();
+					if(id == null){
+						BiMap<String, AssociationRule> associationRuleRegistry = hasAssociationRules.getAssociationRuleRegistry();
+
+						id = (associationRuleRegistry.inverse()).get(associationRule);
+					}
+
+					return id;
+				}
 			case CONFIDENCE:
 				return associationRule.getConfidence();
 			case SUPPORT:
@@ -294,5 +324,24 @@ public class OutputUtil {
 			default:
 				throw new UnsupportedFeatureException(outputField, ruleFeature);
 		}
+	}
+
+	static
+	private List<String> getItemValues(HasAssociationRules hasAssociationRules, String id){
+		List<String> result = Lists.newArrayList();
+
+		BiMap<String, Item> itemRegistry = hasAssociationRules.getItemRegistry();
+		BiMap<String, Itemset> itemsetRegistry = hasAssociationRules.getItemsetRegistry();
+
+		Itemset itemset = itemsetRegistry.get(id);
+
+		List<ItemRef> itemRefs = itemset.getItemRefs();
+		for(ItemRef itemRef : itemRefs){
+			Item item = itemRegistry.get(itemRef.getItemRef());
+
+			result.add(item.getValue());
+		}
+
+		return result;
 	}
 }
