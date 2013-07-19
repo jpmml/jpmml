@@ -5,45 +5,21 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-class Score implements Computable<Double>, HasReasonCode {
+class Score implements Computable<Double>, HasReasonCodes {
 
 	private Double value = null;
 
-	private List<String> reasonCodeRanking = null;
+	private List<String> reasonCodes = null;
 
 
-	Score(Double value, List<String> reasonCodeRanking){
+	Score(Double value, List<String> reasonCodes){
 		setValue(value);
-		setReasonCodeRanking(reasonCodeRanking);
+		setReasonCodes(reasonCodes);
 	}
 
 	@Override
 	public Double getResult(){
 		return getValue();
-	}
-
-	@Override
-	public String getReasonCode(int rank){
-
-		if(rank < 1){
-			throw new IllegalArgumentException();
-		}
-
-		int index = (rank - 1);
-
-		List<String> reasonCodeRanking = getReasonCodeRanking();
-
-		if(reasonCodeRanking.size() > 0){
-
-			if(index < reasonCodeRanking.size()){
-				return reasonCodeRanking.get(index);
-			}
-
-			// The last meaningful explanation
-			return reasonCodeRanking.get(reasonCodeRanking.size() - 1);
-		}
-
-		return null;
 	}
 
 	public Double getValue(){
@@ -54,11 +30,12 @@ class Score implements Computable<Double>, HasReasonCode {
 		this.value = value;
 	}
 
-	public List<String> getReasonCodeRanking(){
-		return this.reasonCodeRanking;
+	@Override
+	public List<String> getReasonCodes(){
+		return this.reasonCodes;
 	}
 
-	private void setReasonCodeRanking(List<String> reasonCodeRanking){
-		this.reasonCodeRanking = reasonCodeRanking;
+	private void setReasonCodes(List<String> reasonCodes){
+		this.reasonCodes = reasonCodes;
 	}
 }

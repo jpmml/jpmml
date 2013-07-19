@@ -150,18 +150,31 @@ public class OutputUtil {
 	static
 	public String getReasonCode(Object object, final OutputField outputField){
 
-		if(!(object instanceof HasReasonCode)){
+		if(!(object instanceof HasReasonCodes)){
 			throw new EvaluationException();
 		}
 
-		HasReasonCode hasReasonCode = (HasReasonCode)object;
+		HasReasonCodes hasReasonCodes = (HasReasonCodes)object;
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
 			throw new InvalidFeatureException(outputField);
 		}
 
-		return hasReasonCode.getReasonCode(rank);
+		int index = (rank - 1);
+
+		List<String> reasonCodes = hasReasonCodes.getReasonCodes();
+		if(reasonCodes.size() > 0){
+
+			if(index < reasonCodes.size()){
+				return reasonCodes.get(index);
+			}
+
+			// The last meaningful explanation
+			return reasonCodes.get(reasonCodes.size() - 1);
+		}
+
+		return null;
 	}
 
 	static

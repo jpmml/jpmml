@@ -147,7 +147,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 			};
 			Collections.sort(entries, comparator);
 
-			List<String> reasonCodeRanking = Lists.newArrayList();
+			List<String> reasonCodes = Lists.newArrayList();
 
 			for(Map.Entry<String, Double> entry : entries){
 
@@ -156,10 +156,10 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 					break;
 				}
 
-				reasonCodeRanking.add(entry.getKey());
+				reasonCodes.add(entry.getKey());
 			}
 
-			result = new Score(score, reasonCodeRanking);
+			result = new Score(score, reasonCodes);
 		}
 
 		return Collections.singletonMap(getTargetField(), result);
