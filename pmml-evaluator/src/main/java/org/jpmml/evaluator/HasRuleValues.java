@@ -12,7 +12,7 @@ import com.google.common.collect.*;
 /**
  * @see ResultFeatureType#RULE_VALUE
  */
-public interface HasRuleValues {
+public interface HasRuleValues extends ResultFeature {
 
 	BiMap<String, Item> getItemRegistry();
 

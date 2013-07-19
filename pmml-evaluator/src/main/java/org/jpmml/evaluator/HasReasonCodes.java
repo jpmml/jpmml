@@ -10,7 +10,7 @@ import org.dmg.pmml.*;
 /**
  * @see ResultFeatureType#REASON_CODE
  */
-public interface HasReasonCodes {
+public interface HasReasonCodes extends ResultFeature {
 
 	List<String> getReasonCodes();
 }

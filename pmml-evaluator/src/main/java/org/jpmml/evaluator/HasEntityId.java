@@ -8,7 +8,7 @@ import org.dmg.pmml.*;
 /**
  * @see ResultFeatureType#ENTITY_ID
  */
-public interface HasEntityId {
+public interface HasEntityId extends ResultFeature {
 
 	String getEntityId();
 }
