@@ -9,7 +9,10 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
-public interface HasAssociationRules {
+/**
+ * @see ResultFeatureType#RULE_VALUE
+ */
+public interface HasRuleValues {
 
 	BiMap<String, Item> getItemRegistry();
 
@@ -17,5 +20,5 @@ public interface HasAssociationRules {
 
 	BiMap<String, AssociationRule> getAssociationRuleRegistry();
 
-	List<AssociationRule> getAssociationRules(OutputField.Algorithm algorithm);
+	List<AssociationRule> getRuleValues(OutputField.Algorithm algorithm);
 }

@@ -167,13 +167,13 @@ public class OutputUtil {
 	static
 	public Object getRuleValue(Object object, final OutputField outputField){
 
-		if(!(object instanceof HasAssociationRules)){
+		if(!(object instanceof HasRuleValues)){
 			throw new EvaluationException();
 		}
 
-		HasAssociationRules hasAssociationRules = (HasAssociationRules)object;
+		HasRuleValues hasRuleValues = (HasRuleValues)object;
 
-		List<AssociationRule> associationRules = hasAssociationRules.getAssociationRules(outputField.getAlgorithm());
+		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
 
 		Comparator<AssociationRule> comparator = new Comparator<AssociationRule>(){
 
@@ -232,7 +232,7 @@ public class OutputUtil {
 			if(index < associationRules.size()){
 				AssociationRule associationRule = associationRules.get(index);
 
-				return getRuleFeature(hasAssociationRules, associationRule, outputField);
+				return getRuleFeature(hasRuleValues, associationRule, outputField);
 			} else
 
 			{
@@ -264,7 +264,7 @@ public class OutputUtil {
 			List<Object> result = Lists.newArrayList();
 
 			for(AssociationRule associationRule : associationRules){
-				result.add(getRuleFeature(hasAssociationRules, associationRule, outputField));
+				result.add(getRuleFeature(hasRuleValues, associationRule, outputField));
 			}
 
 			return result;
@@ -276,26 +276,26 @@ public class OutputUtil {
 	}
 
 	static
-	private Object getRuleFeature(HasAssociationRules hasAssociationRules, AssociationRule associationRule, OutputField outputField){
+	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, OutputField outputField){
 		RuleFeatureType ruleFeature = outputField.getRuleFeature();
 
 		switch(ruleFeature){
 			case ANTECEDENT:
-				return getItemValues(hasAssociationRules, associationRule.getAntecedent());
+				return getItemValues(hasRuleValues, associationRule.getAntecedent());
 			case CONSEQUENT:
-				return getItemValues(hasAssociationRules, associationRule.getConsequent());
+				return getItemValues(hasRuleValues, associationRule.getConsequent());
 			case RULE:
 				{
 					Joiner joiner = Joiner.on(',');
 
 					StringBuffer sb = new StringBuffer();
 
-					String left = joiner.join(getItemValues(hasAssociationRules, associationRule.getAntecedent()));
+					String left = joiner.join(getItemValues(hasRuleValues, associationRule.getAntecedent()));
 					sb.append('{').append(left).append('}');
 
 					sb.append("->");
 
-					String right = joiner.join(getItemValues(hasAssociationRules, associationRule.getConsequent()));
+					String right = joiner.join(getItemValues(hasRuleValues, associationRule.getConsequent()));
 					sb.append('{').append(right).append('}');
 
 					return sb.toString();
@@ -304,7 +304,7 @@ public class OutputUtil {
 				{
 					String id = associationRule.getId();
 					if(id == null){
-						BiMap<String, AssociationRule> associationRuleRegistry = hasAssociationRules.getAssociationRuleRegistry();
+						BiMap<String, AssociationRule> associationRuleRegistry = hasRuleValues.getAssociationRuleRegistry();
 
 						id = (associationRuleRegistry.inverse()).get(associationRule);
 					}
@@ -327,11 +327,11 @@ public class OutputUtil {
 	}
 
 	static
-	private List<String> getItemValues(HasAssociationRules hasAssociationRules, String id){
+	private List<String> getItemValues(HasRuleValues hasRuleValues, String id){
 		List<String> result = Lists.newArrayList();
 
-		BiMap<String, Item> itemRegistry = hasAssociationRules.getItemRegistry();
-		BiMap<String, Itemset> itemsetRegistry = hasAssociationRules.getItemsetRegistry();
+		BiMap<String, Item> itemRegistry = hasRuleValues.getItemRegistry();
+		BiMap<String, Itemset> itemsetRegistry = hasRuleValues.getItemsetRegistry();
 
 		Itemset itemset = itemsetRegistry.get(id);
 

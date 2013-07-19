@@ -12,7 +12,7 @@ import org.dmg.pmml.*;
 import com.google.common.collect.*;
 
 abstract
-class Association implements Computable<Object>, HasAssociationRules {
+class Association implements Computable<Object>, HasRuleValues {
 
 	private List<AssociationRule> associationRules = null;
 
@@ -34,7 +34,7 @@ class Association implements Computable<Object>, HasAssociationRules {
 	}
 
 	@Override
-	public List<AssociationRule> getAssociationRules(OutputField.Algorithm algorithm){
+	public List<AssociationRule> getRuleValues(OutputField.Algorithm algorithm){
 		List<AssociationRule> associationRules = getAssociationRules();
 
 		BitSet flags;
