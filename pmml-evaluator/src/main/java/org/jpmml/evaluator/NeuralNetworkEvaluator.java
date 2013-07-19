@@ -29,10 +29,10 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	@Override
-	public BiMap<String, Entity> getEntities(){
+	public BiMap<String, Entity> getEntityRegistry(){
 
 		if(this.entities == null){
-			this.entities = super.getEntities();
+			this.entities = super.getEntityRegistry();
 		}
 
 		return this.entities;
@@ -110,7 +110,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	Map<FieldName, NeuronClassificationMap> evaluateClassification(EvaluationContext context) {
 		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
 
-		Map<String, Entity> entities = getEntities();
+		Map<String, Entity> entities = getEntityRegistry();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 

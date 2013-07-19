@@ -29,10 +29,10 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	}
 
 	@Override
-	public BiMap<String, Node> getEntities(){
+	public BiMap<String, Node> getEntityRegistry(){
 
 		if(this.entities == null){
-			this.entities = super.getEntities();
+			this.entities = super.getEntityRegistry();
 		}
 
 		return this.entities;

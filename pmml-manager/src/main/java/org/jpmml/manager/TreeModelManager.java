@@ -9,7 +9,7 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
-public class TreeModelManager extends ModelManager<TreeModel> implements EntityRegistry<Node> {
+public class TreeModelManager extends ModelManager<TreeModel> implements HasEntityRegistry<Node> {
 
 	private TreeModel treeModel = null;
 
@@ -68,7 +68,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 	}
 
 	@Override
-	public BiMap<String, Node> getEntities(){
+	public BiMap<String, Node> getEntityRegistry(){
 		BiMap<String, Node> result = HashBiMap.create();
 
 		collectNodes(getRoot(), result);
@@ -83,7 +83,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 	 *
 	 * @return The newly added Node
 	 *
-	 * @see #getEntities()
+	 * @see #getEntityRegistry()
 	 */
 	public Node addNode(String id, Predicate predicate){
 		return addNode(getRoot(), id, predicate);
@@ -96,7 +96,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements EntityR
 	 *
 	 * @return The newly added Node
 	 *
-	 * @see #getEntities()
+	 * @see #getEntityRegistry()
 	 */
 	public Node addNode(Node parentNode, String id, Predicate predicate){
 		Node node = new Node();

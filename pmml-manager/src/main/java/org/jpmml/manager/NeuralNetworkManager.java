@@ -9,7 +9,7 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
-public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements EntityRegistry<Entity> {
+public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
 	private NeuralNetwork neuralNetwork = null;
 
@@ -61,7 +61,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 	/**
 	 * @param id Unique identifier
 	 *
-	 * @see #getEntities()
+	 * @see #getEntityRegistry()
 	 */
 	public NeuralInput addNeuralInput(String id, NormContinuous normContinuous) {
 		DerivedField derivedField = new DerivedField(OpType.CONTINUOUS, DataType.DOUBLE);
@@ -89,7 +89,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 	}
 
 	@Override
-	public BiMap<String, Entity> getEntities(){
+	public BiMap<String, Entity> getEntityRegistry(){
 		BiMap<String, Entity> result = HashBiMap.create();
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();
@@ -112,7 +112,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 	/**
 	 * @param id Unique identifier
 	 *
-	 * @see #getEntities()
+	 * @see #getEntityRegistry()
 	 */
 	static
 	public Neuron addNeuron(NeuralLayer neuralLayer, String id, Double bias) {

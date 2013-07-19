@@ -31,10 +31,10 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 	}
 
 	@Override
-	public BiMap<String, AssociationRule> getEntities(){
+	public BiMap<String, AssociationRule> getEntityRegistry(){
 
 		if(this.entities == null){
-			this.entities = super.getEntities();
+			this.entities = super.getEntityRegistry();
 		}
 
 		return this.entities;

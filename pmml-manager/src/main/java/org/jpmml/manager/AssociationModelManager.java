@@ -9,7 +9,7 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
-public class AssociationModelManager extends ModelManager<AssociationModel> implements EntityRegistry<AssociationRule> {
+public class AssociationModelManager extends ModelManager<AssociationModel> implements HasEntityRegistry<AssociationRule> {
 
 	private AssociationModel associationModel = null;
 
@@ -78,7 +78,7 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 	}
 
 	@Override
-	public BiMap<String, AssociationRule> getEntities(){
+	public BiMap<String, AssociationRule> getEntityRegistry(){
 		BiMap<String, AssociationRule> result = HashBiMap.create();
 
 		List<AssociationRule> associationRules = getAssociationRules();
