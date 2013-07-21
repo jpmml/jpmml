@@ -5,7 +5,7 @@ package org.jpmml.evaluator;
 
 import org.joda.time.*;
 
-public class DaysSinceDate {
+public class DaysSinceDate implements Comparable<DaysSinceDate> {
 
 	private LocalDate epoch = null;
 
@@ -16,6 +16,16 @@ public class DaysSinceDate {
 		setEpoch(epoch);
 
 		setDays(Days.daysBetween(epoch, date));
+	}
+
+	@Override
+	public int compareTo(DaysSinceDate that){
+
+		if(!(this.getEpoch()).equals(that.getEpoch())){
+			throw new ClassCastException();
+		}
+
+		return (this.getDays()).compareTo(that.getDays());
 	}
 
 	@Override

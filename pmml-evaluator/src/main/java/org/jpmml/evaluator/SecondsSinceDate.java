@@ -5,7 +5,7 @@ package org.jpmml.evaluator;
 
 import org.joda.time.*;
 
-public class SecondsSinceDate {
+public class SecondsSinceDate implements Comparable<SecondsSinceDate> {
 
 	private LocalDate epoch = null;
 
@@ -19,6 +19,16 @@ public class SecondsSinceDate {
 		LocalDateTime epochDateTime = new LocalDateTime(epoch.getYear(), epoch.getMonthOfYear(), epoch.getDayOfMonth(), 0, 0, 0);
 
 		setSeconds(Seconds.secondsBetween(epochDateTime, dateTime));
+	}
+
+	@Override
+	public int compareTo(SecondsSinceDate that){
+
+		if(!(this.getEpoch()).equals(that.getEpoch())){
+			throw new ClassCastException();
+		}
+
+		return (this.getSeconds()).compareTo(that.getSeconds());
 	}
 
 	@Override

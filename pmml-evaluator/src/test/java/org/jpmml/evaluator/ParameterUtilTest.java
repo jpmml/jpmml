@@ -7,11 +7,14 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 import org.dmg.pmml.Interval.Closure;
-import org.dmg.pmml.Value.*;
+import org.dmg.pmml.Value.Property;
+import org.dmg.pmml.Interval;
 
 import org.junit.*;
 
 import com.google.common.collect.*;
+
+import org.joda.time.*;
 
 import static org.junit.Assert.*;
 
@@ -161,32 +164,43 @@ public class ParameterUtilTest {
 	}
 
 	@Test
-	public void parseDaysSinceDate(){
-		assertEquals(0, parseDaysSince1960("1960-01-01"));
-		assertEquals(1, parseDaysSince1960("1960-01-02"));
-		assertEquals(31, parseDaysSince1960("1960-02-01"));
+	public void compareDateTime(){
+		assertTrue(ParameterUtil.compare(DataType.DATE, parseDate("1960-01-01"), parseDate("1960-01-01")) == 0);
+		assertTrue(ParameterUtil.compare(DataType.TIME, parseTime("00:00:00"), parseTime("00:00:00")) == 0);
+		assertTrue(ParameterUtil.compare(DataType.DATE_TIME, parseDateTime("1960-01-01T00:00:00"), parseDateTime("1960-01-01T00:00:00")) == 0);
 
-		assertEquals(-1, parseDaysSince1960("1959-12-31"));
+		assertTrue(ParameterUtil.compare(DataType.DATE_DAYS_SINCE_1960, parseDaysSince1960("1960-01-01"), parseDaysSince1960("1960-01-01")) == 0);
+		assertTrue(ParameterUtil.compare(DataType.TIME_SECONDS, parseSecondsSinceMidnight("00:00:00"), parseSecondsSinceMidnight("00:00:00")) == 0);
+		assertTrue(ParameterUtil.compare(DataType.DATE_TIME_SECONDS_SINCE_1960, parseSecondsSince1960("1960-01-01T00:00:00"), parseSecondsSince1960("1960-01-01T00:00:00")) == 0);
 	}
 
 	@Test
-	public void parseSecondsSinceDate(){
-		assertEquals(0, parseSecondsSince1960("1960-01-01T00:00:00"));
-		assertEquals(1, parseSecondsSince1960("1960-01-01T00:00:01"));
-		assertEquals(60, parseSecondsSince1960("1960-01-01T00:01:00"));
+	public void parseDaysSinceDate(){
+		assertEquals(0, countDaysSince1960("1960-01-01"));
+		assertEquals(1, countDaysSince1960("1960-01-02"));
+		assertEquals(31, countDaysSince1960("1960-02-01"));
 
-		assertEquals(-1, parseSecondsSince1960("1959-12-31T23:59:59"));
+		assertEquals(-1, countDaysSince1960("1959-12-31"));
 	}
 
 	@Test
 	public void parseSecondsSinceMidnight(){
-		assertEquals(0, parseSecondsSinceMidnight("0:00:00"));
-		assertEquals(100, parseSecondsSinceMidnight("0:01:40"));
-		assertEquals(200, parseSecondsSinceMidnight("0:03:20"));
-		assertEquals(1000, parseSecondsSinceMidnight("0:16:40"));
-		assertEquals(86400, parseSecondsSinceMidnight("24:00:00"));
-		assertEquals(86401, parseSecondsSinceMidnight("24:00:01"));
-		assertEquals(100000, parseSecondsSinceMidnight("27:46:40"));
+		assertEquals(0, countSecondsSinceMidnight("0:00:00"));
+		assertEquals(100, countSecondsSinceMidnight("0:01:40"));
+		assertEquals(200, countSecondsSinceMidnight("0:03:20"));
+		assertEquals(1000, countSecondsSinceMidnight("0:16:40"));
+		assertEquals(86400, countSecondsSinceMidnight("24:00:00"));
+		assertEquals(86401, countSecondsSinceMidnight("24:00:01"));
+		assertEquals(100000, countSecondsSinceMidnight("27:46:40"));
+	}
+
+	@Test
+	public void parseSecondsSinceDate(){
+		assertEquals(0, countSecondsSince1960("1960-01-01T00:00:00"));
+		assertEquals(1, countSecondsSince1960("1960-01-01T00:00:01"));
+		assertEquals(60, countSecondsSince1960("1960-01-01T00:01:00"));
+
+		assertEquals(-1, countSecondsSince1960("1959-12-31T23:59:59"));
 	}
 
 	@Test
@@ -230,23 +244,53 @@ public class ParameterUtilTest {
 	}
 
 	static
-	private int parseDaysSince1960(String string){
-		DaysSinceDate interval = (DaysSinceDate)ParameterUtil.parse(DataType.DATE_DAYS_SINCE_1960, string);
-
-		return interval.intValue();
+	private LocalDate parseDate(String string){
+		return (LocalDate)ParameterUtil.parse(DataType.DATE, string);
 	}
 
 	static
-	private int parseSecondsSince1960(String string){
-		SecondsSinceDate interval = (SecondsSinceDate)ParameterUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1960, string);
-
-		return interval.intValue();
+	private LocalTime parseTime(String string){
+		return (LocalTime)ParameterUtil.parse(DataType.TIME, string);
 	}
 
 	static
-	private int parseSecondsSinceMidnight(String string){
-		SecondsSinceMidnight interval = (SecondsSinceMidnight)ParameterUtil.parse(DataType.TIME_SECONDS, string);
+	private LocalDateTime parseDateTime(String string){
+		return (LocalDateTime)ParameterUtil.parse(DataType.DATE_TIME, string);
+	}
 
-		return interval.intValue();
+	static
+	private int countDaysSince1960(String string){
+		DaysSinceDate period = parseDaysSince1960(string);
+
+		return period.intValue();
+	}
+
+	static
+	private DaysSinceDate parseDaysSince1960(String string){
+		return (DaysSinceDate)ParameterUtil.parse(DataType.DATE_DAYS_SINCE_1960, string);
+	}
+
+	static
+	private int countSecondsSinceMidnight(String string){
+		SecondsSinceMidnight period = parseSecondsSinceMidnight(string);
+
+		return period.intValue();
+	}
+
+	static
+	private SecondsSinceMidnight parseSecondsSinceMidnight(String string){
+		return (SecondsSinceMidnight)ParameterUtil.parse(DataType.TIME_SECONDS, string);
+	}
+
+	static
+	private int countSecondsSince1960(String string){
+		SecondsSinceDate period = parseSecondsSince1960(string);
+
+		return period.intValue();
+	}
+
+	static
+	private SecondsSinceDate parseSecondsSince1960(String string){
+		return (SecondsSinceDate)ParameterUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1960, string);
 	}
 }

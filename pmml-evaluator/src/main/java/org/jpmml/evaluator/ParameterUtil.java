@@ -386,6 +386,9 @@ public class ParameterUtil {
 		return LocalDateTime.parse(string);
 	}
 
+	@SuppressWarnings (
+		value = {"deprecation"}
+	)
 	static
 	private Seconds parseSeconds(String string){
 		DateTimeFormatter format = SecondsSinceMidnight.getFormat();
@@ -425,6 +428,58 @@ public class ParameterUtil {
 
 		if(value instanceof Double){
 			return DataType.DOUBLE;
+		} else
+
+		if(value instanceof LocalDate){
+			return DataType.DATE;
+		} else
+
+		if(value instanceof LocalTime){
+			return DataType.TIME;
+		} else
+
+		if(value instanceof LocalDateTime){
+			return DataType.DATE_TIME;
+		} else
+
+		if(value instanceof DaysSinceDate){
+			DaysSinceDate period = (DaysSinceDate)value;
+
+			LocalDate epoch = period.getEpoch();
+
+			if((epoch).equals(YEAR_1960)){
+				return DataType.DATE_DAYS_SINCE_1960;
+			} else
+
+			if((epoch).equals(YEAR_1970)){
+				return DataType.DATE_DAYS_SINCE_1970;
+			} else
+
+			if((epoch).equals(YEAR_1980)){
+				return DataType.DATE_DAYS_SINCE_1980;
+			}
+		} else
+
+		if(value instanceof SecondsSinceMidnight){
+			return DataType.TIME_SECONDS;
+		} else
+
+		if(value instanceof SecondsSinceDate){
+			SecondsSinceDate period = (SecondsSinceDate)value;
+
+			LocalDate epoch = period.getEpoch();
+
+			if((epoch).equals(YEAR_1960)){
+				return DataType.DATE_TIME_SECONDS_SINCE_1960;
+			} else
+
+			if((epoch).equals(YEAR_1970)){
+				return DataType.DATE_TIME_SECONDS_SINCE_1970;
+			} else
+
+			if((epoch).equals(YEAR_1980)){
+				return DataType.DATE_TIME_SECONDS_SINCE_1980;
+			}
 		}
 
 		throw new EvaluationException();
@@ -470,6 +525,26 @@ public class ParameterUtil {
 				return toFloat(value);
 			case DOUBLE:
 				return toDouble(value);
+			case DATE:
+				return toDate(value);
+			case TIME:
+				return toTime(value);
+			case DATE_TIME:
+				return toDateTime(value);
+			case DATE_DAYS_SINCE_1960:
+				return toDaysSinceDate(value, YEAR_1960);
+			case DATE_DAYS_SINCE_1970:
+				return toDaysSinceDate(value, YEAR_1970);
+			case DATE_DAYS_SINCE_1980:
+				return toDaysSinceDate(value, YEAR_1980);
+			case TIME_SECONDS:
+				return toSecondsSinceMidnight(value);
+			case DATE_TIME_SECONDS_SINCE_1960:
+				return toSecondsSinceDate(value, YEAR_1960);
+			case DATE_TIME_SECONDS_SINCE_1970:
+				return toSecondsSinceDate(value, YEAR_1970);
+			case DATE_TIME_SECONDS_SINCE_1980:
+				return toSecondsSinceDate(value, YEAR_1980);
 			default:
 				break;
 		}
@@ -571,6 +646,96 @@ public class ParameterUtil {
 			Number number = (Number)value;
 
 			return Double.valueOf(number.doubleValue());
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * @see DataType#DATE
+	 */
+	static
+	private LocalDate toDate(Object value){
+
+		if(value instanceof LocalDate){
+			return (LocalDate)value;
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * @see DataType#TIME
+	 */
+	static
+	private LocalTime toTime(Object value){
+
+		if(value instanceof LocalTime){
+			return (LocalTime)value;
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * @see DataType#DATE_TIME
+	 */
+	static
+	private LocalDateTime toDateTime(Object value){
+
+		if(value instanceof LocalDateTime){
+			return (LocalDateTime)value;
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * @see DataType#DATE_DAYS_SINCE_1960
+	 * @see DataType#DATE_DAYS_SINCE_1970
+	 * @see DataType#DATE_DAYS_SINCE_1980
+	 */
+	static
+	private DaysSinceDate toDaysSinceDate(Object value, LocalDate epoch){
+
+		if(value instanceof DaysSinceDate){
+			DaysSinceDate period = (DaysSinceDate)value;
+
+			if((period.getEpoch()).equals(epoch)){
+				return period;
+			}
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * @see DataType#TIME_SECONDS
+	 */
+	static
+	private SecondsSinceMidnight toSecondsSinceMidnight(Object value){
+
+		if(value instanceof SecondsSinceMidnight){
+			return (SecondsSinceMidnight)value;
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * @see DataType#DATE_TIME_SECONDS_SINCE_1960
+	 * @see DataType#DATE_TIME_SECONDS_SINCE_1970
+	 * @see DataType#DATE_TIME_SECONDS_SINCE_1980
+	 */
+	static
+	private SecondsSinceDate toSecondsSinceDate(Object value, LocalDate epoch){
+
+		if(value instanceof SecondsSinceDate){
+			SecondsSinceDate period = (SecondsSinceDate)value;
+
+			if((period.getEpoch()).equals(epoch)){
+				return period;
+			}
 		}
 
 		throw new EvaluationException();

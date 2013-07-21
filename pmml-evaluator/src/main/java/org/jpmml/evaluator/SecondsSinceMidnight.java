@@ -7,13 +7,18 @@ import org.joda.time.*;
 import org.joda.time.field.*;
 import org.joda.time.format.*;
 
-public class SecondsSinceMidnight {
+public class SecondsSinceMidnight implements Comparable<SecondsSinceMidnight> {
 
 	private Seconds seconds = null;
 
 
 	public SecondsSinceMidnight(Seconds seconds){
 		setSeconds(seconds);
+	}
+
+	@Override
+	public int compareTo(SecondsSinceMidnight that){
+		return (this.getSeconds()).compareTo(that.getSeconds());
 	}
 
 	@Override
