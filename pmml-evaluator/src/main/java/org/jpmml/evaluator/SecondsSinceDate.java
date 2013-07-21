@@ -12,6 +12,10 @@ public class SecondsSinceDate implements Comparable<SecondsSinceDate> {
 	private Seconds seconds = null;
 
 
+	public SecondsSinceDate(int year, LocalDateTime dateTime){
+		this(new LocalDate(year, 1, 1), dateTime);
+	}
+
 	public SecondsSinceDate(LocalDate epoch, LocalDateTime dateTime){
 		setEpoch(epoch);
 

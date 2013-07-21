@@ -9,6 +9,8 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
+import org.joda.time.*;
+
 import static org.junit.Assert.*;
 
 public class FunctionUtilTest {
@@ -203,6 +205,17 @@ public class FunctionUtilTest {
 		assertEquals("valu", evaluate("substring", "value", 1, 4));
 
 		assertEquals("value", evaluate("trimBlanks", "\tvalue\t"));
+	}
+
+	@Test
+	public void evaluateDateTimeFunctions(){
+		assertEquals(15796, evaluate("dateDaysSinceYear", new LocalDate(2003, 4, 1), 1960));
+		assertEquals(15796, evaluate("dateDaysSinceYear", new LocalDateTime(2003, 4, 1, 0, 0, 0), 1960));
+
+		assertEquals(19410, evaluate("dateSecondsSinceMidnight", new LocalTime(5, 23, 30)));
+		assertEquals(19410, evaluate("dateSecondsSinceMidnight", new LocalDateTime(1960, 1, 1, 5, 23, 30)));
+
+		assertEquals(185403, evaluate("dateSecondsSinceYear", new LocalDateTime(1960, 1, 3, 3, 30, 3), 1960));
 	}
 
 	static

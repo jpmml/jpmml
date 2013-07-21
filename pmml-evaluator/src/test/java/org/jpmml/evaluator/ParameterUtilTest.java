@@ -181,6 +181,8 @@ public class ParameterUtilTest {
 		assertEquals(31, countDaysSince1960("1960-02-01"));
 
 		assertEquals(-1, countDaysSince1960("1959-12-31"));
+
+		assertEquals(15796, countDaysSince1960("2003-04-01"));
 	}
 
 	@Test
@@ -192,6 +194,8 @@ public class ParameterUtilTest {
 		assertEquals(86400, countSecondsSinceMidnight("24:00:00"));
 		assertEquals(86401, countSecondsSinceMidnight("24:00:01"));
 		assertEquals(100000, countSecondsSinceMidnight("27:46:40"));
+
+		assertEquals(19410, countSecondsSinceMidnight("05:23:30"));
 	}
 
 	@Test
@@ -201,6 +205,8 @@ public class ParameterUtilTest {
 		assertEquals(60, countSecondsSince1960("1960-01-01T00:01:00"));
 
 		assertEquals(-1, countSecondsSince1960("1959-12-31T23:59:59"));
+
+		assertEquals(185403, countSecondsSince1960("1960-01-03T03:30:03"));
 	}
 
 	@Test

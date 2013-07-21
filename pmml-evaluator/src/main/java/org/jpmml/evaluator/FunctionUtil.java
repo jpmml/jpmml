@@ -16,6 +16,8 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
+import org.joda.time.*;
+
 public class FunctionUtil {
 
 	private FunctionUtil(){
@@ -127,6 +129,54 @@ public class FunctionUtil {
 
 		if(value instanceof String){
 			return (String)value;
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	private LocalDate asDate(Object value){
+
+		if(value instanceof LocalDate){
+			return (LocalDate)value;
+		} else
+
+		if(value instanceof LocalDateTime){
+			LocalDateTime instant = (LocalDateTime)value;
+
+			return instant.toLocalDate();
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	private LocalTime asTime(Object value){
+
+		if(value instanceof LocalTime){
+			return (LocalTime)value;
+		} else
+
+		if(value instanceof LocalDateTime){
+			LocalDateTime instant = (LocalDateTime)value;
+
+			return instant.toLocalTime();
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	private LocalDateTime asDateTime(Object value){
+
+		if(value instanceof LocalDate){
+			LocalDate instant = (LocalDate)value;
+
+			return new LocalDateTime(instant.getYear(), instant.getMonthOfYear(), instant.getDayOfMonth(), 0, 0, 0);
+		} else
+
+		if(value instanceof LocalDateTime){
+			return (LocalDateTime)value;
 		}
 
 		throw new EvaluationException();
@@ -794,6 +844,65 @@ public class FunctionUtil {
 			@Override
 			public String evaluate(String value){
 				return value.trim();
+			}
+		});
+	}
+
+	static {
+		putFunction("dateDaysSinceYear", new Function(){
+
+			@Override
+			public Integer evaluate(List<?> values){
+
+				if(values.size() != 2){
+					throw new EvaluationException();
+				}
+
+				LocalDate instant = asDate(values.get(0));
+
+				int year = asInteger(values.get(1));
+
+				DaysSinceDate period = new DaysSinceDate(year, instant);
+
+				return period.intValue();
+			}
+		});
+
+		putFunction("dateSecondsSinceMidnight", new Function(){
+
+			@Override
+			public Integer evaluate(List<?> values){
+
+				if(values.size() != 1){
+					throw new EvaluationException();
+				}
+
+				LocalTime instant = asTime(values.get(0));
+
+				Seconds seconds = Seconds.seconds(instant.getHourOfDay() * 60 * 60 + instant.getMinuteOfHour() * 60 + instant.getSecondOfMinute());
+
+				SecondsSinceMidnight period = new SecondsSinceMidnight(seconds);
+
+				return period.intValue();
+			}
+		});
+
+		putFunction("dateSecondsSinceYear", new Function(){
+
+			@Override
+			public Integer evaluate(List<?> values){
+
+				if(values.size() != 2){
+					throw new EvaluationException();
+				}
+
+				LocalDateTime instant = asDateTime(values.get(0));
+
+				int year = asInteger(values.get(1));
+
+				SecondsSinceDate period = new SecondsSinceDate(year, instant);
+
+				return period.intValue();
 			}
 		});
 	}

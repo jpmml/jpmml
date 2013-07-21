@@ -12,6 +12,10 @@ public class DaysSinceDate implements Comparable<DaysSinceDate> {
 	private Days days = null;
 
 
+	public DaysSinceDate(int year, LocalDate date){
+		this(new LocalDate(year, 1, 1), date);
+	}
+
 	public DaysSinceDate(LocalDate epoch, LocalDate date){
 		setEpoch(epoch);
 
