@@ -12,7 +12,7 @@ class EntityClassificationMap<E extends Entity> extends ClassificationMap implem
 
 
 	EntityClassificationMap(){
-    }
+	}
 
 	EntityClassificationMap(E entity){
 		setEntity(entity);
