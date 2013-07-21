@@ -8,8 +8,12 @@ import java.util.*;
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
+import org.dmg.pmml.Interval;
 
 import com.google.common.collect.*;
+
+import org.joda.time.*;
+import org.joda.time.format.*;
 
 public class ParameterUtil {
 
@@ -340,11 +344,65 @@ public class ParameterUtil {
 				return Float.valueOf(string);
 			case DOUBLE:
 				return Double.valueOf(string);
+			case DATE:
+				return parseDate(string);
+			case TIME:
+				return parseTime(string);
+			case DATE_TIME:
+				return parseDateTime(string);
+			case DATE_DAYS_SINCE_1960:
+				return new DaysSinceDate(YEAR_1960, parseDate(string));
+			case DATE_DAYS_SINCE_1970:
+				return new DaysSinceDate(YEAR_1970, parseDate(string));
+			case DATE_DAYS_SINCE_1980:
+				return new DaysSinceDate(YEAR_1980, parseDate(string));
+			case TIME_SECONDS:
+				return new SecondsSinceMidnight(parseSeconds(string));
+			case DATE_TIME_SECONDS_SINCE_1960:
+				return new SecondsSinceDate(YEAR_1960, parseDateTime(string));
+			case DATE_TIME_SECONDS_SINCE_1970:
+				return new SecondsSinceDate(YEAR_1970, parseDateTime(string));
+			case DATE_TIME_SECONDS_SINCE_1980:
+				return new SecondsSinceDate(YEAR_1980, parseDateTime(string));
 			default:
 				break;
 		}
 
 		throw new EvaluationException();
+	}
+
+	static
+	private LocalDate parseDate(String string){
+		return LocalDate.parse(string);
+	}
+
+	static
+	private LocalTime parseTime(String string){
+		return LocalTime.parse(string);
+	}
+
+	static
+	private LocalDateTime parseDateTime(String string){
+		return LocalDateTime.parse(string);
+	}
+
+	static
+	private Seconds parseSeconds(String string){
+		DateTimeFormatter format = SecondsSinceMidnight.getFormat();
+
+		DateTimeParser parser = format.getParser();
+
+		DateTimeParserBucket bucket = new DateTimeParserBucket(0, null, null);
+		bucket.setZone(null);
+
+		int result = parser.parseInto(bucket, string, 0);
+		if(result >= 0 && result >= string.length()){
+			long millis = bucket.computeMillis(true);
+
+			return Seconds.seconds((int)(millis / 1000L));
+		}
+
+		throw new IllegalArgumentException(string);
 	}
 
 	/**
@@ -539,4 +597,8 @@ public class ParameterUtil {
 	}
 
 	private static final List<DataType> precedenceSequence = Arrays.asList(DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER);
+
+	private static final LocalDate YEAR_1960 = new LocalDate(1960, 1, 1);
+	private static final LocalDate YEAR_1970 = new LocalDate(1970, 1, 1);
+	private static final LocalDate YEAR_1980 = new LocalDate(1980, 1, 1);
 }

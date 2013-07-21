@@ -161,6 +161,35 @@ public class ParameterUtilTest {
 	}
 
 	@Test
+	public void parseDaysSinceDate(){
+		assertEquals(0, parseDaysSince1960("1960-01-01"));
+		assertEquals(1, parseDaysSince1960("1960-01-02"));
+		assertEquals(31, parseDaysSince1960("1960-02-01"));
+
+		assertEquals(-1, parseDaysSince1960("1959-12-31"));
+	}
+
+	@Test
+	public void parseSecondsSinceDate(){
+		assertEquals(0, parseSecondsSince1960("1960-01-01T00:00:00"));
+		assertEquals(1, parseSecondsSince1960("1960-01-01T00:00:01"));
+		assertEquals(60, parseSecondsSince1960("1960-01-01T00:01:00"));
+
+		assertEquals(-1, parseSecondsSince1960("1959-12-31T23:59:59"));
+	}
+
+	@Test
+	public void parseSecondsSinceMidnight(){
+		assertEquals(0, parseSecondsSinceMidnight("0:00:00"));
+		assertEquals(100, parseSecondsSinceMidnight("0:01:40"));
+		assertEquals(200, parseSecondsSinceMidnight("0:03:20"));
+		assertEquals(1000, parseSecondsSinceMidnight("0:16:40"));
+		assertEquals(86400, parseSecondsSinceMidnight("24:00:00"));
+		assertEquals(86401, parseSecondsSinceMidnight("24:00:01"));
+		assertEquals(100000, parseSecondsSinceMidnight("27:46:40"));
+	}
+
+	@Test
 	public void getDataType(){
 		assertEquals(DataType.STRING, ParameterUtil.getDataType("value"));
 
@@ -198,5 +227,26 @@ public class ParameterUtilTest {
 		result.setProperty(property);
 
 		return result;
+	}
+
+	static
+	private int parseDaysSince1960(String string){
+		DaysSinceDate interval = (DaysSinceDate)ParameterUtil.parse(DataType.DATE_DAYS_SINCE_1960, string);
+
+		return interval.intValue();
+	}
+
+	static
+	private int parseSecondsSince1960(String string){
+		SecondsSinceDate interval = (SecondsSinceDate)ParameterUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1960, string);
+
+		return interval.intValue();
+	}
+
+	static
+	private int parseSecondsSinceMidnight(String string){
+		SecondsSinceMidnight interval = (SecondsSinceMidnight)ParameterUtil.parse(DataType.TIME_SECONDS, string);
+
+		return interval.intValue();
 	}
 }

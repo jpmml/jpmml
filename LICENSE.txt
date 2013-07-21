@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 Third-party dependencies that are released under the Apache License, Version 2.0:
   * Commons Math - http://commons.apache.org/proper/commons-math/
   * Guava - http://guava-libraries.googlecode.com
+  * Joda-Time - http://joda-time.sourceforge.net/index.html
 
                                  Apache License
                            Version 2.0, January 2004
