@@ -41,9 +41,9 @@ public class EvaluatorUtilTest {
 
 		table = EvaluatorUtil.groupRows(new FieldName("transaction"), table);
 
-		assertEquals(Arrays.asList("Cracker", "Coke"), getBasket(table.get(0)));
-		assertEquals(Arrays.asList("Cracker", "Water"), getBasket(table.get(1)));
-		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), getBasket(table.get(2)));
+		checkGroupedRow(table.get(0), "1", Arrays.asList("Cracker", "Coke"));
+		checkGroupedRow(table.get(1), "2", Arrays.asList("Cracker", "Water"));
+		checkGroupedRow(table.get(2), "3", Arrays.asList("Cracker", "Water", "Coke"));
 	}
 
 	static
@@ -56,11 +56,10 @@ public class EvaluatorUtilTest {
 	}
 
 	static
-	private Object getBasket(Map<FieldName, Object> map){
-		Collection<Object> values = map.values();
+	private void checkGroupedRow(Map<FieldName, Object> row, String transaction, List<String> items){
+		assertEquals(2, row.size());
 
-		assertEquals(1, values.size());
-
-		return (values.iterator()).next();
+		assertEquals(transaction, row.get(new FieldName("transaction")));
+		assertEquals(items, row.get(new FieldName("item")));
 	}
 }

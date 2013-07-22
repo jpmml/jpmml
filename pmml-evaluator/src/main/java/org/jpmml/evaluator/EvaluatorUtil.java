@@ -89,12 +89,11 @@ public class EvaluatorUtil {
 		return result;
 	}
 
-	@SuppressWarnings (
-		value = {"rawtypes", "unchecked"}
-	)
 	static
 	public List<Map<FieldName, Object>> groupRows(FieldName groupField, List<Map<FieldName, Object>> table){
 		Map<Object, ListMultimap<FieldName, Object>> groupedRows = Maps.newLinkedHashMap();
+
+		Set<FieldName> keys = Sets.newLinkedHashSet();
 
 		for(int i = 0; i < table.size(); i++){
 			Map<FieldName, ?> row = table.get(i);
@@ -113,7 +112,8 @@ public class EvaluatorUtil {
 				FieldName key = entry.getKey();
 				Object value = entry.getValue();
 
-				// Drop the group column from the table
+				keys.add(key);
+
 				if((groupField).equals(key)){
 					continue;
 				}
@@ -124,9 +124,28 @@ public class EvaluatorUtil {
 
 		List<Map<FieldName, Object>> result = Lists.newArrayList();
 
-		Collection<ListMultimap<FieldName, Object>> values = groupedRows.values();
-		for(ListMultimap<FieldName, Object> value : values){
-			result.add((Map)value.asMap());
+		Collection<Map.Entry<Object, ListMultimap<FieldName, Object>>> entries = groupedRows.entrySet();
+		for(Map.Entry<Object, ListMultimap<FieldName, Object>> entry : entries){
+			Map<FieldName, Object> row = Maps.newLinkedHashMap();
+
+			Object groupValue = entry.getKey();
+
+			ListMultimap<FieldName, Object> groupedRow = entry.getValue();
+
+			for(FieldName key : keys){
+
+				// The group field holds an Object
+				if((groupField).equals(key)){
+					row.put(key, groupValue);
+				} else
+
+				// All other fields hold collections (ie. java.util.List) of Objects
+				{
+					row.put(key, groupedRow.get(key));
+				}
+			}
+
+			result.add(row);
 		}
 
 		return result;
