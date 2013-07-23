@@ -221,32 +221,39 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			locatable = neuralNetwork;
 
 			normalizationMethod = neuralNetwork.getNormalizationMethod();
-		} // End if
+		}
 
-		if (normalizationMethod == NnNormalizationMethodType.NONE) {
-			return;
-		} else
+		switch(normalizationMethod){
+			case NONE:
+				break;
+			case SIMPLEMAX:
+				normalizeNeuronOutputs(neuralLayer, SIMPLEMAX_NORMALIZER, neuronOutputs);
+				break;
+			case SOFTMAX:
+				normalizeNeuronOutputs(neuralLayer, SOFTMAX_NORMALIZER, neuronOutputs);
+				break;
+			default:
+				throw new UnsupportedFeatureException(locatable, normalizationMethod);
+		}
+	}
 
-		if (normalizationMethod == NnNormalizationMethodType.SOFTMAX) {
-			List<Neuron> neurons = neuralLayer.getNeurons();
+	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Normalizer normalizer, Map<String, Double> neuronOutputs){
+		List<Neuron> neurons = neuralLayer.getNeurons();
 
-			double sum = 0.0;
+		double sum = 0;
 
-			for (Neuron neuron : neurons) {
-				double output = neuronOutputs.get(neuron.getId());
+		for(Neuron neuron : neurons){
+			Double output = neuronOutputs.get(neuron.getId());
 
-				sum += Math.exp(output);
-			}
+			sum += normalizer.apply(output.doubleValue());
+		}
 
-			for (Neuron neuron : neurons) {
-				double output = neuronOutputs.get(neuron.getId());
+		for(Neuron neuron : neurons){
+			Double output = neuronOutputs.get(neuron.getId());
 
-				neuronOutputs.put(neuron.getId(), Math.exp(output) / sum);
-			}
-		} else
+			Double normalizedOutput = normalizer.apply(output.doubleValue()) / sum;
 
-		{
-			throw new UnsupportedFeatureException(locatable, normalizationMethod);
+			neuronOutputs.put(neuron.getId(), normalizedOutput);
 		}
 	}
 
@@ -295,4 +302,25 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 				throw new UnsupportedFeatureException(locatable, activationFunction);
 		}
 	}
+
+	private interface Normalizer {
+
+		double apply(double value);
+	}
+
+	private static final Normalizer SIMPLEMAX_NORMALIZER = new Normalizer(){
+
+		@Override
+		public double apply(double value){
+			return value;
+		}
+	};
+
+	private static final Normalizer SOFTMAX_NORMALIZER = new Normalizer(){
+
+		@Override
+		public double apply(double value){
+			return Math.exp(value);
+		}
+	};
 }

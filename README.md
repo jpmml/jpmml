@@ -157,6 +157,18 @@ Tested model types:
 	<tr><td>Neural network</td></tr>
 </table>
 
+##### pmml-rapidminer (internal)
+
+Functional tests for [RapidMiner] (http://rapid-i.com/content/view/181/190/) open source software.
+
+Tested model types:
+<table>
+	<tr><th>Description</th></tr>
+	<tr><td>Linear regression</td></tr>
+	<tr><td>Decision tree</td></tr>
+	<tr><td>Neural network</td></tr>
+</table>
+
 ##### pmml-rattle (internal)
 
 Functional tests for R (http://www.r-project.org/) and Rattle (http://rattle.togaware.com/) open source software.

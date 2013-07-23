@@ -46,6 +46,7 @@
 		<module>pmml-knime</module>
 		<module>pmml-manager</module>
 		<module>pmml-model</module>
+		<module>pmml-rapidminer</module>
 		<module>pmml-rattle</module>
 		<module>pmml-schema</module>
 		<module>xjc</module>
