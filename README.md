@@ -152,8 +152,8 @@ Functional tests for [KNIME] (http://www.knime.org/) open source software.
 Tested model types:
 <table>
 	<tr><th>Description</th></tr>
-	<tr><td>Linear regression</td></tr>
 	<tr><td>Decision tree</td></tr>
+	<tr><td>Linear regression</td></tr>
 	<tr><td>Neural network</td></tr>
 </table>
 
@@ -164,8 +164,8 @@ Functional tests for [RapidMiner] (http://rapid-i.com/content/view/181/190/) ope
 Tested model types:
 <table>
 	<tr><th>Description</th></tr>
-	<tr><td>Linear regression</td></tr>
 	<tr><td>Decision tree</td></tr>
+	<tr><td>Linear regression</td></tr>
 	<tr><td>Neural network</td></tr>
 </table>
 
@@ -176,8 +176,9 @@ Functional tests for R (http://www.r-project.org/) and Rattle (http://rattle.tog
 Tested model types:
 <table>
 	<tr><th>Description</th><th>R function(s)</th></tr>
-	<tr><td>Linear regression</td><td><code>lm()</code> and <code>multinom()</code></td></tr>
+	<tr><td>Association rules</td><td><code>apriori()</code> (package <code>arules</code>)</td></tr>
 	<tr><td>Decision tree</td><td><code>rpart()</code> (package <code>rpart</code>)</td></tr>
+	<tr><td>Linear regression</td><td><code>lm()</code> and <code>multinom()</code></td></tr>
 	<tr><td>Neural network</td><td><code>nnet()</code> (package <code>nnet</code>)</td></tr>
 	<tr><td>Random forest</td><td><code>randomForest()</code> (package <code>randomForest</code>)</td></tr>
 </table>
