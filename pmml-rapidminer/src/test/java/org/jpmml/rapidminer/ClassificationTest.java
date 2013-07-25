@@ -24,4 +24,25 @@ public class ClassificationTest {
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
+
+	@Test
+	public void evaluateRuleSetIris() throws Exception {
+		Batch batch = new RapidMinerBatch("RuleSet", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateDecisionTreeAudit() throws Exception {
+		Batch batch = new RapidMinerBatch("DecisionTree", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateRuleSetAudit() throws Exception {
+		Batch batch = new RapidMinerBatch("RuleSet", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
 }

@@ -8,4 +8,10 @@ import javax.xml.bind.annotation.*;
 @XmlTransient
 abstract
 public class Rule extends Entity {
+
+	abstract
+	public Predicate getPredicate();
+
+	abstract
+	public void setPredicate(Predicate predicate);
 }

@@ -28,6 +28,10 @@ public class ModelManagerFactory {
 			return new RegressionModelManager(pmml, (RegressionModel)model);
 		} else
 
+		if(model instanceof RuleSetModel){
+			return new RuleSetModelManager(pmml, (RuleSetModel)model);
+		} else
+
 		if(model instanceof Scorecard){
 			return new ScorecardManager(pmml, (Scorecard)model);
 		} else

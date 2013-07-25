@@ -10,6 +10,8 @@ class EntityClassificationMap<E extends Entity> extends ClassificationMap implem
 
 	private E entity = null;
 
+	private Double maxValue = null;
+
 
 	EntityClassificationMap(){
 	}
@@ -27,6 +29,17 @@ class EntityClassificationMap<E extends Entity> extends ClassificationMap implem
 		}
 
 		return null;
+	}
+
+	Double put(E entity, String key, Double value){
+
+		if(this.maxValue == null || (value).compareTo(this.maxValue) > 0){
+			this.maxValue = value;
+
+			setEntity(entity);
+		}
+
+		return super.put(key, value);
 	}
 
 	public E getEntity(){

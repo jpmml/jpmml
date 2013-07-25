@@ -31,6 +31,10 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 			return new RegressionModelEvaluator(pmml, (RegressionModel)model);
 		} else
 
+		if(model instanceof RuleSetModel){
+			return new RuleSetModelEvaluator(pmml, (RuleSetModel)model);
+		} else
+
 		if(model instanceof Scorecard){
 			return new ScorecardEvaluator(pmml, (Scorecard)model);
 		} else
