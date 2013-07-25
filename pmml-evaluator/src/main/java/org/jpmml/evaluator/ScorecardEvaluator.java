@@ -21,10 +21,6 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 		super(pmml, scorecard);
 	}
 
-	public ScorecardEvaluator(ScorecardManager parent){
-		super(parent.getPmml(), parent.getModel());
-	}
-
 	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);

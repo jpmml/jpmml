@@ -19,10 +19,6 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		super(pmml, regressionModel);
 	}
 
-	public RegressionModelEvaluator(RegressionModelManager parent){
-		this(parent.getPmml(), parent.getModel());
-	}
-
 	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);

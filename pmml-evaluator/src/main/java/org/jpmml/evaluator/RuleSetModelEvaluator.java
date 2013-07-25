@@ -21,10 +21,6 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 		super(pmml, ruleSetModel);
 	}
 
-	public RuleSetModelEvaluator(RuleSetModelManager parent){
-		super(parent.getPmml(), parent.getModel());
-	}
-
 	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);

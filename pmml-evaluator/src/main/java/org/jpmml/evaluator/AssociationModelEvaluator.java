@@ -30,10 +30,6 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 		super(pmml, associationModel);
 	}
 
-	public AssociationModelEvaluator(AssociationModelManager parent){
-		super(parent.getPmml(), parent.getModel());
-	}
-
 	@Override
 	public BiMap<String, Item> getItemRegistry(){
 

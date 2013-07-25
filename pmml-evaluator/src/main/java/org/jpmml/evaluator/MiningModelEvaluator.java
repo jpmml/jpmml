@@ -21,10 +21,6 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		super(pmml, miningModel);
 	}
 
-	public MiningModelEvaluator(MiningModelManager parent){
-		this(parent.getPmml(), parent.getModel());
-	}
-
 	@Override
 	public Object prepare(FieldName name, Object value){
 		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);

@@ -24,10 +24,6 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		super(pmml, treeModel);
 	}
 
-	public TreeModelEvaluator(TreeModelManager parent){
-		this(parent.getPmml(), parent.getModel());
-	}
-
 	@Override
 	public BiMap<String, Node> getEntityRegistry(){
 

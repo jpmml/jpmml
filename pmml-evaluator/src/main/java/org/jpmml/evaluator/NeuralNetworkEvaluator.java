@@ -24,10 +24,6 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		super(pmml, neuralNetwork);
 	}
 
-	public NeuralNetworkEvaluator(NeuralNetworkManager parent){
-		this(parent.getPmml(), parent.getModel());
-	}
-
 	@Override
 	public BiMap<String, Entity> getEntityRegistry(){
 
