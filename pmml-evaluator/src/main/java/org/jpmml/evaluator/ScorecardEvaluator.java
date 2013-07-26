@@ -49,7 +49,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
 		Scorecard scorecard = getModel();
 
 		double score = 0;

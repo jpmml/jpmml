@@ -65,7 +65,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	Map<FieldName, Double> evaluateRegression(EvaluationContext context) {
+	private Map<FieldName, Double> evaluateRegression(EvaluationContext context) {
 		Map<FieldName, Double> result = Maps.newLinkedHashMap();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
@@ -103,7 +103,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return result;
 	}
 
-	Map<FieldName, NeuronClassificationMap> evaluateClassification(EvaluationContext context) {
+	private Map<FieldName, NeuronClassificationMap> evaluateClassification(EvaluationContext context) {
 		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
 
 		Map<String, Entity> entities = getEntityRegistry();

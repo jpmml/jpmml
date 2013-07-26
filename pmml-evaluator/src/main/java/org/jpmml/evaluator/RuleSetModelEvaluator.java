@@ -49,7 +49,7 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	Map<FieldName, RuleClassificationMap> evaluateRuleSet(EvaluationContext context){
+	private Map<FieldName, RuleClassificationMap> evaluateRuleSet(EvaluationContext context){
 		RuleSet ruleSet = getRuleSet();
 
 		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();

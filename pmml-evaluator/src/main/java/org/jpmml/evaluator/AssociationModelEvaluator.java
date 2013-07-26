@@ -88,7 +88,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	Map<FieldName, ?> evaluate(EvaluationContext context){
+	private Map<FieldName, ?> evaluate(EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
 		FieldName activeField = getActiveField();

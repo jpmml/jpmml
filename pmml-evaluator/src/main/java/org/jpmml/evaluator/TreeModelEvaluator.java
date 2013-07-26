@@ -71,7 +71,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	Node evaluateTree(EvaluationContext context){
+	private Node evaluateTree(EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		Node root = getRoot();

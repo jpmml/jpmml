@@ -50,7 +50,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	Map<FieldName, Double> evaluateRegression(EvaluationContext context){
+	private Map<FieldName, Double> evaluateRegression(EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		List<RegressionTable> regressionTables = getRegressionTables();
@@ -70,7 +70,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return Collections.singletonMap(targetField, value);
 	}
 
-	Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context){
+	private Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		List<RegressionTable> regressionTables = getRegressionTables();

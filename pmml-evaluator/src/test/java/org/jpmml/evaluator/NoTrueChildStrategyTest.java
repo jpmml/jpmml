@@ -3,6 +3,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.*;
+
 import org.dmg.pmml.*;
 
 import org.junit.*;
@@ -13,40 +15,26 @@ public class NoTrueChildStrategyTest extends TreeModelEvaluatorTest {
 
 	@Test
 	public void returnNullPrediction() throws Exception {
-		TreeModelEvaluator treeModelEvaluator = createEvaluator(NoTrueChildStrategyType.RETURN_NULL_PREDICTION);
-
-		FieldName name = new FieldName("probability");
-
-		Node node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(name, 0d));
-
-		assertNull(node);
-
-		node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(name, 1d));
-
-		assertEquals("T1", node.getId());
+		assertEquals(null, getNodeId(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 0d));
+		assertEquals("T1", getNodeId(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 1d));
 	}
 
 	@Test
 	public void returnLastPrediction() throws Exception {
-		TreeModelEvaluator treeModelEvaluator = createEvaluator(NoTrueChildStrategyType.RETURN_LAST_PREDICTION);
-
-		FieldName name = new FieldName("probability");
-
-		Node node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(name, 0d));
-
-		assertEquals("N1", node.getId());
-
-		node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(name, 1d));
-
-		assertEquals("T1", node.getId());
+		assertEquals("N1", getNodeId(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 0d));
+		assertEquals("T1", getNodeId(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 1d));
 	}
 
-	private TreeModelEvaluator createEvaluator(NoTrueChildStrategyType noTrueChildStrategy) throws Exception {
-		TreeModelEvaluator treeModelEvaluator = createEvaluator();
+	private String getNodeId(NoTrueChildStrategyType noTrueChildStrategy, Double value) throws Exception {
+		TreeModelEvaluator evaluator = createEvaluator();
 
-		TreeModel treeModel = treeModelEvaluator.getModel();
+		TreeModel treeModel = evaluator.getModel();
 		treeModel.setNoTrueChildStrategy(noTrueChildStrategy);
 
-		return treeModelEvaluator;
+		Map<FieldName, Double> arguments = Collections.singletonMap(new FieldName("probability"), value);
+
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		return getEntityId(result.get(evaluator.getTargetField()));
 	}
 }

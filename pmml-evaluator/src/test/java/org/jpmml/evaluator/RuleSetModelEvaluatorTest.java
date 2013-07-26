@@ -32,9 +32,7 @@ public class RuleSetModelEvaluatorTest extends PMMLTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(RuleSetModelEvaluatorTest.arguments);
 
-		HasEntityId hasEntityId = (HasEntityId)result.get(evaluator.getTargetField());
-
-		return hasEntityId.getEntityId();
+		return getEntityId(result.get(evaluator.getTargetField()));
 	}
 
 	public RuleSetModelEvaluator createEvaluator() throws Exception {

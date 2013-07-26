@@ -17,32 +17,26 @@ public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
 
 	@Test
 	public void nullPrediction() throws Exception {
-		TreeModelEvaluator treeModelEvaluator = createEvaluator(MissingValueStrategyType.NULL_PREDICTION);
-
-		Node node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(arguments));
-
-		assertNull(node);
+		assertEquals(null, getNodeId(MissingValueStrategyType.NULL_PREDICTION));
 	}
 
 	@Test
 	public void lastPrediction() throws Exception {
-		TreeModelEvaluator treeModelEvaluator = createEvaluator(MissingValueStrategyType.LAST_PREDICTION);
-
-		Node node = treeModelEvaluator.evaluateTree(new LocalEvaluationContext(arguments));
-
-		assertEquals("2", node.getId());
+		assertEquals("2", getNodeId(MissingValueStrategyType.LAST_PREDICTION));
 	}
 
-	private TreeModelEvaluator createEvaluator(MissingValueStrategyType missingValueStrategy) throws Exception {
-		TreeModelEvaluator treeModelEvaluator = createEvaluator();
+	private String getNodeId(MissingValueStrategyType missingValueStrategy) throws Exception {
+		TreeModelEvaluator evaluator = createEvaluator();
 
-		TreeModel treeModel = treeModelEvaluator.getModel();
+		TreeModel treeModel = evaluator.getModel();
 		treeModel.setMissingValueStrategy(missingValueStrategy);
 
-		return treeModelEvaluator;
+		Map<FieldName, ?> result = evaluator.evaluate(MissingValueStrategyTest.arguments);
+
+		return getEntityId(result.get(evaluator.getTargetField()));
 	}
 
-	protected static final Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
+	private static final Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
 
 	static {
 		arguments.put(new FieldName("outlook"), "sunny");
