@@ -189,6 +189,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='ChildParent']/xsd:complexType/xsd:attribute[@name='isRecursive']">
+			<jaxb:property
+				name="recursive"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='ChildParent']/xsd:complexType/xsd:attribute[@name='isRecursive']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="Recursive"
@@ -204,6 +210,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='Cluster']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Entity"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='ClusteringField']/xsd:complexType/xsd:attribute[@name='isCenterField']">
+			<jaxb:property
+				name="centerField"
 			/>
 		</jaxb:bindings>
 
@@ -310,6 +322,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='DataField']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.DictionaryField"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='DataField']/xsd:complexType/xsd:attribute[@name='isCyclic']">
+			<jaxb:property
+				name="cyclic"
 			/>
 		</jaxb:bindings>
 
