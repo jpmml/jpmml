@@ -31,12 +31,6 @@
 			<artifactId>jaxb-impl</artifactId>
 			<version>2.2.6</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.jvnet.jaxb2_commons</groupId>
-			<artifactId>jaxb2-basics-runtime</artifactId>
-			<version>0.6.4</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -79,13 +73,10 @@
 					<args>
 						<arg>-no-header</arg>
 						<arg>-Xannotate</arg>
-						<arg>-Xequals</arg>
-						<arg>-XhashCode</arg>
 						<arg>-Xlocator</arg>
 						<arg>-Xpmml</arg>
 						<arg>-XsuperClass</arg>
 						<arg>-XsuperClass-defaultName=org.dmg.pmml.PMMLObject</arg>
-						<arg>-XtoString</arg>
 						<arg>-XunsupportedProperty</arg>
 						<arg>-XvalueConstructor</arg>
 					</args>
@@ -106,11 +97,6 @@
 						<version>1.0-SNAPSHOT</version>
 					</dependency>
 
-					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-basics</artifactId>
-						<version>0.6.4</version>
-					</dependency>
 					<dependency>
 						<groupId>org.jvnet.jaxb2_commons</groupId>
 						<artifactId>jaxb2-basics-annotate</artifactId>
