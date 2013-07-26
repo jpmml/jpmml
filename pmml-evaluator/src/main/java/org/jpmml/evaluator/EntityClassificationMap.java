@@ -13,10 +13,13 @@ class EntityClassificationMap<E extends Entity> extends ClassificationMap implem
 	private Double maxValue = null;
 
 
-	EntityClassificationMap(){
+	EntityClassificationMap(Type type){
+		super(type);
 	}
 
-	EntityClassificationMap(E entity){
+	EntityClassificationMap(Type type, E entity){
+		super(type);
+
 		setEntity(entity);
 	}
 

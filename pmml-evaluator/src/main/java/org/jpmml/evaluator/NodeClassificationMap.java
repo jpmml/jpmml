@@ -7,8 +7,12 @@ import org.dmg.pmml.*;
 
 class NodeClassificationMap extends EntityClassificationMap<Node> {
 
+	NodeClassificationMap(){
+		super(Type.PROBABILITY);
+	}
+
 	NodeClassificationMap(Node node){
-		super(node);
+		super(Type.PROBABILITY, node);
 	}
 
 	@Override

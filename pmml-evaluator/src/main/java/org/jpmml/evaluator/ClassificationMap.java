@@ -5,9 +5,13 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-class ClassificationMap extends LinkedHashMap<String, Double> implements Computable<String>, HasProbability {
+class ClassificationMap extends LinkedHashMap<String, Double> implements Computable<String>, HasConfidence, HasProbability {
 
-	ClassificationMap(){
+	private Type type = null;
+
+
+	ClassificationMap(Type type){
+		setType(type);
 	}
 
 	@Override
@@ -30,7 +34,28 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 	}
 
 	@Override
+	public Double getConfidence(String value){
+		Type type = getType();
+
+		if(!(Type.CONFIDENCE).equals(type)){
+			throw new EvaluationException();
+		}
+
+		return getFeature(value);
+	}
+
+	@Override
 	public Double getProbability(String value){
+		Type type = getType();
+
+		if(!(Type.PROBABILITY).equals(type)){
+			throw new EvaluationException();
+		}
+
+		return getFeature(value);
+	}
+
+	private Double getFeature(String value){
 		Double result = get(value);
 
 		// The specified value was not encountered during scoring
@@ -41,7 +66,7 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 		return result;
 	}
 
-	void normalizeProbabilities(){
+	void normalizeValues(){
 		double sum = 0;
 
 		Collection<Double> values = values();
@@ -53,5 +78,20 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 		for(Map.Entry<String, Double> entry : entries){
 			entry.setValue(entry.getValue() / sum);
 		}
+	}
+
+	public Type getType(){
+		return this.type;
+	}
+
+	private void setType(Type type){
+		this.type = type;
+	}
+
+	static
+	public enum Type {
+		PROBABILITY,
+		CONFIDENCE,
+		;
 	}
 }

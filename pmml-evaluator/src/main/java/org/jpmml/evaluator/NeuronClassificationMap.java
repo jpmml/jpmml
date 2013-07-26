@@ -8,9 +8,10 @@ import org.dmg.pmml.*;
 class NeuronClassificationMap extends EntityClassificationMap<Entity> {
 
 	NeuronClassificationMap(){
+		super(Type.PROBABILITY);
 	}
 
 	NeuronClassificationMap(Entity entity){
-		super(entity);
+		super(Type.PROBABILITY, entity);
 	}
 }

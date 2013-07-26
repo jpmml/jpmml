@@ -8,10 +8,11 @@ import org.dmg.pmml.*;
 class RuleClassificationMap extends EntityClassificationMap<SimpleRule> {
 
 	RuleClassificationMap(){
+		super(Type.CONFIDENCE);
 	}
 
 	RuleClassificationMap(SimpleRule rule){
-		super(rule);
+		super(Type.CONFIDENCE, rule);
 	}
 
 	@Override

@@ -117,7 +117,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				break;
 		}
 
-		ClassificationMap result = new ClassificationMap();
+		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
 
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
@@ -143,7 +143,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			result.put(category, vote);
 		}
 
-		result.normalizeProbabilities();
+		result.normalizeValues();
 
 		return Collections.singletonMap(getTargetField(), result);
 	}

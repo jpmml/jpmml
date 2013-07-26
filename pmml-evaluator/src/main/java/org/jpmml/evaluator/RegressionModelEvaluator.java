@@ -80,7 +80,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		double sumExp = 0d;
 
-		ClassificationMap result = new ClassificationMap();
+		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
 
 		for(RegressionTable regressionTable : regressionTables){
 			String category = regressionTable.getTargetCategory();
