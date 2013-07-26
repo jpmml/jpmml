@@ -65,33 +65,19 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 			throw new InvalidFeatureException(ruleSet);
 		}
 
-		// Both the ordering of keys and values is significant.
-		// Guava's ListMultimap does not keep track of the insertion order of keys, so it has to be handled separately
-		final
-		Set<String> keys = Sets.newLinkedHashSet();
-
-		final
-		ListMultimap<String, SimpleRule> firedRules = ArrayListMultimap.create();
-
-		RuleCollector collector = new RuleCollector(){
-
-			@Override
-			public void add(SimpleRule rule){
-				keys.add(rule.getScore());
-
-				firedRules.put(rule.getScore(), rule);
-			}
-		};
+		// Both the ordering of keys and values is significant
+		ListMultimap<String, SimpleRule> firedRules = LinkedListMultimap.create();
 
 		List<Rule> rules = ruleSet.getRules();
 		for(Rule rule : rules){
-			collectRules(rule, collector, context);
+			collectFiredRules(firedRules, rule, context);
 		}
 
 		RuleClassificationMap result = new RuleClassificationMap();
 
 		RuleSelectionMethod.Criterion criterion = ruleSelectionMethod.getCriterion();
 
+		Set<String> keys = firedRules.keySet();
 		for(String key : keys){
 			List<SimpleRule> keyRules = firedRules.get(key);
 
@@ -149,7 +135,7 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 	}
 
 	static
-	private void collectRules(Rule rule, RuleCollector collector, EvaluationContext context){
+	private void collectFiredRules(ListMultimap<String, SimpleRule> firedRules, Rule rule, EvaluationContext context){
 		Predicate predicate = rule.getPredicate();
 		if(predicate == null){
 			throw new InvalidFeatureException(rule);
@@ -163,7 +149,7 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 		if(rule instanceof SimpleRule){
 			SimpleRule simpleRule = (SimpleRule)rule;
 
-			collector.add(simpleRule);
+			firedRules.put(simpleRule.getScore(), simpleRule);
 		} else
 
 		if(rule instanceof CompoundRule){
@@ -171,14 +157,8 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 
 			List<Rule> childRules = compoundRule.getRules();
 			for(Rule childRule : childRules){
-				collectRules(childRule, collector, context);
+				collectFiredRules(firedRules, childRule, context);
 			}
 		}
-	}
-
-	static
-	private interface RuleCollector {
-
-		void add(SimpleRule rule);
 	}
 }
