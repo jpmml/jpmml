@@ -8,6 +8,8 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 /**
  * Naming conventions for getter methods:
  * <ul>
@@ -157,7 +159,7 @@ public class PMMLManager implements Serializable {
 	)
 	static
 	public <E extends PMMLObject> List<E> findAll(List<? extends PMMLObject> objects, Class<? extends E> clazz){
-		List<E> result = new ArrayList<E>();
+		List<E> result = Lists.newArrayList();
 
 		for(PMMLObject object : objects){
 

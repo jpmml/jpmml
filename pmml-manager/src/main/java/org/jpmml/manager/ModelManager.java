@@ -64,7 +64,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public List<FieldName> getMiningFields(FieldUsageType fieldUsageType){
-		List<FieldName> result = new ArrayList<FieldName>();
+		List<FieldName> result = Lists.newArrayList();
 
 		List<MiningField> miningFields = getMiningSchema().getMiningFields();
 		for(MiningField miningField : miningFields){
@@ -96,7 +96,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public List<FieldName> getOutputFields(){
-		List<FieldName> result = new ArrayList<FieldName>();
+		List<FieldName> result = Lists.newArrayList();
 
 		Output output = getOrCreateOutput();
 
