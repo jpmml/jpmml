@@ -125,7 +125,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 
 	static
 	private void collectNodes(Node node, BiMap<String, Node> map){
-		putEntity(node, map);
+		EntityUtil.put(node, map);
 
 		List<Node> children = node.getNodes();
 		for(Node child : children){

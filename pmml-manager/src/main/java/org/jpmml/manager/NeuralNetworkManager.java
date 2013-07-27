@@ -96,7 +96,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 
 		List<NeuralInput> neuralInputs = getNeuralInputs();
 		for(NeuralInput neuralInput : neuralInputs){
-			putEntity(neuralInput, result);
+			EntityUtil.put(neuralInput, result);
 		}
 
 		List<NeuralLayer> neuralLayers = getNeuralLayers();
@@ -104,7 +104,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 			List<Neuron> neurons = neuralLayer.getNeurons();
 
 			for(Neuron neuron : neurons){
-				putEntity(neuron, result);
+				EntityUtil.put(neuron, result);
 			}
 		}
 

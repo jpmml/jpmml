@@ -112,16 +112,8 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 		BiMap<String, AssociationRule> result = HashBiMap.create();
 
 		List<AssociationRule> associationRules = getAssociationRules();
-		for(int i = 0, j = 1; i < associationRules.size(); i++, j++){
-			AssociationRule associationRule = associationRules.get(i);
 
-			String id = associationRule.getId();
-			if(id == null){
-				id = String.valueOf(j);
-			}
-
-			result.put(id, associationRule);
-		}
+		EntityUtil.putAll(associationRules, result);
 
 		return result;
 	}
