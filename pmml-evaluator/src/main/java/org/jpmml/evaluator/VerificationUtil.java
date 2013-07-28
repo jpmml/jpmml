@@ -25,6 +25,14 @@ public class VerificationUtil {
 	}
 
 	/**
+	 * A convenience method for unit testing purposes only
+	 */
+	static
+	boolean acceptable(Number expected, Number actual){
+		return acceptable(expected, actual, 0.0000001, 0.0000001);
+	}
+
+	/**
 	 * @param precision The acceptable range given <em>in proportion</em> of the expected value, including its boundaries.
 	 * @param zeroThreshold The threshold for distinguishing between zero and non-zero values.
 	 */

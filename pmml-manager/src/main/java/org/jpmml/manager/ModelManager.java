@@ -131,8 +131,24 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return derivedField;
 	}
 
+	public Target getTarget(FieldName field){
+		Targets targetDictionary = getOrCreateTargets();
+
+		List<Target> targets = targetDictionary.getTargets();
+		for(Target target : targets){
+
+			if((target.getField()).equals(field)){
+				return target;
+			}
+		}
+
+		return null;
+	}
+
 	public MiningSchema getMiningSchema(){
-		return getModel().getMiningSchema();
+		M model = getModel();
+
+		return model.getMiningSchema();
 	}
 
 	public LocalTransformations getOrCreateLocalTransformations(){
@@ -159,5 +175,18 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		}
 
 		return output;
+	}
+
+	public Targets getOrCreateTargets(){
+		M model = getModel();
+
+		Targets targets = model.getTargets();
+		if(targets == null){
+			targets = new Targets();
+
+			model.setTargets(targets);
+		}
+
+		return targets;
 	}
 }

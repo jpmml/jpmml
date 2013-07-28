@@ -22,6 +22,12 @@ public class Model extends PMMLObject {
 	public void setFunctionName(MiningFunctionType functionName);
 
 	abstract
+	public boolean isScorable();
+
+	abstract
+	public void setScorable(Boolean scorable);
+
+	abstract
 	public MiningSchema getMiningSchema();
 
 	abstract
@@ -40,10 +46,10 @@ public class Model extends PMMLObject {
 	public void setOutput(Output output);
 
 	abstract
-	public boolean isScorable();
+	public Targets getTargets();
 
 	abstract
-	public void setScorable(Boolean scorable);
+	public void setTargets(Targets targets);
 
 	abstract
 	public ModelStats getModelStats();

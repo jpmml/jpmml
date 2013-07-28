@@ -49,10 +49,10 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ModelManagerEvaluationContext context){
 		Scorecard scorecard = getModel();
 
-		double score = 0;
+		double value = 0;
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
@@ -89,7 +89,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 					throw new InvalidFeatureException(attribute);
 				}
 
-				score += partialScore.doubleValue();
+				value += partialScore.doubleValue();
 
 				String reasonCode = attribute.getReasonCode();
 				if(reasonCode == null){
@@ -128,7 +128,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 			}
 		}
 
-		Object result = score;
+		Map<FieldName, ? extends Number> result = TargetUtil.evaluateRegression(value, context);
 
 		if(useReasonCodes){
 			List<Map.Entry<String, Double>> entries = Lists.newArrayList(reasonCodePoints.entrySet());
@@ -155,9 +155,11 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 				reasonCodes.add(entry.getKey());
 			}
 
-			result = new Score(score, reasonCodes);
+			Map.Entry<FieldName, ? extends Number> resultEntry = Iterables.getOnlyElement(result.entrySet());
+
+			return Collections.singletonMap(resultEntry.getKey(), new Score(resultEntry.getValue(), reasonCodes));
 		}
 
-		return Collections.singletonMap(getTargetField(), result);
+		return result;
 	}
 }

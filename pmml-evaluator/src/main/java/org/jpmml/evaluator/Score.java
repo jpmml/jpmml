@@ -5,28 +5,28 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-class Score implements Computable<Double>, HasReasonCodes {
+class Score implements Computable<Number>, HasReasonCodes {
 
-	private Double value = null;
+	private Number value = null;
 
 	private List<String> reasonCodes = null;
 
 
-	Score(Double value, List<String> reasonCodes){
+	Score(Number value, List<String> reasonCodes){
 		setValue(value);
 		setReasonCodes(reasonCodes);
 	}
 
 	@Override
-	public Double getResult(){
+	public Number getResult(){
 		return getValue();
 	}
 
-	public Double getValue(){
+	public Number getValue(){
 		return this.value;
 	}
 
-	private void setValue(Double value){
+	private void setValue(Number value){
 		this.value = value;
 	}
 

@@ -100,6 +100,10 @@ Copyright (c) 2009 University of Tartu
 			<java:superClass
 				name="org.dmg.pmml.Model"
 			/>
+			<java:unsupportedProperty
+				property="targets"
+				name="org.dmg.pmml.Targets"
+			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='AssociationRule']/xsd:complexType">
@@ -228,6 +232,10 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='ClusteringModel']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Model"
+			/>
+			<java:unsupportedProperty
+				property="targets"
+				name="org.dmg.pmml.Targets"
 			/>
 		</jaxb:bindings>
 
@@ -796,6 +804,10 @@ Copyright (c) 2009 University of Tartu
 				property="output"
 				name="org.dmg.pmml.Output"
 			/>
+			<java:unsupportedProperty
+				property="targets"
+				name="org.dmg.pmml.Targets"
+			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='SequenceRule']/xsd:complexType">
@@ -909,6 +921,10 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='TimeSeriesModel']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Model"
+			/>
+			<java:unsupportedProperty
+				property="targets"
+				name="org.dmg.pmml.Targets"
 			/>
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_0"/>

@@ -52,7 +52,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ModelManagerEvaluationContext context){
 		List<SegmentResult> segmentResults = evaluate(context);
 
 		Segmentation segmentation = getSegmentation();
@@ -68,8 +68,6 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				break;
 		}
 
-		Double result;
-
 		double sum = 0d;
 		double weightedSum = 0d;
 
@@ -82,23 +80,23 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			weightedSum += ((segmentResult.getSegment()).getWeight() * value.doubleValue());
 		}
 
-		int count = segmentResults.size();
+		Double result;
 
 		switch(multipleModelMethod){
 			case SUM:
 				result = sum;
 				break;
 			case AVERAGE:
-				result = (sum / count);
+				result = (sum / segmentResults.size());
 				break;
 			case WEIGHTED_AVERAGE:
-				result = (weightedSum / count);
+				result = (weightedSum / segmentResults.size());
 				break;
 			default:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 		}
 
-		return Collections.singletonMap(getTargetField(), result);
+		return TargetUtil.evaluateRegression(result, context);
 	}
 
 	private Map<FieldName, ?> evaluateClassification(EvaluationContext context){
