@@ -99,7 +99,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ?> evaluateClassification(EvaluationContext context){
+	private Map<FieldName, ?> evaluateClassification(ModelManagerEvaluationContext context){
 		List<SegmentResult> segmentResults = evaluate(context);
 
 		Segmentation segmentation = getSegmentation();
@@ -143,7 +143,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 		result.normalizeValues();
 
-		return Collections.singletonMap(getTargetField(), result);
+		return TargetUtil.evaluateClassification(result, context);
 	}
 
 	private Map<FieldName, ?> dispatchSingleResult(Segmentation segmentation, List<SegmentResult> results){

@@ -66,12 +66,12 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 			values = createNodeClassificationMap(node);
 		}
 
-		Map<FieldName, NodeClassificationMap> predictions = Collections.singletonMap(getTargetField(), values);
+		Map<FieldName, ? extends ClassificationMap> predictions = TargetUtil.evaluateClassification(values, context);
 
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Node evaluateTree(EvaluationContext context){
+	private Node evaluateTree(ModelManagerEvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		Node root = getRoot();

@@ -68,7 +68,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 		return TargetUtil.evaluateRegression(value, context);
 	}
 
-	private Map<FieldName, ClassificationMap> evaluateClassification(EvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelManagerEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		List<RegressionTable> regressionTables = getRegressionTables();
@@ -76,9 +76,9 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			throw new InvalidFeatureException(regressionModel);
 		}
 
-		double sumExp = 0d;
-
 		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
+
+		double sumExp = 0d;
 
 		for(RegressionTable regressionTable : regressionTables){
 			String category = regressionTable.getTargetCategory();
@@ -113,7 +113,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 			entry.setValue(normalizeClassificationResult(regressionModel, entry.getValue(), sumExp));
 		}
 
-		return Collections.singletonMap(targetField, result);
+		return TargetUtil.evaluateClassification(result, context);
 	}
 
 	static

@@ -49,7 +49,7 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, RuleClassificationMap> evaluateRuleSet(EvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap> evaluateRuleSet(ModelManagerEvaluationContext context){
 		RuleSet ruleSet = getRuleSet();
 
 		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();
@@ -131,7 +131,7 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 			}
 		}
 
-		return Collections.singletonMap(getTargetField(), result);
+		return TargetUtil.evaluateClassification(result, context);
 	}
 
 	static

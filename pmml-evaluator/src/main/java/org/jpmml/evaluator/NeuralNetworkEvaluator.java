@@ -103,7 +103,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, NeuronClassificationMap> evaluateClassification(EvaluationContext context) {
+	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelManagerEvaluationContext context) {
 		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
 
 		Map<String, Entity> entities = getEntityRegistry();
@@ -139,7 +139,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			}
 		}
 
-		return result;
+		return TargetUtil.evaluateClassification(result, context);
 	}
 
 	private Expression getExpression(DerivedField derivedField){

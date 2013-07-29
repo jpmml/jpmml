@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="DMG.org"/>
+    <DataDictionary>
+        <DataField name="response" optype="categorical" dataType="string"/>
+    </DataDictionary>
+    <RegressionModel functionName="regression" targetFieldName="response">
+        <MiningSchema>
+            <MiningField name="response" usageType="predicted"/>
+        </MiningSchema>
+        <Targets>
+            <Target field="response" optype="categorical">
+                <TargetValue value="YES" displayValue="Yes" priorProbability="0.02"/>
+                <TargetValue value="NO" displayValue="No" priorProbability="0.98"/>
+            </Target>
+        </Targets>
+        <RegressionTable intercept="0.0" targetCategory="response"/>
+    </RegressionModel>
+</PMML>
