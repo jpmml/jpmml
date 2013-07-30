@@ -17,7 +17,7 @@ public class TargetUtilTest {
 		target.setRescaleFactor(3.14);
 		target.setRescaleConstant(10d);
 
-		assertTrue(VerificationUtil.acceptable(35.12, TargetUtil.process(target, 8d)));
+		assertTrue(VerificationUtil.acceptable(35.12d, TargetUtil.process(target, 8d)));
 
 		target.setMin(-10d);
 		target.setMax(10.5d);

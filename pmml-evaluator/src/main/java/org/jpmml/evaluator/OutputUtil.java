@@ -48,6 +48,7 @@ public class OutputUtil {
 				case PREDICTED_VALUE:
 				case PREDICTED_DISPLAY_VALUE:
 				case PROBABILITY:
+				case RESIDUAL:
 				case ENTITY_ID:
 				case REASON_CODE:
 				case RULE_VALUE:
@@ -91,6 +92,28 @@ public class OutputUtil {
 				case PROBABILITY:
 					{
 						value = getProbability(value, outputField);
+					}
+					break;
+				case RESIDUAL:
+					{
+						Object expectedValue = context.getArgument(targetField);
+						if(expectedValue == null){
+							throw new MissingFieldException(targetField, outputField);
+						}
+
+						DataField dataField = modelManager.getDataField(targetField);
+
+						OpType opType = dataField.getOptype();
+						switch(opType){
+							case CONTINUOUS:
+								value = getContinuousResidual(value, expectedValue);
+								break;
+							case CATEGORICAL:
+								value = getCategoricalResidual(value, expectedValue);
+								break;
+							default:
+								throw new UnsupportedFeatureException(outputField, opType);
+						}
 					}
 					break;
 				case ENTITY_ID:
@@ -165,6 +188,34 @@ public class OutputUtil {
 		HasProbability hasProbability = (HasProbability)object;
 
 		return hasProbability.getProbability(outputField.getValue());
+	}
+
+	static
+	private Double getContinuousResidual(Object object, Object expectedObject){
+		object = getPredictedValue(object);
+
+		Number value = (Number)object;
+		Number expectedValue = (Number)expectedObject;
+
+		return Double.valueOf(expectedValue.doubleValue() - value.doubleValue());
+	}
+
+	static
+	public Double getCategoricalResidual(Object object, Object expectedObject){
+
+		if(!(object instanceof HasProbability)){
+			throw new EvaluationException();
+		}
+
+		HasProbability hasProbability = (HasProbability)object;
+
+		object = getPredictedValue(object);
+
+		String value = (String)ParameterUtil.cast(DataType.STRING, object);
+
+		boolean equals = ParameterUtil.equals(DataType.STRING, object, expectedObject);
+
+		return Double.valueOf((equals ? 1d : 0d) - hasProbability.getProbability(value));
 	}
 
 	static
