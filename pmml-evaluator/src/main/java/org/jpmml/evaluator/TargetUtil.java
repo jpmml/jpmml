@@ -138,6 +138,21 @@ public class TargetUtil {
 	}
 
 	static
+	public TargetValue getTargetValue(Target target, Object value){
+		DataType dataType = ParameterUtil.getDataType(value);
+
+		List<TargetValue> targetValues = target.getTargetValues();
+		for(TargetValue targetValue : targetValues){
+
+			if(ParameterUtil.equals(dataType, value, targetValue.getValue())){
+				return targetValue;
+			}
+		}
+
+		return null;
+	}
+
+	static
 	private Double getDefaultValue(Target target){
 		List<TargetValue> values = target.getTargetValues();
 		if(values.size() != 1){

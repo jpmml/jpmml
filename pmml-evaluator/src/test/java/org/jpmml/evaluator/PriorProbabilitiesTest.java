@@ -27,5 +27,13 @@ public class PriorProbabilitiesTest extends RegressionModelEvaluatorTest {
 
 		assertEquals((Double)0.02d, response.getProbability("YES"));
 		assertEquals((Double)0.98d, response.getProbability("NO"));
+
+		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);
+
+		assertEquals(0.02d, result.get(new FieldName("P_responseYes")));
+		assertEquals(0.98d, result.get(new FieldName("P_responseNo")));
+
+		assertEquals("NO", result.get(new FieldName("I_response")));
+		assertEquals("No", result.get(new FieldName("U_response")));
 	}
 }

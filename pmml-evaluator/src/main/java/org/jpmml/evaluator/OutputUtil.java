@@ -36,21 +36,22 @@ public class OutputUtil {
 
 		List<OutputField> outputFields = output.getOutputFields();
 		for(OutputField outputField : outputFields){
+			FieldName targetField = outputField.getTargetField();
+			if(targetField == null){
+				targetField = modelManager.getTargetField();
+			}
+
 			Object value = null;
 
 			ResultFeatureType resultFeature = outputField.getFeature();
 			switch(resultFeature){
 				case PREDICTED_VALUE:
+				case PREDICTED_DISPLAY_VALUE:
 				case PROBABILITY:
 				case ENTITY_ID:
 				case REASON_CODE:
 				case RULE_VALUE:
 					{
-						FieldName targetField = outputField.getTargetField();
-						if(targetField == null){
-							targetField = modelManager.getTargetField();
-						} // End if
-
 						if(!predictions.containsKey(targetField)){
 							throw new MissingFieldException(targetField, outputField);
 						}
@@ -66,7 +67,14 @@ public class OutputUtil {
 			switch(resultFeature){
 				case PREDICTED_VALUE:
 					{
-						value = EvaluatorUtil.decode(value);
+						value = getPredictedValue(value);
+					}
+					break;
+				case PREDICTED_DISPLAY_VALUE:
+					{
+						Target target = modelManager.getTarget(targetField);
+
+						value = getPredictedDisplayValue(value, target);
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -125,6 +133,26 @@ public class OutputUtil {
 		result.putAll(frame);
 
 		return result;
+	}
+
+	static
+	private Object getPredictedValue(Object object){
+		return EvaluatorUtil.decode(object);
+	}
+
+	static
+	private Object getPredictedDisplayValue(Object object, Target target){
+		object = getPredictedValue(object);
+
+		if(target != null){
+			TargetValue targetValue = TargetUtil.getTargetValue(target, object);
+
+			if(targetValue != null){
+				return targetValue.getDisplayValue();
+			}
+		}
+
+		return object;
 	}
 
 	static
