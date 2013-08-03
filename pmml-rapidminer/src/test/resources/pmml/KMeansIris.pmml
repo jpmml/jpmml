@@ -4,12 +4,11 @@
     <Application name="RapidMiner" version="5.3.008"/>
     <Timestamp>Aug 3, 2013 11:40:52 AM</Timestamp>
   </Header>
-  <DataDictionary numberOfFields="5">
+  <DataDictionary numberOfFields="4">
     <DataField dataType="double" name="Sepal.Length" optype="continuous"/>
     <DataField dataType="double" name="Sepal.Width" optype="continuous"/>
     <DataField dataType="double" name="Petal.Length" optype="continuous"/>
     <DataField dataType="double" name="Petal.Width" optype="continuous"/>
-    <DataField dataType="double" name="id" optype="continuous"/>
   </DataDictionary>
   <ClusteringModel algorithmName="Clustering" functionName="clustering" modelClass="centerBased" modelName="Cluster Model" numberOfClusters="3">
     <MiningSchema>
@@ -17,8 +16,10 @@
       <MiningField highValue="1.0" importance="1.0" invalidValueTreatment="asIs" lowValue="0.0" missingValueTreatment="asIs" name="Sepal.Width" optype="continuous" usageType="active"/>
       <MiningField highValue="1.0" importance="1.0" invalidValueTreatment="asIs" lowValue="0.0" missingValueTreatment="asIs" name="Petal.Length" optype="continuous" usageType="active"/>
       <MiningField highValue="1.0" importance="1.0" invalidValueTreatment="asIs" lowValue="0.0" missingValueTreatment="asIs" name="Petal.Width" optype="continuous" usageType="active"/>
-      <MiningField highValue="1.0" importance="1.0" invalidValueTreatment="asIs" lowValue="0.0" missingValueTreatment="asIs" name="id" optype="continuous" usageType="supplementary"/>
     </MiningSchema>
+    <Output>
+      <OutputField name="Cluster" optype="categorical" dataType="string" feature="predictedDisplayValue"/>
+    </Output>
     <ComparisonMeasure compareFunction="absDiff" kind="distance">
       <euclidean/>
     </ComparisonMeasure>

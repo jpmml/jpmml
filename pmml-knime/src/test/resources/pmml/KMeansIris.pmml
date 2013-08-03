@@ -29,6 +29,9 @@
       <MiningField name="Petal.Length" invalidValueTreatment="asIs"/>
       <MiningField name="Petal.Width" invalidValueTreatment="asIs"/>
     </MiningSchema>
+    <Output>
+      <OutputField name="Cluster" optype="categorical" dataType="string" feature="predictedDisplayValue"/>
+    </Output>
     <ComparisonMeasure kind="distance">
       <squaredEuclidean/>
     </ComparisonMeasure>

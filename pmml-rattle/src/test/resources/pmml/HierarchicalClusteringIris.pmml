@@ -19,7 +19,7 @@
    <MiningField name="Petal.Width" usageType="active"/>
   </MiningSchema>
   <Output>
-   <OutputField name="predictedValue" feature="predictedValue"/>
+   <OutputField name="Cluster" feature="predictedValue"/>
   </Output>
   <ComparisonMeasure kind="distance">
    <squaredEuclidean/>
