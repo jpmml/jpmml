@@ -50,6 +50,10 @@ public class OutputUtil {
 				case PROBABILITY:
 				case RESIDUAL:
 				case ENTITY_ID:
+				case CLUSTER_ID:
+				case AFFINITY:
+				case ENTITY_AFFINITY:
+				case CLUSTER_AFFINITY:
 				case REASON_CODE:
 				case RULE_VALUE:
 					{
@@ -121,6 +125,22 @@ public class OutputUtil {
 						value = getEntityId(value);
 					}
 					break;
+				case CLUSTER_ID:
+					{
+						value = getClusterId(value);
+					}
+					break;
+				case AFFINITY:
+				case ENTITY_AFFINITY:
+					{
+						value = getAffinity(value, outputField);
+					}
+					break;
+				case CLUSTER_AFFINITY:
+					{
+						value = getClusterAffinity(value);
+					}
+					break;
 				case REASON_CODE:
 					{
 						value = getReasonCode(value, outputField);
@@ -165,6 +185,13 @@ public class OutputUtil {
 
 	static
 	private Object getPredictedDisplayValue(Object object, Target target){
+
+		if(object instanceof HasDisplayValue){
+			HasDisplayValue hasDisplayValue = (HasDisplayValue)object;
+
+			return hasDisplayValue.getDisplayValue();
+		}
+
 		object = getPredictedValue(object);
 
 		if(target != null){
@@ -228,6 +255,42 @@ public class OutputUtil {
 		HasEntityId hasEntityId = (HasEntityId)object;
 
 		return hasEntityId.getEntityId();
+	}
+
+	static
+	private String getClusterId(Object object){
+
+		if(!(object instanceof HasClusterId)){
+			throw new EvaluationException();
+		}
+
+		HasClusterId hasClusterId = (HasClusterId)object;
+
+		return hasClusterId.getClusterId();
+	}
+
+	static
+	public Double getAffinity(Object object, final OutputField outputField){
+
+		if(!(object instanceof HasAffinity)){
+			throw new EvaluationException();
+		}
+
+		HasAffinity hasAffinity = (HasAffinity)object;
+
+		return hasAffinity.getAffinity(outputField.getValue());
+	}
+
+	static
+	public Double getClusterAffinity(Object object){
+
+		if(!(object instanceof HasClusterAffinity)){
+			throw new EvaluationException();
+		}
+
+		HasClusterAffinity hasClusterAffinity = (HasClusterAffinity)object;
+
+		return hasClusterAffinity.getClusterAffinity();
 	}
 
 	static

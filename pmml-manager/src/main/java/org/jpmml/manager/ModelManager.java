@@ -131,13 +131,13 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return derivedField;
 	}
 
-	public Target getTarget(FieldName field){
+	public Target getTarget(FieldName name){
 		Targets targetDictionary = getOrCreateTargets();
 
 		List<Target> targets = targetDictionary.getTargets();
 		for(Target target : targets){
 
-			if((target.getField()).equals(field)){
+			if((target.getField()).equals(name)){
 				return target;
 			}
 		}

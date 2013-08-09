@@ -18,10 +18,12 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 	public String getResult(){
 		Map.Entry<String, Double> result = null;
 
+		Type type = getType();
+
 		Collection<Map.Entry<String, Double>> entries = entrySet();
 		for(Map.Entry<String, Double> entry : entries){
 
-			if(result == null || (entry.getValue()).compareTo(result.getValue()) > 0){
+			if(result == null || type.isMoreOptimal(entry.getValue(), result.getValue())){
 				result = entry;
 			}
 		}
@@ -55,7 +57,7 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 		return getFeature(value);
 	}
 
-	private Double getFeature(String value){
+	Double getFeature(String value){
 		Double result = get(value);
 
 		// The specified value was not encountered during scoring
@@ -90,8 +92,60 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 
 	static
 	public enum Type {
-		PROBABILITY,
-		CONFIDENCE,
+		PROBABILITY(Ordering.INCREASING),
+		CONFIDENCE(Ordering.INCREASING),
+		DISTANCE(Ordering.DECREASING),
+		SIMILARITY(Ordering.INCREASING),
 		;
+
+		private Ordering ordering;
+
+
+		private Type(Ordering ordering){
+			setOrdering(ordering);
+		}
+
+		/**
+		 * Indicates if the first argument is more optimal than the second argument.
+		 *
+		 * @param left A value
+		 * @param right The reference value
+		 *
+		 * @see Comparable
+		 */
+		public <C extends Comparable<C>> boolean isMoreOptimal(C left, C right){
+			int order = (left).compareTo(right);
+
+			Ordering ordering = getOrdering();
+			switch(ordering){
+				case INCREASING:
+					return (order > 0);
+				case DECREASING:
+					return (order < 0);
+				default:
+					throw new IllegalStateException();
+			}
+		}
+
+		public Ordering getOrdering(){
+			return this.ordering;
+		}
+
+		private void setOrdering(Ordering ordering){
+			this.ordering = ordering;
+		}
+
+		static
+		private enum Ordering {
+			/**
+			 * The most positive value represents the optimum.
+			 */
+			INCREASING,
+
+			/**
+			 * The most negative value represents the optimum.
+			 */
+			DECREASING,
+		}
 	}
 }

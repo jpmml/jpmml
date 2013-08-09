@@ -19,6 +19,10 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 			return new AssociationModelEvaluator(pmml, (AssociationModel)model);
 		} else
 
+		if(model instanceof ClusteringModel){
+			 return new ClusteringModelEvaluator(pmml, (ClusteringModel)model);
+		} else
+
 		if(model instanceof MiningModel){
 			return new MiningModelEvaluator(pmml, (MiningModel)model);
 		} else

@@ -9,6 +9,7 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 public class ArrayUtil {
@@ -53,6 +54,48 @@ public class ArrayUtil {
 		}
 
 		return values;
+	}
+
+	static
+	public List<Integer> getIntContent(Array array){
+		Function<String, Integer> transformer = new Function<String, Integer>(){
+
+			@Override
+			public Integer apply(String string){
+				return Integer.valueOf(string);
+			}
+		};
+
+		return Lists.transform(getContent(array), transformer);
+	}
+
+	static
+	public List<Double> getRealContent(Array array){
+		Function<String, Double> transformer = new Function<String, Double>(){
+
+			@Override
+			public Double apply(String string){
+				return Double.valueOf(string);
+			}
+		};
+
+		return Lists.transform(getContent(array), transformer);
+	}
+
+	static
+	public List<? extends Number> getNumberContent(Array array){
+		Array.Type type = array.getType();
+
+		switch(type){
+			case INT:
+				return getIntContent(array);
+			case REAL:
+				return getRealContent(array);
+			default:
+				break;
+		}
+
+		throw new EvaluationException();
 	}
 
 	static

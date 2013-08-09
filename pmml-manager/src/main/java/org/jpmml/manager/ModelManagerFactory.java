@@ -16,6 +16,10 @@ public class ModelManagerFactory {
 			return new AssociationModelManager(pmml, (AssociationModel)model);
 		} else
 
+		if(model instanceof ClusteringModel){
+			return new ClusteringModelManager(pmml, (ClusteringModel)model);
+		} else
+
 		if(model instanceof MiningModel){
 			return new MiningModelManager(pmml, (MiningModel)model);
 		} else

@@ -151,6 +151,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='binarySimilarity']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='BoundaryValueMeans']/xsd:complexType">
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_0"/>
@@ -193,6 +199,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='chebychev']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='ChildParent']/xsd:complexType/xsd:attribute[@name='isRecursive']">
 			<jaxb:property
 				name="recursive"
@@ -202,6 +214,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='ChildParent']/xsd:complexType/xsd:attribute[@name='isRecursive']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="Recursive"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='cityBlock']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
 			/>
 		</jaxb:bindings>
 
@@ -249,6 +267,12 @@ Copyright (c) 2009 University of Tartu
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_0"/>
 			</annox:annotate>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='ComparisonMeasure']/xsd:complexType/xsd:sequence/xsd:choice">
+			<jaxb:property
+				name="measure"
+			/>
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='ComparisonMeasure']/xsd:complexType/xsd:attribute[@name='kind']/xsd:simpleType">
@@ -384,6 +408,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='euclidean']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='EventValues']/xsd:complexType">
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_0"/>
@@ -474,6 +504,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='jaccard']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='KNNInput']/xsd:complexType">
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_1"/>
@@ -535,6 +571,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='MiningField']/xsd:complexType/xsd:attribute[@name='outliers']">
 			<jaxb:property
 				name="outlierTreatment"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='minkowski']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
 			/>
 		</jaxb:bindings>
 
@@ -816,6 +858,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='simpleMatching']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='SimplePredicate']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Predicate"
@@ -846,9 +894,21 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='squaredEuclidean']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='SupportVectorMachineModel']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Model"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='tanimoto']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.Measure"
 			/>
 		</jaxb:bindings>
 

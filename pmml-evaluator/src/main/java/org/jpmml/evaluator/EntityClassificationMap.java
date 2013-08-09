@@ -35,8 +35,9 @@ class EntityClassificationMap<E extends Entity> extends ClassificationMap implem
 	}
 
 	Double put(E entity, String key, Double value){
+		Type type = getType();
 
-		if(this.maxValue == null || (value).compareTo(this.maxValue) > 0){
+		if(this.maxValue == null || type.isMoreOptimal(value, this.maxValue)){
 			this.maxValue = value;
 
 			setEntity(entity);
