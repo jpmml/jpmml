@@ -146,6 +146,9 @@ public class ParameterUtilTest {
 		assertTrue(ParameterUtil.equals(1d, "1"));
 		assertTrue(ParameterUtil.equals(1.0d, "1"));
 		assertTrue(ParameterUtil.equals(1d, "1.0"));
+
+		assertTrue(ParameterUtil.equals(true, "true"));
+		assertTrue(ParameterUtil.equals(false, "false"));
 	}
 
 	@Test

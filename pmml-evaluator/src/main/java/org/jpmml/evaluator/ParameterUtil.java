@@ -344,6 +344,8 @@ public class ParameterUtil {
 				return Float.valueOf(string);
 			case DOUBLE:
 				return Double.valueOf(string);
+			case BOOLEAN:
+				return Boolean.valueOf(string);
 			case DATE:
 				return parseDate(string);
 			case TIME:
@@ -428,6 +430,10 @@ public class ParameterUtil {
 
 		if(value instanceof Double){
 			return DataType.DOUBLE;
+		} else
+
+		if(value instanceof Boolean){
+			return DataType.BOOLEAN;
 		} else
 
 		if(value instanceof LocalDate){
@@ -525,6 +531,8 @@ public class ParameterUtil {
 				return toFloat(value);
 			case DOUBLE:
 				return toDouble(value);
+			case BOOLEAN:
+				return toBoolean(value);
 			case DATE:
 				return toDate(value);
 			case TIME:
@@ -646,6 +654,26 @@ public class ParameterUtil {
 			Number number = (Number)value;
 
 			return Double.valueOf(number.doubleValue());
+		}
+
+		throw new EvaluationException();
+	}
+
+	/**
+	 * @see DataType#BOOLEAN
+	 */
+	static
+	private Boolean toBoolean(Object value){
+
+		// XXX
+		if(value instanceof String){
+			String string = (String)value;
+
+			return Boolean.valueOf(string);
+		} else
+
+		if(value instanceof Boolean){
+			return (Boolean)value;
 		}
 
 		throw new EvaluationException();
