@@ -59,6 +59,14 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 		return super.getTargetField();
 	}
 
+	/**
+	 * @return <code>null</code> Always.
+	 */
+	@Override
+	public Target getTarget(FieldName name){
+		return null;
+	}
+
 	@Override
 	public AssociationModel getModel(){
 		checkState(this.associationModel != null);

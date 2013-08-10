@@ -45,6 +45,9 @@ public class ClusteringModelManager extends ModelManager<ClusteringModel> implem
 		return super.getTargetField();
 	}
 
+	/**
+	 * @return <code>null</code> Always.
+	 */
 	@Override
 	public Target getTarget(FieldName name){
 		return null;
