@@ -47,8 +47,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	public FieldName getTargetField(){
 		List<FieldName> predictedFields = getPredictedFields();
 
+		// "The definition of predicted fields in the MiningSchema is not required"
 		if(predictedFields.size() < 1){
-			throw new InvalidFeatureException("No predicted fields", getMiningSchema());
+			return null;
 		} else
 
 		if(predictedFields.size() > 1){

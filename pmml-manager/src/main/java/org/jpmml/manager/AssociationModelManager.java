@@ -48,17 +48,6 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 		return activeFields.get(0);
 	}
 
-	@Override
-	public FieldName getTargetField(){
-		List<FieldName> predictedFields = getPredictedFields();
-
-		if(predictedFields.size() < 1){
-			return null;
-		}
-
-		return super.getTargetField();
-	}
-
 	/**
 	 * @return <code>null</code> Always.
 	 */

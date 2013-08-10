@@ -34,17 +34,6 @@ public class ClusteringModelManager extends ModelManager<ClusteringModel> implem
 		return "Clustering model";
 	}
 
-	@Override
-	public FieldName getTargetField(){
-		List<FieldName> predictedFields = getPredictedFields();
-
-		if(predictedFields.size() < 1){
-			return null;
-		}
-
-		return super.getTargetField();
-	}
-
 	/**
 	 * @return <code>null</code> Always.
 	 */

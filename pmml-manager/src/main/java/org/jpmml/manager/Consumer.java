@@ -41,7 +41,7 @@ public interface Consumer extends Serializable {
 	/**
 	 * Convenience method for retrieving the sole predicted field.
 	 *
-	 * @return The sole predicted field
+	 * @return The sole predicted field, or <code>null</code> if it does not exist
 	 *
 	 * @throws InvalidFeatureException If the number of predicted fields is not exactly one
 	 *
