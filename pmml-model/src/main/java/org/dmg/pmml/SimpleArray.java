@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.*;
 
 @XmlTransient
 abstract
-public class ArrayBase extends PMMLObject {
+public class SimpleArray extends PMMLObject {
 
 	@XmlTransient
 	private List<String> content = null;

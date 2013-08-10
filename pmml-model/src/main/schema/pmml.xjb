@@ -86,7 +86,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='Array']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.ArrayBase"
+				name="org.dmg.pmml.SimpleArray"
 			/>
 		</jaxb:bindings>
 
