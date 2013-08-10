@@ -45,15 +45,31 @@ public class ArrayUtil {
 
 	static
 	public List<String> getContent(Array array){
-		List<String> values = array.getContent();
+		List<String> parsedValue = array.getParsedValue();
 
-		if(values == null){
-			values = tokenize(array);
+		if(parsedValue == null){
+			parsedValue = tokenize(array);
 
-			array.setContent(values);
+			array.setParsedValue(parsedValue);
 		}
 
-		return values;
+		return parsedValue;
+	}
+
+	static
+	public List<? extends Number> getNumberContent(Array array){
+		Array.Type type = array.getType();
+
+		switch(type){
+			case INT:
+				return getIntContent(array);
+			case REAL:
+				return getRealContent(array);
+			default:
+				break;
+		}
+
+		throw new EvaluationException();
 	}
 
 	static
@@ -80,22 +96,6 @@ public class ArrayUtil {
 		};
 
 		return Lists.transform(getContent(array), transformer);
-	}
-
-	static
-	public List<? extends Number> getNumberContent(Array array){
-		Array.Type type = array.getType();
-
-		switch(type){
-			case INT:
-				return getIntContent(array);
-			case REAL:
-				return getRealContent(array);
-			default:
-				break;
-		}
-
-		throw new EvaluationException();
 	}
 
 	static

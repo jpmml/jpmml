@@ -12,7 +12,7 @@ abstract
 public class SimpleArray extends PMMLObject {
 
 	@XmlTransient
-	private List<String> content = null;
+	private List<String> parsedValue = null;
 
 
 	/**
@@ -32,8 +32,8 @@ public class SimpleArray extends PMMLObject {
 	 *
 	 * @see #getValue()
 	 */
-	public List<String> getContent(){
-		return this.content;
+	public List<String> getParsedValue(){
+		return this.parsedValue;
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class SimpleArray extends PMMLObject {
 	 *
 	 * @see #setValue(String)
 	 */
-	public void setContent(List<String> content){
-		this.content = content;
+	public void setParsedValue(List<String> parsedValue){
+		this.parsedValue = parsedValue;
 	}
 }
