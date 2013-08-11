@@ -1156,6 +1156,8 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:simpleType[@name='FIELD-NAME']">
 			<jaxb:javaType
 				name="org.dmg.pmml.FieldName"
+				parseMethod="org.dmg.pmml.FieldName.unmarshal"
+				printMethod="org.dmg.pmml.FieldName.marshal"
 			/>
 		</jaxb:bindings>
 

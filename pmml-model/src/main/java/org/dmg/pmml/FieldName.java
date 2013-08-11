@@ -3,6 +3,7 @@
  */
 package org.dmg.pmml;
 
+final
 public class FieldName {
 
 	private String value = null;
@@ -48,12 +49,17 @@ public class FieldName {
 	}
 
 	static
-	public FieldName unmarshal(String value){
+	public FieldName create(String value){
+		return unmarshal(value);
+	}
+
+	static
+	FieldName unmarshal(String value){
 		return new FieldName(value);
 	}
 
 	static
-	public String marshal(FieldName name){
+	String marshal(FieldName name){
 		return name.getValue();
 	}
 }
