@@ -3,6 +3,9 @@
  */
 package org.dmg.pmml;
 
+import java.lang.ref.*;
+import java.util.*;
+
 final
 public class FieldName {
 
@@ -11,6 +14,10 @@ public class FieldName {
 
 	public FieldName(String value){
 		setValue(value);
+	}
+
+	public FieldName intern(){
+		return create(getValue());
 	}
 
 	@Override
@@ -55,11 +62,25 @@ public class FieldName {
 
 	static
 	FieldName unmarshal(String value){
-		return new FieldName(value);
+		FieldName name = new FieldName(value);
+
+		WeakReference<FieldName> reference = FieldName.cache.get(name);
+		if(reference != null){
+			FieldName cachedName = reference.get();
+			if(cachedName != null){
+				return cachedName;
+			}
+		}
+
+		FieldName.cache.put(name, new WeakReference<FieldName>(name));
+
+		return name;
 	}
 
 	static
 	String marshal(FieldName name){
 		return name.getValue();
 	}
+
+	private static final Map<FieldName, WeakReference<FieldName>> cache = new WeakHashMap<FieldName, WeakReference<FieldName>>();
 }

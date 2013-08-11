@@ -32,7 +32,7 @@ public class CsvUtil {
 
 			List<String> headerCells = parseLine(headerLine);
 			for(int i = 0; i < headerCells.size(); i++){
-				keys.add(new FieldName(headerCells.get(i)));
+				keys.add(FieldName.create(headerCells.get(i)));
 			}
 
 			while(true){

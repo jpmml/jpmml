@@ -49,7 +49,7 @@ public class EvaluatorUtil {
 
 		Collection<Map.Entry<String, V>> entries = map.entrySet();
 		for(Map.Entry<String, V> entry : entries){
-			result.put(new FieldName(entry.getKey()), entry.getValue());
+			result.put(FieldName.create(entry.getKey()), entry.getValue());
 		}
 
 		return result;
