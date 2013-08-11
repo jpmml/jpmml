@@ -101,7 +101,7 @@ public class ClusteringModelEvaluator extends ClusteringModelManager implements 
 		for(ClusteringField clusteringField : clusteringFields){
 			FieldName name = clusteringField.getField();
 
-			Object value = context.getArgument(name);
+			Object value = ExpressionUtil.evaluate(name, context);
 
 			DataType dataType = ParameterUtil.getDataType(value);
 			switch(dataType){
