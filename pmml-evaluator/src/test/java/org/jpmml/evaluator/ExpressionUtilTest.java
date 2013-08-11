@@ -3,6 +3,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.*;
+
 import org.dmg.pmml.*;
 
 import org.junit.*;
@@ -102,5 +104,23 @@ public class ExpressionUtilTest {
 		assertEquals(null, ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, "3")));
 		expression.setDefaultValue("Default");
 		assertEquals("Default", ExpressionUtil.evaluate(expression, new LocalEvaluationContext(name, "3")));
+	}
+
+	@Test
+	public void evaluateAggregate(){
+		FieldName name = new FieldName("x");
+
+		List<?> values = Arrays.asList(ParameterUtil.parse(DataType.DATE, "2013-01-01"), ParameterUtil.parse(DataType.DATE, "2013-02-01"), ParameterUtil.parse(DataType.DATE, "2013-03-01"));
+
+		EvaluationContext context = new LocalEvaluationContext(name, values);
+
+		Aggregate aggregate = new Aggregate(name, Aggregate.Function.COUNT);
+		assertEquals(3, ExpressionUtil.evaluate(aggregate, context));
+
+		aggregate.setFunction(Aggregate.Function.MIN);
+		assertEquals(values.get(0), ExpressionUtil.evaluate(aggregate, context));
+
+		aggregate.setFunction(Aggregate.Function.MAX);
+		assertEquals(values.get(2), ExpressionUtil.evaluate(aggregate, context));
 	}
 }

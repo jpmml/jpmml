@@ -9,6 +9,7 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 public class ExpressionUtil {
@@ -72,6 +73,10 @@ public class ExpressionUtil {
 
 		if(expression instanceof Apply){
 			return evaluateApply((Apply)expression, context);
+		} else
+
+		if(expression instanceof Aggregate){
+			return evaluateAggregate((Aggregate)expression, context);
 		}
 
 		throw new UnsupportedFeatureException(expression);
@@ -192,6 +197,48 @@ public class ExpressionUtil {
 		}
 
 		return result;
+	}
+
+	@SuppressWarnings (
+		value = {"rawtypes", "unchecked"}
+	)
+	static
+	public Object evaluateAggregate(Aggregate aggregate, EvaluationContext context){
+		Object value = evaluate(aggregate.getField(), context);
+
+		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records
+		// It is assumed that the aggregation has been performed by application developer beforehand
+		if(!(value instanceof Collection)){
+			throw new EvaluationException();
+		}
+
+		Collection<?> values = (Collection<?>)value;
+
+		FieldName groupName = aggregate.getGroupField();
+		if(groupName != null){
+			Object groupValue = evaluate(groupName, context);
+
+			ParameterUtil.getDataType(groupValue);
+		}
+
+		// Remove missing values
+		values = Lists.newArrayList(Iterables.filter(values, Predicates.notNull()));
+
+		Aggregate.Function function = aggregate.getFunction();
+		switch(function){
+			case COUNT:
+				return Integer.valueOf(values.size());
+			case SUM:
+				return FunctionUtil.evaluate(new Apply("sum"), (List<?>)values, context);
+			case AVERAGE:
+				return FunctionUtil.evaluate(new Apply("avg"), (List<?>)values, context);
+			case MIN:
+				return Collections.min((Collection<Comparable>)values);
+			case MAX:
+				return Collections.max((Collection<Comparable>)values);
+			default:
+				throw new UnsupportedFeatureException(aggregate, function);
+		}
 	}
 
 	static
