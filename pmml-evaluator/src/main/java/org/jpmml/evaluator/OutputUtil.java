@@ -151,6 +151,11 @@ public class OutputUtil {
 						value = getRuleValue(value, outputField);
 					}
 					break;
+				case WARNING:
+					{
+						value = context.getWarnings();
+					}
+					break;
 				default:
 					throw new UnsupportedFeatureException(outputField, resultFeature);
 			}

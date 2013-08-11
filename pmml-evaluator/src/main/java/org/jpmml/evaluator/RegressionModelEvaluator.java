@@ -124,10 +124,14 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 		for(NumericPredictor numericPredictor : numericPredictors){
-			Object value = ExpressionUtil.evaluate(numericPredictor.getName(), context);
+			FieldName name = numericPredictor.getName();
+
+			Object value = ExpressionUtil.evaluate(name, context);
 
 			// "if the input value is missing, then the result evaluates to a missing value"
 			if(value == null){
+				context.addWarning("Missing argument \"" + name.getValue() + "\"");
+
 				return null;
 			}
 
@@ -136,10 +140,14 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 		List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
 		for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-			Object value = ExpressionUtil.evaluate(categoricalPredictor.getName(), context);
+			FieldName name = categoricalPredictor.getName();
+
+			Object value = ExpressionUtil.evaluate(name, context);
 
 			// "if the input value is missing, then the product is ignored"
 			if(value == null){
+				context.addWarning("Missing argument \"" + name.getValue() + "\"");
+
 				continue;
 			}
 

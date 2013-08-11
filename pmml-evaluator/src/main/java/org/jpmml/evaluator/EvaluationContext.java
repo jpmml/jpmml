@@ -14,6 +14,8 @@ public class EvaluationContext {
 
 	private Deque<Map<FieldName, ?>> stack = Queues.newArrayDeque();
 
+	private List<String> warnings = Lists.newArrayList();
+
 
 	public EvaluationContext(){
 	}
@@ -82,7 +84,17 @@ public class EvaluationContext {
 		getStack().push(frame);
 	}
 
+	public void addWarning(String warning){
+		List<String> warnings = getWarnings();
+
+		warnings.add(warning);
+	}
+
 	Deque<Map<FieldName, ?>> getStack(){
 		return this.stack;
+	}
+
+	public List<String> getWarnings(){
+		return this.warnings;
 	}
 }

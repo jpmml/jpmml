@@ -98,7 +98,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 			throw new MissingFieldException(activeField, associationModel);
 		}
 
-		Set<String> input = createInput((Collection<?>)value);
+		Set<String> input = createInput((Collection<?>)value, context);
 
 		Map<String, Boolean> flags = Maps.newLinkedHashMap();
 
@@ -154,7 +154,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 	/**
 	 * @return A set of {@link Item#getId() Item identifiers}.
 	 */
-	private Set<String> createInput(Collection<?> values){
+	private Set<String> createInput(Collection<?> values, EvaluationContext context){
 		Set<String> result = Sets.newLinkedHashSet();
 
 		Map<String, String> valueItems = (getItemValues().inverse());
@@ -165,6 +165,8 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 			String id = valueItems.get(stringValue);
 			if(id == null){
+				context.addWarning("Unknown item value \"" + stringValue + "\"");
+
 				continue values;
 			}
 
