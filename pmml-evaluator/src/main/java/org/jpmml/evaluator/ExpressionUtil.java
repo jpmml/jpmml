@@ -18,12 +18,17 @@ public class ExpressionUtil {
 
 	static
 	public Object evaluate(FieldName name, EvaluationContext context){
-		DerivedField derivedField = context.resolveField(name);
-		if(derivedField != null){
+		Map.Entry<FieldName, Object> entry = context.getArgumentEntry(name);
+		if(entry == null){
+			DerivedField derivedField = context.resolveField(name);
+			if(derivedField == null){
+				return null;
+			}
+
 			return evaluate(derivedField, context);
 		}
 
-		return context.getArgument(name);
+		return entry.getValue();
 	}
 
 	static

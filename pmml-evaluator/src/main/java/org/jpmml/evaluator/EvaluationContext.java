@@ -44,7 +44,19 @@ public class EvaluationContext {
 		return result;
 	}
 
+	/**
+	 * @see #getArgumentEntry(FieldName)
+	 */
 	public Object getArgument(FieldName name){
+		Map.Entry<FieldName, Object> entry = getArgumentEntry(name);
+		if(entry != null){
+			return entry.getValue();
+		}
+
+		return null;
+	}
+
+	public Map.Entry<FieldName, Object> getArgumentEntry(FieldName name){
 		Deque<Map<FieldName, ?>> stack = getStack();
 
 		// Iterate from first to last
@@ -53,7 +65,9 @@ public class EvaluationContext {
 			Map<FieldName, ?> frame = it.next();
 
 			if(frame.containsKey(name)){
-				return frame.get(name);
+				Map.Entry<FieldName, Object> entry = new AbstractMap.SimpleEntry<FieldName, Object>(name, frame.get(name));
+
+				return entry;
 			}
 		}
 
