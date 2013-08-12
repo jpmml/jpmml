@@ -7,12 +7,12 @@ Supported model types:
 	<tr><th>Description</th><th>PMML element</th></tr>
 	<tr><td>Association rules</td><td>http://www.dmg.org/v4-1/AssociationRules.html</td></tr>
 	<tr><td>Cluster models</td><td>http://www.dmg.org/v4-1/ClusteringModel.html</td></tr>
-	<tr><td>Decision tree</td><td>http://www.dmg.org/v4-1/TreeModel.html</td></tr>
-	<tr><td>Linear regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
 	<tr><td>Neural network</td><td>http://www.dmg.org/v4-1/NeuralNetwork.html</td></tr>
+	<tr><td>Regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
 	<tr><td>Rule set</td><td>http://www.dmg.org/v4-1/RuleSet.html</td></tr>
 	<tr><td>Scorecard</td><td>http://www.dmg.org/v4-1/Scorecard.html</td></tr>
-	<tr><td>Ensembles models (all of the above)</td><td>http://www.dmg.org/v4-1/MultipleModels.html</td></tr>
+	<tr><td>Tree models</td><td>http://www.dmg.org/v4-1/TreeModel.html</td></tr>
+	<tr><td>Ensemble models (all of the above)</td><td>http://www.dmg.org/v4-1/MultipleModels.html</td></tr>
 </table>
 
 # Usage #
@@ -157,9 +157,9 @@ Tested model types:
 <table>
 	<tr><th>Description</th></tr>
 	<tr><td>Cluster models</td></tr>
-	<tr><td>Decision tree</td></tr>
-	<tr><td>Linear regression</td></tr>
 	<tr><td>Neural network</td></tr>
+	<tr><td>Regression</td></tr>
+	<tr><td>Tree models</td></tr>
 </table>
 
 ##### pmml-rapidminer (internal)
@@ -170,10 +170,10 @@ Tested model types:
 <table>
 	<tr><th>Description</th></tr>
 	<tr><td>Cluster models</td></tr>
-	<tr><td>Decision tree</td></tr>
-	<tr><td>Linear regression</td></tr>
 	<tr><td>Neural network</td></tr>
+	<tr><td>Regression</td></tr>
 	<tr><td>Rule set</td></tr>
+	<tr><td>Tree models</td></tr>
 </table>
 
 ##### pmml-rattle (internal)
@@ -185,10 +185,10 @@ Tested model types:
 	<tr><th>Description</th><th>R function(s)</th></tr>
 	<tr><td>Association rules</td><td><code>apriori()</code> (package <code>arules</code>)</td></tr>
 	<tr><td>Cluster models</td><td><code>hcluster()</code> and <code>kmeans()</code></td></tr>
-	<tr><td>Decision tree</td><td><code>rpart()</code> (package <code>rpart</code>)</td></tr>
-	<tr><td>Linear regression</td><td><code>lm()</code> and <code>multinom()</code></td></tr>
 	<tr><td>Neural network</td><td><code>nnet()</code> (package <code>nnet</code>)</td></tr>
 	<tr><td>Random forest</td><td><code>randomForest()</code> (package <code>randomForest</code>)</td></tr>
+	<tr><td>Regression</td><td><code>lm()</code> and <code>multinom()</code></td></tr>
+	<tr><td>Tree models</td><td><code>rpart()</code> (package <code>rpart</code>)</td></tr>
 </table>
 
 ### Example code
