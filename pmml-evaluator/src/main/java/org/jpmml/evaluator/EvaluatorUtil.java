@@ -90,64 +90,43 @@ public class EvaluatorUtil {
 	}
 
 	static
-	public List<Map<FieldName, Object>> groupRows(FieldName groupField, List<Map<FieldName, Object>> table){
-		Map<Object, ListMultimap<FieldName, Object>> groupedRows = Maps.newLinkedHashMap();
-
-		Set<FieldName> keys = Sets.newLinkedHashSet();
+	public <K> List<Map<K, Object>> groupRows(K groupKey, List<Map<K, Object>> table){
+		Map<Object, ListMultimap<K, Object>> groupedRows = Maps.newLinkedHashMap();
 
 		for(int i = 0; i < table.size(); i++){
-			Map<FieldName, ?> row = table.get(i);
+			Map<K, ?> row = table.get(i);
 
-			Object groupValue = row.get(groupField);
+			Object groupValue = row.get(groupKey);
 
-			ListMultimap<FieldName, Object> groupedRow = groupedRows.get(groupValue);
+			ListMultimap<K, Object> groupedRow = groupedRows.get(groupValue);
 			if(groupedRow == null){
 				groupedRow = ArrayListMultimap.create();
 
 				groupedRows.put(groupValue, groupedRow);
 			}
 
-			Collection<? extends Map.Entry<FieldName, ?>> entries = row.entrySet();
-			for(Map.Entry<FieldName, ?> entry : entries){
-				FieldName key = entry.getKey();
+			Collection<? extends Map.Entry<K, ?>> entries = row.entrySet();
+			for(Map.Entry<K, ?> entry : entries){
+				K key = entry.getKey();
 				Object value = entry.getValue();
-
-				keys.add(key);
-
-				if((groupField).equals(key)){
-					continue;
-				}
 
 				groupedRow.put(key, value);
 			}
 		}
 
-		List<Map<FieldName, Object>> result = Lists.newArrayList();
+		List<Map<K, Object>> resultTable = Lists.newArrayList();
 
-		Collection<Map.Entry<Object, ListMultimap<FieldName, Object>>> entries = groupedRows.entrySet();
-		for(Map.Entry<Object, ListMultimap<FieldName, Object>> entry : entries){
-			Map<FieldName, Object> row = Maps.newLinkedHashMap();
+		Collection<Map.Entry<Object, ListMultimap<K, Object>>> entries = groupedRows.entrySet();
+		for(Map.Entry<Object, ListMultimap<K, Object>> entry : entries){
+			Map<K, Object> resultRow = Maps.newLinkedHashMap();
+			resultRow.putAll((entry.getValue()).asMap());
 
-			Object groupValue = entry.getKey();
+			// The value of the "group by" column is a single Object, not a Collection (ie. java.util.List) of Objects
+			resultRow.put(groupKey, entry.getKey());
 
-			ListMultimap<FieldName, Object> groupedRow = entry.getValue();
-
-			for(FieldName key : keys){
-
-				// The group field holds an Object
-				if((groupField).equals(key)){
-					row.put(key, groupValue);
-				} else
-
-				// All other fields hold collections (ie. java.util.List) of Objects
-				{
-					row.put(key, groupedRow.get(key));
-				}
-			}
-
-			result.add(row);
+			resultTable.add(resultRow);
 		}
 
-		return result;
+		return resultTable;
 	}
 }
