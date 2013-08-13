@@ -17,24 +17,9 @@ Supported model types:
 
 # Usage #
 
-JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
+Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
 
-Release history:
-<table>
-	<tr><th>Date</th><th>Version</th></tr>
-	<tr><td>12 Aug, 2013</td><td>1.0.11</td></tr>
-	<tr><td>29 Jul, 2013</td><td>1.0.10</td></tr>
-	<tr><td>22 Jul, 2013</td><td>1.0.9</td></tr>
-	<tr><td>28 Jun, 2013</td><td>1.0.8</td></tr>
-	<tr><td>22 Jun, 2013</td><td>1.0.7</td></tr>
-	<tr><td>16 Jun, 2013</td><td>1.0.6</td></tr>
-	<tr><td>5 Jun, 2013</td><td>1.0.5</td></tr>
-	<tr><td>2 Jun, 2013</td><td>1.0.4</td></tr>
-	<tr><td>27 May, 2013</td><td>1.0.3</td></tr>
-	<tr><td>21 May, 2013</td><td>1.0.2</td></tr>
-	<tr><td>20 May, 2013</td><td>1.0.1</td></tr>
-	<tr><td>2 Dec, 2012</td><td>1.0.0</td></tr>
-</table>
+JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
 
 The latest versions of public API modules can be incorporated using the following dependency declarations:
 ```
