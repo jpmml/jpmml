@@ -210,6 +210,8 @@ public class FunctionUtilTest {
 	@Test
 	public void evaluateFormatFunctions(){
 		assertEquals("  2", evaluate("formatNumber", 2, "%3d"));
+
+		assertEquals("08/20/04", evaluate("formatDatetime", new LocalDate(2004, 8, 20), "%m/%d/%y"));
 	}
 
 	@Test

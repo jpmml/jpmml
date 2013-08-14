@@ -135,7 +135,7 @@ public class FunctionUtil {
 	}
 
 	static
-	private LocalDate asDate(Object value){
+	private LocalDate asLocalDate(Object value){
 
 		if(value instanceof LocalDate){
 			return (LocalDate)value;
@@ -151,7 +151,7 @@ public class FunctionUtil {
 	}
 
 	static
-	private LocalTime asTime(Object value){
+	private LocalTime asLocalTime(Object value){
 
 		if(value instanceof LocalTime){
 			return (LocalTime)value;
@@ -167,7 +167,7 @@ public class FunctionUtil {
 	}
 
 	static
-	private LocalDateTime asDateTime(Object value){
+	private LocalDateTime asLocalDateTime(Object value){
 
 		if(value instanceof LocalDate){
 			LocalDate instant = (LocalDate)value;
@@ -177,6 +177,30 @@ public class FunctionUtil {
 
 		if(value instanceof LocalDateTime){
 			return (LocalDateTime)value;
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	private DateTime asDateTime(Object value){
+
+		if(value instanceof LocalDate){
+			LocalDate instant = (LocalDate)value;
+
+			return instant.toDateTimeAtStartOfDay();
+		} else
+
+		if(value instanceof LocalTime){
+			LocalTime instant = (LocalTime)value;
+
+			return instant.toDateTimeToday();
+		} else
+
+		if(value instanceof LocalDateTime){
+			LocalDateTime instant = (LocalDateTime)value;
+
+			return instant.toDateTime();
 		}
 
 		throw new EvaluationException();
@@ -872,6 +896,52 @@ public class FunctionUtil {
 				}
 			}
 		});
+
+		putFunction("formatDatetime", new Function(){
+
+			@Override
+			public String evaluate(List<?> values){
+
+				if(values.size() != 2){
+					throw new EvaluationException();
+				}
+
+				DateTime dateTime = asDateTime(values.get(0));
+
+				Date date = dateTime.toDate();
+
+				String pattern = asString(values.get(1));
+
+				pattern = translatePattern(pattern);
+
+				try {
+					return String.format(pattern, date);
+				} catch(IllegalFormatException ife){
+					throw ife;
+				}
+			}
+
+			private String translatePattern(String pattern){
+				StringBuilder sb = new StringBuilder();
+
+				for(int i = 0; i < pattern.length(); i++){
+					char c = pattern.charAt(i);
+
+					sb.append(c);
+
+					if(c == '%'){
+
+						// Every %[conversion] has to become %1$t[conversion]
+						// Here, "1$" denotes the first argument, and "t" denotes the prefix for date and time conversion characters
+						if(i < (pattern.length() - 1) && pattern.charAt(i + 1) != '%'){
+							sb.append("1$t");
+						}
+					}
+				}
+
+				return sb.toString();
+			}
+		});
 	}
 
 	static {
@@ -884,7 +954,7 @@ public class FunctionUtil {
 					throw new EvaluationException();
 				}
 
-				LocalDate instant = asDate(values.get(0));
+				LocalDate instant = asLocalDate(values.get(0));
 
 				int year = asInteger(values.get(1));
 
@@ -903,7 +973,7 @@ public class FunctionUtil {
 					throw new EvaluationException();
 				}
 
-				LocalTime instant = asTime(values.get(0));
+				LocalTime instant = asLocalTime(values.get(0));
 
 				Seconds seconds = Seconds.seconds(instant.getHourOfDay() * 60 * 60 + instant.getMinuteOfHour() * 60 + instant.getSecondOfMinute());
 
@@ -922,7 +992,7 @@ public class FunctionUtil {
 					throw new EvaluationException();
 				}
 
-				LocalDateTime instant = asDateTime(values.get(0));
+				LocalDateTime instant = asLocalDateTime(values.get(0));
 
 				int year = asInteger(values.get(1));
 
