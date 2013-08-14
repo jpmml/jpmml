@@ -208,6 +208,11 @@ public class FunctionUtilTest {
 	}
 
 	@Test
+	public void evaluateFormatFunctions(){
+		assertEquals("  2", evaluate("formatNumber", 2, "%3d"));
+	}
+
+	@Test
 	public void evaluateDateTimeFunctions(){
 		assertEquals(15796, evaluate("dateDaysSinceYear", new LocalDate(2003, 4, 1), 1960));
 		assertEquals(15796, evaluate("dateDaysSinceYear", new LocalDateTime(2003, 4, 1, 0, 0, 0), 1960));

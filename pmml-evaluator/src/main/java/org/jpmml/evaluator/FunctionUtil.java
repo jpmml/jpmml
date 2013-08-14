@@ -849,6 +849,32 @@ public class FunctionUtil {
 	}
 
 	static {
+		putFunction("formatNumber", new Function(){
+
+			@Override
+			public String evaluate(List<?> values){
+
+				if(values.size() != 2){
+					throw new EvaluationException();
+				}
+
+				// Require numeric data type
+				Number value = asNumber(values.get(0));
+
+				String pattern = asString(values.get(1));
+
+				// According to the java.util.Formatter javadoc, Java formatting is more strict than C's printf formatting.
+				// For example, in Java, if a conversion is incompatible with a flag, an exception will be thrown. In C's printf, inapplicable flags are silently ignored.
+				try {
+					return String.format(pattern, value);
+				} catch(IllegalFormatException ife){
+					throw ife;
+				}
+			}
+		});
+	}
+
+	static {
 		putFunction("dateDaysSinceYear", new Function(){
 
 			@Override
