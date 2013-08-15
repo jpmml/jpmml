@@ -11,7 +11,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class ModelChainRegressionTest extends MiningModelEvaluatorTest {
+public class ModelChainMultipleModelTest extends MiningModelEvaluatorTest {
 
 	@Test
 	public void evaluateSetosa() throws Exception {
