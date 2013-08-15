@@ -33,6 +33,9 @@
                     </MiningSchema>
                     <Output>
                         <OutputField name="PredictedClass" optype="categorical" dataType="string" feature="predictedValue"/>
+                        <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="Iris-setosa"/>
+                        <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="Iris-versicolor"/>
+                        <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="Iris-virginica"/>
                     </Output>
                     <Node score="Iris-setosa" recordCount="150.0">
                         <True/>
@@ -68,70 +71,26 @@
             </Segment>
             <Segment id="2">
                 <True/>
-                <MiningModel modelName="PollenIndex" functionName="regression">
+                <RegressionModel modelName="PollenIndex" functionName="regression">
                     <MiningSchema>
+                        <MiningField name="Probability_setosa" usageType="active"/>
+                        <MiningField name="Probability_versicolor" usageType="active"/>
+                        <MiningField name="Probability_virginica" usageType="active"/>
                         <MiningField name="temperature" usageType="active"/>
                         <MiningField name="cloudiness" usageType="active"/>
-                        <MiningField name="PredictedClass" usageType="active"/>
                         <MiningField name="PollenIndex" usageType="predicted"/>
                     </MiningSchema>
                     <Output>
                         <OutputField name="Pollen Index" optype="continuous" dataType="double" feature="predictedValue"/>
                     </Output>
-                    <Segmentation multipleModelMethod="selectFirst">
-                        <Segment id="2.1">
-                            <SimplePredicate field="PredictedClass" operator="equal" value="Iris-setosa"/>
-                            <RegressionModel modelName="Setosa_PollenIndex" functionName="regression">
-                                <MiningSchema>
-                                    <MiningField name="temperature" usageType="active"/>
-                                    <MiningField name="cloudiness" usageType="active"/>
-                                    <MiningField name="PollenIndex" usageType="predicted"/>
-                                </MiningSchema>
-                                <Output>
-                                    <OutputField name="Setosa Pollen Index" optype="continuous" dataType="double" feature="predictedValue"/>
-                                </Output>
-                                <RegressionTable intercept="0.3">
-                                    <NumericPredictor name="temperature" exponent="1" coefficient="0.02"/>
-                                    <NumericPredictor name="cloudiness" exponent="1" coefficient="-0.1"/>
-                                </RegressionTable>
-                            </RegressionModel>
-                        </Segment>
-                        <Segment id="2.2">
-                            <SimplePredicate field="PredictedClass" operator="equal" value="Iris-versicolor"/>
-                            <RegressionModel modelName="Versicolor_PollenIndex" functionName="regression">
-                                <MiningSchema>
-                                    <MiningField name="temperature" usageType="active"/>
-                                    <MiningField name="cloudiness" usageType="active"/>
-                                    <MiningField name="PollenIndex" usageType="predicted"/>
-                                </MiningSchema>
-                                <Output>
-                                    <OutputField name="Versicolor Pollen Index" optype="continuous" dataType="double" feature="predictedValue"/>
-                                </Output>
-                                <RegressionTable intercept="0.2">
-                                    <NumericPredictor name="temperature" exponent="1" coefficient="-0.02"/>
-                                    <NumericPredictor name="cloudiness" exponent="1" coefficient="0.1"/>
-                                </RegressionTable>
-                            </RegressionModel>
-                        </Segment>
-                        <Segment id="2.3">
-                            <SimplePredicate field="PredictedClass" operator="equal" value="Iris-virginica"/>
-                            <RegressionModel modelName="Virginica_PollenIndex" functionName="regression">
-                                <MiningSchema>
-                                    <MiningField name="temperature" usageType="active"/>
-                                    <MiningField name="cloudiness" usageType="active"/>
-                                    <MiningField name="PollenIndex" usageType="predicted"/>
-                                </MiningSchema>
-                                <Output>
-                                    <OutputField name="Virginica Pollen Index" optype="continuous" dataType="double" feature="predictedValue"/>
-                                </Output>
-                                <RegressionTable intercept="0.1">
-                                    <NumericPredictor name="temperature" exponent="1" coefficient="0.01"/>
-                                    <NumericPredictor name="cloudiness" exponent="1" coefficient="-0.2"/>
-                                </RegressionTable>
-                            </RegressionModel>
-                        </Segment>
-                    </Segmentation>
-                </MiningModel>
+                    <RegressionTable intercept="0.3">
+                        <NumericPredictor name="Probability_setosa" exponent="1" coefficient="0.8"/>
+                        <NumericPredictor name="Probability_versicolor" exponent="1" coefficient="0.7"/>
+                        <NumericPredictor name="Probability_virginica" exponent="1" coefficient="0.9"/>
+                        <NumericPredictor name="temperature" exponent="1" coefficient="0.02"/>
+                        <NumericPredictor name="cloudiness" exponent="1" coefficient="-0.1"/>
+                    </RegressionTable>
+                </RegressionModel>
             </Segment>
         </Segmentation>
     </MiningModel>
