@@ -11,13 +11,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class AttributeReasonCodeTest extends ScorecardEvaluatorTest {
+public class AttributeReasonCodeTest extends ReasonCodeTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		ScorecardEvaluator evaluator = createEvaluator();
-
-		Map<FieldName, ?> result = evaluator.evaluate(ScorecardEvaluatorTest.arguments);
+		Map<FieldName, ?> result = evaluateExample();
 
 		assertEquals(29d, result.get(new FieldName("Final Score")));
 

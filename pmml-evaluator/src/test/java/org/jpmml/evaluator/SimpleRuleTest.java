@@ -9,7 +9,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class SimpleRuleTest extends RuleSetModelEvaluatorTest {
+public class SimpleRuleTest extends RuleSelectionMethodTest {
 
 	@Test
 	public void evaluate() throws Exception {

@@ -19,17 +19,4 @@ public class MiningModelEvaluatorTest extends PMMLTest {
 
 		return evaluator;
 	}
-
-	Map<FieldName, ?> evaluate(double petalLength, double petalWidth) throws Exception {
-		MiningModelEvaluator evaluator = createEvaluator();
-
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-
-		arguments.put(new FieldName("petal_length"), petalLength);
-		arguments.put(new FieldName("petal_width"), petalWidth);
-		arguments.put(new FieldName("temperature"), 0d);
-		arguments.put(new FieldName("cloudiness"), 0d);
-
-		return evaluator.evaluate(arguments);
-	}
 }

@@ -31,16 +31,15 @@ public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
 		TreeModel treeModel = evaluator.getModel();
 		treeModel.setMissingValueStrategy(missingValueStrategy);
 
-		Map<FieldName, ?> result = evaluator.evaluate(MissingValueStrategyTest.arguments);
+		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
+		arguments.put(new FieldName("outlook"), "sunny");
+		arguments.put(new FieldName("temperature"), null);
+		arguments.put(new FieldName("humidity"), null);
+
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
 		return getEntityId(result.get(evaluator.getTargetField()));
 	}
 
-	private static final Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
 
-	static {
-		arguments.put(new FieldName("outlook"), "sunny");
-		arguments.put(new FieldName("temperature"), null);
-		arguments.put(new FieldName("humidity"), null);
-	}
 }
