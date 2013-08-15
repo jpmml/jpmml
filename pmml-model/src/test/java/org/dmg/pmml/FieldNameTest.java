@@ -11,9 +11,17 @@ public class FieldNameTest {
 
 	@Test
 	public void create(){
-		FieldName first = FieldName.create("x");
-		FieldName second = FieldName.create("x");
+		assertSame(FieldName.create("x"), FieldName.create("x"));
+	}
 
-		assertSame(first, second);
+	@Test
+	public void unmarshal(){
+		assertNotNull(FieldName.unmarshal("x"));
+	}
+
+	@Test
+	public void marshal(){
+		assertEquals("x", FieldName.marshal(FieldName.create("x")));
+		assertEquals(null, FieldName.marshal(null));
 	}
 }

@@ -79,6 +79,12 @@ public class FieldName {
 
 	static
 	String marshal(FieldName name){
+
+		// FieldName corresponds to a simple type in PMML XML Schema. Hence, it is possible to encounter a null instance.
+		if(name == null){
+			return null;
+		}
+
 		return name.getValue();
 	}
 
