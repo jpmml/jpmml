@@ -19,34 +19,32 @@ Supported model types:
 
 Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
 
-JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
-
-The latest versions of public API modules can be incorporated using the following dependency declarations:
+JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). The latest versions of public API modules can be incorporated using the following dependency declarations:
 ```
 <!-- low-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-model</artifactId>
-	<version>1.0.11</version>
+	<version>1.0.12</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
-	<version>1.0.11</version>
+	<version>1.0.12</version>
 </dependency>
 
 <!-- medium-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-manager</artifactId>
-	<version>1.0.11</version>
+	<version>1.0.12</version>
 </dependency>
 
 <!-- high-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.0.11</version>
+	<version>1.0.12</version>
 </dependency>
 ```
 Please note that higher API levels depend on lower API levels.
