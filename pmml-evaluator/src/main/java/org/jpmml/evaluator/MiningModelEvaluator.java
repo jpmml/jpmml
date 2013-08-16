@@ -181,7 +181,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 			Model model = segment.getModel();
 
-			Evaluator evaluator = (Evaluator)evaluatorFactory.getModelManager(getPmml(), model);
+			Evaluator evaluator = createEvaluator(model);
 
 			FieldName targetField = evaluator.getTargetField();
 
@@ -219,6 +219,12 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		}
 
 		return results;
+	}
+
+	private Evaluator createEvaluator(Model model){
+		ModelManager<?> modelManager = MiningModelEvaluator.evaluatorFactory.getModelManager(getPmml(), model);
+
+		return (Evaluator)modelManager;
 	}
 
 	private static final ModelEvaluatorFactory evaluatorFactory = ModelEvaluatorFactory.getInstance();
