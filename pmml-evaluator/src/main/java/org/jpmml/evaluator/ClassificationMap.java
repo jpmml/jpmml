@@ -96,6 +96,7 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 		CONFIDENCE(Ordering.INCREASING),
 		DISTANCE(Ordering.DECREASING),
 		SIMILARITY(Ordering.INCREASING),
+		VOTE(Ordering.INCREASING),
 		;
 
 		private Ordering ordering;

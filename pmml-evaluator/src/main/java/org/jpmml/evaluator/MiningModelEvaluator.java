@@ -50,6 +50,9 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			case CLASSIFICATION:
 				predictions = evaluateClassification(context);
 				break;
+			case CLUSTERING:
+				predictions = evaluateClustering(context);
+				break;
 			default:
 				throw new UnsupportedFeatureException(miningModel, miningFunction);
 		}
@@ -121,6 +124,51 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		}
 
 		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
+		result.putAll(countVotes(segmentation, segmentResults));
+
+		// Convert from votes to probabilities
+		result.normalizeValues();
+
+		return TargetUtil.evaluateClassification(result, context);
+	}
+
+	private Map<FieldName, ?> evaluateClustering(ModelManagerEvaluationContext context){
+		List<SegmentResult> segmentResults = evaluate(context);
+
+		Segmentation segmentation = getSegmentation();
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+				return dispatchSingleResult(segmentation, segmentResults);
+			case SELECT_ALL:
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+			default:
+				break;
+		}
+
+		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.VOTE);
+		result.putAll(countVotes(segmentation, segmentResults));
+
+		return Collections.singletonMap(getTargetField(), result);
+	}
+
+	private Map<FieldName, ?> dispatchSingleResult(Segmentation segmentation, List<SegmentResult> results){
+
+		if(results.size() < 1 || results.size() > 1){
+			throw new MissingResultException(segmentation);
+		}
+
+		SegmentResult result = results.get(0);
+
+		return result.getResult();
+	}
+
+	static
+	private Map<String, Double> countVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
+		Map<String, Double> result = Maps.newLinkedHashMap();
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
@@ -146,20 +194,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			result.put(category, vote);
 		}
 
-		result.normalizeValues();
-
-		return TargetUtil.evaluateClassification(result, context);
-	}
-
-	private Map<FieldName, ?> dispatchSingleResult(Segmentation segmentation, List<SegmentResult> results){
-
-		if(results.size() < 1 || results.size() > 1){
-			throw new MissingResultException(segmentation);
-		}
-
-		SegmentResult result = results.get(0);
-
-		return result.getResult();
+		return result;
 	}
 
 	@SuppressWarnings (
