@@ -161,11 +161,17 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		value = "fallthrough"
 	)
 	private List<SegmentResult> evaluate(EvaluationContext context){
+		MiningModel miningModel = getModel();
+
 		List<SegmentResult> results = Lists.newArrayList();
 
 		Segmentation segmentation = getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+
+		Model lastModel = null;
+
+		MiningFunctionType miningFunction = miningModel.getFunctionName();
 
 		List<Segment> segments = segmentation.getSegments();
 		for(Segment segment : segments){
@@ -180,6 +186,21 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			}
 
 			Model model = segment.getModel();
+			if(model == null){
+				throw new InvalidFeatureException(segment);
+			}
+
+			// "With the exception of modelChain models, all model elements used inside Segment elements in one MiningModel must have the same MINING-FUNCTION"
+			switch(multipleModelMethod){
+				case MODEL_CHAIN:
+					lastModel = model;
+					break;
+				default:
+					if(!(miningFunction).equals(model.getFunctionName())){
+						throw new InvalidFeatureException(model);
+					}
+					break;
+			}
 
 			Evaluator evaluator = createEvaluator(model);
 
@@ -217,6 +238,17 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 					results.add(new SegmentResult(segment, targetField, result));
 					break;
 			}
+		}
+
+		// "The model element used inside the last Segment element executed must have the same MINING-FUNCTION"
+		switch(multipleModelMethod){
+			case MODEL_CHAIN:
+				if(lastModel != null && !(miningFunction).equals(lastModel.getFunctionName())){
+					throw new InvalidFeatureException(lastModel);
+				}
+				break;
+			default:
+				break;
 		}
 
 		return results;
