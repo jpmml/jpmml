@@ -54,7 +54,8 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 				predictions = evaluateClustering(context);
 				break;
 			default:
-				throw new UnsupportedFeatureException(miningModel, miningFunction);
+				predictions = evaluateAny(context);
+				break;
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -140,6 +141,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_FIRST:
+			case MODEL_CHAIN:
 				return dispatchSingleResult(segmentation, segmentResults);
 			case SELECT_ALL:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
@@ -151,6 +153,25 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		result.putAll(countVotes(segmentation, segmentResults));
 
 		return Collections.singletonMap(getTargetField(), result);
+	}
+
+	private Map<FieldName, ?> evaluateAny(ModelManagerEvaluationContext context){
+		List<SegmentResult> segmentResults = evaluate(context);
+
+		Segmentation segmentation = getSegmentation();
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+			case MODEL_CHAIN:
+				return dispatchSingleResult(segmentation, segmentResults);
+			case SELECT_ALL:
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+			default:
+				break;
+		}
+
+		throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 	}
 
 	private Map<FieldName, ?> dispatchSingleResult(Segmentation segmentation, List<SegmentResult> results){
