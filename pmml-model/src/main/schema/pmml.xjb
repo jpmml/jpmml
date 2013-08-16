@@ -390,6 +390,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='DecisionTree']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.EmbeddedModel"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='DecisionTree']/xsd:complexType/xsd:attribute[@name='splitCharacteristic']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="SplitCharacteristic"
@@ -754,6 +760,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 			<java:superClass
 				name="org.dmg.pmml.SparseArray"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='Regression']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.EmbeddedModel"
 			/>
 		</jaxb:bindings>
 

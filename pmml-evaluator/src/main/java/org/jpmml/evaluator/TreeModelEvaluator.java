@@ -170,6 +170,11 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 			throw new InvalidFeatureException(node);
 		}
 
+		EmbeddedModel embeddedModel = node.getEmbeddedModel();
+		if(embeddedModel != null){
+			throw new UnsupportedFeatureException(embeddedModel);
+		}
+
 		return PredicateUtil.evaluate(predicate, context);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 University of Tartu
+ * Copyright (c) 2013 University of Tartu
  */
 package org.dmg.pmml;
 
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.*;
 
 @XmlTransient
 abstract
-public class Model extends PMMLObject {
+public class EmbeddedModel extends PMMLObject {
 
 	abstract
 	public String getModelName();
@@ -19,19 +19,7 @@ public class Model extends PMMLObject {
 	public MiningFunctionType getFunctionName();
 
 	abstract
-	public void setFunctionName(MiningFunctionType functionName);
-
-	abstract
-	public boolean isScorable();
-
-	abstract
-	public void setScorable(Boolean scorable);
-
-	abstract
-	public MiningSchema getMiningSchema();
-
-	abstract
-	public void setMiningSchema(MiningSchema miningSchema);
+	public void setFunctionName(MiningFunctionType miningFunction);
 
 	abstract
 	public LocalTransformations getLocalTransformations();

@@ -33,6 +33,11 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 			throw new InvalidResultException(miningModel);
 		}
 
+		EmbeddedModel embeddedModel = Iterables.getFirst(miningModel.getContent(), null);
+		if(embeddedModel != null){
+			throw new UnsupportedFeatureException(embeddedModel);
+		}
+
 		Map<FieldName, ?> predictions;
 
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
