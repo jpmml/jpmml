@@ -207,6 +207,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 							frame.put(outputField, outputValue);
 						}
 
+						// "The OutputFields from one model element can be passed as input to the MiningSchema of subsequent models"
 						context.pushFrame(frame);
 
 						results.clear();
