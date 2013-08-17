@@ -44,6 +44,13 @@ public class OutputUtil {
 			Object value = null;
 
 			ResultFeatureType resultFeature = outputField.getFeature();
+
+			// "If the attribute feature is not specified then the output value is a copy of the target field value."
+			if(resultFeature == null){
+				resultFeature = ResultFeatureType.PREDICTED_VALUE;
+			}
+
+			// Load the mining result
 			switch(resultFeature){
 				case PREDICTED_VALUE:
 				case PREDICTED_DISPLAY_VALUE:
@@ -69,6 +76,7 @@ public class OutputUtil {
 					break;
 			} // End switch
 
+			// Perform the requested computation on the mining result
 			switch(resultFeature){
 				case PREDICTED_VALUE:
 					{
