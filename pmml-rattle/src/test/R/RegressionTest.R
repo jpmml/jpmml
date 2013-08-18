@@ -4,12 +4,20 @@ library("randomForest")
 
 ozoneData = readCsv("csv/Ozone.csv")
 ozoneFormula = formula(O3 ~ temp + ibh + ibt)
+ozoneGlmFormula = formula(O3 ~ temp * ibh * ibt)
 
 writeOzone = function(values, file){
 	result = data.frame(values)
 	names(result) = c("O3")
 
 	writeCsv(result, file)
+}
+
+generateGeneralRegressionOzone = function(){
+	glm = glm(ozoneGlmFormula, ozoneData, family = gaussian)
+	saveXML(pmml(glm), "pmml/GeneralRegressionOzone.pmml")
+
+	writeOzone(predict(glm), "csv/GeneralRegressionOzone.csv")
 }
 
 generateNeuralNetworkOzone = function(){
@@ -33,6 +41,7 @@ generateRegressionOzone = function(){
 	writeOzone(predict(lm), "csv/RegressionOzone.csv")
 }
 
+generateGeneralRegressionOzone()
 generateNeuralNetworkOzone()
 generateRandomForestOzone()
 generateRegressionOzone()

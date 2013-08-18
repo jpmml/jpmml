@@ -12,6 +12,13 @@ import static org.junit.Assert.*;
 public class RegressionTest {
 
 	@Test
+	public void evaluateGeneralRegressionOzone() throws Exception {
+		Batch batch = new RattleBatch("GeneralRegression", "Ozone");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateNeuralNetworkOzone() throws Exception {
 		Batch batch = new RattleBatch("NeuralNetwork", "Ozone");
 

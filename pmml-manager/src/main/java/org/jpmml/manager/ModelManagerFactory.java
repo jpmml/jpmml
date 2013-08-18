@@ -20,6 +20,10 @@ public class ModelManagerFactory {
 			return new ClusteringModelManager(pmml, (ClusteringModel)model);
 		} else
 
+		if(model instanceof GeneralRegressionModel){
+			return new GeneralRegressionModelManager(pmml, (GeneralRegressionModel)model);
+		} else
+
 		if(model instanceof MiningModel){
 			return new MiningModelManager(pmml, (MiningModel)model);
 		} else

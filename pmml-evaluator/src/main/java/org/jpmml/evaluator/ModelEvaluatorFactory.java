@@ -23,6 +23,10 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 			 return new ClusteringModelEvaluator(pmml, (ClusteringModel)model);
 		} else
 
+		if(model instanceof GeneralRegressionModel){
+			return new GeneralRegressionModelEvaluator(pmml, (GeneralRegressionModel)model);
+		} else
+
 		if(model instanceof MiningModel){
 			return new MiningModelEvaluator(pmml, (MiningModel)model);
 		} else
