@@ -3,7 +3,11 @@
  */
 package org.jpmml.manager;
 
+import java.util.*;
+
 import org.dmg.pmml.*;
+
+import com.google.common.collect.*;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -37,6 +41,22 @@ public class GeneralRegressionModelManager extends ModelManager<GeneralRegressio
 		return this.generalRegressionModel;
 	}
 
+	public BiMap<FieldName, Predictor> getFactorRegistry(){
+		GeneralRegressionModel generalRegressionModel = getModel();
+
+		PredictorList predictorList = generalRegressionModel.getFactorList();
+
+		return toPredictorRegistry(predictorList);
+	}
+
+	public BiMap<FieldName, Predictor> getCovariateRegistry(){
+		GeneralRegressionModel generalRegressionModel = getModel();
+
+		PredictorList predictorList = generalRegressionModel.getCovariateList();
+
+		return toPredictorRegistry(predictorList);
+	}
+
 	public PPMatrix getPPMatrix(){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
@@ -47,5 +67,17 @@ public class GeneralRegressionModelManager extends ModelManager<GeneralRegressio
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		return generalRegressionModel.getParamMatrix();
+	}
+
+	static
+	private BiMap<FieldName, Predictor> toPredictorRegistry(PredictorList predictorList){
+		BiMap<FieldName, Predictor> result = HashBiMap.create();
+
+		List<Predictor> predictors = predictorList.getPredictors();
+		for(Predictor predictor : predictors){
+			result.put(predictor.getName(), predictor);
+		}
+
+		return result;
 	}
 }

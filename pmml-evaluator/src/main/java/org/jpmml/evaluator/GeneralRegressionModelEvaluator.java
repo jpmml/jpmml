@@ -15,6 +15,10 @@ import com.google.common.collect.*;
 
 public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManager implements Evaluator {
 
+	private BiMap<FieldName, Predictor> factors = null;
+
+	private BiMap<FieldName, Predictor> covariates = null;
+
 	private Map<String, Map<String, Row>> ppMatrixMap = null;
 
 	private Map<String, List<PCell>> paramMatrixMap = null;
@@ -26,6 +30,26 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){
 		super(pmml, generalRegressionModel);
+	}
+
+	@Override
+	public BiMap<FieldName, Predictor> getFactorRegistry(){
+
+		if(this.factors == null){
+			this.factors = super.getFactorRegistry();
+		}
+
+		return this.factors;
+	}
+
+	@Override
+	public BiMap<FieldName, Predictor> getCovariateRegistry(){
+
+		if(this.covariates == null){
+			this.covariates = super.getCovariateRegistry();
+		}
+
+		return this.covariates;
 	}
 
 	@Override
@@ -408,14 +432,12 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 	}
 
 	private Map<FieldName, ?> getArguments(EvaluationContext context){
-		GeneralRegressionModel generalRegressionModel = getModel();
-
-		FactorList factorList = generalRegressionModel.getFactorList();
-		CovariateList covariateList = generalRegressionModel.getCovariateList();
+		BiMap<FieldName, Predictor> factors = getFactorRegistry();
+		BiMap<FieldName, Predictor> covariates = getCovariateRegistry();
 
 		Map<FieldName, Object> result = Maps.newLinkedHashMap();
 
-		Iterable<Predictor> predictors = Iterables.concat(factorList.getPredictors(), covariateList.getPredictors());
+		Iterable<Predictor> predictors = Iterables.concat(factors.values(), covariates.values());
 		for(Predictor predictor : predictors){
 			FieldName name = predictor.getName();
 
@@ -447,11 +469,9 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 	private Map<String, Map<String, Row>> parsePPMatrix(){
 		Function<List<PPCell>, Row> rowBuilder = new Function<List<PPCell>, Row>(){
 
-			private GeneralRegressionModel generalRegressionModel = getModel();
+			private BiMap<FieldName, Predictor> factors = getFactorRegistry();
 
-			private FactorList factorList = this.generalRegressionModel.getFactorList();
-
-			private CovariateList covariateList = this.generalRegressionModel.getCovariateList();
+			private BiMap<FieldName, Predictor> covariates = getCovariateRegistry();
 
 
 			@Override
@@ -462,7 +482,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 				for(PPCell ppCell : ppCells){
 					FieldName name = ppCell.getPredictorName();
 
-					Predictor factor = find(this.factorList, name);
+					Predictor factor = this.factors.get(name);
 					if(factor != null){
 						List<PPCell> factorCells = result.getFactorCells();
 
@@ -471,7 +491,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 						continue ppCells;
 					}
 
-					Predictor covariate = find(this.covariateList, name);
+					Predictor covariate = this.covariates.get(name);
 					if(covariate != null){
 						List<PPCell> covariateCells = result.getCovariateCells();
 
@@ -480,24 +500,10 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 						continue ppCells;
 					}
 
-
 					throw new InvalidFeatureException(ppCell);
 				}
 
 				return result;
-			}
-
-			private Predictor find(PredictorList predictorList, FieldName name){
-				List<Predictor> predictors = predictorList.getPredictors();
-
-				for(Predictor predictor : predictors){
-
-					if((predictor.getName()).equals(name)){
-						return predictor;
-					}
-				}
-
-				return null;
 			}
 		};
 
