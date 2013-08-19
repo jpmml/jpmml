@@ -441,16 +441,6 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		for(Predictor predictor : predictors){
 			FieldName name = predictor.getName();
 
-			Categories categories = predictor.getCategories();
-			if(categories != null){
-				throw new UnsupportedFeatureException(categories);
-			}
-
-			Matrix matrix = predictor.getMatrix();
-			if(matrix != null){
-				throw new UnsupportedFeatureException(matrix);
-			}
-
 			result.put(name, context.getArgument(name));
 		}
 
@@ -485,6 +475,16 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 					Predictor factor = this.factors.get(name);
 					if(factor != null){
 						List<PPCell> factorCells = result.getFactorCells();
+
+						Categories categories = factor.getCategories();
+						if(categories != null){
+							throw new UnsupportedFeatureException(categories);
+						}
+
+						Matrix matrix = factor.getMatrix();
+						if(matrix != null){
+							throw new UnsupportedFeatureException(matrix);
+						}
 
 						factorCells.add(ppCell);
 
