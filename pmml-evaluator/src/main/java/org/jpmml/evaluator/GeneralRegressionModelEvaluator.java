@@ -15,6 +15,11 @@ import com.google.common.collect.*;
 
 public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManager implements Evaluator {
 
+	private Map<String, Map<String, Row>> ppMatrixMap = null;
+
+	private Map<String, List<PCell>> paramMatrixMap = null;
+
+
 	public GeneralRegressionModelEvaluator(PMML pmml){
 		super(pmml);
 	}
@@ -59,14 +64,14 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 		Map<FieldName, ?> arguments = getArguments(context);
 
-		Map<String, Map<String, Row>> ppMatrixMap = parsePPMatrix();
+		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
 		if(ppMatrixMap.size() != 1 || !ppMatrixMap.containsKey(null)){
 			throw new InvalidFeatureException(getPPMatrix());
 		}
 
 		Map<String, Row> parameterPredictorRows = ppMatrixMap.get(null);
 
-		Map<String, List<PCell>> paramMatrixMap = parseParamMatrix();
+		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
 			throw new InvalidFeatureException(getParamMatrix());
 		}
@@ -113,10 +118,10 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 		Map<FieldName, ?> arguments = getArguments(context);
 
-		Map<String, Map<String, Row>> ppMatrixMap = parsePPMatrix();
+		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
 
 		final
-		Map<String, List<PCell>> paramMatrixMap = parseParamMatrix();
+		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
 
@@ -430,6 +435,15 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		return result;
 	}
 
+	private Map<String, Map<String, Row>> getPPMatrixMap(){
+
+		if(this.ppMatrixMap == null){
+			this.ppMatrixMap = parsePPMatrix();
+		}
+
+		return this.ppMatrixMap;
+	}
+
 	private Map<String, Map<String, Row>> parsePPMatrix(){
 		Function<List<PPCell>, Row> rowBuilder = new Function<List<PPCell>, Row>(){
 
@@ -508,6 +522,15 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		}
 
 		return result;
+	}
+
+	private Map<String, List<PCell>> getParamMatrixMap(){
+
+		if(this.paramMatrixMap == null){
+			this.paramMatrixMap = parseParamMatrix();
+		}
+
+		return this.paramMatrixMap;
 	}
 
 	private Map<String, List<PCell>> parseParamMatrix(){
