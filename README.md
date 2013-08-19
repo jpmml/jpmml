@@ -7,6 +7,7 @@ Supported model types:
 	<tr><th>Description</th><th>PMML element</th></tr>
 	<tr><td>Association rules</td><td>http://www.dmg.org/v4-1/AssociationRules.html</td></tr>
 	<tr><td>Cluster models</td><td>http://www.dmg.org/v4-1/ClusteringModel.html</td></tr>
+	<tr><td>General regression</td><td>http://www.dmg.org/v4-1/GeneralRegression.html</td></tr>
 	<tr><td>Neural network</td><td>http://www.dmg.org/v4-1/NeuralNetwork.html</td></tr>
 	<tr><td>Regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
 	<tr><td>Rule set</td><td>http://www.dmg.org/v4-1/RuleSet.html</td></tr>
@@ -25,26 +26,26 @@ JPMML library JAR files (together with accompanying Java source and Javadocs JAR
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-model</artifactId>
-	<version>1.0.12</version>
+	<version>1.0.13</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
-	<version>1.0.12</version>
+	<version>1.0.13</version>
 </dependency>
 
 <!-- medium-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-manager</artifactId>
-	<version>1.0.12</version>
+	<version>1.0.13</version>
 </dependency>
 
 <!-- high-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.0.12</version>
+	<version>1.0.13</version>
 </dependency>
 ```
 Please note that higher API levels depend on lower API levels.
@@ -140,6 +141,7 @@ Tested model types:
 <table>
 	<tr><th>Description</th></tr>
 	<tr><td>Cluster models</td></tr>
+	<tr><td>General regression</td></tr>
 	<tr><td>Neural network</td></tr>
 	<tr><td>Regression</td></tr>
 	<tr><td>Tree models</td></tr>
@@ -168,6 +170,7 @@ Tested model types:
 	<tr><th>Description</th><th>R function(s)</th></tr>
 	<tr><td>Association rules</td><td><code>apriori()</code> (package <code>arules</code>)</td></tr>
 	<tr><td>Cluster models</td><td><code>hcluster()</code> and <code>kmeans()</code></td></tr>
+	<tr><td>General regression</td><td><code>glm()</code></td></tr>
 	<tr><td>Neural network</td><td><code>nnet()</code> (package <code>nnet</code>)</td></tr>
 	<tr><td>Random forest</td><td><code>randomForest()</code> (package <code>randomForest</code>)</td></tr>
 	<tr><td>Regression</td><td><code>lm()</code> and <code>multinom()</code></td></tr>
@@ -176,7 +179,7 @@ Tested model types:
 
 ### Example code
 
-Constructing an instance of `org.jpmml.evaluator.TreeModelEvaluator` for a PMML document that **is known to contain** a decision tree model:
+Constructing an instance of `org.jpmml.evaluator.TreeModelEvaluator` for a PMML document that is known to contain a decision tree model:
 ```
 PMML pmml = ...
 
