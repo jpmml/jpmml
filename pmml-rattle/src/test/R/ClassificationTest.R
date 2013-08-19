@@ -54,6 +54,33 @@ generateNeuralNetworkIris()
 generateRandomForestIris()
 generateRegressionIris()
 
+# Convert target field from categorical to binomial
+versicolor = as.character(as.integer(irisData$Species == 'versicolor'))
+versicolorData = cbind(irisData[, 1:4], versicolor)
+versicolorFormula = formula(versicolor ~ .)
+
+writeVersicolor = function(classes, probabilities, file){
+	result = data.frame(classes, probabilities)
+	names(result) = c("versicolor", "Probability_1")
+
+	writeCsv(result, file)
+}
+
+binomialProbabilities = function(probabilities){
+	return (probabilities / (probabilities + (1.0 / (1.0 + exp(0)))))
+}
+
+generateGeneralRegressionIris = function(){
+	glm = glm(versicolorFormula, versicolorData, family = binomial)
+	saveXML(pmml(glm), "pmml/GeneralRegressionIris.pmml")
+
+	probabilities = binomialProbabilities(predict(glm, type = "response"))
+	classes = as.character(as.integer(probabilities > 0.5))
+	writeVersicolor(classes, probabilities, "csv/GeneralRegressionIris.csv")
+}
+
+generateGeneralRegressionIris()
+
 auditData = readCsv("csv/Audit.csv")
 auditData[, "Adjusted"] = as.factor(auditData[, "Adjusted"])
 auditFormula = formula(Adjusted ~ Employment + Education + Marital + Occupation + Income + Gender + Deductions + Hours)
@@ -83,6 +110,16 @@ generateDecisionTreeAudit = function(){
 	writeAudit(classes, probabilities, "csv/DecisionTreeAudit.csv")
 }
 
+generateGeneralRegressionAudit = function(){
+	glm = glm(auditFormula, auditData, family = binomial)
+	saveXML(pmml(glm), "pmml/GeneralRegressionAudit.pmml")
+
+	probabilities = binomialProbabilities(predict(glm, type = "response"))
+	classes = as.character(as.integer(probabilities > 0.5))
+	probabilities = cbind(1 - probabilities, probabilities)
+	writeAudit(classes, probabilities, "csv/GeneralRegressionAudit.csv")
+}
+
 generateNeuralNetworkAudit = function(){
 	nnet = nnet(auditFormula, auditData, size = 9, decay = 1e-3, maxit = 10000)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkAudit.pmml")
@@ -101,5 +138,6 @@ generateRandomForestAudit = function(){
 }
 
 generateDecisionTreeAudit()
+generateGeneralRegressionAudit()
 generateNeuralNetworkAudit()
 generateRandomForestAudit()

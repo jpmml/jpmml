@@ -19,6 +19,20 @@ public class ClassificationTest {
 	}
 
 	@Test
+	public void evaluateGeneralRegressionAudit() throws Exception {
+		Batch batch = new RattleBatch("GeneralRegression", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateGeneralRegressionIris() throws Exception {
+		Batch batch = new RattleBatch("GeneralRegression", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
 		Batch batch = new RattleBatch("NeuralNetwork", "Iris");
 

@@ -295,6 +295,26 @@ public class ParameterUtil {
 		return true;
 	}
 
+	static
+	public List<String> getValidValues(DataField dataField){
+		List<String> result = Lists.newArrayList();
+
+		List<Value> fieldValues = dataField.getValues();
+		for(Value fieldValue : fieldValues){
+			Value.Property property = fieldValue.getProperty();
+
+			switch(property){
+				case VALID:
+					result.add(fieldValue.getValue());
+					break;
+				default:
+					break;
+			}
+		}
+
+		return result;
+	}
+
 	/**
 	 * Checks the equality between different value representations.
 	 *
