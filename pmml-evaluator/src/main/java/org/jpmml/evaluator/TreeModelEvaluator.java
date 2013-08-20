@@ -75,6 +75,9 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 		TreeModel treeModel = getModel();
 
 		Node root = getRoot();
+		if(root == null){
+			throw new InvalidFeatureException(treeModel);
+		}
 
 		LinkedList<Node> trail = Lists.newLinkedList();
 
