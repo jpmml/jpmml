@@ -44,6 +44,18 @@ public class ArrayUtil {
 	}
 
 	static
+	public int getSize(Array array){
+		Integer n = array.getN();
+		if(n != null){
+			return n.intValue();
+		}
+
+		List<String> context = getContent(array);
+
+		return context.size();
+	}
+
+	static
 	public List<String> getContent(Array array){
 		List<String> parsedValue = array.getParsedValue();
 

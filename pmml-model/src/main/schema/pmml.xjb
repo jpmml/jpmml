@@ -570,6 +570,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='Matrix']/xsd:complexType/xsd:choice/xsd:group">
+			<jaxb:property
+				name="array"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='MiningField']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Field"
@@ -1114,6 +1120,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:group[@name='EXPRESSION']">
 			<jaxb:property
 				name="expression"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:group[@name='FrequenciesType']">
+			<jaxb:property
+				name="array"
 			/>
 		</jaxb:bindings>
 
