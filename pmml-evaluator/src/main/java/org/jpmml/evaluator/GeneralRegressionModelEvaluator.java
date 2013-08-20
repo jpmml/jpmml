@@ -474,8 +474,6 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 					Predictor factor = this.factors.get(name);
 					if(factor != null){
-						List<PPCell> factorCells = result.getFactorCells();
-
 						Categories categories = factor.getCategories();
 						if(categories != null){
 							throw new UnsupportedFeatureException(categories);
@@ -486,16 +484,14 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 							throw new UnsupportedFeatureException(matrix);
 						}
 
-						factorCells.add(ppCell);
+						result.addFactor(ppCell);
 
 						continue ppCells;
 					}
 
 					Predictor covariate = this.covariates.get(name);
 					if(covariate != null){
-						List<PPCell> covariateCells = result.getCovariateCells();
-
-						covariateCells.add(ppCell);
+						result.addCovariate(ppCell);
 
 						continue ppCells;
 					}
@@ -608,100 +604,151 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 	static
 	private class Row {
 
-		private List<PPCell> factorCells = Lists.newArrayList();
+		private List<FactorHandler> factorHandlers = Lists.newArrayList();
 
-		private List<PPCell> covariateCells = Lists.newArrayList();
+		private List<CovariateHandler> covariateHandlers = Lists.newArrayList();
 
 
 		public Double evaluate(Map<FieldName, ?> arguments){
-			List<PPCell> factorCells = getFactorCells();
-			List<PPCell> covariateCells = getCovariateCells();
+			List<FactorHandler> factorHandlers = getFactorHandlers();
+			List<CovariateHandler> covariateHandlers = getCovariateHandlers();
 
 			// The row is empty
-			if(factorCells.isEmpty() && covariateCells.isEmpty()){
+			if(factorHandlers.isEmpty() && covariateHandlers.isEmpty()){
 				return 1d;
 			}
 
-			Boolean match = calculateMatch(factorCells, arguments);
-			Double product = calculateProduct(covariateCells, arguments);
+			Double factorProduct = computeProduct(factorHandlers, arguments);
+			Double covariateProduct = computeProduct(covariateHandlers, arguments);
 
-			if(covariateCells.isEmpty()){
-
-				if(match != null){
-					return (match.booleanValue() ? 1d : 0d);
-				}
-
-				return null;
+			if(covariateHandlers.isEmpty()){
+				return factorProduct;
 			} else
 
-			if(factorCells.isEmpty()){
-
-				if(product != null){
-					return product;
-				}
-
-				return null;
+			if(factorHandlers.isEmpty()){
+				return covariateProduct;
 			} else
 
 			{
-				if(match != null && product != null){
-					return (match.booleanValue() ? product : 0d);
+				if(factorProduct != null && covariateProduct != null){
+					return (factorProduct * covariateProduct);
 				}
 
 				return null;
 			}
 		}
 
-		public List<PPCell> getFactorCells(){
-			return this.factorCells;
+		public void addFactor(PPCell ppCell){
+			List<FactorHandler> factorHandlers = getFactorHandlers();
+
+			factorHandlers.add(new FactorHandler(ppCell));
 		}
 
-		public List<PPCell> getCovariateCells(){
-			return this.covariateCells;
+		private void addCovariate(PPCell ppCell){
+			List<CovariateHandler> covariateHandlers = getCovariateHandlers();
+
+			covariateHandlers.add(new CovariateHandler(ppCell));
 		}
 
-		static
-		private Boolean calculateMatch(List<PPCell> ppCells, Map<FieldName, ?> arguments){
+		public List<FactorHandler> getFactorHandlers(){
+			return this.factorHandlers;
+		}
 
-			for(PPCell ppCell : ppCells){
-				Object value = arguments.get(ppCell.getPredictorName());
-				if(value == null){
-					return null;
-				}
-
-				boolean equals = ParameterUtil.equals(value, ppCell.getValue());
-				if(!equals){
-					return Boolean.FALSE;
-				}
-			}
-
-			return Boolean.TRUE;
+		public List<CovariateHandler> getCovariateHandlers(){
+			return this.covariateHandlers;
 		}
 
 		static
-		private Double calculateProduct(List<PPCell> ppCells, Map<FieldName, ?> arguments){
+		private Double computeProduct(List<? extends PredictorHandler> predictorHandlers, Map<FieldName, ?> arguments){
 			Double result = null;
 
-			for(PPCell ppCell : ppCells){
-				Object value = arguments.get(ppCell.getPredictorName());
+			for(PredictorHandler predictorHandler : predictorHandlers){
+				Object value = arguments.get(predictorHandler.getPredictorName());
 				if(value == null){
 					return null;
-				}
-
-				Double doubleValue = (Double)ParameterUtil.cast(DataType.DOUBLE, value);
-
-				Double multiplicity = Double.valueOf(ppCell.getValue());
+				} // End if
 
 				if(result == null){
-					result = Math.pow(doubleValue.doubleValue(), multiplicity.doubleValue());
+					result = predictorHandler.evaluate(value);
 				} else
 
 				{
-					result = result * Math.pow(doubleValue.doubleValue(), multiplicity.doubleValue());
+					result = result * predictorHandler.evaluate(value);
 				}
 			}
 
 			return result;
+		}
+
+		abstract
+		static
+		private class PredictorHandler {
+
+			private PPCell ppCell = null;
+
+
+			private PredictorHandler(PPCell ppCell){
+				setPPCell(ppCell);
+			}
+
+			abstract
+			public Double evaluate(Object value);
+
+			public FieldName getPredictorName(){
+				PPCell ppCell = getPPCell();
+
+				return ppCell.getPredictorName();
+			}
+
+			public PPCell getPPCell(){
+				return this.ppCell;
+			}
+
+			private void setPPCell(PPCell ppCell){
+				this.ppCell = ppCell;
+			}
+		}
+
+		static
+		private class FactorHandler extends PredictorHandler {
+
+			private FactorHandler(PPCell ppCell){
+				super(ppCell);
+			}
+
+			@Override
+			public Double evaluate(Object value){
+				boolean equals = ParameterUtil.equals(value, getCategory());
+
+				return (equals ? 1d : 0d);
+			}
+
+			private String getCategory(){
+				PPCell ppCell = getPPCell();
+
+				return ppCell.getValue();
+			}
+		}
+
+		static
+		private class CovariateHandler extends PredictorHandler {
+
+			private CovariateHandler(PPCell ppCell){
+				super(ppCell);
+			}
+
+			@Override
+			public Double evaluate(Object value){
+				Double doubleValue = (Double)ParameterUtil.cast(DataType.DOUBLE, value);
+
+				return Math.pow(doubleValue, getMultiplicity());
+			}
+
+			private Double getMultiplicity(){
+				PPCell ppCell = getPPCell();
+
+				return Double.valueOf(ppCell.getValue());
+			}
 		}
 	}
 }
