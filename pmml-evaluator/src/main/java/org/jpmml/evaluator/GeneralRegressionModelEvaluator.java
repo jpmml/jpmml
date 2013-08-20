@@ -457,7 +457,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 	}
 
 	private Map<String, Map<String, Row>> parsePPMatrix(){
-		Function<List<PPCell>, Row> rowBuilder = new Function<List<PPCell>, Row>(){
+		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
 
 			private BiMap<FieldName, Predictor> factors = getFactorRegistry();
 
@@ -474,17 +474,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 					Predictor factor = this.factors.get(name);
 					if(factor != null){
-						Categories categories = factor.getCategories();
-						if(categories != null){
-							throw new UnsupportedFeatureException(categories);
-						}
-
-						Matrix matrix = factor.getMatrix();
-						if(matrix != null){
-							throw new UnsupportedFeatureException(matrix);
-						}
-
-						result.addFactor(ppCell);
+						result.addFactor(ppCell, factor);
 
 						continue ppCells;
 					}
@@ -517,7 +507,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 			Collection<Map.Entry<String, List<PPCell>>> parameterNameEntries = (asMap(parameterNameMap)).entrySet();
 			for(Map.Entry<String, List<PPCell>> parameterNameEntry : parameterNameEntries){
-				predictorMap.put(parameterNameEntry.getKey(), rowBuilder.apply(parameterNameEntry.getValue()));
+				predictorMap.put(parameterNameEntry.getKey(), function.apply(parameterNameEntry.getValue()));
 			}
 
 			result.put(targetCategoryEntry.getKey(), predictorMap);
@@ -638,10 +628,32 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 		}
 
-		public void addFactor(PPCell ppCell){
+		public void addFactor(PPCell ppCell, Predictor predictor){
 			List<FactorHandler> factorHandlers = getFactorHandlers();
 
-			factorHandlers.add(new FactorHandler(ppCell));
+			Matrix matrix = predictor.getMatrix();
+			if(matrix != null){
+				Categories categories = predictor.getCategories();
+				if(categories == null){
+					throw new UnsupportedFeatureException(predictor);
+				}
+
+				Function<Category, String> function = new Function<Category, String>(){
+
+					@Override
+					public String apply(Category category){
+						return category.getValue();
+					}
+				};
+
+				List<String> values = Lists.transform(categories.getCategories(), function);
+
+				factorHandlers.add(new ContrastMatrixHandler(ppCell, matrix, values));
+			} else
+
+			{
+				factorHandlers.add(new FactorHandler(ppCell));
+			}
 		}
 
 		private void addCovariate(PPCell ppCell){
@@ -681,7 +693,6 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		}
 
 		abstract
-		static
 		private class PredictorHandler {
 
 			private PPCell ppCell = null;
@@ -709,7 +720,6 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 		}
 
-		static
 		private class FactorHandler extends PredictorHandler {
 
 			private FactorHandler(PPCell ppCell){
@@ -723,14 +733,77 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 				return (equals ? 1d : 0d);
 			}
 
-			private String getCategory(){
+			public String getCategory(){
 				PPCell ppCell = getPPCell();
 
 				return ppCell.getValue();
 			}
 		}
 
-		static
+		private class ContrastMatrixHandler extends FactorHandler {
+
+			private Matrix matrix = null;
+
+			private List<String> categories = null;
+
+
+			private ContrastMatrixHandler(PPCell ppCell, Matrix matrix, List<String> categories){
+				super(ppCell);
+
+				setMatrix(matrix);
+				setCategories(categories);
+			}
+
+			@Override
+			public Double evaluate(Object value){
+				Matrix matrix = getMatrix();
+
+				int row = getIndex(value);
+				int column = getIndex(getCategory()); // XXX
+
+				if(row < 0 || column < 0){
+					throw new EvaluationException();
+				}
+
+				Number result = MatrixUtil.getElementAt(matrix, row + 1, column + 1);
+				if(result == null){
+					throw new EvaluationException();
+				}
+
+				return result.doubleValue();
+			}
+
+			public int getIndex(Object value){
+				List<String> categories = getCategories();
+
+				for(int i = 0; i < categories.size(); i++){
+					String category = categories.get(i);
+
+					if(ParameterUtil.equals(value, category)){
+						return i;
+					}
+				}
+
+				return -1;
+			}
+
+			public Matrix getMatrix(){
+				return this.matrix;
+			}
+
+			private void setMatrix(Matrix matrix){
+				this.matrix = matrix;
+			}
+
+			public List<String> getCategories(){
+				return this.categories;
+			}
+
+			private void setCategories(List<String> categories){
+				this.categories = categories;
+			}
+		}
+
 		private class CovariateHandler extends PredictorHandler {
 
 			private CovariateHandler(PPCell ppCell){
@@ -744,7 +817,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 				return Math.pow(doubleValue, getMultiplicity());
 			}
 
-			private Double getMultiplicity(){
+			public Double getMultiplicity(){
 				PPCell ppCell = getPPCell();
 
 				return Double.valueOf(ppCell.getValue());
