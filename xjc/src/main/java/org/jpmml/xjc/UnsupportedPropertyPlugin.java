@@ -66,9 +66,13 @@ public class UnsupportedPropertyPlugin extends Plugin {
 				JClass nameClazz = (clazz.implClass).owner().ref(name);
 
 				JMethod getter = (clazz.implClass).method(JMod.PUBLIC, nameClazz, "get" + propertyName);
+				getter.javadoc().append("Gets the value of the " + property + " property.").addThrows(exceptionClazz).append("Always.");
+				getter.annotate(Override.class);
 				getter.body()._throw(JExpr._new(exceptionClazz));
 
 				JMethod setter = (clazz.implClass).method(JMod.PUBLIC, void.class, "set" + propertyName);
+				setter.javadoc().append("Sets the value of the " + property + " property.").addThrows(exceptionClazz).append("Always.");
+				setter.annotate(Override.class);
 				setter.param(nameClazz, property);
 				setter.body()._throw(JExpr._new(exceptionClazz));
 
