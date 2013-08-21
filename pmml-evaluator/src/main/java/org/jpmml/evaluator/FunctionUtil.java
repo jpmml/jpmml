@@ -596,6 +596,54 @@ public class FunctionUtil {
 
 	static
 	abstract
+	public class EqualityFunction implements Function {
+
+		abstract
+		public Boolean evaluate(boolean equals);
+
+		@Override
+		public Boolean evaluate(List<?> values){
+
+			if(values.size() != 2){
+				throw new EvaluationException();
+			}
+
+			Object left = values.get(0);
+			Object right = values.get(1);
+
+			if(left == null || right == null){
+				throw new EvaluationException();
+			}
+
+			DataType dataType = ParameterUtil.getResultDataType(left, right);
+
+			boolean equals = ParameterUtil.equals(dataType, left, right);
+
+			return evaluate(equals);
+		}
+	}
+
+	static {
+		putFunction("equal", new EqualityFunction(){
+
+			@Override
+			public Boolean evaluate(boolean equals){
+				return Boolean.valueOf(equals);
+			}
+		});
+
+		putFunction("notEqual", new EqualityFunction(){
+
+			@Override
+			public Boolean evaluate(boolean equals){
+				return Boolean.valueOf(!equals);
+			}
+		});
+
+	}
+
+	static
+	abstract
 	public class ComparisonFunction implements Function {
 
 		abstract
@@ -624,22 +672,6 @@ public class FunctionUtil {
 	}
 
 	static {
-		putFunction("equal", new ComparisonFunction(){
-
-			@Override
-			public Boolean evaluate(int order){
-				return Boolean.valueOf(order == 0);
-			}
-		});
-
-		putFunction("notEqual", new ComparisonFunction(){
-
-			@Override
-			public Boolean evaluate(int order){
-				return Boolean.valueOf(order != 0);
-			}
-		});
-
 		putFunction("lessThan", new ComparisonFunction(){
 
 			@Override

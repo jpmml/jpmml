@@ -64,13 +64,20 @@ public class PredicateUtil {
 			return null;
 		}
 
-		int order = ParameterUtil.compare(value, simplePredicate.getValue());
+		String referenceValue = simplePredicate.getValue();
 
 		switch(operator){
 			case EQUAL:
-				return Boolean.valueOf(order == 0);
+				return ParameterUtil.equals(value, referenceValue);
 			case NOT_EQUAL:
-				return Boolean.valueOf(order != 0);
+				return !ParameterUtil.equals(value, referenceValue);
+			default:
+				break;
+		}
+
+		int order = ParameterUtil.compare(value, referenceValue);
+
+		switch(operator){
 			case LESS_THAN:
 				return Boolean.valueOf(order < 0);
 			case LESS_OR_EQUAL:

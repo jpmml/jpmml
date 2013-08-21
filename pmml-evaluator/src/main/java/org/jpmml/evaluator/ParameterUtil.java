@@ -316,10 +316,10 @@ public class ParameterUtil {
 	}
 
 	/**
-	 * Checks the equality between different value representations.
+	 * Checks if the value is equal to the reference value.
 	 *
 	 * @param value The {@link #getDataType(Object) runtime data type representation} of the value.
-	 * @param string The String representation of the value.
+	 * @param string The String representation of the reference value.
 	 */
 	static
 	public boolean equals(Object value, String string){

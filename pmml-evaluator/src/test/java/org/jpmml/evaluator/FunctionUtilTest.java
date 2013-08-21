@@ -132,13 +132,16 @@ public class FunctionUtilTest {
 	}
 
 	@Test
-	public void evaluateComparisonFunctions(){
+	public void evaluateEqualityFunctions(){
 		assertEquals(Boolean.TRUE, evaluate("equal", 1, 1d));
 		assertEquals(Boolean.TRUE, evaluate("equal", 1d, 1d));
 
 		assertEquals(Boolean.TRUE, evaluate("notEqual", 1d, 3d));
 		assertEquals(Boolean.TRUE, evaluate("notEqual", 1, 3));
+	}
 
+	@Test
+	public void evaluateComparisonFunctions(){
 		assertEquals(Boolean.TRUE, evaluate("lessThan", 1d, 3d));
 		assertEquals(Boolean.TRUE, evaluate("lessThan", 1, 3d));
 
