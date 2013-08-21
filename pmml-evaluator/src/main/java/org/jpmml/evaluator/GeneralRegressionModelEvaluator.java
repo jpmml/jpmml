@@ -66,7 +66,8 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = generalRegressionModel.getFunctionName();
 		switch(miningFunction){

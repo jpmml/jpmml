@@ -74,7 +74,8 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = associationModel.getFunctionName();
 		switch(miningFunction){

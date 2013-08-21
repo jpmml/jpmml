@@ -17,13 +17,6 @@ public class EvaluationContext {
 	private List<String> warnings = Lists.newArrayList();
 
 
-	public EvaluationContext(){
-	}
-
-	public EvaluationContext(Map<FieldName, ?> arguments){
-		pushFrame(arguments);
-	}
-
 	abstract
 	public DerivedField resolveField(FieldName name);
 

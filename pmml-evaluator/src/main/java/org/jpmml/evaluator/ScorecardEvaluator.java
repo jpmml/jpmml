@@ -35,7 +35,8 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = scorecard.getFunctionName();
 		switch(miningFunction){

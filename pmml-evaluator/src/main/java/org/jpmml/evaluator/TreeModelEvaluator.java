@@ -48,7 +48,8 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
 		Node node;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = treeModel.getFunctionName();
 		switch(miningFunction){

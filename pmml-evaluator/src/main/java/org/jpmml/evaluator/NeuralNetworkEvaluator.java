@@ -48,7 +48,8 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
 		switch(miningFunction){

@@ -19,7 +19,8 @@ public class OutputTest extends RegressionModelEvaluatorTest {
 
 		Map<FieldName, ?> predictions = Collections.singletonMap(new FieldName("result"), 8d);
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(regressionModelEvaluator, Collections.<FieldName, Object>emptyMap());
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(regressionModelEvaluator);
+		context.pushFrame(Collections.<FieldName, Object>emptyMap());
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);
 

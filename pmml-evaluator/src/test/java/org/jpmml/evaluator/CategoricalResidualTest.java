@@ -20,7 +20,8 @@ public class CategoricalResidualTest extends RegressionModelEvaluatorTest {
 		// "For some row in the test data the expected value may be Y"
 		Map<FieldName, ?> arguments = Collections.singletonMap(evaluator.getTargetField(), "Y");
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(evaluator, arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(evaluator);
+		context.pushFrame(arguments);
 
 		ClassificationMap response = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
 		response.put("Y", 0.8d);
@@ -35,7 +36,8 @@ public class CategoricalResidualTest extends RegressionModelEvaluatorTest {
 		// "For some other row the expected value may be N"
 		arguments = Collections.singletonMap(evaluator.getTargetField(), "N");
 
-		context = new ModelManagerEvaluationContext(evaluator, arguments);
+		context = new ModelManagerEvaluationContext(evaluator);
+		context.pushFrame(arguments);
 
 		result = OutputUtil.evaluate(prediction, context);
 

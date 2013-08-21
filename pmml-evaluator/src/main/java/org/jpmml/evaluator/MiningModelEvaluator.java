@@ -40,7 +40,8 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
 		switch(miningFunction){

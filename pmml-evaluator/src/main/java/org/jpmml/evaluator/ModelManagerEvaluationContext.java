@@ -3,8 +3,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
@@ -15,12 +13,6 @@ public class ModelManagerEvaluationContext extends EvaluationContext {
 
 
 	public ModelManagerEvaluationContext(ModelManager<?> modelManager){
-		setModelManager(modelManager);
-	}
-
-	public ModelManagerEvaluationContext(ModelManager<?> modelManager, Map<FieldName, ?> arguments){
-		super(arguments);
-
 		setModelManager(modelManager);
 	}
 
