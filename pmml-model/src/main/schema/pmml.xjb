@@ -359,7 +359,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='DataField']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.DictionaryField"
+				name="org.dmg.pmml.TypeDefinitionField"
 			/>
 		</jaxb:bindings>
 
@@ -410,7 +410,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='DerivedField']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.DictionaryField"
+				name="org.dmg.pmml.TypeDefinitionField"
 			/>
 		</jaxb:bindings>
 
@@ -581,6 +581,10 @@ Copyright (c) 2009 University of Tartu
 				name="org.dmg.pmml.Field"
 			/>
 			<java:unsupportedProperty
+				property="displayName"
+				name="java.lang.String"
+			/>
+			<java:unsupportedProperty
 				property="dataType"
 				name="org.dmg.pmml.DataType"
 			/>
@@ -711,7 +715,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='OutputField']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.DictionaryField"
+				name="org.dmg.pmml.Field"
 			/>
 		</jaxb:bindings>
 
@@ -736,6 +740,10 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='ParameterField']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Field"
+			/>
+			<java:unsupportedProperty
+				property="displayName"
+				name="java.lang.String"
 			/>
 		</jaxb:bindings>
 
@@ -813,7 +821,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:element[@name='ResultField']/xsd:complexType">
 			<java:superClass
-				name="org.dmg.pmml.DictionaryField"
+				name="org.dmg.pmml.Field"
 			/>
 		</jaxb:bindings>
 

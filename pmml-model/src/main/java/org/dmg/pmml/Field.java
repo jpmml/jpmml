@@ -18,6 +18,12 @@ public class Field extends PMMLObject implements HasName {
 	public void setName(FieldName name);
 
 	abstract
+	public String getDisplayName();
+
+	abstract
+	public void setDisplayName(String displayName);
+
+	abstract
 	public OpType getOptype();
 
 	abstract

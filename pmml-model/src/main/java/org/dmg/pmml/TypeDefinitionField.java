@@ -3,15 +3,14 @@
  */
 package org.dmg.pmml;
 
+import java.util.*;
+
 import javax.xml.bind.annotation.*;
 
 @XmlTransient
 abstract
-public class DictionaryField extends Field {
+public class TypeDefinitionField extends Field {
 
 	abstract
-	public String getDisplayName();
-
-	abstract
-	public void setDisplayName(String displayName);
+	public List<Value> getValues();
 }
