@@ -94,12 +94,20 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 		FieldName activeField = getActiveField();
 
-		Object value = context.getArgument(activeField);
+		FieldValue value = context.getArgument(activeField);
 		if(value == null){
 			throw new MissingFieldException(activeField, associationModel);
 		}
 
-		Set<String> input = createInput((Collection<?>)value, context);
+		Collection<?> values;
+
+		try {
+			values = (Collection<?>)FieldValueUtil.getValue(value);
+		} catch(ClassCastException cce){
+			throw new EvaluationException();
+		}
+
+		Set<String> input = createInput(values, context);
 
 		Map<String, Boolean> flags = Maps.newLinkedHashMap();
 

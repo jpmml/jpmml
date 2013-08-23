@@ -47,7 +47,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
-		Object value = ExpressionUtil.evaluate(simplePredicate.getField(), context);
+		FieldValue value = ExpressionUtil.evaluate(simplePredicate.getField(), context);
 
 		SimplePredicate.Operator operator = simplePredicate.getOperator();
 		switch(operator){
@@ -64,18 +64,16 @@ public class PredicateUtil {
 			return null;
 		}
 
-		String referenceValue = simplePredicate.getValue();
-
 		switch(operator){
 			case EQUAL:
-				return ParameterUtil.equals(value, referenceValue);
+				return value.equalsString(simplePredicate.getValue());
 			case NOT_EQUAL:
-				return !ParameterUtil.equals(value, referenceValue);
+				return !value.equalsString(simplePredicate.getValue());
 			default:
 				break;
 		}
 
-		int order = ParameterUtil.compare(value, referenceValue);
+		int order = value.compareToString(simplePredicate.getValue());
 
 		switch(operator){
 			case LESS_THAN:
@@ -145,19 +143,21 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		Object value = ExpressionUtil.evaluate(simpleSetPredicate.getField(), context);
+		FieldValue value = ExpressionUtil.evaluate(simpleSetPredicate.getField(), context);
 		if(value == null){
 			throw new MissingFieldException(simpleSetPredicate.getField(), simpleSetPredicate);
 		}
 
 		Array array = simpleSetPredicate.getArray();
 
+		List<String> content = ArrayUtil.getContent(array);
+
 		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
 		switch(booleanOperator){
 			case IS_IN:
-				return ArrayUtil.isIn(array, value);
+				return value.equalsAnyString(content);
 			case IS_NOT_IN:
-				return ArrayUtil.isNotIn(array, value);
+				return !value.equalsAnyString(content);
 			default:
 				throw new UnsupportedFeatureException(simpleSetPredicate, booleanOperator);
 		}

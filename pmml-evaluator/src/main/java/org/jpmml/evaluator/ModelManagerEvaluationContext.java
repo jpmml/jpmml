@@ -30,6 +30,18 @@ public class ModelManagerEvaluationContext extends EvaluationContext {
 		return modelManager.resolveFunction(name);
 	}
 
+	@Override
+	public FieldValue createFieldValue(FieldName name, Object value){
+		ModelManager<?> modelManager = getModelManager();
+
+		DataField dataField = modelManager.getDataField(name);
+		if(dataField != null){
+			return FieldValueUtil.create(dataField, value);
+		}
+
+		return super.createFieldValue(name, value);
+	}
+
 	public ModelManager<?> getModelManager(){
 		return this.modelManager;
 	}

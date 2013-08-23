@@ -12,7 +12,7 @@ import com.google.common.collect.*;
 abstract
 public class EvaluationContext {
 
-	private Deque<Map<FieldName, ?>> stack = Queues.newArrayDeque();
+	private Deque<Map<FieldName, FieldValue>> stack = Queues.newArrayDeque();
 
 	private List<String> warnings = Lists.newArrayList();
 
@@ -23,15 +23,15 @@ public class EvaluationContext {
 	abstract
 	public DefineFunction resolveFunction(String name);
 
-	public Map<FieldName, ?> getArguments(){
-		Map<FieldName, Object> result = Maps.newLinkedHashMap();
+	public Map<FieldName, FieldValue> getArguments(){
+		Deque<Map<FieldName, FieldValue>> stack = getStack();
 
-		Deque<Map<FieldName, ?>> stack = getStack();
+		Map<FieldName, FieldValue> result = Maps.newLinkedHashMap();
 
 		// Iterate from last (ie. oldest) to first (ie. newest)
-		Iterator<Map<FieldName, ?>> it = stack.descendingIterator();
+		Iterator<Map<FieldName, FieldValue>> it = stack.descendingIterator();
 		while(it.hasNext()){
-			Map<FieldName, ?> frame = it.next();
+			Map<FieldName, FieldValue> frame = it.next();
 
 			result.putAll(frame);
 		}
@@ -42,8 +42,8 @@ public class EvaluationContext {
 	/**
 	 * @see #getArgumentEntry(FieldName)
 	 */
-	public Object getArgument(FieldName name){
-		Map.Entry<FieldName, Object> entry = getArgumentEntry(name);
+	public FieldValue getArgument(FieldName name){
+		Map.Entry<FieldName, FieldValue> entry = getArgumentEntry(name);
 		if(entry != null){
 			return entry.getValue();
 		}
@@ -51,16 +51,16 @@ public class EvaluationContext {
 		return null;
 	}
 
-	public Map.Entry<FieldName, Object> getArgumentEntry(FieldName name){
-		Deque<Map<FieldName, ?>> stack = getStack();
+	public Map.Entry<FieldName, FieldValue> getArgumentEntry(FieldName name){
+		Deque<Map<FieldName, FieldValue>> stack = getStack();
 
 		// Iterate from first to last
-		Iterator<Map<FieldName, ?>> it = stack.iterator();
+		Iterator<Map<FieldName, FieldValue>> it = stack.iterator();
 		while(it.hasNext()){
-			Map<FieldName, ?> frame = it.next();
+			Map<FieldName, FieldValue> frame = it.next();
 
 			if(frame.containsKey(name)){
-				Map.Entry<FieldName, Object> entry = new AbstractMap.SimpleEntry<FieldName, Object>(name, frame.get(name));
+				Map.Entry<FieldName, FieldValue> entry = new AbstractMap.SimpleEntry<FieldName, FieldValue>(name, frame.get(name));
 
 				return entry;
 			}
@@ -69,12 +69,35 @@ public class EvaluationContext {
 		return null;
 	}
 
-	public Map<FieldName, ?> popFrame(){
-		return getStack().pop();
+	public FieldValue createFieldValue(FieldName name, Object value){
+		return FieldValueUtil.create(value);
 	}
 
-	public void pushFrame(Map<FieldName, ?> frame){
+	public Map<FieldName, FieldValue> pushFrame(Map<FieldName, ?> arguments){
+		Maps.EntryTransformer<FieldName, Object, FieldValue> transformer = new Maps.EntryTransformer<FieldName, Object, FieldValue>(){
+
+			@Override
+			public FieldValue transformEntry(FieldName name, Object value){
+
+				if(value instanceof FieldValue){
+					return (FieldValue)value;
+				}
+
+				return createFieldValue(name, value);
+			}
+		};
+
+		Map<FieldName, FieldValue> frame = Maps.newLinkedHashMap();
+
+		frame.putAll(Maps.transformEntries(arguments, transformer));
+
 		getStack().push(frame);
+
+		return frame;
+	}
+
+	public Map<FieldName, FieldValue> popFrame(){
+		return getStack().pop();
 	}
 
 	public void addWarning(String warning){
@@ -83,7 +106,7 @@ public class EvaluationContext {
 		warnings.add(warning);
 	}
 
-	Deque<Map<FieldName, ?>> getStack(){
+	Deque<Map<FieldName, FieldValue>> getStack(){
 		return this.stack;
 	}
 

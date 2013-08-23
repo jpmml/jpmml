@@ -18,32 +18,6 @@ public class ArrayUtil {
 	}
 
 	static
-	public Boolean isIn(Array array, Object value){
-		List<String> values = getContent(array);
-
-		validateDataType(value);
-
-		String stringValue = (String)ParameterUtil.cast(DataType.STRING, value);
-
-		boolean result = values.contains(stringValue);
-
-		return Boolean.valueOf(result);
-	}
-
-	static
-	public Boolean isNotIn(Array array, Object value){
-		List<String> values = getContent(array);
-
-		validateDataType(value);
-
-		String stringValue = (String)ParameterUtil.cast(DataType.STRING, value);
-
-		boolean result = !values.contains(stringValue);
-
-		return Boolean.valueOf(result);
-	}
-
-	static
 	public int getSize(Array array){
 		Integer n = array.getN();
 		if(n != null){
@@ -221,21 +195,5 @@ public class ArrayUtil {
 		sb.setLength(0);
 
 		return result;
-	}
-
-	static
-	private void validateDataType(Object value){
-		DataType dataType = ParameterUtil.getDataType(value);
-
-		switch(dataType){
-			case STRING:
-			case INTEGER:
-				break;
-			case FLOAT:
-			case DOUBLE:
-				// Falls through
-			default:
-				throw new EvaluationException();
-		}
 	}
 }

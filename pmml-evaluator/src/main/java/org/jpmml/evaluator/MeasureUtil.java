@@ -22,7 +22,7 @@ public class MeasureUtil {
 	}
 
 	static
-	public Double evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<? extends Number> values, List<? extends Number> centerValues, List<Double> fieldWeights, Double adjustment){
+	public Double evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values, List<? extends Number> centerValues, List<Double> fieldWeights, Double adjustment){
 		double innerPower;
 		double outerPower;
 
@@ -59,12 +59,12 @@ public class MeasureUtil {
 
 		clusteringFields:
 		for(int i = 0; i < clusteringFields.size(); i++){
-			Number value = values.get(i);
+			FieldValue value = values.get(i);
 			if(value == null){
 				continue clusteringFields;
 			}
 
-			Double distance = evaluateInnerFunction(comparisonMeasure, clusteringFields.get(i), values.get(i), centerValues.get(i), fieldWeights.get(i), innerPower);
+			Double distance = evaluateInnerFunction(comparisonMeasure, clusteringFields.get(i), value.asNumber(), centerValues.get(i), fieldWeights.get(i), innerPower);
 
 			distances.add(distance);
 		}
@@ -135,7 +135,7 @@ public class MeasureUtil {
 			case DELTA:
 			case EQUAL:
 				{
-					DataType dataType = ParameterUtil.getResultDataType(x, y);
+					DataType dataType = ParameterUtil.getResultDataType(ParameterUtil.getDataType(x), ParameterUtil.getDataType(y));
 
 					boolean equals = ParameterUtil.equals(dataType, x, y);
 

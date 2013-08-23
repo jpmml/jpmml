@@ -21,11 +21,11 @@ public class DefineFunctionTest extends PMMLManagerTest {
 
 		PMMLManagerEvaluationContext context = new PMMLManagerEvaluationContext(pmmlManager);
 
-		assertEquals("AM", evaluateAmPm(34742, context));
+		assertValueEquals("AM", evaluateAmPm(34742, context));
 
 		Map<FieldName, ?> arguments = Collections.singletonMap(new FieldName("StartTime"), 34742);
 
-		assertEquals("AM", evaluateField(new FieldName("Shift"), arguments, context));
+		assertValueEquals("AM", evaluateField(new FieldName("Shift"), arguments, context));
 	}
 
 	@Test
@@ -34,27 +34,36 @@ public class DefineFunctionTest extends PMMLManagerTest {
 
 		PMMLManagerEvaluationContext context = new PMMLManagerEvaluationContext(pmmlManager);
 
-		assertEquals("West", evaluateStategroup("CA", context));
-		assertEquals("West", evaluateStategroup("OR", context));
-		assertEquals("East", evaluateStategroup("NC", context));
+		assertValueEquals("West", evaluateStategroup("CA", context));
+		assertValueEquals("West", evaluateStategroup("OR", context));
+		assertValueEquals("East", evaluateStategroup("NC", context));
 
 		Map<FieldName, ?> arguments = Collections.singletonMap(new FieldName("State"), "CA");
 
-		assertEquals("West", evaluateField(new FieldName("Group"), arguments, context));
+		assertValueEquals("West", evaluateField(new FieldName("Group"), arguments, context));
 	}
 
 	static
-	private Object evaluateAmPm(Integer time, EvaluationContext context){
-		return evaluateFunction("AMPM", Collections.singletonList(time), context);
+	private void assertValueEquals(Object expected, FieldValue actual){
+		assertEquals(expected, FieldValueUtil.getValue(actual));
 	}
 
 	static
-	private Object evaluateStategroup(String state, EvaluationContext context){
-		return evaluateFunction("STATEGROUP", Collections.singletonList(state), context);
+	private FieldValue evaluateAmPm(Integer time, EvaluationContext context){
+		List<FieldValue> values = Collections.singletonList(FieldValueUtil.create(time));
+
+		return evaluateFunction("AMPM", values, context);
 	}
 
 	static
-	private Object evaluateField(FieldName name, Map<FieldName, ?> arguments, EvaluationContext context){
+	private FieldValue evaluateStategroup(String state, EvaluationContext context){
+		List<FieldValue> values = Collections.singletonList(FieldValueUtil.create(state));
+
+		return evaluateFunction("STATEGROUP", values, context);
+	}
+
+	static
+	private FieldValue evaluateField(FieldName name, Map<FieldName, ?> arguments, EvaluationContext context){
 		context.pushFrame(arguments);
 
 		try {
@@ -65,7 +74,7 @@ public class DefineFunctionTest extends PMMLManagerTest {
 	}
 
 	static
-	private Object evaluateFunction(String function, List<?> values, EvaluationContext context){
+	private FieldValue evaluateFunction(String function, List<FieldValue> values, EvaluationContext context){
 		Apply apply = new Apply(function);
 
 		return FunctionUtil.evaluate(apply, values, context);

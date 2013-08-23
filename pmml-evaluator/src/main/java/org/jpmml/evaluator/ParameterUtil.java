@@ -315,41 +315,17 @@ public class ParameterUtil {
 		return result;
 	}
 
-	/**
-	 * Checks if the value is equal to the reference value.
-	 *
-	 * @param value The {@link #getDataType(Object) runtime data type representation} of the value.
-	 * @param string The String representation of the reference value.
-	 */
 	static
-	public boolean equals(Object value, String string){
-		return equals(getDataType(value), value, string);
-	}
-
-	static
-	boolean equals(DataType dataType, Object left, Object right){
+	public boolean equals(DataType dataType, Object left, Object right){
 		return (cast(dataType, left)).equals(cast(dataType, right));
 	}
 
-	/**
-	 * Calculates the order between the value and the reference value.
-	 *
-	 * @param value The {@link #getDataType(Object) runtime data type representation} of the value.
-	 * @param string The String representation of the reference value.
-	 *
-	 * @see Comparable#compareTo(Object)
-	 */
-	static
-	public int compare(Object value, String string){
-		return compare(getDataType(value), value, string);
-	}
-
 	@SuppressWarnings (
-		value = {"cast", "rawtypes", "unchecked"}
+		value = {"rawtypes", "unchecked"}
 	)
 	static
-	int compare(DataType dataType, Object left, Object right){
-		return ((Comparable)cast(dataType, left)).compareTo((Comparable)cast(dataType, right));
+	public int compare(DataType dataType, Object left, Object right){
+		return ((Comparable)cast(dataType, left)).compareTo(cast(dataType, right));
 	}
 
 	static
@@ -513,14 +489,7 @@ public class ParameterUtil {
 
 	/**
 	 * @return The least restrictive data type of the data types of two values
-	 *
-	 * @see #getResultDataType(DataType, DataType)
 	 */
-	static
-	public DataType getResultDataType(Object left, Object right){
-		return getResultDataType(getDataType(left), getDataType(right));
-	}
-
 	static
 	public DataType getResultDataType(DataType left, DataType right){
 
@@ -534,6 +503,37 @@ public class ParameterUtil {
 			if((dataType).equals(left) || (dataType).equals(right)){
 				return dataType;
 			}
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	public OpType getOpType(DataType dataType){
+
+		switch(dataType){
+			case STRING:
+				return OpType.CATEGORICAL;
+			case INTEGER:
+			case FLOAT:
+			case DOUBLE:
+				return OpType.CONTINUOUS;
+			case BOOLEAN:
+				return OpType.CATEGORICAL;
+			case DATE:
+			case TIME:
+			case DATE_TIME:
+			case DATE_DAYS_SINCE_0:
+			case DATE_DAYS_SINCE_1960:
+			case DATE_DAYS_SINCE_1970:
+			case DATE_DAYS_SINCE_1980:
+			case DATE_TIME_SECONDS_SINCE_0:
+			case DATE_TIME_SECONDS_SINCE_1960:
+			case DATE_TIME_SECONDS_SINCE_1970:
+			case DATE_TIME_SECONDS_SINCE_1980:
+				return OpType.ORDINAL;
+			default:
+				break;
 		}
 
 		throw new EvaluationException();

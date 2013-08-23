@@ -9,6 +9,9 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
+import com.google.common.base.*;
+import com.google.common.collect.*;
+
 import org.joda.time.*;
 
 import static org.junit.Assert.*;
@@ -230,16 +233,26 @@ public class FunctionUtilTest {
 
 	static
 	private Object evaluate(String function, Object... values){
-		return apply(function, Arrays.asList(values), new LocalEvaluationContext());
+		return evaluate(function, Arrays.asList(values));
 	}
 
 	static
 	private Object evaluate(String function, List<?> values){
-		return apply(function, values, new LocalEvaluationContext());
+		Function<Object, FieldValue> transformer = new Function<Object, FieldValue>(){
+
+			@Override
+			public FieldValue apply(Object object){
+				return FieldValueUtil.create(object);
+			}
+		};
+
+		FieldValue result = apply(function, Lists.newArrayList(Iterables.transform(values, transformer)), new LocalEvaluationContext());
+
+		return FieldValueUtil.getValue(result);
 	}
 
 	static
-	private Object apply(String function, List<?> values, EvaluationContext context){
+	private FieldValue apply(String function, List<FieldValue> values, EvaluationContext context){
 		Apply apply = new Apply(function);
 
 		return FunctionUtil.evaluate(apply, values, context);

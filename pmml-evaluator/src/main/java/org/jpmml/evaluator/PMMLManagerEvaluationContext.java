@@ -30,6 +30,18 @@ public class PMMLManagerEvaluationContext extends EvaluationContext {
 		return pmmlManager.resolveFunction(name);
 	}
 
+	@Override
+	public FieldValue createFieldValue(FieldName name, Object value){
+		PMMLManager pmmlManager = getPmmlManager();
+
+		DataField dataField = pmmlManager.getDataField(name);
+		if(dataField != null){
+			return FieldValueUtil.create(dataField, value);
+		}
+
+		return super.createFieldValue(name, value);
+	}
+
 	public PMMLManager getPmmlManager(){
 		return this.pmmlManager;
 	}

@@ -135,35 +135,35 @@ public class ParameterUtilTest {
 
 	@Test
 	public void equals(){
-		assertTrue(ParameterUtil.equals("1", "1"));
+		assertTrue(ParameterUtil.equals(DataType.STRING, "1", "1"));
 
-		assertTrue(ParameterUtil.equals(1, "1"));
+		assertTrue(ParameterUtil.equals(DataType.INTEGER, 1, "1"));
 
-		assertTrue(ParameterUtil.equals(1f, "1"));
-		assertTrue(ParameterUtil.equals(1.0f, "1"));
-		assertTrue(ParameterUtil.equals(1f, "1.0"));
+		assertTrue(ParameterUtil.equals(DataType.FLOAT, 1f, "1"));
+		assertTrue(ParameterUtil.equals(DataType.FLOAT, 1.0f, "1"));
+		assertTrue(ParameterUtil.equals(DataType.FLOAT, 1f, "1.0"));
 
-		assertTrue(ParameterUtil.equals(1d, "1"));
-		assertTrue(ParameterUtil.equals(1.0d, "1"));
-		assertTrue(ParameterUtil.equals(1d, "1.0"));
+		assertTrue(ParameterUtil.equals(DataType.DOUBLE, 1d, "1"));
+		assertTrue(ParameterUtil.equals(DataType.DOUBLE, 1.0d, "1"));
+		assertTrue(ParameterUtil.equals(DataType.DOUBLE, 1d, "1.0"));
 
-		assertTrue(ParameterUtil.equals(true, "true"));
-		assertTrue(ParameterUtil.equals(false, "false"));
+		assertTrue(ParameterUtil.equals(DataType.BOOLEAN, true, "true"));
+		assertTrue(ParameterUtil.equals(DataType.BOOLEAN, false, "false"));
 	}
 
 	@Test
 	public void compare(){
-		assertTrue(ParameterUtil.compare("1", "1") == 0);
+		assertTrue(ParameterUtil.compare(DataType.STRING, "1", "1") == 0);
 
-		assertTrue(ParameterUtil.compare(1, "1") == 0);
+		assertTrue(ParameterUtil.compare(DataType.INTEGER, 1, "1") == 0);
 
-		assertTrue(ParameterUtil.compare(1f, "1") == 0);
-		assertTrue(ParameterUtil.compare(1.0f, "1") == 0);
-		assertTrue(ParameterUtil.compare(1f, "1.0") == 0);
+		assertTrue(ParameterUtil.compare(DataType.FLOAT, 1f, "1") == 0);
+		assertTrue(ParameterUtil.compare(DataType.FLOAT, 1.0f, "1") == 0);
+		assertTrue(ParameterUtil.compare(DataType.FLOAT, 1f, "1.0") == 0);
 
-		assertTrue(ParameterUtil.compare(1d, "1") == 0);
-		assertTrue(ParameterUtil.compare(1.0d, "1") == 0);
-		assertTrue(ParameterUtil.compare(1d, "1.0") == 0);
+		assertTrue(ParameterUtil.compare(DataType.DOUBLE, 1d, "1") == 0);
+		assertTrue(ParameterUtil.compare(DataType.DOUBLE, 1.0d, "1") == 0);
+		assertTrue(ParameterUtil.compare(DataType.DOUBLE, 1d, "1.0") == 0);
 	}
 
 	@Test
@@ -223,14 +223,14 @@ public class ParameterUtilTest {
 
 	@Test
 	public void getResultDataType(){
-		assertEquals(DataType.DOUBLE, ParameterUtil.getResultDataType(1d, 1f));
-		assertEquals(DataType.DOUBLE, ParameterUtil.getResultDataType(1d, 1));
+		assertEquals(DataType.DOUBLE, getResultDataType(1d, 1f));
+		assertEquals(DataType.DOUBLE, getResultDataType(1d, 1));
 
-		assertEquals(DataType.DOUBLE, ParameterUtil.getResultDataType(1f, 1d));
-		assertEquals(DataType.FLOAT, ParameterUtil.getResultDataType(1f, 1));
+		assertEquals(DataType.DOUBLE, getResultDataType(1f, 1d));
+		assertEquals(DataType.FLOAT, getResultDataType(1f, 1));
 
-		assertEquals(DataType.DOUBLE, ParameterUtil.getResultDataType(1, 1d));
-		assertEquals(DataType.FLOAT, ParameterUtil.getResultDataType(1, 1f));
+		assertEquals(DataType.DOUBLE, getResultDataType(1, 1d));
+		assertEquals(DataType.FLOAT, getResultDataType(1, 1f));
 	}
 
 	@Test
@@ -301,5 +301,10 @@ public class ParameterUtilTest {
 	static
 	private SecondsSinceDate parseSecondsSince1960(String string){
 		return (SecondsSinceDate)ParameterUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1960, string);
+	}
+
+	static
+	private DataType getResultDataType(Object left, Object right){
+		return ParameterUtil.getResultDataType(ParameterUtil.getDataType(left), ParameterUtil.getDataType(right));
 	}
 }

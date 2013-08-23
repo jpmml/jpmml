@@ -24,7 +24,7 @@ public class FunctionUtil {
 	}
 
 	static
-	public Object evaluate(Apply apply, List<?> values, EvaluationContext context){
+	public FieldValue evaluate(Apply apply, List<FieldValue> values, EvaluationContext context){
 		String name = apply.getFunction();
 
 		Function function = getFunction(name);
@@ -41,7 +41,7 @@ public class FunctionUtil {
 	}
 
 	static
-	public Object evaluate(DefineFunction defineFunction, List<?> values, EvaluationContext context){
+	public FieldValue evaluate(DefineFunction defineFunction, List<FieldValue> values, EvaluationContext context){
 		List<ParameterField> parameterFields = defineFunction.getParameterFields();
 
 		if(parameterFields.size() < 1){
@@ -52,19 +52,14 @@ public class FunctionUtil {
 			throw new EvaluationException();
 		}
 
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
+		Map<FieldName, FieldValue> arguments = Maps.newLinkedHashMap();
 
 		for(int i = 0; i < parameterFields.size(); i++){
 			ParameterField parameterField = parameterFields.get(i);
 
-			Object value = values.get(i);
+			FieldValue value = values.get(i);
 
-			DataType dataType = parameterField.getDataType();
-			if(dataType != null){
-				value = ParameterUtil.cast(dataType, value);
-			}
-
-			arguments.put(parameterField.getName(), value);
+			arguments.put(parameterField.getName(), FieldValueUtil.refine(parameterField, value));
 		}
 
 		Expression expression = defineFunction.getExpression();
@@ -75,14 +70,9 @@ public class FunctionUtil {
 		FunctionEvaluationContext functionContext = new FunctionEvaluationContext(context);
 		functionContext.pushFrame(arguments);
 
-		Object result = ExpressionUtil.evaluate(expression, functionContext);
+		FieldValue result = ExpressionUtil.evaluate(expression, functionContext);
 
-		DataType dataType = defineFunction.getDataType();
-		if(dataType != null){
-			result = ParameterUtil.cast(dataType, result);
-		}
-
-		return result;
+		return FieldValueUtil.refine(defineFunction.getDataType(), defineFunction.getOptype(), result);
 	}
 
 	static
@@ -96,115 +86,13 @@ public class FunctionUtil {
 	}
 
 	static
-	private Boolean asBoolean(Object value){
-
-		if(value instanceof Boolean){
-			return (Boolean)value;
-		}
-
-		throw new EvaluationException();
+	private boolean checkArguments(List<FieldValue> values, int size){
+		return (values.size() == size) && !values.contains(null);
 	}
 
 	static
-	private Number asNumber(Object value){
-
-		if(value instanceof Number){
-			return (Number)value;
-		}
-
-		throw new EvaluationException();
-	}
-
-	static
-	private Integer asInteger(Object value){
-
-		if(value instanceof Integer){
-			return (Integer)value;
-		}
-
-		throw new EvaluationException();
-	}
-
-	static
-	private String asString(Object value){
-
-		if(value instanceof String){
-			return (String)value;
-		}
-
-		throw new EvaluationException();
-	}
-
-	static
-	private LocalDate asLocalDate(Object value){
-
-		if(value instanceof LocalDate){
-			return (LocalDate)value;
-		} else
-
-		if(value instanceof LocalDateTime){
-			LocalDateTime instant = (LocalDateTime)value;
-
-			return instant.toLocalDate();
-		}
-
-		throw new EvaluationException();
-	}
-
-	static
-	private LocalTime asLocalTime(Object value){
-
-		if(value instanceof LocalTime){
-			return (LocalTime)value;
-		} else
-
-		if(value instanceof LocalDateTime){
-			LocalDateTime instant = (LocalDateTime)value;
-
-			return instant.toLocalTime();
-		}
-
-		throw new EvaluationException();
-	}
-
-	static
-	private LocalDateTime asLocalDateTime(Object value){
-
-		if(value instanceof LocalDate){
-			LocalDate instant = (LocalDate)value;
-
-			return new LocalDateTime(instant.getYear(), instant.getMonthOfYear(), instant.getDayOfMonth(), 0, 0, 0);
-		} else
-
-		if(value instanceof LocalDateTime){
-			return (LocalDateTime)value;
-		}
-
-		throw new EvaluationException();
-	}
-
-	static
-	private DateTime asDateTime(Object value){
-
-		if(value instanceof LocalDate){
-			LocalDate instant = (LocalDate)value;
-
-			return instant.toDateTimeAtStartOfDay();
-		} else
-
-		if(value instanceof LocalTime){
-			LocalTime instant = (LocalTime)value;
-
-			return instant.toDateTimeToday();
-		} else
-
-		if(value instanceof LocalDateTime){
-			LocalDateTime instant = (LocalDateTime)value;
-
-			return instant.toDateTime();
-		}
-
-		throw new EvaluationException();
+	private boolean checkVariableArguments(List<FieldValue> values, int size){
+		return (values.size() >= size) && !values.contains(null);
 	}
 
 	static
@@ -250,7 +138,7 @@ public class FunctionUtil {
 
 	public interface Function {
 
-		Object evaluate(List<?> values);
+		FieldValue evaluate(List<FieldValue> values);
 	}
 
 	static
@@ -261,30 +149,31 @@ public class FunctionUtil {
 		public Number evaluate(Number left, Number right);
 
 		@Override
-		public Number evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
 			if(values.size() != 2){
 				throw new EvaluationException();
 			}
 
-			Object left = values.get(0);
-			Object right = values.get(1);
+			FieldValue left = values.get(0);
+			FieldValue right = values.get(1);
 
+			// "If one of the input fields of a simple arithmetic function is a missing value, the result evaluates to missing value"
 			if(left == null || right == null){
 				return null;
 			}
 
-			DataType dataType = ParameterUtil.getResultDataType(left, right);
+			DataType dataType = ParameterUtil.getResultDataType(left.getDataType(), right.getDataType());
 
 			Number result;
 
 			try {
-				result = evaluate(asNumber(left), asNumber(right));
+				result = evaluate(left.asNumber(), right.asNumber());
 			} catch(ArithmeticException ae){
 				throw new InvalidResultException(null);
 			}
 
-			return cast(dataType, result);
+			return FieldValueUtil.create(cast(dataType, result));
 		}
 	}
 
@@ -339,25 +228,26 @@ public class FunctionUtil {
 		}
 
 		@Override
-		public Number evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 			StorelessUnivariateStatistic statistic = createStatistic();
 
 			DataType dataType = null;
 
-			for(Object value : values){
+			for(FieldValue value : values){
 
+				// "Missing values in the input to an aggregate function are simply ignored"
 				if(value == null){
 					continue;
 				}
 
-				statistic.increment(asNumber(value).doubleValue());
+				statistic.increment((value.asNumber()).doubleValue());
 
 				if(dataType != null){
-					dataType = ParameterUtil.getResultDataType(dataType, ParameterUtil.getDataType(value));
+					dataType = ParameterUtil.getResultDataType(dataType, value.getDataType());
 				} else
 
 				{
-					dataType = ParameterUtil.getDataType(value);
+					dataType = value.getDataType();
 				}
 			}
 
@@ -365,7 +255,9 @@ public class FunctionUtil {
 				throw new MissingResultException(null);
 			}
 
-			return cast(getResultType(dataType), statistic.getResult());
+			Object result = cast(getResultType(dataType), statistic.getResult());
+
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -428,17 +320,17 @@ public class FunctionUtil {
 		}
 
 		@Override
-		public Number evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
-			if(values.size() != 1){
+			if(!checkArguments(values, 1)){
 				throw new EvaluationException();
 			}
 
-			Object value = values.get(0);
+			FieldValue value = values.get(0);
 
-			DataType dataType = ParameterUtil.getDataType(value);
+			Number result = cast(getResultType(value.getDataType()), evaluate(value.asNumber()));
 
-			return cast(getResultType(dataType), evaluate(asNumber(value)));
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -496,40 +388,40 @@ public class FunctionUtil {
 		putFunction("pow", new Function(){
 
 			@Override
-			public Number evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() != 2){
+				if(!checkArguments(values, 2)){
 					throw new EvaluationException();
 				}
 
-				Number left = asNumber(values.get(0));
-				Number right = asNumber(values.get(1));
+				FieldValue left = values.get(0);
+				FieldValue right = values.get(1);
 
-				DataType dataType = ParameterUtil.getResultDataType(left, right);
+				DataType dataType = ParameterUtil.getResultDataType(left.getDataType(), right.getDataType());
 
-				Double result = Math.pow(left.doubleValue(), right.doubleValue());
+				Double result = Math.pow((left.asNumber()).doubleValue(), (right.asNumber()).doubleValue());
 
-				return cast(dataType, result);
+				return FieldValueUtil.create(cast(dataType, result));
 			}
 		});
 
 		putFunction("threshold", new Function(){
 
 			@Override
-			public Number evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() != 2){
+				if(!checkArguments(values, 2)){
 					throw new EvaluationException();
 				}
 
-				Number left = asNumber(values.get(0));
-				Number right = asNumber(values.get(1));
+				FieldValue left = values.get(0);
+				FieldValue right = values.get(1);
 
-				DataType dataType = ParameterUtil.getResultDataType(left, right);
+				DataType dataType = ParameterUtil.getResultDataType(left.getDataType(), right.getDataType());
 
-				Integer result = (left.doubleValue() > right.doubleValue()) ? 1 : 0;
+				Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? 1 : 0;
 
-				return cast(dataType, result);
+				return FieldValueUtil.create(cast(dataType, result));
 			}
 		});
 
@@ -563,16 +455,20 @@ public class FunctionUtil {
 	public class ValueFunction implements Function {
 
 		abstract
-		public Boolean evaluate(Object value);
+		public Boolean evaluate(FieldValue value);
 
 		@Override
-		public Boolean evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
 			if(values.size() != 1){
 				throw new EvaluationException();
 			}
 
-			return evaluate(values.get(0));
+			FieldValue value = values.get(0);
+
+			Boolean result = evaluate(value);
+
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -580,7 +476,7 @@ public class FunctionUtil {
 		putFunction("isMissing", new ValueFunction(){
 
 			@Override
-			public Boolean evaluate(Object value){
+			public Boolean evaluate(FieldValue value){
 				return Boolean.valueOf(value == null);
 			}
 		});
@@ -588,7 +484,7 @@ public class FunctionUtil {
 		putFunction("isNotMissing", new ValueFunction(){
 
 			@Override
-			public Boolean evaluate(Object value){
+			public Boolean evaluate(FieldValue value){
 				return Boolean.valueOf(value != null);
 			}
 		});
@@ -602,24 +498,18 @@ public class FunctionUtil {
 		public Boolean evaluate(boolean equals);
 
 		@Override
-		public Boolean evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
-			if(values.size() != 2){
+			if(!checkArguments(values, 2)){
 				throw new EvaluationException();
 			}
 
-			Object left = values.get(0);
-			Object right = values.get(1);
+			FieldValue left = values.get(0);
+			FieldValue right = values.get(1);
 
-			if(left == null || right == null){
-				throw new EvaluationException();
-			}
+			Boolean result = evaluate((left).equalsValue(right));
 
-			DataType dataType = ParameterUtil.getResultDataType(left, right);
-
-			boolean equals = ParameterUtil.equals(dataType, left, right);
-
-			return evaluate(equals);
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -650,24 +540,18 @@ public class FunctionUtil {
 		public Boolean evaluate(int order);
 
 		@Override
-		public Boolean evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
-			if(values.size() != 2){
+			if(!checkArguments(values, 2)){
 				throw new EvaluationException();
 			}
 
-			Object left = values.get(0);
-			Object right = values.get(1);
+			FieldValue left = values.get(0);
+			FieldValue right = values.get(1);
 
-			if(left == null || right == null){
-				throw new EvaluationException();
-			}
+			Boolean result = evaluate((left).compareToValue(right));
 
-			DataType dataType = ParameterUtil.getResultDataType(left, right);
-
-			int order = ParameterUtil.compare(dataType, left, right);
-
-			return evaluate(order);
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -713,19 +597,19 @@ public class FunctionUtil {
 		public Boolean evaluate(Boolean left, Boolean right);
 
 		@Override
-		public Boolean evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
-			if(values.size() < 2){
+			if(!checkVariableArguments(values, 2)){
 				throw new EvaluationException();
 			}
 
-			Boolean result = asBoolean(values.get(0));
+			Boolean result = (values.get(0)).asBoolean();
 
 			for(int i = 1; i < values.size(); i++){
-				result = evaluate(result, asBoolean(values.get(i)));
+				result = evaluate(result, (values.get(i)).asBoolean());
 			}
 
-			return result;
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -755,13 +639,17 @@ public class FunctionUtil {
 		public Boolean evaluate(Boolean value);
 
 		@Override
-		public Boolean evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
-			if(values.size() != 1){
+			if(!checkArguments(values, 1)){
 				throw new EvaluationException();
 			}
 
-			return evaluate(asBoolean(values.get(0)));
+			FieldValue value = values.get(0);
+
+			Boolean result = evaluate(value.asBoolean());
+
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -780,16 +668,18 @@ public class FunctionUtil {
 	public class ValueListFunction implements Function {
 
 		abstract
-		public Boolean evaluate(Object value, List<?> values);
+		public Boolean evaluate(FieldValue value, List<FieldValue> values);
 
 		@Override
-		public Boolean evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
-			if(values.size() < 2){
+			if(!checkVariableArguments(values, 2)){
 				throw new EvaluationException();
 			}
 
-			return evaluate(values.get(0), values.subList(1, values.size()));
+			Boolean result = evaluate(values.get(0), values.subList(1, values.size()));
+
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -797,16 +687,16 @@ public class FunctionUtil {
 		putFunction("isIn", new ValueListFunction(){
 
 			@Override
-			public Boolean evaluate(Object value, List<?> values){
-				return Boolean.valueOf(values.contains(value));
+			public Boolean evaluate(FieldValue value, List<FieldValue> values){
+				return value.equalsAnyValue(values);
 			}
 		});
 
 		putFunction("isNotIn", new ValueListFunction(){
 
 			@Override
-			public Boolean evaluate(Object value, List<?> values){
-				return Boolean.valueOf(!values.contains(value));
+			public Boolean evaluate(FieldValue value, List<FieldValue> values){
+				return !value.equalsAnyValue(values);
 			}
 		});
 	}
@@ -815,25 +705,37 @@ public class FunctionUtil {
 		putFunction("if", new Function(){
 
 			@Override
-			public Object evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() < 2 || values.size() > 3){
+				if((values.size() < 2 || values.size() > 3)){
 					throw new EvaluationException();
 				}
 
-				Boolean flag = asBoolean(values.get(0));
+				FieldValue flag = values.get(0);
+				if(flag == null){
+					throw new EvaluationException();
+				} // End if
 
-				if(flag.booleanValue()){
-					return values.get(1);
+				if(flag.asBoolean()){
+					FieldValue trueValue = values.get(1);
+
+					// "The THEN part is required"
+					if(trueValue == null){
+						throw new EvaluationException();
+					}
+
+					return trueValue;
 				} else
 
 				{
-					if(values.size() > 2){
-						return values.get(2);
+					FieldValue falseValue = (values.size() > 2 ? values.get(2) : null);
+
+					// "The ELSE part is optional. If the ELSE part is absent then a missing value is returned"
+					if(falseValue == null){
+						return null;
 					}
 
-					// XXX
-					return null;
+					return falseValue;
 				}
 			}
 		});
@@ -847,13 +749,17 @@ public class FunctionUtil {
 		public String evaluate(String value);
 
 		@Override
-		public String evaluate(List<?> values){
+		public FieldValue evaluate(List<FieldValue> values){
 
-			if(values.size() != 1){
+			if(!checkArguments(values, 1)){
 				throw new EvaluationException();
 			}
 
-			return evaluate(asString(values.get(0)));
+			FieldValue value = values.get(0);
+
+			String result = evaluate(value.asString());
+
+			return FieldValueUtil.create(result);
 		}
 	}
 
@@ -877,22 +783,25 @@ public class FunctionUtil {
 		putFunction("substring", new Function(){
 
 			@Override
-			public String evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() != 3){
+				if(!checkArguments(values, 3)){
 					throw new EvaluationException();
 				}
 
-				String value = asString(values.get(0));
+				String string = (values.get(0)).asString();
 
-				int position = asInteger(values.get(1));
-				int length = asInteger(values.get(2));
+				int position = (values.get(1)).asInteger();
+				int length = (values.get(2)).asInteger();
 
+				// "The first character of a string is located at position 1 (not position 0)"
 				if(position <= 0 || length < 0){
 					throw new EvaluationException();
 				}
 
-				return value.substring(position - 1, (position + length) - 1);
+				String result = string.substring(position - 1, (position + length) - 1);
+
+				return FieldValueUtil.create(result);
 			}
 		});
 
@@ -909,49 +818,50 @@ public class FunctionUtil {
 		putFunction("formatNumber", new Function(){
 
 			@Override
-			public String evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() != 2){
+				if(!checkArguments(values, 2)){
 					throw new EvaluationException();
 				}
 
-				// Require numeric data type
-				Number value = asNumber(values.get(0));
+				FieldValue value = values.get(0);
+				FieldValue pattern = values.get(1);
 
-				String pattern = asString(values.get(1));
+				String result;
 
 				// According to the java.util.Formatter javadoc, Java formatting is more strict than C's printf formatting.
 				// For example, in Java, if a conversion is incompatible with a flag, an exception will be thrown. In C's printf, inapplicable flags are silently ignored.
 				try {
-					return String.format(pattern, value);
+					result = String.format(pattern.asString(), value.asNumber());
 				} catch(IllegalFormatException ife){
 					throw ife;
 				}
+
+				return FieldValueUtil.create(result);
 			}
 		});
 
 		putFunction("formatDatetime", new Function(){
 
 			@Override
-			public String evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() != 2){
+				if(!checkArguments(values, 2)){
 					throw new EvaluationException();
 				}
 
-				DateTime dateTime = asDateTime(values.get(0));
+				FieldValue value = values.get(0);
+				FieldValue pattern = values.get(1);
 
-				Date date = dateTime.toDate();
-
-				String pattern = asString(values.get(1));
-
-				pattern = translatePattern(pattern);
+				String result;
 
 				try {
-					return String.format(pattern, date);
+					result = String.format(translatePattern(pattern.asString()), (value.asDateTime()).toDate());
 				} catch(IllegalFormatException ife){
 					throw ife;
 				}
+
+				return FieldValueUtil.create(result);
 			}
 
 			private String translatePattern(String pattern){
@@ -981,57 +891,57 @@ public class FunctionUtil {
 		putFunction("dateDaysSinceYear", new Function(){
 
 			@Override
-			public Integer evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() != 2){
+				if(!checkArguments(values, 2)){
 					throw new EvaluationException();
 				}
 
-				LocalDate instant = asLocalDate(values.get(0));
+				LocalDate instant = (values.get(0)).asLocalDate();
 
-				int year = asInteger(values.get(1));
+				int year = (values.get(1)).asInteger();
 
 				DaysSinceDate period = new DaysSinceDate(year, instant);
 
-				return period.intValue();
+				return FieldValueUtil.create(period.intValue());
 			}
 		});
 
 		putFunction("dateSecondsSinceMidnight", new Function(){
 
 			@Override
-			public Integer evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() != 1){
+				if(!checkArguments(values, 1)){
 					throw new EvaluationException();
 				}
 
-				LocalTime instant = asLocalTime(values.get(0));
+				LocalTime instant = (values.get(0)).asLocalTime();
 
 				Seconds seconds = Seconds.seconds(instant.getHourOfDay() * 60 * 60 + instant.getMinuteOfHour() * 60 + instant.getSecondOfMinute());
 
 				SecondsSinceMidnight period = new SecondsSinceMidnight(seconds);
 
-				return period.intValue();
+				return FieldValueUtil.create(period.intValue());
 			}
 		});
 
 		putFunction("dateSecondsSinceYear", new Function(){
 
 			@Override
-			public Integer evaluate(List<?> values){
+			public FieldValue evaluate(List<FieldValue> values){
 
-				if(values.size() != 2){
+				if(!checkArguments(values, 2)){
 					throw new EvaluationException();
 				}
 
-				LocalDateTime instant = asLocalDateTime(values.get(0));
+				LocalDateTime instant = (values.get(0)).asLocalDateTime();
 
-				int year = asInteger(values.get(1));
+				int year = (values.get(1)).asInteger();
 
 				SecondsSinceDate period = new SecondsSinceDate(year, instant);
 
-				return period.intValue();
+				return FieldValueUtil.create(period.intValue());
 			}
 		});
 	}

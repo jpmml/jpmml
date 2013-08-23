@@ -28,9 +28,7 @@ public class OutputUtil {
 	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelManagerEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
-		Map<FieldName, Object> frame = Maps.newLinkedHashMap();
-
-		context.pushFrame(frame);
+		Map<FieldName, FieldValue> frame = context.pushFrame(Collections.<FieldName, Object>emptyMap());
 
 		Output output = modelManager.getOrCreateOutput();
 
@@ -98,7 +96,9 @@ public class OutputUtil {
 							throw new InvalidFeatureException(outputField);
 						}
 
-						value = ExpressionUtil.evaluate(expression, context);
+						FieldValue result = ExpressionUtil.evaluate(expression, context);
+
+						value = FieldValueUtil.getValue(result);
 					}
 					break;
 				case PROBABILITY:
@@ -108,7 +108,7 @@ public class OutputUtil {
 					break;
 				case RESIDUAL:
 					{
-						Object expectedValue = context.getArgument(targetField);
+						FieldValue expectedValue = context.getArgument(targetField);
 						if(expectedValue == null){
 							throw new MissingFieldException(targetField, outputField);
 						}
@@ -168,25 +168,18 @@ public class OutputUtil {
 					throw new UnsupportedFeatureException(outputField, resultFeature);
 			}
 
-			FieldName name = outputField.getName();
-
-			DataType dataType = outputField.getDataType();
-			if(dataType != null){
-
-				// output fields may be null (ie. indicating a missing value)
-				if(value != null){
-					value = ParameterUtil.cast(dataType, value);
-				}
-			}
-
-			// The result of one output field becomes available to other output fields
-			frame.put(name, value);
+			// The result of one output field becomes available to other other output fields
+			frame.put(outputField.getName(), FieldValueUtil.create(outputField, value));
 		}
 
 		context.popFrame();
 
 		Map<FieldName, Object> result = Maps.newLinkedHashMap(predictions);
-		result.putAll(frame);
+
+		Collection<Map.Entry<FieldName, FieldValue>> entries = frame.entrySet();
+		for(Map.Entry<FieldName, FieldValue> entry : entries){
+			result.put(entry.getKey(), FieldValueUtil.getValue(entry.getValue()));
+		}
 
 		return result;
 	}
@@ -231,17 +224,17 @@ public class OutputUtil {
 	}
 
 	static
-	private Double getContinuousResidual(Object object, Object expectedObject){
+	private Double getContinuousResidual(Object object, FieldValue expectedObject){
 		object = getPredictedValue(object);
 
 		Number value = (Number)object;
-		Number expectedValue = (Number)expectedObject;
+		Number expectedValue = (Number)FieldValueUtil.getValue(expectedObject);
 
 		return Double.valueOf(expectedValue.doubleValue() - value.doubleValue());
 	}
 
 	static
-	public Double getCategoricalResidual(Object object, Object expectedObject){
+	public Double getCategoricalResidual(Object object, FieldValue expectedObject){
 
 		if(!(object instanceof HasProbability)){
 			throw new EvaluationException();
@@ -252,8 +245,9 @@ public class OutputUtil {
 		object = getPredictedValue(object);
 
 		String value = (String)ParameterUtil.cast(DataType.STRING, object);
+		String expectedValue = (String)ParameterUtil.cast(DataType.STRING, FieldValueUtil.getValue(expectedObject));
 
-		boolean equals = ParameterUtil.equals(DataType.STRING, object, expectedObject);
+		boolean equals = ParameterUtil.equals(DataType.STRING, value, expectedValue);
 
 		return Double.valueOf((equals ? 1d : 0d) - hasProbability.getProbability(value));
 	}

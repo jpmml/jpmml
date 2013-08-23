@@ -87,7 +87,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 	private Map<FieldName, ?> evaluateRegression(ModelManagerEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		Map<FieldName, ?> arguments = getArguments(context);
+		Map<FieldName, FieldValue> arguments = getArguments(context);
 
 		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
 		if(ppMatrixMap.size() != 1 || !ppMatrixMap.containsKey(null)){
@@ -141,7 +141,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			throw new InvalidFeatureException(dataField);
 		}
 
-		Map<FieldName, ?> arguments = getArguments(context);
+		Map<FieldName, FieldValue> arguments = getArguments(context);
 
 		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
 
@@ -320,7 +320,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
 	}
 
-	private Double computeDotProduct(Iterable<PCell> parameterCells, Map<String, Row> parameterPredictorRows, Map<FieldName, ?> arguments){
+	private Double computeDotProduct(Iterable<PCell> parameterCells, Map<String, Row> parameterPredictorRows, Map<FieldName, FieldValue> arguments){
 		double sum = 0d;
 
 		for(PCell parameterCell : parameterCells){
@@ -432,11 +432,11 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		}
 	}
 
-	private Map<FieldName, ?> getArguments(EvaluationContext context){
+	private Map<FieldName, FieldValue> getArguments(EvaluationContext context){
 		BiMap<FieldName, Predictor> factors = getFactorRegistry();
 		BiMap<FieldName, Predictor> covariates = getCovariateRegistry();
 
-		Map<FieldName, Object> result = Maps.newLinkedHashMap();
+		Map<FieldName, FieldValue> result = Maps.newLinkedHashMap();
 
 		Iterable<Predictor> predictors = Iterables.concat(factors.values(), covariates.values());
 		for(Predictor predictor : predictors){
@@ -538,10 +538,10 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		value = {"unchecked"}
 	)
 	static
-	private <V extends Number> V getValue(DataType dataType, Object argumentValue, V xmlValue){
+	private <V extends Number> V getValue(DataType dataType, FieldValue argumentValue, V xmlValue){
 
 		if(argumentValue != null){
-			return (V)ParameterUtil.cast(dataType, argumentValue);
+			return (V)argumentValue.asNumber();
 		} // End if
 
 		return xmlValue;
@@ -600,7 +600,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		private List<CovariateHandler> covariateHandlers = Lists.newArrayList();
 
 
-		public Double evaluate(Map<FieldName, ?> arguments){
+		public Double evaluate(Map<FieldName, FieldValue> arguments){
 			List<FactorHandler> factorHandlers = getFactorHandlers();
 			List<CovariateHandler> covariateHandlers = getCovariateHandlers();
 
@@ -672,11 +672,11 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		}
 
 		static
-		private Double computeProduct(List<? extends PredictorHandler> predictorHandlers, Map<FieldName, ?> arguments){
+		private Double computeProduct(List<? extends PredictorHandler> predictorHandlers, Map<FieldName, FieldValue> arguments){
 			Double result = null;
 
 			for(PredictorHandler predictorHandler : predictorHandlers){
-				Object value = arguments.get(predictorHandler.getPredictorName());
+				FieldValue value = arguments.get(predictorHandler.getPredictorName());
 				if(value == null){
 					return null;
 				} // End if
@@ -704,7 +704,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 
 			abstract
-			public Double evaluate(Object value);
+			public Double evaluate(FieldValue value);
 
 			public FieldName getPredictorName(){
 				PPCell ppCell = getPPCell();
@@ -728,8 +728,8 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 
 			@Override
-			public Double evaluate(Object value){
-				boolean equals = ParameterUtil.equals(value, getCategory());
+			public Double evaluate(FieldValue value){
+				boolean equals = value.equalsString(getCategory());
 
 				return (equals ? 1d : 0d);
 			}
@@ -756,11 +756,11 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 
 			@Override
-			public Double evaluate(Object value){
+			public Double evaluate(FieldValue value){
 				Matrix matrix = getMatrix();
 
 				int row = getIndex(value);
-				int column = getIndex(getCategory()); // XXX
+				int column = getIndex(getCategory());
 
 				if(row < 0 || column < 0){
 					throw new EvaluationException();
@@ -774,18 +774,25 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 				return result.doubleValue();
 			}
 
-			public int getIndex(Object value){
+			public int getIndex(FieldValue value){
 				List<String> categories = getCategories();
 
 				for(int i = 0; i < categories.size(); i++){
 					String category = categories.get(i);
 
-					if(ParameterUtil.equals(value, category)){
+					boolean equals = value.equalsString(category);
+					if(equals){
 						return i;
 					}
 				}
 
 				return -1;
+			}
+
+			public int getIndex(String category){
+				List<String> categories = getCategories();
+
+				return categories.indexOf(category);
 			}
 
 			public Matrix getMatrix(){
@@ -812,10 +819,8 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 
 			@Override
-			public Double evaluate(Object value){
-				Double doubleValue = (Double)ParameterUtil.cast(DataType.DOUBLE, value);
-
-				return Math.pow(doubleValue, getMultiplicity());
+			public Double evaluate(FieldValue value){
+				return Math.pow((value.asNumber()).doubleValue(), getMultiplicity());
 			}
 
 			public Double getMultiplicity(){

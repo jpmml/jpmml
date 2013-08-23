@@ -41,7 +41,7 @@ public class TableUtil {
 	}
 
 	static
-	public Map<String, String> match(List<Map<String, String>> rows, Map<String, ?> values){
+	public Map<String, String> match(List<Map<String, String>> rows, Map<String, FieldValue> values){
 
 		rows:
 		for(Map<String, String> row : rows){
@@ -51,14 +51,17 @@ public class TableUtil {
 				continue rows;
 			}
 
-			Set<? extends Map.Entry<String, ?>> entries = values.entrySet();
-			for(Map.Entry<String, ?> entry : entries){
-				String rowValue = row.get(entry.getKey());
+			Collection<Map.Entry<String, FieldValue>> entries = values.entrySet();
+			for(Map.Entry<String, FieldValue> entry : entries){
+				String key = entry.getKey();
+				FieldValue value = entry.getValue();
+
+				String rowValue = row.get(key);
 				if(rowValue == null){
 					continue rows;
 				}
 
-				boolean equals = ParameterUtil.equals(entry.getValue(), rowValue);
+				boolean equals = value.equalsString(rowValue);
 				if(!equals){
 					continue rows;
 				}

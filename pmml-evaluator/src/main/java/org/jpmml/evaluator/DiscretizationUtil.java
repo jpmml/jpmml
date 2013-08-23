@@ -15,14 +15,20 @@ public class DiscretizationUtil {
 	}
 
 	static
-	public String discretize(Discretize discretize, Object value){
-		Double doubleValue = (Double)ParameterUtil.cast(DataType.DOUBLE, value);
+	public FieldValue discretize(Discretize discretize, FieldValue value){
+		String result = discretize(discretize, (value.asNumber()).doubleValue());
 
+		return FieldValueUtil.create(discretize.getDataType(), null, result);
+	}
+
+	static
+	public String discretize(Discretize discretize, double value){
 		List<DiscretizeBin> bins = discretize.getDiscretizeBins();
+
 		for(DiscretizeBin bin : bins){
 			Interval interval = bin.getInterval();
 
-			if(contains(interval, doubleValue)){
+			if(contains(interval, value)){
 				return bin.getBinValue();
 			}
 		}
@@ -31,49 +37,50 @@ public class DiscretizationUtil {
 	}
 
 	static
-	public boolean contains(Interval interval, Double value){
+	public boolean contains(Interval interval, double value){
 		Double left = interval.getLeftMargin();
 		Double right = interval.getRightMargin();
 
 		Interval.Closure closure = interval.getClosure();
 		switch(closure){
 			case OPEN_CLOSED:
-				return greaterThan(left, value) && lessOrEqual(right, value);
+				return greaterThan(value, left) && lessOrEqual(value, right);
 			case OPEN_OPEN:
-				return greaterThan(left, value) && lessThan(right, value);
+				return greaterThan(value, left) && lessThan(value, right);
 			case CLOSED_OPEN:
-				return greaterOrEqual(left, value) && lessThan(right, value);
+				return greaterOrEqual(value, left) && lessThan(value, right);
 			case CLOSED_CLOSED:
-				return greaterOrEqual(left, value) && lessOrEqual(right, value);
+				return greaterOrEqual(value, left) && lessOrEqual(value, right);
 			default:
 				throw new UnsupportedFeatureException(interval, closure);
 		}
 	}
 
 	static
-	private boolean lessThan(Double reference, Double value){
-		return (reference != null ? (value).compareTo(reference) < 0 : true);
+	private boolean lessThan(double value, Double reference){
+		return reference == null || Double.compare(value, reference) < 0;
 	}
 
 	static
-	private boolean lessOrEqual(Double reference, Double value){
-		return (reference != null ? (value).compareTo(reference) <= 0 : true);
+	private boolean lessOrEqual(double value, Double reference){
+		return reference == null || Double.compare(value, reference) <= 0;
 	}
 
 	static
-	private boolean greaterThan(Double reference, Double value){
-		return (reference != null ? (value).compareTo(reference) > 0 : true);
+	private boolean greaterThan(double value, Double reference){
+		return reference == null || Double.compare(value, reference) > 0;
 	}
 
 	static
-	private boolean greaterOrEqual(Double reference, Double value){
-		return (reference != null ? (value).compareTo(reference) >= 0 : true);
+	private boolean greaterOrEqual(double value, Double reference){
+		return reference == null || Double.compare(value, reference) >= 0;
 	}
 
 	static
-	public String mapValue(MapValues mapValues, Map<String, Object> values){
+	public FieldValue mapValue(MapValues mapValues, Map<String, FieldValue> values){
+		DataType dataType = mapValues.getDataType();
+
 		InlineTable table = mapValues.getInlineTable();
-
 		if(table != null){
 			List<Map<String, String>> rows = TableUtil.parse(table);
 
@@ -84,17 +91,15 @@ public class DiscretizationUtil {
 					throw new EvaluationException(mapValues);
 				}
 
-				return result;
-			}
-		} else
-
-		{
-			TableLocator tableLocator = mapValues.getTableLocator();
-			if(tableLocator != null){
-				throw new UnsupportedFeatureException(tableLocator);
+				return FieldValueUtil.create(dataType, null, result);
 			}
 		}
 
-		return mapValues.getDefaultValue();
+		TableLocator tableLocator = mapValues.getTableLocator();
+		if(tableLocator != null){
+			throw new UnsupportedFeatureException(tableLocator);
+		}
+
+		return FieldValueUtil.create(dataType, null, mapValues.getDefaultValue());
 	}
 }

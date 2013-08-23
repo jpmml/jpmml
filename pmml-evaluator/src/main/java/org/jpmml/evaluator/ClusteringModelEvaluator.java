@@ -94,26 +94,14 @@ public class ClusteringModelEvaluator extends ClusteringModelManager implements 
 
 		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.DISTANCE);
 
-		List<Number> values = Lists.newArrayList();
+		List<FieldValue> values = Lists.newArrayList();
 
 		List<Double> fieldWeights = Lists.newArrayList();
 
 		List<ClusteringField> clusteringFields = getCenterClusteringFields();
 		for(ClusteringField clusteringField : clusteringFields){
-			FieldName name = clusteringField.getField();
-
-			Object value = ExpressionUtil.evaluate(name, context);
-
-			DataType dataType = ParameterUtil.getDataType(value);
-			switch(dataType){
-				case DOUBLE:
-				case FLOAT: // XXX
-				case INTEGER:
-					values.add((Number)value);
-					break;
-				default:
-					throw new EvaluationException();
-			}
+			FieldValue value = ExpressionUtil.evaluate(clusteringField.getField(), context);
+			values.add(value);
 
 			Double fieldWeight = clusteringField.getFieldWeight();
 			fieldWeights.add(fieldWeight);
@@ -134,7 +122,7 @@ public class ClusteringModelEvaluator extends ClusteringModelManager implements 
 			double nonmissingSum = 0d;
 
 			for(int i = 0; i < values.size(); i++){
-				Object value = values.get(i);
+				FieldValue value = values.get(i);
 
 				Double adjustmentValue = adjustmentValues.get(i);
 
@@ -150,7 +138,7 @@ public class ClusteringModelEvaluator extends ClusteringModelManager implements 
 			double nonmissingSum = 0d;
 
 			for(int i = 0; i < values.size(); i++){
-				Object value = values.get(i);
+				FieldValue value = values.get(i);
 
 				sum += 1d;
 				nonmissingSum += (value != null ? 1d : 0d);

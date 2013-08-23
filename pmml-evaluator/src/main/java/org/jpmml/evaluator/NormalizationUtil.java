@@ -12,13 +12,23 @@ import org.dmg.pmml.*;
 public class NormalizationUtil {
 
 	static
+	public FieldValue normalize(NormContinuous normContinuous, FieldValue value){
+		double result = normalize(normContinuous, (value.asNumber()).doubleValue());
+
+		return FieldValueUtil.create(result);
+	}
+
+	static
 	public double normalize(NormContinuous normContinuous, double value){
 		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
+		if(linearNorms.size() < 2){
+			throw new InvalidFeatureException(normContinuous);
+		}
 
 		LinearNorm rangeStart = linearNorms.get(0);
 		LinearNorm rangeEnd = linearNorms.get(linearNorms.size() - 1);
 
-		// select proper interval for normalization
+		// Select proper interval for normalization
 		if (value >= rangeStart.getOrig() && value <= rangeEnd.getOrig()) {
 
 			for (int i = 1; i < linearNorms.size() - 1; i++) {
@@ -36,7 +46,7 @@ public class NormalizationUtil {
 			}
 		} else
 
-		// deal with outliers
+		// Deal with outliers
 		{
 			OutlierTreatmentMethodType outlierTreatmentMethod = normContinuous.getOutliers();
 
@@ -57,9 +67,15 @@ public class NormalizationUtil {
 					}
 					break;
 				case AS_EXTREME_VALUES:
-					return value < rangeStart.getOrig() ? rangeStart.getNorm() : rangeEnd.getNorm();
+					if (value < rangeStart.getOrig()) {
+						return rangeStart.getNorm();
+					} else
+
+					{
+						return rangeEnd.getNorm();
+					}
 				default:
-					break;
+					throw new UnsupportedFeatureException(normContinuous, outlierTreatmentMethod);
 			}
 		}
 
@@ -70,8 +86,11 @@ public class NormalizationUtil {
 	}
 
 	static
-	public double denormalize(NormContinuous normContinuous, double value) {
+	public double denormalize(NormContinuous normContinuous, double value){
 		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
+		if(linearNorms.size() < 2){
+			throw new InvalidFeatureException(normContinuous);
+		}
 
 		LinearNorm rangeStart = linearNorms.get(0);
 		LinearNorm rangeEnd = linearNorms.get(linearNorms.size() - 1);

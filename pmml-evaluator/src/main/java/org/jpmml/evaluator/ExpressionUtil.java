@@ -18,8 +18,8 @@ public class ExpressionUtil {
 	}
 
 	static
-	public Object evaluate(FieldName name, EvaluationContext context){
-		Map.Entry<FieldName, Object> entry = context.getArgumentEntry(name);
+	public FieldValue evaluate(FieldName name, EvaluationContext context){
+		Map.Entry<FieldName, FieldValue> entry = context.getArgumentEntry(name);
 		if(entry == null){
 			DerivedField derivedField = context.resolveField(name);
 			if(derivedField == null){
@@ -33,19 +33,14 @@ public class ExpressionUtil {
 	}
 
 	static
-	public Object evaluate(DerivedField derivedField, EvaluationContext context){
-		Object value = evaluate(derivedField.getExpression(), context);
+	public FieldValue evaluate(DerivedField derivedField, EvaluationContext context){
+		FieldValue value = evaluate(derivedField.getExpression(), context);
 
-		DataType dataType = derivedField.getDataType();
-		if(dataType != null){
-			value = ParameterUtil.cast(dataType, value);
-		}
-
-		return value;
+		return FieldValueUtil.refine(derivedField, value);
 	}
 
 	static
-	public Object evaluate(Expression expression, EvaluationContext context){
+	public FieldValue evaluate(Expression expression, EvaluationContext context){
 
 		if(expression instanceof Constant){
 			return evaluateConstant((Constant)expression, context);
@@ -83,7 +78,7 @@ public class ExpressionUtil {
 	}
 
 	static
-	public Object evaluateConstant(Constant constant, EvaluationContext context){
+	public FieldValue evaluateConstant(Constant constant, EvaluationContext context){
 		String value = constant.getValue();
 
 		DataType dataType = constant.getDataType();
@@ -91,88 +86,80 @@ public class ExpressionUtil {
 			dataType = ParameterUtil.getConstantDataType(value);
 		}
 
-		return ParameterUtil.parse(dataType, value);
+		return FieldValueUtil.create(dataType, null, value);
 	}
 
 	static
-	public Object evaluateFieldRef(FieldRef fieldRef, EvaluationContext context){
-		Object value = evaluate(fieldRef.getField(), context);
+	public FieldValue evaluateFieldRef(FieldRef fieldRef, EvaluationContext context){
+		FieldValue value = evaluate(fieldRef.getField(), context);
 		if(value == null){
-			return fieldRef.getMapMissingTo();
+			return FieldValueUtil.create(fieldRef.getMapMissingTo());
 		}
 
 		return value;
 	}
 
 	static
-	public Object evaluateNormContinuous(NormContinuous normContinuous, EvaluationContext context){
-		Number value = (Number)evaluate(normContinuous.getField(), context);
+	public FieldValue evaluateNormContinuous(NormContinuous normContinuous, EvaluationContext context){
+		FieldValue value = evaluate(normContinuous.getField(), context);
 		if(value == null){
-			return normContinuous.getMapMissingTo();
+			return FieldValueUtil.create(normContinuous.getMapMissingTo());
 		}
 
-		return NormalizationUtil.normalize(normContinuous, value.doubleValue());
+		return NormalizationUtil.normalize(normContinuous, value);
 	}
 
 	static
-	public Object evaluateNormDiscrete(NormDiscrete normDiscrete, EvaluationContext context){
-		Object value = evaluate(normDiscrete.getField(), context);
+	public FieldValue evaluateNormDiscrete(NormDiscrete normDiscrete, EvaluationContext context){
+		FieldValue value = evaluate(normDiscrete.getField(), context);
 		if(value == null){
-			return normDiscrete.getMapMissingTo();
+			return FieldValueUtil.create(normDiscrete.getMapMissingTo());
 		}
 
-		boolean equals = ParameterUtil.equals(value, normDiscrete.getValue());
+		boolean equals = value.equalsString(normDiscrete.getValue());
 
-		return Double.valueOf(equals ? 1.0 : 0.0);
+		return FieldValueUtil.create(equals ? 1d : 0d);
 	}
 
 	static
-	public Object evaluateDiscretize(Discretize discretize, EvaluationContext context){
-		DataType dataType = discretize.getDataType();
-
-		Object value = evaluate(discretize.getField(), context);
+	public FieldValue evaluateDiscretize(Discretize discretize, EvaluationContext context){
+		FieldValue value = evaluate(discretize.getField(), context);
 		if(value == null){
-			return parseSafely(dataType, discretize.getMapMissingTo());
+			return FieldValueUtil.create(discretize.getDataType(), null, discretize.getMapMissingTo());
 		}
 
-		String result = DiscretizationUtil.discretize(discretize, value);
-
-		return parseSafely(dataType, result);
+		return DiscretizationUtil.discretize(discretize, value);
 	}
 
 	static
-	public Object evaluateMapValues(MapValues mapValues, EvaluationContext context){
-		DataType dataType = mapValues.getDataType();
-
-		Map<String, Object> values = Maps.newLinkedHashMap();
+	public FieldValue evaluateMapValues(MapValues mapValues, EvaluationContext context){
+		Map<String, FieldValue> values = Maps.newLinkedHashMap();
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-			Object value = evaluate(fieldColumnPair.getField(), context);
+			FieldValue value = evaluate(fieldColumnPair.getField(), context);
 			if(value == null){
-				return parseSafely(dataType, mapValues.getMapMissingTo());
+				return FieldValueUtil.create(mapValues.getDataType(), null, mapValues.getMapMissingTo());
 			}
 
 			values.put(fieldColumnPair.getColumn(), value);
 		}
 
-		String result = DiscretizationUtil.mapValue(mapValues, values);
-
-		return parseSafely(dataType, result);
+		return DiscretizationUtil.mapValue(mapValues, values);
 	}
 
 	static
-	public Object evaluateApply(Apply apply, EvaluationContext context){
-		List<Object> values = Lists.newArrayList();
+	public FieldValue evaluateApply(Apply apply, EvaluationContext context){
+		List<FieldValue> values = Lists.newArrayList();
 
 		List<Expression> arguments = apply.getExpressions();
 		for(Expression argument : arguments){
-			Object value = evaluate(argument, context);
+			FieldValue value = evaluate(argument, context);
 
 			values.add(value);
 		}
 
-		Object result;
+		FieldValue result;
 
 		try {
 			result = FunctionUtil.evaluate(apply, values, context);
@@ -186,14 +173,14 @@ public class ExpressionUtil {
 					// Re-throw the given InvalidResultException instance
 					throw ire;
 				case AS_MISSING:
-					return apply.getMapMissingTo();
+					return FieldValueUtil.create(apply.getMapMissingTo());
 				default:
 					throw new UnsupportedFeatureException(apply, invalidValueTreatmentMethod);
 			}
 		}
 
 		if(result == null){
-			return apply.getMapMissingTo();
+			return FieldValueUtil.create(apply.getMapMissingTo());
 		}
 
 		return result;
@@ -203,22 +190,25 @@ public class ExpressionUtil {
 		value = {"rawtypes", "unchecked"}
 	)
 	static
-	public Object evaluateAggregate(Aggregate aggregate, EvaluationContext context){
-		Object value = evaluate(aggregate.getField(), context);
+	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
+		FieldValue value = evaluate(aggregate.getField(), context);
+
+		Collection<?> values;
 
 		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records
 		// It is assumed that the aggregation has been performed by application developer beforehand
-		if(!(value instanceof Collection)){
+		try {
+			values = (Collection<?>)FieldValueUtil.getValue(value);
+		} catch(ClassCastException cce){
 			throw new EvaluationException();
 		}
 
-		Collection<?> values = (Collection<?>)value;
-
 		FieldName groupName = aggregate.getGroupField();
 		if(groupName != null){
-			Object groupValue = evaluate(groupName, context);
+			FieldValue groupValue = evaluate(groupName, context);
 
-			ParameterUtil.getDataType(groupValue);
+			// Ensure that the group value is a simple type, not a collection type
+			ParameterUtil.getDataType(FieldValueUtil.getValue(groupValue));
 		}
 
 		// Remove missing values
@@ -227,30 +217,30 @@ public class ExpressionUtil {
 		Aggregate.Function function = aggregate.getFunction();
 		switch(function){
 			case COUNT:
-				return Integer.valueOf(values.size());
+				return FieldValueUtil.create(values.size());
 			case SUM:
-				return FunctionUtil.evaluate(new Apply("sum"), (List<?>)values, context);
+				return FunctionUtil.evaluate(new Apply("sum"), createValues(values), context);
 			case AVERAGE:
-				return FunctionUtil.evaluate(new Apply("avg"), (List<?>)values, context);
+				return FunctionUtil.evaluate(new Apply("avg"), createValues(values), context);
 			case MIN:
-				return Collections.min((Collection<Comparable>)values);
+				return FieldValueUtil.create(Collections.min((List<Comparable>)values));
 			case MAX:
-				return Collections.max((Collection<Comparable>)values);
+				return FieldValueUtil.create(Collections.max((List<Comparable>)values));
 			default:
 				throw new UnsupportedFeatureException(aggregate, function);
 		}
 	}
 
 	static
-	private Object parseSafely(DataType dataType, String value){
+	private List<FieldValue> createValues(Collection<?> values){
+		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
 
-		if(value != null){
-
-			if(dataType != null){
-				return ParameterUtil.parse(dataType, value);
+			@Override
+			public FieldValue apply(Object value){
+				return FieldValueUtil.create(value);
 			}
-		}
+		};
 
-		return value;
+		return Lists.newArrayList(Iterables.transform(values, function));
 	}
 }
