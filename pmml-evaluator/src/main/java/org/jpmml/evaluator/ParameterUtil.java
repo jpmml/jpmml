@@ -296,10 +296,14 @@ public class ParameterUtil {
 	}
 
 	static
-	public List<String> getValidValues(DataField dataField){
+	public List<String> getValidValues(TypeDefinitionField field){
+		List<Value> fieldValues = field.getValues();
+		if(fieldValues.isEmpty()){
+			return Collections.emptyList();
+		}
+
 		List<String> result = Lists.newArrayList();
 
-		List<Value> fieldValues = dataField.getValues();
 		for(Value fieldValue : fieldValues){
 			Value.Property property = fieldValue.getProperty();
 

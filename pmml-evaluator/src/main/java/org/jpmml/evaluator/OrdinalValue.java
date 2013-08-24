@@ -3,9 +3,14 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.*;
+
 import org.dmg.pmml.*;
 
 public class OrdinalValue extends FieldValue {
+
+	private List<?> ordering = null;
+
 
 	public OrdinalValue(DataType dataType, Object value){
 		super(dataType, value);
@@ -18,11 +23,41 @@ public class OrdinalValue extends FieldValue {
 
 	@Override
 	public int compareToString(String string){
-		return super.compareToString(string);
+		List<?> ordering = getOrdering();
+		if(ordering == null){
+			return super.compareToString(string);
+		}
+
+		return compare(ordering, getValue(), parseValue(string));
 	}
 
 	@Override
-	public int compareToValue(FieldValue that){
-		return super.compareToValue(that);
+	public int compareToValue(FieldValue value){
+		List<?> ordering = getOrdering();
+		if(ordering == null){
+			return super.compareToValue(value);
+		}
+
+		return compare(ordering, getValue(), value.getValue());
+	}
+
+	public List<?> getOrdering(){
+		return this.ordering;
+	}
+
+	public void setOrdering(List<?> ordering){
+		this.ordering = ordering;
+	}
+
+	static
+	private int compare(List<?> ordering, Object left, Object right){
+		int leftIndex = ordering.indexOf(left);
+		int rightIndex = ordering.indexOf(right);
+
+		if((leftIndex | rightIndex) < 0){
+			throw new EvaluationException();
+		}
+
+		return (leftIndex - rightIndex);
 	}
 }
