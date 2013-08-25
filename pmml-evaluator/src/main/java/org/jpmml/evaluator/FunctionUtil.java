@@ -86,13 +86,29 @@ public class FunctionUtil {
 	}
 
 	static
-	private boolean checkArguments(List<FieldValue> values, int size){
-		return (values.size() == size) && !values.contains(null);
+	private void checkArguments(List<FieldValue> values, int size){
+		checkArguments(values, size, false);
 	}
 
 	static
-	private boolean checkVariableArguments(List<FieldValue> values, int size){
-		return (values.size() >= size) && !values.contains(null);
+	private void checkArguments(List<FieldValue> values, int size, boolean allowNulls){
+		boolean success = (values.size() == size) && (allowNulls ? true : !values.contains(null));
+		if(!success){
+			throw new EvaluationException();
+		}
+	}
+
+	static
+	private void checkVariableArguments(List<FieldValue> values, int size){
+		checkVariableArguments(values, size, false);
+	}
+
+	static
+	private void checkVariableArguments(List<FieldValue> values, int size, boolean allowNulls){
+		boolean success = (values.size() >= size) && (allowNulls ? true : !values.contains(null));
+		if(!success){
+			throw new EvaluationException();
+		}
 	}
 
 	static
@@ -321,10 +337,7 @@ public class FunctionUtil {
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> values){
-
-			if(!checkArguments(values, 1)){
-				throw new EvaluationException();
-			}
+			checkArguments(values, 1);
 
 			FieldValue value = values.get(0);
 
@@ -389,10 +402,7 @@ public class FunctionUtil {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
-
-				if(!checkArguments(values, 2)){
-					throw new EvaluationException();
-				}
+				checkArguments(values, 2);
 
 				FieldValue left = values.get(0);
 				FieldValue right = values.get(1);
@@ -409,10 +419,7 @@ public class FunctionUtil {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
-
-				if(!checkArguments(values, 2)){
-					throw new EvaluationException();
-				}
+				checkArguments(values, 2);
 
 				FieldValue left = values.get(0);
 				FieldValue right = values.get(1);
@@ -459,10 +466,7 @@ public class FunctionUtil {
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> values){
-
-			if(values.size() != 1){
-				throw new EvaluationException();
-			}
+			checkArguments(values, 1, true);
 
 			FieldValue value = values.get(0);
 
@@ -499,10 +503,7 @@ public class FunctionUtil {
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> values){
-
-			if(!checkArguments(values, 2)){
-				throw new EvaluationException();
-			}
+			checkArguments(values, 2);
 
 			FieldValue left = values.get(0);
 			FieldValue right = values.get(1);
@@ -541,10 +542,7 @@ public class FunctionUtil {
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> values){
-
-			if(!checkArguments(values, 2)){
-				throw new EvaluationException();
-			}
+			checkArguments(values, 2);
 
 			FieldValue left = values.get(0);
 			FieldValue right = values.get(1);
@@ -598,10 +596,7 @@ public class FunctionUtil {
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> values){
-
-			if(!checkVariableArguments(values, 2)){
-				throw new EvaluationException();
-			}
+			checkVariableArguments(values, 2);
 
 			Boolean result = (values.get(0)).asBoolean();
 
@@ -640,10 +635,7 @@ public class FunctionUtil {
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> values){
-
-			if(!checkArguments(values, 1)){
-				throw new EvaluationException();
-			}
+			checkArguments(values, 1);
 
 			FieldValue value = values.get(0);
 
@@ -672,10 +664,7 @@ public class FunctionUtil {
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> values){
-
-			if(!checkVariableArguments(values, 2)){
-				throw new EvaluationException();
-			}
+			checkVariableArguments(values, 2);
 
 			Boolean result = evaluate(values.get(0), values.subList(1, values.size()));
 
@@ -750,10 +739,7 @@ public class FunctionUtil {
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> values){
-
-			if(!checkArguments(values, 1)){
-				throw new EvaluationException();
-			}
+			checkArguments(values, 1);
 
 			FieldValue value = values.get(0);
 
@@ -784,10 +770,7 @@ public class FunctionUtil {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
-
-				if(!checkArguments(values, 3)){
-					throw new EvaluationException();
-				}
+				checkArguments(values, 3);
 
 				String string = (values.get(0)).asString();
 
@@ -819,10 +802,7 @@ public class FunctionUtil {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
-
-				if(!checkArguments(values, 2)){
-					throw new EvaluationException();
-				}
+				checkArguments(values, 2);
 
 				FieldValue value = values.get(0);
 				FieldValue pattern = values.get(1);
@@ -845,10 +825,7 @@ public class FunctionUtil {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
-
-				if(!checkArguments(values, 2)){
-					throw new EvaluationException();
-				}
+				checkArguments(values, 2);
 
 				FieldValue value = values.get(0);
 				FieldValue pattern = values.get(1);
@@ -892,10 +869,7 @@ public class FunctionUtil {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
-
-				if(!checkArguments(values, 2)){
-					throw new EvaluationException();
-				}
+				checkArguments(values, 2);
 
 				LocalDate instant = (values.get(0)).asLocalDate();
 
@@ -911,10 +885,7 @@ public class FunctionUtil {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
-
-				if(!checkArguments(values, 1)){
-					throw new EvaluationException();
-				}
+				checkArguments(values, 1);
 
 				LocalTime instant = (values.get(0)).asLocalTime();
 
@@ -930,10 +901,7 @@ public class FunctionUtil {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
-
-				if(!checkArguments(values, 2)){
-					throw new EvaluationException();
-				}
+				checkArguments(values, 2);
 
 				LocalDateTime instant = (values.get(0)).asLocalDateTime();
 
