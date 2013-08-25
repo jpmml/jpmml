@@ -122,10 +122,15 @@ public class ArgumentUtil {
 		switch(opType){
 			case CONTINUOUS:
 				{
-					List<Double> range = Lists.newArrayList();
+					List<Double> range = null;
 
 					List<Interval> fieldIntervals = dataField.getIntervals();
 					for(Interval fieldInterval : fieldIntervals){
+
+						if(range == null){
+							range = Lists.newArrayList();
+						}
+
 						range.add(fieldInterval.getLeftMargin());
 						range.add(fieldInterval.getRightMargin());
 					}
@@ -136,14 +141,20 @@ public class ArgumentUtil {
 
 						switch(property){
 							case VALID:
-								range.add((Double)TypeUtil.parseOrCast(DataType.DOUBLE, fieldValue.getValue()));
+								{
+									if(range == null){
+										range = Lists.newArrayList();
+									}
+
+									range.add((Double)TypeUtil.parseOrCast(DataType.DOUBLE, fieldValue.getValue()));
+								}
 								break;
 							default:
 								break;
 						}
 					}
 
-					if(range.isEmpty()){
+					if(range == null){
 						return false;
 					}
 
