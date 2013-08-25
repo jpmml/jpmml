@@ -221,8 +221,9 @@ public class TypeUtil {
 			return left;
 		}
 
-		List<DataType> dataTypes = TypeUtil.precedenceSequence;
-		for(DataType dataType : dataTypes){
+		// "When the input parameters have multiple dataTypes, the least restrictive dataType will be inherited by default."
+		for(int i = 0; i < inheritanceSequence.length; i++){
+			DataType dataType = inheritanceSequence[i];
 
 			if((dataType).equals(left) || (dataType).equals(right)){
 				return dataType;
@@ -505,7 +506,7 @@ public class TypeUtil {
 		}
 	}
 
-	private static final List<DataType> precedenceSequence = Arrays.asList(DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER);
+	private static final DataType[] inheritanceSequence = {DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER};
 
 	private static final LocalDate YEAR_1960 = new LocalDate(1960, 1, 1);
 	private static final LocalDate YEAR_1970 = new LocalDate(1970, 1, 1);
