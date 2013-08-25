@@ -528,7 +528,7 @@ public class ParameterUtil {
 
 		if((left).equals(right)){
 			return left;
-		} // End if
+		}
 
 		List<DataType> dataTypes = ParameterUtil.precedenceSequence;
 		for(DataType dataType : dataTypes){
@@ -631,7 +631,7 @@ public class ParameterUtil {
 			return number.toString();
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.STRING, value);
 	}
 
 	/**
@@ -646,7 +646,7 @@ public class ParameterUtil {
 			return (Integer)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.INTEGER, value);
 	}
 
 	/**
@@ -667,7 +667,7 @@ public class ParameterUtil {
 			return Float.valueOf(number.floatValue());
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.FLOAT, value);
 	}
 
 	/**
@@ -688,7 +688,7 @@ public class ParameterUtil {
 			return Double.valueOf(number.doubleValue());
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DOUBLE, value);
 	}
 
 	/**
@@ -701,7 +701,7 @@ public class ParameterUtil {
 			return (Boolean)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.BOOLEAN, value);
 	}
 
 	/**
@@ -714,7 +714,7 @@ public class ParameterUtil {
 			return (LocalDate)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DATE, value);
 	}
 
 	/**
@@ -727,7 +727,7 @@ public class ParameterUtil {
 			return (LocalTime)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.TIME, value);
 	}
 
 	/**
@@ -740,7 +740,7 @@ public class ParameterUtil {
 			return (LocalDateTime)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DATE_TIME, value);
 	}
 
 	/**
@@ -759,7 +759,7 @@ public class ParameterUtil {
 			}
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DATE_DAYS_SINCE_1970, value);
 	}
 
 	/**
@@ -772,7 +772,7 @@ public class ParameterUtil {
 			return (SecondsSinceMidnight)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.TIME_SECONDS, value);
 	}
 
 	/**
@@ -791,7 +791,7 @@ public class ParameterUtil {
 			}
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DATE_TIME_SECONDS_SINCE_1970, value);
 	}
 
 	static

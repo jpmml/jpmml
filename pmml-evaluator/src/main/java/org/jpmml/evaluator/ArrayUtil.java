@@ -55,7 +55,7 @@ public class ArrayUtil {
 				break;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(Number.class, null);
 	}
 
 	static

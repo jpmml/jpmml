@@ -215,7 +215,7 @@ public class OutputUtil {
 	private Double getProbability(Object object, final OutputField outputField){
 
 		if(!(object instanceof HasProbability)){
-			throw new EvaluationException();
+			throw new TypeCheckException(HasProbability.class, object);
 		}
 
 		HasProbability hasProbability = (HasProbability)object;
@@ -237,7 +237,7 @@ public class OutputUtil {
 	public Double getCategoricalResidual(Object object, FieldValue expectedObject){
 
 		if(!(object instanceof HasProbability)){
-			throw new EvaluationException();
+			throw new TypeCheckException(HasProbability.class, object);
 		}
 
 		HasProbability hasProbability = (HasProbability)object;
@@ -256,7 +256,7 @@ public class OutputUtil {
 	private String getEntityId(Object object){
 
 		if(!(object instanceof HasEntityId)){
-			throw new EvaluationException();
+			throw new TypeCheckException(HasEntityId.class, object);
 		}
 
 		HasEntityId hasEntityId = (HasEntityId)object;
@@ -268,7 +268,7 @@ public class OutputUtil {
 	private String getClusterId(Object object){
 
 		if(!(object instanceof HasClusterId)){
-			throw new EvaluationException();
+			throw new TypeCheckException(HasClusterId.class, object);
 		}
 
 		HasClusterId hasClusterId = (HasClusterId)object;
@@ -280,7 +280,7 @@ public class OutputUtil {
 	public Double getAffinity(Object object, final OutputField outputField){
 
 		if(!(object instanceof HasAffinity)){
-			throw new EvaluationException();
+			throw new TypeCheckException(HasAffinity.class, object);
 		}
 
 		HasAffinity hasAffinity = (HasAffinity)object;
@@ -292,7 +292,7 @@ public class OutputUtil {
 	public Double getClusterAffinity(Object object){
 
 		if(!(object instanceof HasClusterAffinity)){
-			throw new EvaluationException();
+			throw new TypeCheckException(HasClusterAffinity.class, object);
 		}
 
 		HasClusterAffinity hasClusterAffinity = (HasClusterAffinity)object;
@@ -304,7 +304,7 @@ public class OutputUtil {
 	public String getReasonCode(Object object, final OutputField outputField){
 
 		if(!(object instanceof HasReasonCodes)){
-			throw new EvaluationException();
+			throw new TypeCheckException(HasReasonCodes.class, object);
 		}
 
 		HasReasonCodes hasReasonCodes = (HasReasonCodes)object;
@@ -328,7 +328,7 @@ public class OutputUtil {
 	public Object getRuleValue(Object object, final OutputField outputField){
 
 		if(!(object instanceof HasRuleValues)){
-			throw new EvaluationException();
+			throw new TypeCheckException(HasRuleValues.class, object);
 		}
 
 		HasRuleValues hasRuleValues = (HasRuleValues)object;

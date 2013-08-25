@@ -104,7 +104,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 		try {
 			values = (Collection<?>)FieldValueUtil.getValue(value);
 		} catch(ClassCastException cce){
-			throw new EvaluationException();
+			throw new TypeCheckException(Collection.class, value);
 		}
 
 		Set<String> input = createInput(values, context);

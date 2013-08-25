@@ -200,7 +200,7 @@ public class ExpressionUtil {
 		try {
 			values = (Collection<?>)FieldValueUtil.getValue(value);
 		} catch(ClassCastException cce){
-			throw new EvaluationException();
+			throw new TypeCheckException(Collection.class, value);
 		}
 
 		FieldName groupName = aggregate.getGroupField();

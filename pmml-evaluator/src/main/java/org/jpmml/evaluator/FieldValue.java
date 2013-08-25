@@ -97,7 +97,7 @@ public class FieldValue implements Serializable {
 			return (String)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.STRING, value);
 	}
 
 	public Integer asInteger(){
@@ -107,7 +107,7 @@ public class FieldValue implements Serializable {
 			return (Integer)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.INTEGER, value);
 	}
 
 	public Number asNumber(){
@@ -117,7 +117,7 @@ public class FieldValue implements Serializable {
 			return (Number)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DOUBLE, value);
 	}
 
 	public Boolean asBoolean(){
@@ -127,7 +127,7 @@ public class FieldValue implements Serializable {
 			return (Boolean)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.BOOLEAN, value);
 	}
 
 	public LocalDate asLocalDate(){
@@ -143,7 +143,7 @@ public class FieldValue implements Serializable {
 			return instant.toLocalDate();
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DATE, value);
 	}
 
 	public LocalTime asLocalTime(){
@@ -159,7 +159,7 @@ public class FieldValue implements Serializable {
 			return instant.toLocalTime();
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.TIME, value);
 	}
 
 	public LocalDateTime asLocalDateTime(){
@@ -175,7 +175,7 @@ public class FieldValue implements Serializable {
 			return (LocalDateTime)value;
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DATE_TIME, value);
 	}
 
 	public DateTime asDateTime(){
@@ -199,7 +199,7 @@ public class FieldValue implements Serializable {
 			return instant.toDateTime();
 		}
 
-		throw new EvaluationException();
+		throw new TypeCheckException(DataType.DATE_TIME, value);
 	}
 
 	@Override

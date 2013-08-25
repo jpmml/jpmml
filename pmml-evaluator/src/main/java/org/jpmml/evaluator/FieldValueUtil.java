@@ -5,6 +5,8 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import org.jpmml.manager.*;
+
 import org.dmg.pmml.*;
 
 import com.google.common.base.*;
@@ -71,8 +73,10 @@ public class FieldValueUtil {
 			case ORDINAL:
 				return new OrdinalValue(dataType, value);
 			default:
-				throw new EvaluationException();
+				break;
 		}
+
+		throw new EvaluationException();
 	}
 
 	static
