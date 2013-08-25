@@ -84,7 +84,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			Double value = (Double)ParameterUtil.cast(DataType.DOUBLE, targetValue);
+			Double value = (Double)ParameterUtil.parseOrCast(DataType.DOUBLE, targetValue);
 
 			sum += value.doubleValue();
 			weightedSum += ((segmentResult.getSegment()).getWeight() * value.doubleValue());
@@ -195,7 +195,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			String category = (String)ParameterUtil.cast(DataType.STRING, targetValue);
+			String category = ParameterUtil.format(targetValue);
 
 			Double vote = result.get(category);
 			if(vote == null){

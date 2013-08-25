@@ -53,13 +53,13 @@ public class ParameterUtil {
 							throw new InvalidFeatureException(miningField);
 						}
 
-						DataType dataType = dataField.getDataType();
+						Double doubleValue = (Double)parseOrCast(DataType.DOUBLE, value);
 
-						if(compare(dataType, value, lowValue) < 0){
+						if(compare(DataType.DOUBLE, doubleValue, lowValue) < 0){
 							value = lowValue;
 						} else
 
-						if(compare(dataType, value, highValue) > 0){
+						if(compare(DataType.DOUBLE, doubleValue, highValue) > 0){
 							value = highValue;
 						}
 					}
@@ -111,7 +111,7 @@ public class ParameterUtil {
 			}
 		}
 
-		return cast(dataField.getDataType(), value);
+		return parseOrCast(dataField.getDataType(), value);
 	}
 
 	static
@@ -139,7 +139,7 @@ public class ParameterUtil {
 
 						switch(property){
 							case VALID:
-								range.add(toDouble(fieldValue.getValue()));
+								range.add((Double)parseOrCast(DataType.DOUBLE, fieldValue.getValue()));
 								break;
 							default:
 								break;
@@ -150,15 +150,15 @@ public class ParameterUtil {
 						return false;
 					}
 
-					Double doubleValue = toDouble(value);
+					Double doubleValue = (Double)parseOrCast(DataType.DOUBLE, value);
 
 					Double minValue = Collections.min(range);
-					if((doubleValue).compareTo(minValue) < 0){
+					if(compare(DataType.DOUBLE, doubleValue, minValue) < 0){
 						return true;
 					}
 
 					Double maxValue = Collections.max(range);
-					if((doubleValue).compareTo(maxValue) > 0){
+					if(compare(DataType.DOUBLE, doubleValue, maxValue) > 0){
 						return true;
 					}
 				}
@@ -180,6 +180,9 @@ public class ParameterUtil {
 			return true;
 		}
 
+		// Compare as String. Missing values are often represented as String constants that cannot be parsed to runtime data type (eg. N/A).
+		String stringValue = format(value);
+
 		List<Value> fieldValues = dataField.getValues();
 		for(Value fieldValue : fieldValues){
 			Value.Property property = fieldValue.getProperty();
@@ -187,7 +190,7 @@ public class ParameterUtil {
 			switch(property){
 				case MISSING:
 					{
-						boolean equals = equals(DataType.STRING, value, fieldValue.getValue());
+						boolean equals = equals(DataType.STRING, stringValue, fieldValue.getValue());
 						if(equals){
 							return true;
 						}
@@ -223,14 +226,14 @@ public class ParameterUtil {
 
 		DataType dataType = dataField.getDataType();
 
-		// Speed up subsequent conversions
-		value = cast(dataType, value);
+		// Compare as runtime data type
+		value = parseOrCast(dataType, value);
 
 		OpType opType = dataField.getOptype();
 		switch(opType){
 			case CONTINUOUS:
 				{
-					Double doubleValue = toDouble(value);
+					Double doubleValue = (Double)ParameterUtil.cast(DataType.DOUBLE, value);
 
 					int intervalCount = 0;
 
@@ -262,7 +265,7 @@ public class ParameterUtil {
 								{
 									validValueCount += 1;
 
-									boolean equals = equals(dataType, value, fieldValue.getValue());
+									boolean equals = equals(dataType, value, parseOrCast(dataType, fieldValue.getValue()));
 									if(equals){
 										return true;
 									}
@@ -270,7 +273,7 @@ public class ParameterUtil {
 								break;
 							case INVALID:
 								{
-									boolean equals = equals(dataType, value, fieldValue.getValue());
+									boolean equals = equals(dataType, value, parseOrCast(dataType, fieldValue.getValue()));
 									if(equals){
 										return false;
 									}
@@ -333,39 +336,51 @@ public class ParameterUtil {
 	}
 
 	static
-	public Object parse(DataType dataType, String string){
+	public Object parseOrCast(DataType dataType, Object value){
+
+		if(value instanceof String){
+			String string = (String)value;
+
+			return parse(dataType, string);
+		}
+
+		return cast(dataType, value);
+	}
+
+	static
+	public Object parse(DataType dataType, String value){
 
 		switch(dataType){
 			case STRING:
-				return string;
+				return value;
 			case INTEGER:
-				return Integer.valueOf(string);
+				return Integer.valueOf(value);
 			case FLOAT:
-				return Float.valueOf(string);
+				return Float.valueOf(value);
 			case DOUBLE:
-				return Double.valueOf(string);
+				return Double.valueOf(value);
 			case BOOLEAN:
-				return Boolean.valueOf(string);
+				return Boolean.valueOf(value);
 			case DATE:
-				return parseDate(string);
+				return parseDate(value);
 			case TIME:
-				return parseTime(string);
+				return parseTime(value);
 			case DATE_TIME:
-				return parseDateTime(string);
+				return parseDateTime(value);
 			case DATE_DAYS_SINCE_1960:
-				return new DaysSinceDate(YEAR_1960, parseDate(string));
+				return new DaysSinceDate(YEAR_1960, parseDate(value));
 			case DATE_DAYS_SINCE_1970:
-				return new DaysSinceDate(YEAR_1970, parseDate(string));
+				return new DaysSinceDate(YEAR_1970, parseDate(value));
 			case DATE_DAYS_SINCE_1980:
-				return new DaysSinceDate(YEAR_1980, parseDate(string));
+				return new DaysSinceDate(YEAR_1980, parseDate(value));
 			case TIME_SECONDS:
-				return new SecondsSinceMidnight(parseSeconds(string));
+				return new SecondsSinceMidnight(parseSeconds(value));
 			case DATE_TIME_SECONDS_SINCE_1960:
-				return new SecondsSinceDate(YEAR_1960, parseDateTime(string));
+				return new SecondsSinceDate(YEAR_1960, parseDateTime(value));
 			case DATE_TIME_SECONDS_SINCE_1970:
-				return new SecondsSinceDate(YEAR_1970, parseDateTime(string));
+				return new SecondsSinceDate(YEAR_1970, parseDateTime(value));
 			case DATE_TIME_SECONDS_SINCE_1980:
-				return new SecondsSinceDate(YEAR_1980, parseDateTime(string));
+				return new SecondsSinceDate(YEAR_1980, parseDateTime(value));
 			default:
 				break;
 		}
@@ -374,25 +389,25 @@ public class ParameterUtil {
 	}
 
 	static
-	private LocalDate parseDate(String string){
-		return LocalDate.parse(string);
+	private LocalDate parseDate(String value){
+		return LocalDate.parse(value);
 	}
 
 	static
-	private LocalTime parseTime(String string){
-		return LocalTime.parse(string);
+	private LocalTime parseTime(String value){
+		return LocalTime.parse(value);
 	}
 
 	static
-	private LocalDateTime parseDateTime(String string){
-		return LocalDateTime.parse(string);
+	private LocalDateTime parseDateTime(String value){
+		return LocalDateTime.parse(value);
 	}
 
 	@SuppressWarnings (
 		value = {"deprecation"}
 	)
 	static
-	private Seconds parseSeconds(String string){
+	private Seconds parseSeconds(String value){
 		DateTimeFormatter format = SecondsSinceMidnight.getFormat();
 
 		DateTimeParser parser = format.getParser();
@@ -400,14 +415,28 @@ public class ParameterUtil {
 		DateTimeParserBucket bucket = new DateTimeParserBucket(0, null, null);
 		bucket.setZone(null);
 
-		int result = parser.parseInto(bucket, string, 0);
-		if(result >= 0 && result >= string.length()){
+		int result = parser.parseInto(bucket, value, 0);
+		if(result >= 0 && result >= value.length()){
 			long millis = bucket.computeMillis(true);
 
 			return Seconds.seconds((int)(millis / 1000L));
 		}
 
-		throw new IllegalArgumentException(string);
+		throw new IllegalArgumentException(value);
+	}
+
+	static
+	public String format(Object value){
+
+		if(value instanceof String){
+			return (String)value;
+		} // End if
+
+		if(value != null){
+			return String.valueOf(value);
+		}
+
+		throw new EvaluationException();
 	}
 
 	/**
@@ -585,7 +614,7 @@ public class ParameterUtil {
 	}
 
 	/**
-	 * Converts the specified value to String data type.
+	 * Casts the specified value to String data type.
 	 *
 	 * @see DataType#STRING
 	 */
@@ -606,19 +635,12 @@ public class ParameterUtil {
 	}
 
 	/**
-	 * Converts the specified value to Integer data type.
+	 * Casts the specified value to Integer data type.
 	 *
 	 * @see DataType#INTEGER
 	 */
 	static
 	private Integer toInteger(Object value){
-
-		// XXX
-		if(value instanceof String){
-			String string = (String)value;
-
-			return Integer.valueOf(string);
-		} else
 
 		if(value instanceof Integer){
 			return (Integer)value;
@@ -628,19 +650,12 @@ public class ParameterUtil {
 	}
 
 	/**
-	 * Converts the specified value to Float data type.
+	 * Casts the specified value to Float data type.
 	 *
 	 * @see DataType#FLOAT
 	 */
 	static
 	private Float toFloat(Object value){
-
-		// XXX
-		if(value instanceof String){
-			String string = (String)value;
-
-			return Float.valueOf(string);
-		} else
 
 		if(value instanceof Float){
 			return (Float)value;
@@ -656,19 +671,12 @@ public class ParameterUtil {
 	}
 
 	/**
-	 * Converts the specified value to Double data type.
+	 * Casts the specified value to Double data type.
 	 *
 	 * @see DataType#DOUBLE
 	 */
 	static
 	private Double toDouble(Object value){
-
-		// XXX
-		if(value instanceof String){
-			String string = (String)value;
-
-			return Double.valueOf(string);
-		} else
 
 		if(value instanceof Double){
 			return (Double)value;
@@ -688,13 +696,6 @@ public class ParameterUtil {
 	 */
 	static
 	private Boolean toBoolean(Object value){
-
-		// XXX
-		if(value instanceof String){
-			String string = (String)value;
-
-			return Boolean.valueOf(string);
-		} else
 
 		if(value instanceof Boolean){
 			return (Boolean)value;

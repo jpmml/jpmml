@@ -134,37 +134,25 @@ public class ParameterUtilTest {
 	}
 
 	@Test
-	public void equals(){
-		assertTrue(ParameterUtil.equals(DataType.STRING, "1", "1"));
+	public void cast(){
+		assertEquals("1", ParameterUtil.cast(DataType.STRING, "1"));
 
-		assertTrue(ParameterUtil.equals(DataType.INTEGER, 1, "1"));
+		assertEquals("1", ParameterUtil.cast(DataType.STRING, 1));
+		assertEquals("1.0", ParameterUtil.cast(DataType.STRING, 1f)); // XXX
+		assertEquals("1.0", ParameterUtil.cast(DataType.STRING, 1.0f));
+		assertEquals("1.0", ParameterUtil.cast(DataType.STRING, 1d)); // XXX
+		assertEquals("1.0", ParameterUtil.cast(DataType.STRING, 1.0d));
 
-		assertTrue(ParameterUtil.equals(DataType.FLOAT, 1f, "1"));
-		assertTrue(ParameterUtil.equals(DataType.FLOAT, 1.0f, "1"));
-		assertTrue(ParameterUtil.equals(DataType.FLOAT, 1f, "1.0"));
+		assertEquals(1, ParameterUtil.cast(DataType.INTEGER, 1));
 
-		assertTrue(ParameterUtil.equals(DataType.DOUBLE, 1d, "1"));
-		assertTrue(ParameterUtil.equals(DataType.DOUBLE, 1.0d, "1"));
-		assertTrue(ParameterUtil.equals(DataType.DOUBLE, 1d, "1.0"));
+		assertEquals(1f, ParameterUtil.cast(DataType.FLOAT, 1));
+		assertEquals(1f, ParameterUtil.cast(DataType.FLOAT, 1f));
 
-		assertTrue(ParameterUtil.equals(DataType.BOOLEAN, true, "true"));
-		assertTrue(ParameterUtil.equals(DataType.BOOLEAN, false, "false"));
+		assertEquals(1d, ParameterUtil.cast(DataType.DOUBLE, 1));
+		assertEquals(1d, ParameterUtil.cast(DataType.DOUBLE, 1f));
+		assertEquals(1d, ParameterUtil.cast(DataType.DOUBLE, 1d));
 	}
 
-	@Test
-	public void compare(){
-		assertTrue(ParameterUtil.compare(DataType.STRING, "1", "1") == 0);
-
-		assertTrue(ParameterUtil.compare(DataType.INTEGER, 1, "1") == 0);
-
-		assertTrue(ParameterUtil.compare(DataType.FLOAT, 1f, "1") == 0);
-		assertTrue(ParameterUtil.compare(DataType.FLOAT, 1.0f, "1") == 0);
-		assertTrue(ParameterUtil.compare(DataType.FLOAT, 1f, "1.0") == 0);
-
-		assertTrue(ParameterUtil.compare(DataType.DOUBLE, 1d, "1") == 0);
-		assertTrue(ParameterUtil.compare(DataType.DOUBLE, 1.0d, "1") == 0);
-		assertTrue(ParameterUtil.compare(DataType.DOUBLE, 1d, "1.0") == 0);
-	}
 
 	@Test
 	public void compareDateTime(){

@@ -244,8 +244,8 @@ public class OutputUtil {
 
 		object = getPredictedValue(object);
 
-		String value = (String)ParameterUtil.cast(DataType.STRING, object);
-		String expectedValue = (String)ParameterUtil.cast(DataType.STRING, FieldValueUtil.getValue(expectedObject));
+		String value = ParameterUtil.format(object);
+		String expectedValue = ParameterUtil.format(FieldValueUtil.getValue(expectedObject));
 
 		boolean equals = ParameterUtil.equals(DataType.STRING, value, expectedValue);
 

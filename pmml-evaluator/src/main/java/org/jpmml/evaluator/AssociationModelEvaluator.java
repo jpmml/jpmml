@@ -170,7 +170,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 		values:
 		for(Object value : values){
-			String stringValue = (String)ParameterUtil.cast(DataType.STRING, value);
+			String stringValue = ParameterUtil.format(value);
 
 			String id = valueItems.get(stringValue);
 			if(id == null){

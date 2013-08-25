@@ -55,7 +55,7 @@ public class FieldValueUtil {
 			} else
 
 			{
-				value = ParameterUtil.cast(dataType, value);
+				value = ParameterUtil.parseOrCast(dataType, value);
 			} // End if
 
 			if(opType == null){
