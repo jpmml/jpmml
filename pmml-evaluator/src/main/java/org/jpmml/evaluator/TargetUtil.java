@@ -144,7 +144,7 @@ public class TargetUtil {
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
 
-			if(TypeUtil.equals(dataType, value, targetValue.getValue())){
+			if(TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, targetValue.getValue()))){
 				return targetValue;
 			}
 		}
