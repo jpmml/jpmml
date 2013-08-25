@@ -121,7 +121,7 @@ public class BatchUtil {
 
 	static
 	private boolean acceptable(String expected, Object actual){
-		return VerificationUtil.acceptable(ParameterUtil.parse(ParameterUtil.getDataType(actual), expected), actual, BatchUtil.precision, BatchUtil.zeroThreshold);
+		return VerificationUtil.acceptable(TypeUtil.parse(TypeUtil.getDataType(actual), expected), actual, BatchUtil.precision, BatchUtil.zeroThreshold);
 	}
 
 	// One part per million parts

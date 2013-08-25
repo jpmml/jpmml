@@ -83,7 +83,7 @@ public class ExpressionUtil {
 
 		DataType dataType = constant.getDataType();
 		if(dataType == null){
-			dataType = ParameterUtil.getConstantDataType(value);
+			dataType = TypeUtil.getConstantDataType(value);
 		}
 
 		return FieldValueUtil.create(dataType, null, value);
@@ -208,7 +208,7 @@ public class ExpressionUtil {
 			FieldValue groupValue = evaluate(groupName, context);
 
 			// Ensure that the group value is a simple type, not a collection type
-			ParameterUtil.getDataType(FieldValueUtil.getValue(groupValue));
+			TypeUtil.getDataType(FieldValueUtil.getValue(groupValue));
 		}
 
 		// Remove missing values

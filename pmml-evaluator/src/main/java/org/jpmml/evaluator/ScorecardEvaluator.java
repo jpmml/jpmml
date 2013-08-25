@@ -23,7 +23,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 
 	@Override
 	public Object prepare(FieldName name, Object value){
-		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
+		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
 	@Override

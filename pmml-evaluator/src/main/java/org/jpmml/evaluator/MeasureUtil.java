@@ -135,9 +135,9 @@ public class MeasureUtil {
 			case DELTA:
 			case EQUAL:
 				{
-					DataType dataType = ParameterUtil.getResultDataType(ParameterUtil.getDataType(x), ParameterUtil.getDataType(y));
+					DataType dataType = TypeUtil.getResultDataType(TypeUtil.getDataType(x), TypeUtil.getDataType(y));
 
-					boolean equals = ParameterUtil.equals(dataType, x, y);
+					boolean equals = TypeUtil.equals(dataType, x, y);
 
 					if((CompareFunctionType.DELTA).equals(compareFunction)){
 						distance = (equals ? 0 : 1);

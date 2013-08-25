@@ -62,7 +62,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 	@Override
 	public Object prepare(FieldName name, Object value){
-		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
+		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
 	@Override
@@ -170,7 +170,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 		values:
 		for(Object value : values){
-			String stringValue = ParameterUtil.format(value);
+			String stringValue = TypeUtil.format(value);
 
 			String id = valueItems.get(stringValue);
 			if(id == null){

@@ -53,15 +53,15 @@ public class FieldValueUtil {
 
 		{
 			if(dataType == null){
-				dataType = ParameterUtil.getDataType(value);
+				dataType = TypeUtil.getDataType(value);
 			} else
 
 			{
-				value = ParameterUtil.parseOrCast(dataType, value);
+				value = TypeUtil.parseOrCast(dataType, value);
 			} // End if
 
 			if(opType == null){
-				opType = ParameterUtil.getOpType(dataType);
+				opType = TypeUtil.getOpType(dataType);
 			}
 		}
 
@@ -137,7 +137,7 @@ public class FieldValueUtil {
 
 	static
 	private List<?> getOrdering(TypeDefinitionField field, final DataType dataType){
-		List<String> values = ParameterUtil.getValidValues(field);
+		List<String> values = ArgumentUtil.getValidValues(field);
 		if(values.isEmpty()){
 			return null;
 		}
@@ -146,7 +146,7 @@ public class FieldValueUtil {
 
 			@Override
 			public Object apply(String string){
-				return ParameterUtil.parse(dataType, string);
+				return TypeUtil.parse(dataType, string);
 			}
 		};
 

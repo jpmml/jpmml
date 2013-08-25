@@ -23,7 +23,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 	@Override
 	public Object prepare(FieldName name, Object value){
-		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
+		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			Double value = (Double)ParameterUtil.parseOrCast(DataType.DOUBLE, targetValue);
+			Double value = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, targetValue);
 
 			sum += value.doubleValue();
 			weightedSum += ((segmentResult.getSegment()).getWeight() * value.doubleValue());
@@ -195,7 +195,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			String category = ParameterUtil.format(targetValue);
+			String category = TypeUtil.format(targetValue);
 
 			Double vote = result.get(category);
 			if(vote == null){

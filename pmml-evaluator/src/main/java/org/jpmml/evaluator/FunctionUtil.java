@@ -179,7 +179,7 @@ public class FunctionUtil {
 				return null;
 			}
 
-			DataType dataType = ParameterUtil.getResultDataType(left.getDataType(), right.getDataType());
+			DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
 
 			Number result;
 
@@ -259,7 +259,7 @@ public class FunctionUtil {
 				statistic.increment((value.asNumber()).doubleValue());
 
 				if(dataType != null){
-					dataType = ParameterUtil.getResultDataType(dataType, value.getDataType());
+					dataType = TypeUtil.getResultDataType(dataType, value.getDataType());
 				} else
 
 				{
@@ -407,7 +407,7 @@ public class FunctionUtil {
 				FieldValue left = values.get(0);
 				FieldValue right = values.get(1);
 
-				DataType dataType = ParameterUtil.getResultDataType(left.getDataType(), right.getDataType());
+				DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
 
 				Double result = Math.pow((left.asNumber()).doubleValue(), (right.asNumber()).doubleValue());
 
@@ -424,7 +424,7 @@ public class FunctionUtil {
 				FieldValue left = values.get(0);
 				FieldValue right = values.get(1);
 
-				DataType dataType = ParameterUtil.getResultDataType(left.getDataType(), right.getDataType());
+				DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
 
 				Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? 1 : 0;
 

@@ -34,7 +34,7 @@ public class FieldValue implements Serializable {
 	 * @param string The reference value.
 	 */
 	public boolean equalsString(String string){
-		return ParameterUtil.equals(getDataType(), getValue(), parseValue(string));
+		return TypeUtil.equals(getDataType(), getValue(), parseValue(string));
 	}
 
 	public boolean equalsAnyString(Iterable<String> strings){
@@ -51,9 +51,9 @@ public class FieldValue implements Serializable {
 	}
 
 	public boolean equalsValue(FieldValue value){
-		DataType dataType = ParameterUtil.getResultDataType(getDataType(), value.getDataType());
+		DataType dataType = TypeUtil.getResultDataType(getDataType(), value.getDataType());
 
-		return ParameterUtil.equals(dataType, getValue(), value.getValue());
+		return TypeUtil.equals(dataType, getValue(), value.getValue());
 	}
 
 	public boolean equalsAnyValue(Iterable<FieldValue> values){
@@ -75,19 +75,19 @@ public class FieldValue implements Serializable {
 	 * @param string The reference value.
 	 */
 	public int compareToString(String string){
-		return ParameterUtil.compare(getDataType(), getValue(), parseValue(string));
+		return TypeUtil.compare(getDataType(), getValue(), parseValue(string));
 	}
 
 	public int compareToValue(FieldValue value){
-		DataType dataType = ParameterUtil.getResultDataType(getDataType(), value.getDataType());
+		DataType dataType = TypeUtil.getResultDataType(getDataType(), value.getDataType());
 
-		return ParameterUtil.compare(dataType, getValue(), value.getValue());
+		return TypeUtil.compare(dataType, getValue(), value.getValue());
 	}
 
 	public Object parseValue(String string){
 		DataType dataType = getDataType();
 
-		return ParameterUtil.parse(dataType, string);
+		return TypeUtil.parse(dataType, string);
 	}
 
 	public String asString(){

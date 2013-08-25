@@ -110,7 +110,7 @@ public class ExpressionUtilTest {
 	public void evaluateAggregate(){
 		FieldName name = new FieldName("x");
 
-		List<?> values = Arrays.asList(ParameterUtil.parse(DataType.DATE, "2013-01-01"), ParameterUtil.parse(DataType.DATE, "2013-02-01"), ParameterUtil.parse(DataType.DATE, "2013-03-01"));
+		List<?> values = Arrays.asList(TypeUtil.parse(DataType.DATE, "2013-01-01"), TypeUtil.parse(DataType.DATE, "2013-02-01"), TypeUtil.parse(DataType.DATE, "2013-03-01"));
 
 		EvaluationContext context = createContext(name, values);
 

@@ -54,7 +54,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 	@Override
 	public Object prepare(FieldName name, Object value){
-		return ParameterUtil.prepare(getDataField(name), getMiningField(name), value);
+		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-		List<String> targetCategories = ParameterUtil.getValidValues(dataField);
+		List<String> targetCategories = ArgumentUtil.getValidValues(dataField);
 		if(targetCategories.size() < 2){
 			throw new InvalidFeatureException(dataField);
 		}

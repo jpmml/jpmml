@@ -139,12 +139,12 @@ public class TargetUtil {
 
 	static
 	public TargetValue getTargetValue(Target target, Object value){
-		DataType dataType = ParameterUtil.getDataType(value);
+		DataType dataType = TypeUtil.getDataType(value);
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
 
-			if(ParameterUtil.equals(dataType, value, targetValue.getValue())){
+			if(TypeUtil.equals(dataType, value, targetValue.getValue())){
 				return targetValue;
 			}
 		}

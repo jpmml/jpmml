@@ -12,7 +12,7 @@ public class TypeCheckException extends EvaluationException {
 	}
 
 	public TypeCheckException(DataType expected, Object value){
-		super(formatMessage(expected, (value != null ? ParameterUtil.getDataType(value) : null), value));
+		super(formatMessage(expected, (value != null ? TypeUtil.getDataType(value) : null), value));
 	}
 
 	public TypeCheckException(Class<?> expected, FieldValue value){
