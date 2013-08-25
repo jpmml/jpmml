@@ -22,7 +22,7 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 	}
 
 	@Override
-	public Object prepare(FieldName name, Object value){
+	public FieldValue prepare(FieldName name, Object value){
 		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 

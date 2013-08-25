@@ -20,7 +20,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	}
 
 	@Override
-	public Object prepare(FieldName name, Object value){
+	public FieldValue prepare(FieldName name, Object value){
 		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 

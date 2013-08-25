@@ -74,7 +74,7 @@ public interface Evaluator extends Consumer {
 	 * @see #getDataField(FieldName)
 	 * @see #getMiningField(FieldName)
 	 */
-	Object prepare(FieldName name, Object value);
+	FieldValue prepare(FieldName name, Object value);
 
 	/**
 	 * @param arguments Map of {@link #getActiveFields() active field} values.

@@ -31,22 +31,22 @@ public class ArgumentUtilTest {
 		miningField.setLowValue(1d);
 		miningField.setHighValue(3d);
 
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, "1"));
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1));
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1f));
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1d));
+		assertEquals(1d, prepare(dataField, miningField, "1"));
+		assertEquals(1d, prepare(dataField, miningField, 1));
+		assertEquals(1d, prepare(dataField, miningField, 1f));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
 
 		Value missingValue = createValue("N/A", Property.MISSING);
 
 		fieldValues.add(missingValue);
 
-		assertEquals(null, ArgumentUtil.prepare(dataField, miningField, null));
-		assertEquals(null, ArgumentUtil.prepare(dataField, miningField, "N/A"));
+		assertEquals(null, prepare(dataField, miningField, null));
+		assertEquals(null, prepare(dataField, miningField, "N/A"));
 
 		miningField.setMissingValueReplacement("0");
 
-		assertEquals(0d, ArgumentUtil.prepare(dataField, miningField, null));
-		assertEquals(0d, ArgumentUtil.prepare(dataField, miningField, "N/A"));
+		assertEquals(0d, prepare(dataField, miningField, null));
+		assertEquals(0d, prepare(dataField, miningField, "N/A"));
 
 		fieldValues.clear();
 		fieldIntervals.clear();
@@ -62,22 +62,22 @@ public class ArgumentUtilTest {
 		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS);
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
-		assertEquals(-1d, ArgumentUtil.prepare(dataField, miningField, -1d));
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1d));
-		assertEquals(5d, ArgumentUtil.prepare(dataField, miningField, 5d));
+		assertEquals(-1d, prepare(dataField, miningField, -1d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(5d, prepare(dataField, miningField, 5d));
 
 		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, -1d));
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1d));
-		assertEquals(3d, ArgumentUtil.prepare(dataField, miningField, 5d));
+		assertEquals(1d, prepare(dataField, miningField, -1d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(3d, prepare(dataField, miningField, 5d));
 
 		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS);
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1d));
-		assertEquals(0d, ArgumentUtil.prepare(dataField, miningField, 5d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(0d, prepare(dataField, miningField, 5d));
 
 		fieldValues.clear();
 		fieldIntervals.clear();
@@ -92,13 +92,13 @@ public class ArgumentUtilTest {
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1d));
-		assertEquals(5d, ArgumentUtil.prepare(dataField, miningField, 5d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(5d, prepare(dataField, miningField, 5d));
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1d));
-		assertEquals(0d, ArgumentUtil.prepare(dataField, miningField, 5d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(0d, prepare(dataField, miningField, 5d));
 
 		fieldValues.clear();
 		fieldIntervals.clear();
@@ -111,13 +111,13 @@ public class ArgumentUtilTest {
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
-		assertEquals(1d, ArgumentUtil.prepare(dataField, miningField, 1d));
-		assertEquals(5d, ArgumentUtil.prepare(dataField, miningField, 5d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(5d, prepare(dataField, miningField, 5d));
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
-		assertEquals(0d, ArgumentUtil.prepare(dataField, miningField, 1d));
-		assertEquals(5d, ArgumentUtil.prepare(dataField, miningField, 5d));
+		assertEquals(0d, prepare(dataField, miningField, 1d));
+		assertEquals(5d, prepare(dataField, miningField, 5d));
 	}
 
 	@Test
@@ -128,6 +128,13 @@ public class ArgumentUtilTest {
 	@Test
 	public void isValid(){
 		assertFalse(ArgumentUtil.isValid(null, null));
+	}
+
+	static
+	private Object prepare(DataField dataField, MiningField miningField, Object value){
+		FieldValue result = ArgumentUtil.prepare(dataField, miningField, value);
+
+		return FieldValueUtil.getValue(result);
 	}
 
 	static

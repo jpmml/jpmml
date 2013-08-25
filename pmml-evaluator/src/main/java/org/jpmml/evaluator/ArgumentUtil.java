@@ -21,7 +21,7 @@ public class ArgumentUtil {
 		value = {"unused"}
 	)
 	static
-	public Object prepare(DataField dataField, MiningField miningField, Object value){
+	public FieldValue prepare(DataField dataField, MiningField miningField, Object value){
 
 		if(dataField == null){
 			throw new InvalidFeatureException(dataField);
@@ -108,7 +108,7 @@ public class ArgumentUtil {
 			}
 		}
 
-		return TypeUtil.parseOrCast(dataField.getDataType(), value);
+		return FieldValueUtil.create(dataField, value);
 	}
 
 	static

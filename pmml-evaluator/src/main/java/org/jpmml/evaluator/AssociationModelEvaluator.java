@@ -61,7 +61,7 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 	}
 
 	@Override
-	public Object prepare(FieldName name, Object value){
+	public FieldValue prepare(FieldName name, Object value){
 		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
