@@ -10,9 +10,11 @@ import com.sun.tools.xjc.*;
 import com.sun.tools.xjc.model.*;
 import com.sun.tools.xjc.outline.*;
 
+import org.jvnet.jaxb2_commons.plugin.*;
+
 import org.xml.sax.*;
 
-public class ValueConstructorPlugin extends Plugin {
+public class ValueConstructorPlugin extends AbstractParameterizablePlugin {
 
 	private boolean ignoreAttributes = false;
 
@@ -29,39 +31,6 @@ public class ValueConstructorPlugin extends Plugin {
 	@Override
 	public String getUsage(){
 		return null;
-	}
-
-	@Override
-	public int parseArgument(Options options, String[] args, int i){
-		int result = 0;
-
-		String prefix = ("-" + getOptionName());
-
-		for(int j = i; j < args.length; j++, result++){
-			String arg = args[j];
-
-			if(prefix.equals(arg)){
-				// Ignored
-			} else
-
-			if((prefix + ":" + "ignoreAttributes").equals(arg)){
-				setIgnoreAttributes(true);
-			} else
-
-			if((prefix + ":" + "ignoreElements").equals(arg)){
-				setIgnoreElements(true);
-			} else
-
-			if((prefix + ":" + "ignoreValues").equals(arg)){
-				setIgnoreValues(true);
-			} else
-
-			{
-				break;
-			}
-		}
-
-		return result;
 	}
 
 	@Override
@@ -164,7 +133,7 @@ public class ValueConstructorPlugin extends Plugin {
 		return this.ignoreAttributes;
 	}
 
-	private void setIgnoreAttributes(boolean ignoreAttributes){
+	public void setIgnoreAttributes(boolean ignoreAttributes){
 		this.ignoreAttributes = ignoreAttributes;
 	}
 
@@ -172,7 +141,7 @@ public class ValueConstructorPlugin extends Plugin {
 		return this.ignoreElements;
 	}
 
-	private void setIgnoreElements(boolean ignoreElements){
+	public void setIgnoreElements(boolean ignoreElements){
 		this.ignoreElements = ignoreElements;
 	}
 
@@ -180,7 +149,7 @@ public class ValueConstructorPlugin extends Plugin {
 		return this.ignoreValues;
 	}
 
-	private void setIgnoreValues(boolean ignoreValues){
+	public void setIgnoreValues(boolean ignoreValues){
 		this.ignoreValues = ignoreValues;
 	}
 }
