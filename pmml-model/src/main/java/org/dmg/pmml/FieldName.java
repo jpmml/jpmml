@@ -3,11 +3,12 @@
  */
 package org.dmg.pmml;
 
+import java.io.*;
 import java.lang.ref.*;
 import java.util.*;
 
 final
-public class FieldName {
+public class FieldName implements Serializable {
 
 	private String value = null;
 
@@ -53,6 +54,10 @@ public class FieldName {
 		}
 
 		this.value = value;
+	}
+
+	Object readResolve(){
+		return intern();
 	}
 
 	static
