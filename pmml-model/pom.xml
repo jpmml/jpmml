@@ -84,6 +84,7 @@
 						<arg>-XsuperClass-defaultName=org.dmg.pmml.PMMLObject</arg>
 						<arg>-XunsupportedProperty</arg>
 						<arg>-XvalueConstructor</arg>
+						<arg>-Xvisitor</arg>
 					</args>
 					<episode>false</episode>
 					<extension>true</extension>

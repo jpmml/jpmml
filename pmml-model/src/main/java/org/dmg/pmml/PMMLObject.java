@@ -13,7 +13,7 @@ import org.xml.sax.*;
 
 @XmlTransient
 abstract
-public class PMMLObject implements Locatable, Serializable {
+public class PMMLObject implements Locatable, Serializable, Visitable {
 
 	@Override
 	abstract
