@@ -30,7 +30,7 @@ public class MatrixUtil {
 		List<Array> arrays = matrix.getArrays();
 		List<MatCell> matCells = matrix.getMatCells();
 
-		Matrix.Kind kind = getKind(matrix);
+		Matrix.Kind kind = matrix.getKind();
 		switch(kind){
 			case DIAGONAL:
 				{
@@ -151,7 +151,7 @@ public class MatrixUtil {
 		List<Array> arrays = matrix.getArrays();
 		List<MatCell> matCells = matrix.getMatCells();
 
-		Matrix.Kind kind = getKind(matrix);
+		Matrix.Kind kind = matrix.getKind();
 		switch(kind){
 			case DIAGONAL:
 				{
@@ -202,7 +202,7 @@ public class MatrixUtil {
 		List<Array> arrays = matrix.getArrays();
 		List<MatCell> matCells = matrix.getMatCells();
 
-		Matrix.Kind kind = getKind(matrix);
+		Matrix.Kind kind = matrix.getKind();
 		switch(kind){
 			case DIAGONAL:
 				{
@@ -240,16 +240,6 @@ public class MatrixUtil {
 		}
 
 		throw new InvalidFeatureException(matrix);
-	}
-
-	static
-	private Matrix.Kind getKind(Matrix matrix){
-		Matrix.Kind kind = matrix.getKind();
-		if(kind == null){
-			kind = Matrix.Kind.ANY;
-		}
-
-		return kind;
 	}
 
 	static
