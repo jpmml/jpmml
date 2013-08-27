@@ -89,6 +89,13 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-model</artifactId>
+				<type>test-jar</type>
+				<version>1.0-SNAPSHOT</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-schema</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
