@@ -36,13 +36,19 @@ public class VisitorPlugin extends Plugin {
 
 		JPackage modelPackage = objectClazz._package();
 
-		JDefinedClass visitor = clazzFactory.createInterface(modelPackage, JMod.PUBLIC, "Visitor", null);
+		JDefinedClass visitorAction = clazzFactory.createClass(modelPackage, JMod.PUBLIC, "VisitorAction", null, ClassType.ENUM);
+		JEnumConstant continueAction = visitorAction.enumConstant("CONTINUE");
+		JEnumConstant skipAction = visitorAction.enumConstant("SKIP");
+		JEnumConstant terminateAction = visitorAction.enumConstant("TERMINATE");
 
-		JDefinedClass abstractVisitor = clazzFactory.createClass(modelPackage, JMod.ABSTRACT | JMod.PUBLIC, "AbstractVisitor", null)._implements(visitor);
-		JDefinedClass abstractSimpleVisitor = clazzFactory.createClass(modelPackage, JMod.ABSTRACT | JMod.PUBLIC, "AbstractSimpleVisitor", null)._implements(visitor);
+		JDefinedClass visitor = clazzFactory.createClass(modelPackage, JMod.PUBLIC, "Visitor", null, ClassType.INTERFACE);
 
-		JMethod defaultMethod = abstractSimpleVisitor.method(JMod.ABSTRACT | JMod.PUBLIC, void.class, "visit");
+		JDefinedClass abstractVisitor = clazzFactory.createClass(modelPackage, JMod.ABSTRACT | JMod.PUBLIC, "AbstractVisitor", null, ClassType.CLASS)._implements(visitor);
+		JDefinedClass abstractSimpleVisitor = clazzFactory.createClass(modelPackage, JMod.ABSTRACT | JMod.PUBLIC, "AbstractSimpleVisitor", null, ClassType.CLASS)._implements(visitor);
+
+		JMethod defaultMethod = abstractSimpleVisitor.method(JMod.PUBLIC, visitorAction, "visit");
 		defaultMethod.param(objectClazz, "object");
+		defaultMethod.body()._return(continueAction);
 
 		Set<JType> traversableTypes = new LinkedHashSet<JType>();
 
@@ -63,27 +69,29 @@ public class VisitorPlugin extends Plugin {
 				parameterName = ("_" + parameterName);
 			}
 
-			JMethod visitorVisit = visitor.method(JMod.PUBLIC, void.class, "visit");
+			JMethod visitorVisit = visitor.method(JMod.PUBLIC, visitorAction, "visit");
 			visitorVisit.param(beanClazz, parameterName);
 
-			JMethod abstractVisitorVisit = abstractVisitor.method(JMod.PUBLIC, void.class, "visit");
+			JMethod abstractVisitorVisit = abstractVisitor.method(JMod.PUBLIC, visitorAction, "visit");
 			abstractVisitorVisit.annotate(Override.class);
 			abstractVisitorVisit.param(beanClazz, parameterName);
+			abstractVisitorVisit.body()._return(continueAction);
 
 			JClass beanSuperClass = beanClazz._extends();
 
-			JMethod abstractSimpleVisitorVisit = abstractSimpleVisitor.method(JMod.PUBLIC, void.class, "visit");
+			JMethod abstractSimpleVisitorVisit = abstractSimpleVisitor.method(JMod.PUBLIC, visitorAction, "visit");
 			abstractSimpleVisitorVisit.annotate(Override.class);
 			abstractSimpleVisitorVisit.param(beanClazz, parameterName);
-			abstractSimpleVisitorVisit.body().add(JExpr.invoke(defaultMethod).arg(JExpr.cast(beanSuperClass, JExpr.ref(parameterName))));
+			abstractSimpleVisitorVisit.body()._return(JExpr.invoke(defaultMethod).arg(JExpr.cast(beanSuperClass, JExpr.ref(parameterName))));
 
-			JMethod beanAccept = beanClazz.method(JMod.PUBLIC, void.class, "accept");
+			JMethod beanAccept = beanClazz.method(JMod.PUBLIC, visitorAction, "accept");
 			beanAccept.annotate(Override.class);
 
 			JVar visitorParameter = beanAccept.param(visitor, "visitor");
 
 			JBlock body = beanAccept.body();
-			body.add(JExpr.invoke(visitorParameter, "visit").arg(JExpr._this()));
+
+			JVar status = body.decl(visitorAction, "status", JExpr.invoke(visitorParameter, "visit").arg(JExpr._this()));
 
 			List<FieldOutline> beanFields = Arrays.asList(clazz.getDeclaredFields());
 			for(FieldOutline beanField : beanFields){
@@ -105,19 +113,23 @@ public class VisitorPlugin extends Plugin {
 					if(traversableTypes.contains(fieldElementType)){
 						JForLoop forLoop = body._for();
 						JVar var = forLoop.init(codeModel.INT, "i", JExpr.lit(0));
-						forLoop.test(fieldRef.ne(JExpr._null()).cand(var.lt(fieldRef.invoke("size"))));
+						forLoop.test((status.eq(continueAction)).cand(fieldRef.ne(JExpr._null())).cand(var.lt(fieldRef.invoke("size"))));
 						forLoop.update(var.incr());
-						forLoop.body().add((JExpr.invoke(fieldRef, "get").arg(var)).invoke("accept").arg(visitorParameter));
+						forLoop.body().assign(status, (JExpr.invoke(fieldRef, "get").arg(var)).invoke("accept").arg(visitorParameter));
 					}
 				} else
 
 				// Simple value
 				{
 					if(traversableTypes.contains(fieldType)){
-						body._if(fieldRef.ne(JExpr._null()))._then().add(JExpr.invoke(fieldRef, "accept").arg(visitorParameter));
+						body._if((status.eq(continueAction)).cand(fieldRef.ne(JExpr._null())))._then().assign(status, JExpr.invoke(fieldRef, "accept").arg(visitorParameter));
 					}
 				}
 			}
+
+			body._if(status.eq(terminateAction))._then()._return(terminateAction);
+
+			body._return(continueAction);
 		}
 
 		return true;

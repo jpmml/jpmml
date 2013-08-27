@@ -5,5 +5,5 @@ package org.dmg.pmml;
 
 public interface Visitable {
 
-	void accept(Visitor visitor);
+	VisitorAction accept(Visitor visitor);
 }
