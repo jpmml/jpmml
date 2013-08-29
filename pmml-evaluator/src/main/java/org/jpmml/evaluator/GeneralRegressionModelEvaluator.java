@@ -442,7 +442,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		for(Predictor predictor : predictors){
 			FieldName name = predictor.getName();
 
-			result.put(name, context.getArgument(name));
+			result.put(name, ExpressionUtil.evaluate(name, context));
 		}
 
 		return result;
