@@ -52,6 +52,41 @@ public class EvaluatorUtil {
 	}
 
 	static
+	public FieldValue prepare(Evaluator evaluator, FieldName name, Object value){
+
+		if(value instanceof Collection){
+			Collection<?> rawValues = (Collection<?>)value;
+
+			// Try to preserve the original Collection contract
+			Collection<Object> preparedValues = (rawValues instanceof Set ? Sets.newLinkedHashSet() : Lists.newArrayList());
+
+			DataType dataType = null;
+
+			OpType opType = null;
+
+			for(Object rawValue : rawValues){
+				FieldValue preparedValue = evaluator.prepare(name, rawValue);
+				if(preparedValue != null){
+
+					if(dataType == null){
+						dataType = preparedValue.getDataType();
+					} // End if
+
+					if(opType == null){
+						opType = preparedValue.getOpType();
+					}
+				}
+
+				preparedValues.add(FieldValueUtil.getValue(preparedValue));
+			}
+
+			return FieldValueUtil.create(dataType, opType, preparedValues);
+		}
+
+		return evaluator.prepare(name, value);
+	}
+
+	static
 	public <K> List<Map<K, Object>> groupRows(K groupKey, List<Map<K, Object>> table){
 		Map<Object, ListMultimap<K, Object>> groupedRows = Maps.newLinkedHashMap();
 
