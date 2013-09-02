@@ -35,7 +35,7 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 			return "Random forest";
 		}
 
-		return "Segmentation model";
+		return "Ensemble model";
 	}
 
 	@Override

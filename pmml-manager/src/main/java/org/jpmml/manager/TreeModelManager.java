@@ -31,7 +31,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 
 	@Override
 	public String getSummary(){
-		return "Tree";
+		return "Tree model";
 	}
 
 	@Override

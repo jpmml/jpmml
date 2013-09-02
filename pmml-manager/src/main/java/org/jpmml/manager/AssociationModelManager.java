@@ -31,7 +31,7 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 
 	@Override
 	public String getSummary(){
-		return "Association rules model";
+		return "Association rules";
 	}
 
 	public FieldName getActiveField(){

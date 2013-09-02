@@ -27,7 +27,7 @@ public class RuleSetModelManager extends ModelManager<RuleSetModel> {
 
 	@Override
 	public String getSummary(){
-		return "Rule set model";
+		return "Ruleset model";
 	}
 
 	@Override
