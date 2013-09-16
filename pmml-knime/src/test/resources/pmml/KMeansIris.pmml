@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1">
   <Header copyright="Vfed">
-    <Application name="KNIME" version="2.7.4"/>
+    <Application name="KNIME" version="2.8.0"/>
   </Header>
   <DataDictionary numberOfFields="5">
     <DataField name="Sepal.Length" optype="continuous" dataType="double">
@@ -29,6 +29,7 @@
       <MiningField name="Petal.Length" invalidValueTreatment="asIs"/>
       <MiningField name="Petal.Width" invalidValueTreatment="asIs"/>
     </MiningSchema>
+    <!-- Custom Output element -->
     <Output>
       <OutputField name="Cluster" optype="categorical" dataType="string" feature="predictedDisplayValue"/>
     </Output>
