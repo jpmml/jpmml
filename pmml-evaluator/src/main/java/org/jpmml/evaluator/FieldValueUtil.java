@@ -5,8 +5,6 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-import org.jpmml.manager.*;
-
 import org.dmg.pmml.*;
 
 import com.google.common.base.*;
