@@ -2,8 +2,8 @@
 <PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
  <Header copyright="Copyright (c) 2013 Vfed" description="arules association rules model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
-  <Application name="Rattle/PMML" version="1.2.34r27"/>
-  <Timestamp>2013-07-13 23:24:29</Timestamp>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 10:30:50</Timestamp>
  </Header>
  <DataDictionary numberOfFields="2">
   <DataField name="Transaction" optype="categorical" dataType="string"/>
@@ -14,6 +14,7 @@
    <MiningField name="Transaction" usageType="group"/>
    <MiningField name="Product"/>
   </MiningSchema>
+  <!-- Custom Output element -->
   <Output>
    <OutputField name="Recommendation" rankBasis="lift" isMultiValued="1" rank="0" algorithm="recommendation" feature="ruleValue" ruleFeature="ruleId"/>
    <OutputField name="Exclusive_Recommendation" rankBasis="lift" isMultiValued="1" rank="0" algorithm="exclusiveRecommendation" feature="ruleValue" ruleFeature="ruleId"/>

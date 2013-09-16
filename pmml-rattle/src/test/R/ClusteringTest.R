@@ -1,3 +1,4 @@
+library("amap")
 library("pmml")
 library("rattle")
 
