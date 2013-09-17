@@ -78,6 +78,7 @@
 					<args>
 						<arg>-no-header</arg>
 						<arg>-Xannotate</arg>
+						<arg>-Xannotate-defaultFieldTarget=field</arg>
 						<arg>-Xlocator</arg>
 						<arg>-Xpmml</arg>
 						<arg>-XsuperClass</arg>
@@ -106,7 +107,7 @@
 					<dependency>
 						<groupId>org.jvnet.jaxb2_commons</groupId>
 						<artifactId>jaxb2-basics-annotate</artifactId>
-						<version>0.6.4</version>
+						<version>0.6.5</version>
 					</dependency>
 				</dependencies>
 			</plugin>
