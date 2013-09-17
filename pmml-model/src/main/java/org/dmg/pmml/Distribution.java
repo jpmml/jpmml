@@ -3,6 +3,9 @@
  */
 package org.dmg.pmml;
 
+import javax.xml.bind.annotation.*;
+
+@XmlTransient
 abstract
 public class Distribution extends PMMLObject {
 }
