@@ -8,6 +8,7 @@ Supported model types:
 	<tr><td>Association rules</td><td>http://www.dmg.org/v4-1/AssociationRules.html</td></tr>
 	<tr><td>Cluster models</td><td>http://www.dmg.org/v4-1/ClusteringModel.html</td></tr>
 	<tr><td>General regression</td><td>http://www.dmg.org/v4-1/GeneralRegression.html</td></tr>
+	<tr><td>Naive Bayes</td><td>http://www.dmg.org/v4-1/NaiveBayes.html</td></tr>
 	<tr><td>Neural network</td><td>http://www.dmg.org/v4-1/NeuralNetwork.html</td></tr>
 	<tr><td>Regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
 	<tr><td>Rule set</td><td>http://www.dmg.org/v4-1/RuleSet.html</td></tr>
@@ -26,26 +27,26 @@ JPMML library JAR files (together with accompanying Java source and Javadocs JAR
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-model</artifactId>
-	<version>1.0.16</version>
+	<version>1.0.17</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
-	<version>1.0.16</version>
+	<version>1.0.17</version>
 </dependency>
 
 <!-- medium-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-manager</artifactId>
-	<version>1.0.16</version>
+	<version>1.0.17</version>
 </dependency>
 
 <!-- high-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.0.16</version>
+	<version>1.0.17</version>
 </dependency>
 ```
 Please note that higher API levels depend on lower API levels.
