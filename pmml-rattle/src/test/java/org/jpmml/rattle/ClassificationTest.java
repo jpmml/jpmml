@@ -33,6 +33,13 @@ public class ClassificationTest {
 	}
 
 	@Test
+	public void evaluateNaiveBayesIris() throws Exception {
+		Batch batch = new RattleBatch("NaiveBayes", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
 		Batch batch = new RattleBatch("NeuralNetwork", "Iris");
 
@@ -56,6 +63,13 @@ public class ClassificationTest {
 	@Test
 	public void evaluateDecisionTreeAudit() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateNaiveBayesAudit() throws Exception {
+		Batch batch = new RattleBatch("NaiveBayes", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}

@@ -142,9 +142,9 @@ public class PMMLManager implements Serializable {
 		value = {"unchecked"}
 	)
 	static
-	public <E extends PMMLObject> E find(List<? extends PMMLObject> objects, Class<? extends E> clazz){
+	public <E extends PMMLObject> E find(List<?> objects, Class<? extends E> clazz){
 
-		for(PMMLObject object : objects){
+		for(Object object : objects){
 
 			if(object.getClass().equals(clazz)){
 				return (E)object;
@@ -158,10 +158,10 @@ public class PMMLManager implements Serializable {
 		value = {"unchecked"}
 	)
 	static
-	public <E extends PMMLObject> List<E> findAll(List<? extends PMMLObject> objects, Class<? extends E> clazz){
+	public <E extends PMMLObject> List<E> findAll(List<?> objects, Class<? extends E> clazz){
 		List<E> result = Lists.newArrayList();
 
-		for(PMMLObject object : objects){
+		for(Object object : objects){
 
 			if(object.getClass().equals(clazz)){
 				result.add((E)object);

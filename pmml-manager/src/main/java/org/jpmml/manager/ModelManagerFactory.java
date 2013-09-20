@@ -28,6 +28,10 @@ public class ModelManagerFactory {
 			return new MiningModelManager(pmml, (MiningModel)model);
 		} else
 
+		if(model instanceof NaiveBayesModel){
+			return new NaiveBayesModelManager(pmml, (NaiveBayesModel)model);
+		} else
+
 		if(model instanceof NeuralNetwork){
 			return new NeuralNetworkManager(pmml, (NeuralNetwork)model);
 		} else

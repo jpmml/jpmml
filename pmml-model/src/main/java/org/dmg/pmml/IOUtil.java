@@ -45,11 +45,14 @@ public class IOUtil {
 
 	static
 	public PMML unmarshal(InputSource source) throws SAXException, JAXBException {
-		Source importSource = createImportSource(source);
+		return (PMML)unmarshal(createImportSource(source));
+	}
 
+	static
+	public Object unmarshal(Source source) throws JAXBException {
 		Unmarshaller unmarshaller = getJAXBContext().createUnmarshaller();
 
-		return (PMML)unmarshaller.unmarshal(importSource);
+		return unmarshaller.unmarshal(source);
 	}
 
 	static

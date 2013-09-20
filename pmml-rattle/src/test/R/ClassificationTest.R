@@ -1,3 +1,4 @@
+library("e1071")
 library("nnet")
 library("pmml")
 library("randomForest")
@@ -20,6 +21,15 @@ generateDecisionTreeIris = function(){
 	classes = predict(rpart, type = "class")
 	probabilities = predict(rpart, type = "prob")
 	writeIris(classes, probabilities, "csv/DecisionTreeIris.csv")
+}
+
+generateNaiveBayesIris = function(){
+	naiveBayes = naiveBayes(irisFormula, irisData) 
+	saveXML(pmml(naiveBayes, predictedField = "Species"), "pmml/NaiveBayesIris.pmml")
+
+	classes = predict(naiveBayes, newdata = irisData, type = "class")
+	probabilities = predict(naiveBayes, newdata = irisData, type = "raw")
+	writeIris(classes, probabilities, "csv/NaiveBayesIris.csv")
 }
 
 generateNeuralNetworkIris = function(){
@@ -50,6 +60,7 @@ generateRegressionIris = function(){
 }
 
 generateDecisionTreeIris()
+generateNaiveBayesIris()
 generateNeuralNetworkIris()
 generateRandomForestIris()
 generateRegressionIris()
@@ -120,6 +131,15 @@ generateGeneralRegressionAudit = function(){
 	writeAudit(classes, probabilities, "csv/GeneralRegressionAudit.csv")
 }
 
+generateNaiveBayesAudit = function(){
+	naiveBayes = naiveBayes(auditFormula, auditData) 
+	saveXML(pmml(naiveBayes, predictedField = "Adjusted"), "pmml/NaiveBayesAudit.pmml")
+
+	classes = predict(naiveBayes, newdata = auditData, type = "class")
+	probabilities = predict(naiveBayes, newdata = auditData, type = "raw")
+	writeAudit(classes, probabilities, "csv/NaiveBayesAudit.csv")
+}
+
 generateNeuralNetworkAudit = function(){
 	nnet = nnet(auditFormula, auditData, size = 9, decay = 1e-3, maxit = 10000)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkAudit.pmml")
@@ -139,5 +159,6 @@ generateRandomForestAudit = function(){
 
 generateDecisionTreeAudit()
 generateGeneralRegressionAudit()
+generateNaiveBayesAudit()
 generateNeuralNetworkAudit()
 generateRandomForestAudit()
