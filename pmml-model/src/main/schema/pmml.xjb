@@ -558,6 +558,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='LinearKernelType']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.KernelType"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='MapValues']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Expression"
@@ -768,6 +774,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='PolynomialKernelType']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.KernelType"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='PPCell']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.ParameterCell"
@@ -783,6 +795,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='PredictorTerm']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Term"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='RadialBasisKernelType']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.KernelType"
 			/>
 		</jaxb:bindings>
 
@@ -908,6 +926,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='SigmoidKernelType']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.KernelType"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='simpleMatching']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Measure"
@@ -953,6 +977,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='SupportVectorMachineModel']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Model"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='SupportVectorMachineModel']/xsd:complexType/xsd:sequence/xsd:sequence/xsd:choice">
+			<jaxb:property
+				name="kernelType"
 			/>
 		</jaxb:bindings>
 
