@@ -20,7 +20,7 @@ public class NaiveBayesModelManager extends ModelManager<NaiveBayesModel> {
 	}
 
 	public NaiveBayesModelManager(PMML pmml){
-		this(pmml, find(pmml.getContent(), NaiveBayesModel.class));
+		this(pmml, find(pmml.getModels(), NaiveBayesModel.class));
 	}
 
 	public NaiveBayesModelManager(PMML pmml, NaiveBayesModel naiveBayesModel){

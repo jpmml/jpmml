@@ -20,7 +20,7 @@ public class ClusteringModelManager extends ModelManager<ClusteringModel> implem
 	}
 
 	public ClusteringModelManager(PMML pmml){
-		this(pmml, find(pmml.getContent(), ClusteringModel.class));
+		this(pmml, find(pmml.getModels(), ClusteringModel.class));
 	}
 
 	public ClusteringModelManager(PMML pmml, ClusteringModel clusteringModel){

@@ -20,7 +20,7 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 	}
 
 	public AssociationModelManager(PMML pmml){
-		this(pmml, find(pmml.getContent(), AssociationModel.class));
+		this(pmml, find(pmml.getModels(), AssociationModel.class));
 	}
 
 	public AssociationModelManager(PMML pmml, AssociationModel associationModel){

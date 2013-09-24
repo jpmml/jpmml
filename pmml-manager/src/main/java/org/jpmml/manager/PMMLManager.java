@@ -77,11 +77,15 @@ public class PMMLManager implements Serializable {
 	}
 
 	public Header getHeader(){
-		return getPmml().getHeader();
+		PMML pmml = getPmml();
+
+		return pmml.getHeader();
 	}
 
 	public DataDictionary getDataDictionary(){
-		return getPmml().getDataDictionary();
+		PMML pmml = getPmml();
+
+		return pmml.getDataDictionary();
 	}
 
 	public TransformationDictionary getOrCreateTransformationDictionary(){
@@ -98,7 +102,9 @@ public class PMMLManager implements Serializable {
 	}
 
 	public List<Model> getModels(){
-		return getPmml().getContent();
+		PMML pmml = getPmml();
+
+		return pmml.getModels();
 	}
 
 	/**

@@ -20,7 +20,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 	}
 
 	public NeuralNetworkManager(PMML pmml) {
-		this(pmml, find(pmml.getContent(), NeuralNetwork.class));
+		this(pmml, find(pmml.getModels(), NeuralNetwork.class));
 	}
 
 	public NeuralNetworkManager(PMML pmml, NeuralNetwork neuralNetwork) {

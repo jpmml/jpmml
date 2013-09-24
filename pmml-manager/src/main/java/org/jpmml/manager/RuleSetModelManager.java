@@ -16,7 +16,7 @@ public class RuleSetModelManager extends ModelManager<RuleSetModel> {
 	}
 
 	public RuleSetModelManager(PMML pmml){
-		this(pmml, find(pmml.getContent(), RuleSetModel.class));
+		this(pmml, find(pmml.getModels(), RuleSetModel.class));
 	}
 
 	public RuleSetModelManager(PMML pmml, RuleSetModel ruleSetModel){

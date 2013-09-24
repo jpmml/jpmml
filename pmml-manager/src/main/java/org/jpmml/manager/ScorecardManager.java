@@ -18,7 +18,7 @@ public class ScorecardManager extends ModelManager<Scorecard> {
 	}
 
 	public ScorecardManager(PMML pmml){
-		this(pmml, find(pmml.getContent(), Scorecard.class));
+		this(pmml, find(pmml.getModels(), Scorecard.class));
 	}
 
 	public ScorecardManager(PMML pmml, Scorecard scorecard){

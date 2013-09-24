@@ -20,7 +20,7 @@ public class GeneralRegressionModelManager extends ModelManager<GeneralRegressio
 	}
 
 	public GeneralRegressionModelManager(PMML pmml){
-		this(pmml, find(pmml.getContent(), GeneralRegressionModel.class));
+		this(pmml, find(pmml.getModels(), GeneralRegressionModel.class));
 	}
 
 	public GeneralRegressionModelManager(PMML pmml, GeneralRegressionModel generalRegressionModel){

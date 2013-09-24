@@ -18,7 +18,7 @@ public class MiningModelManager extends ModelManager<MiningModel> {
 	}
 
 	public MiningModelManager(PMML pmml){
-		this(pmml, find(pmml.getContent(), MiningModel.class));
+		this(pmml, find(pmml.getModels(), MiningModel.class));
 	}
 
 	public MiningModelManager(PMML pmml, MiningModel miningModel){

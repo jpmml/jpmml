@@ -20,7 +20,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 	}
 
 	public TreeModelManager(PMML pmml){
-		this(pmml, find(pmml.getContent(), TreeModel.class));
+		this(pmml, find(pmml.getModels(), TreeModel.class));
 	}
 
 	public TreeModelManager(PMML pmml, TreeModel treeModel){

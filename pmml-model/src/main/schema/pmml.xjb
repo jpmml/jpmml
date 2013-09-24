@@ -293,6 +293,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='CompoundPredicate']/xsd:complexType/xsd:sequence/xsd:sequence">
+			<jaxb:property
+				name="predicates"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='CompoundRule']/xsd:complexType">
 			<java:superClass
 				name="org.dmg.pmml.Rule"
@@ -608,6 +614,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='MiningModel']/xsd:complexType/xsd:sequence/xsd:choice">
+			<jaxb:property
+				name="embeddedModels"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='MiningField']/xsd:complexType/xsd:attribute[@name='outliers']">
 			<jaxb:property
 				name="outlierTreatment"
@@ -768,6 +780,12 @@ Copyright (c) 2009 University of Tartu
 		<jaxb:bindings node="//xsd:element[@name='PCovMatrix']/xsd:complexType/xsd:attribute[@name='type']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="Type"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='PMML']/xsd:complexType/xsd:sequence/xsd:sequence">
+			<jaxb:property
+				name="models"
 			/>
 		</jaxb:bindings>
 

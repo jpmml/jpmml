@@ -91,7 +91,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, EvaluationContext context){
-		List<Predicate> predicates = compoundPredicate.getContent();
+		List<Predicate> predicates = compoundPredicate.getPredicates();
 		if(predicates.size() < 2){
 			throw new InvalidFeatureException(compoundPredicate);
 		}
