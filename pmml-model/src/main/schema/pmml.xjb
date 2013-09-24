@@ -516,6 +516,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='INT-SparseArray']/xsd:complexType/xsd:sequence/xsd:element[@ref='INT-Entries']">
+			<jaxb:property
+				name="entries"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='Interval']/xsd:complexType/xsd:attribute[@name='closure']/xsd:simpleType">
 			<jaxb:typesafeEnumClass
 				name="Closure"
@@ -816,6 +822,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 			<java:superClass
 				name="org.dmg.pmml.SparseArray"
+			/>
+		</jaxb:bindings>
+
+		<jaxb:bindings node="//xsd:element[@name='REAL-SparseArray']/xsd:complexType/xsd:sequence/xsd:element[@ref='REAL-Entries']">
+			<jaxb:property
+				name="entries"
 			/>
 		</jaxb:bindings>
 
