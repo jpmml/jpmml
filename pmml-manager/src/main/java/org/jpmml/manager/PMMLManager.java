@@ -10,6 +10,8 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * Naming conventions for getter methods:
  * <ul>
@@ -27,7 +29,7 @@ public class PMMLManager implements Serializable {
 	}
 
 	public PMMLManager(PMML pmml){
-		setPmml(pmml);
+		this.pmml = pmml;
 	}
 
 	public DataField getDataField(FieldName name){
@@ -69,11 +71,9 @@ public class PMMLManager implements Serializable {
 	}
 
 	public PMML getPmml(){
-		return this.pmml;
-	}
+		checkState(this.pmml != null);
 
-	private void setPmml(PMML pmml){
-		this.pmml = pmml;
+		return this.pmml;
 	}
 
 	public Header getHeader(){
