@@ -31,15 +31,15 @@ public class ArrayUtil {
 
 	static
 	public List<String> getContent(Array array){
-		List<String> parsedValue = array.getParsedValue();
+		List<String> content = array.getContent();
 
-		if(parsedValue == null){
-			parsedValue = tokenize(array);
+		if(content == null){
+			content = parse(array);
 
-			array.setParsedValue(parsedValue);
+			array.setContent(content);
 		}
 
-		return parsedValue;
+		return content;
 	}
 
 	static
@@ -85,7 +85,7 @@ public class ArrayUtil {
 	}
 
 	static
-	public List<String> tokenize(Array array){
+	public List<String> parse(Array array){
 		List<String> result;
 
 		Array.Type type = array.getType();
@@ -101,7 +101,7 @@ public class ArrayUtil {
 				throw new UnsupportedFeatureException(array, type);
 		}
 
-		Number n = array.getN();
+		Integer n = array.getN();
 		if(n != null && n.intValue() != result.size()){
 			throw new InvalidFeatureException(array);
 		}

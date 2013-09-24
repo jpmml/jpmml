@@ -14,31 +14,31 @@ import static org.junit.Assert.*;
 public class ArrayUtilTest {
 
 	@Test
-	public void tokenizeIntArray(){
-		assertEquals(Arrays.asList("1", "2", "3"), tokenizeIntArray("1 2 3"));
+	public void parseIntArray(){
+		assertEquals(Arrays.asList("1", "2", "3"), parseIntArray("1 2 3"));
 	}
 
 	@Test
-	public void tokenizeStringArray(){
-		assertEquals(Arrays.asList("a", "b", "c"), tokenizeStringArray("a b c"));
-		assertEquals(Arrays.asList("a", "b", "c"), tokenizeStringArray("\"a\" \"b\" \"c\""));
+	public void parseStringArray(){
+		assertEquals(Arrays.asList("a", "b", "c"), parseStringArray("a b c"));
+		assertEquals(Arrays.asList("a", "b", "c"), parseStringArray("\"a\" \"b\" \"c\""));
 
-		assertEquals(Arrays.asList("a b c"), tokenizeStringArray("\"a b c\""));
+		assertEquals(Arrays.asList("a b c"), parseStringArray("\"a b c\""));
 
-		assertEquals(Arrays.asList("\"a b c"), tokenizeStringArray("\"a b c"));
-		assertEquals(Arrays.asList("\\a", "\\b\\", "c\\"), tokenizeStringArray("\\a \\b\\ c\\"));
+		assertEquals(Arrays.asList("\"a b c"), parseStringArray("\"a b c"));
+		assertEquals(Arrays.asList("\\a", "\\b\\", "c\\"), parseStringArray("\\a \\b\\ c\\"));
 
-		assertEquals(Arrays.asList("a \"b\" c"), tokenizeStringArray("\"a \\\"b\\\" c\""));
-		assertEquals(Arrays.asList("\"a b c\""), tokenizeStringArray("\"\\\"a b c\\\"\""));
+		assertEquals(Arrays.asList("a \"b\" c"), parseStringArray("\"a \\\"b\\\" c\""));
+		assertEquals(Arrays.asList("\"a b c\""), parseStringArray("\"\\\"a b c\\\"\""));
 	}
 
 	static
-	private List<String> tokenizeIntArray(String content){
-		return ArrayUtil.tokenize(new Array(content, Array.Type.INT));
+	private List<String> parseIntArray(String content){
+		return ArrayUtil.parse(new Array(content, Array.Type.INT));
 	}
 
 	static
-	private List<String> tokenizeStringArray(String content){
-		return ArrayUtil.tokenize(new Array(content, Array.Type.STRING));
+	private List<String> parseStringArray(String content){
+		return ArrayUtil.parse(new Array(content, Array.Type.STRING));
 	}
 }
