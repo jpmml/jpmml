@@ -36,6 +36,14 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 			throw new InvalidResultException(supportVectorMachineModel);
 		}
 
+		SvmRepresentationType svmRepresentation = supportVectorMachineModel.getSvmRepresentation();
+		switch(svmRepresentation){
+			case SUPPORT_VECTORS:
+				break;
+			default:
+				throw new UnsupportedFeatureException(supportVectorMachineModel, svmRepresentation);
+		}
+
 		Map<FieldName, ?> predictions;
 
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
@@ -79,14 +87,6 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 		List<SupportVectorMachine> supportVectorMachines = getSupportVectorMachines();
 		if(supportVectorMachines.size() < 1){
 			throw new InvalidFeatureException(supportVectorMachineModel);
-		}
-
-		SvmRepresentationType svmRepresentation = supportVectorMachineModel.getSvmRepresentation();
-		switch(svmRepresentation){
-			case SUPPORT_VECTORS:
-				break;
-			default:
-				throw new UnsupportedFeatureException(supportVectorMachineModel, svmRepresentation);
 		}
 
 		ClassificationMap result;
