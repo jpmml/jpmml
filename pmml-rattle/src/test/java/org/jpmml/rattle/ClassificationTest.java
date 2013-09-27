@@ -19,13 +19,6 @@ public class ClassificationTest {
 	}
 
 	@Test
-	public void evaluateGeneralRegressionAudit() throws Exception {
-		Batch batch = new RattleBatch("GeneralRegression", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
-	}
-
-	@Test
 	public void evaluateGeneralRegressionIris() throws Exception {
 		Batch batch = new RattleBatch("GeneralRegression", "Iris");
 
@@ -61,8 +54,22 @@ public class ClassificationTest {
 	}
 
 	@Test
+	public void evaluateSupportVectorMachineIris() throws Exception {
+		Batch batch = new RattleBatch("SupportVectorMachine", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateDecisionTreeAudit() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateGeneralRegressionAudit() throws Exception {
+		Batch batch = new RattleBatch("GeneralRegression", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
@@ -84,6 +91,13 @@ public class ClassificationTest {
 	@Test
 	public void evaluateRandomForestAudit() throws Exception {
 		Batch batch = new RattleBatch("RandomForest", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateSupportVectorMachineAudit() throws Exception {
+		Batch batch = new RattleBatch("SupportVectorMachine", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}

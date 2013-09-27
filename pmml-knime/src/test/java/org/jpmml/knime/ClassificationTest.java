@@ -19,13 +19,6 @@ public class ClassificationTest {
 	}
 
 	@Test
-	public void evaluateGeneralRegressionAudit() throws Exception {
-		Batch batch = new KnimeBatch("GeneralRegression", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
-	}
-
-	@Test
 	public void evaluateGeneralRegressionIris() throws Exception {
 		Batch batch = new KnimeBatch("GeneralRegression", "Iris");
 
@@ -35,6 +28,20 @@ public class ClassificationTest {
 	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
 		Batch batch = new KnimeBatch("NeuralNetwork", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateSupportVectorMachineIris() throws Exception {
+		Batch batch = new KnimeBatch("SupportVectorMachine", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateGeneralRegressionAudit() throws Exception {
+		Batch batch = new KnimeBatch("GeneralRegression", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}

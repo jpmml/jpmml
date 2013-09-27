@@ -1,4 +1,5 @@
 library("e1071")
+library("kernlab")
 library("nnet")
 library("pmml")
 library("randomForest")
@@ -8,8 +9,17 @@ irisData = readCsv("csv/Iris.csv")
 irisFormula = formula(Species ~ .)
 
 writeIris = function(classes, probabilities, file){
-	result = data.frame(classes, probabilities)
-	names(result) = c("Species", "Probability_setosa", "Probability_versicolor", "Probability_virginica")
+	result = NULL
+
+	if(is.null(probabilities)){
+		result = data.frame(classes)
+		names(result) = c("Species")
+	} else
+
+	{
+		result = data.frame(classes, probabilities)
+		names(result) = c("Species", "Probability_setosa", "Probability_versicolor", "Probability_virginica")
+	}
 
 	writeCsv(result, file)
 }
@@ -59,11 +69,21 @@ generateRegressionIris = function(){
 	writeIris(classes, probabilities, "csv/RegressionIris.csv")
 }
 
+generateSupportVectorMachineIris = function(){
+	ksvm = ksvm(irisFormula, irisData)
+	pmml = pmml(ksvm, dataset = irisData)
+	xmlAttrs(pmml$children$SupportVectorMachineModel)["classificationMethod"] = "OneAgainstOne"
+	saveXML(pmml, "pmml/SupportVectorMachineIris.pmml")
+
+	writeIris(predict(ksvm, newdata = irisData), NULL, "csv/SupportVectorMachineIris.csv")
+}
+
 generateDecisionTreeIris()
 generateNaiveBayesIris()
 generateNeuralNetworkIris()
 generateRandomForestIris()
 generateRegressionIris()
+generateSupportVectorMachineIris()
 
 # Convert target field from categorical to binomial
 versicolor = as.character(as.integer(irisData$Species == 'versicolor'))
@@ -157,8 +177,18 @@ generateRandomForestAudit = function(){
 	writeAudit(classes, probabilities, "csv/RandomForestAudit.csv")
 }
 
+generateSupportVectorMachineAudit = function(){
+	ksvm = ksvm(auditFormula, auditData)
+	pmml = pmml(ksvm, dataset = auditData)
+	xmlAttrs(pmml$children$SupportVectorMachineModel)["classificationMethod"] = "OneAgainstOne"
+	saveXML(pmml, "pmml/SupportVectorMachineAudit.pmml")
+
+	writeAudit(predict(ksvm, newdata = auditData), NULL, "csv/SupportVectorMachineAudit.csv")
+}
+
 generateDecisionTreeAudit()
 generateGeneralRegressionAudit()
 generateNaiveBayesAudit()
 generateNeuralNetworkAudit()
 generateRandomForestAudit()
+generateSupportVectorMachineAudit()

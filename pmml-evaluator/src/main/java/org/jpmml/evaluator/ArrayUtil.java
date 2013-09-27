@@ -43,6 +43,22 @@ public class ArrayUtil {
 	}
 
 	static
+	public double[] toArray(Array array){
+		int size = getSize(array);
+
+		double[] result = new double[size];
+
+		List<? extends Number> content = getNumberContent(array);
+		for(int i = 0; i < size; i++){
+			Number value = content.get(i);
+
+			result[i] = value.doubleValue();
+		}
+
+		return result;
+	}
+
+	static
 	public List<? extends Number> getNumberContent(Array array){
 		Array.Type type = array.getType();
 

@@ -42,6 +42,21 @@ public class SparseArrayUtil {
 	}
 
 	static
+	public <E extends Number> double[] toArray(SparseArray<E> sparseArray){
+		int size = getSize(sparseArray);
+
+		double[] result = new double[size];
+
+		for(int i = 0; i < size; i++){
+			Number value = getValue(sparseArray, Integer.valueOf(i + 1));
+
+			result[i] = value.doubleValue();
+		}
+
+		return result;
+	}
+
+	static
 	public <E extends Number> SortedMap<Integer, E> parse(SparseArray<E> sparseArray){
 		SortedMap<Integer, E> result = Maps.newTreeMap();
 

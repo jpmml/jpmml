@@ -38,4 +38,11 @@ public class RegressionTest {
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
+
+	@Test
+	public void evaluateSupportVectorMachineOzone() throws Exception {
+		Batch batch = new RattleBatch("SupportVectorMachine", "Ozone");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
 }

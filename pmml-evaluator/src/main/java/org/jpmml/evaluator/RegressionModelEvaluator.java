@@ -119,7 +119,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 
 	static
 	private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
-		double result = 0D;
+		double result = 0d;
 
 		result += regressionTable.getIntercept();
 

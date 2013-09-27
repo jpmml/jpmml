@@ -48,6 +48,10 @@ public class ModelManagerFactory {
 			return new ScorecardManager(pmml, (Scorecard)model);
 		} else
 
+		if(model instanceof SupportVectorMachineModel){
+			return new SupportVectorMachineModelManager(pmml, (SupportVectorMachineModel)model);
+		} else
+
 		if(model instanceof TreeModel){
 			return new TreeModelManager(pmml, (TreeModel)model);
 		}

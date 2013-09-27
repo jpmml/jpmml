@@ -1,3 +1,4 @@
+library("kernlab")
 library("nnet")
 library("pmml")
 library("randomForest")
@@ -41,7 +42,15 @@ generateRegressionOzone = function(){
 	writeOzone(predict(lm), "csv/RegressionOzone.csv")
 }
 
+generateSupportVectorMachineOzone = function(){
+	ksvm = ksvm(ozoneFormula, ozoneData)
+	saveXML(pmml(ksvm, dataset = ozoneData), "pmml/SupportVectorMachineOzone.pmml")
+
+	writeOzone(predict(ksvm, newdata = ozoneData), "csv/SupportVectorMachineOzone.csv")
+}
+
 generateGeneralRegressionOzone()
 generateNeuralNetworkOzone()
 generateRandomForestOzone()
 generateRegressionOzone()
+generateSupportVectorMachineOzone()

@@ -51,6 +51,10 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 			return new ScorecardEvaluator(pmml, (Scorecard)model);
 		} else
 
+		if(model instanceof SupportVectorMachineModel){
+			return new SupportVectorMachineModelEvaluator(pmml, (SupportVectorMachineModel)model);
+		} else
+
 		if(model instanceof TreeModel){
 			return new TreeModelEvaluator(pmml, (TreeModel)model);
 		}
