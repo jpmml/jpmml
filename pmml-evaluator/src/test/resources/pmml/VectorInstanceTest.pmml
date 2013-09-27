@@ -9,7 +9,7 @@
             <Value value="yes"/>
         </DataField>
     </DataDictionary>
-    <SupportVectorMachineModel modelName="SVM XOR Model" functionName="classification" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors">
+    <SupportVectorMachineModel modelName="SVM XOR Model" functionName="regression" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors">
         <MiningSchema>
             <MiningField name="x1"/>
             <MiningField name="x2"/>
@@ -43,7 +43,7 @@
                 </REAL-SparseArray>
             </VectorInstance>
         </VectorDictionary>
-        <SupportVectorMachine targetCategory="no" alternateTargetCategory="yes">
+        <SupportVectorMachine>
             <SupportVectors numberOfSupportVectors="4" numberOfAttributes="2">
                 <SupportVector vectorId="mv0"/>
                 <SupportVector vectorId="mv1"/>

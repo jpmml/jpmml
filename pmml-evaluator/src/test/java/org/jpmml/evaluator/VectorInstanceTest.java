@@ -19,14 +19,14 @@ public class VectorInstanceTest extends SupportVectorMachineModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		SupportVectorMachineModelEvaluator evaluator = createEvaluator();
 
-		assertTrue(VerificationUtil.acceptable(-0.3995764, classify(evaluator, 0.0d, 0.0d)));
-		assertTrue(VerificationUtil.acceptable(0.3995764, classify(evaluator, 0.0d, 1.0d)));
-		assertTrue(VerificationUtil.acceptable(0.3995764, classify(evaluator, 1.0d, 0.0d)));
-		assertTrue(VerificationUtil.acceptable(-0.3995764, classify(evaluator, 1.0d, 1.0d)));
+		assertTrue(VerificationUtil.acceptable(-0.3995764, evaluate(evaluator, 0.0d, 0.0d)));
+		assertTrue(VerificationUtil.acceptable(0.3995764, evaluate(evaluator, 0.0d, 1.0d)));
+		assertTrue(VerificationUtil.acceptable(0.3995764, evaluate(evaluator, 1.0d, 0.0d)));
+		assertTrue(VerificationUtil.acceptable(-0.3995764, evaluate(evaluator, 1.0d, 1.0d)));
 	}
 
 	static
-	private double classify(Evaluator evaluator, double x1, double x2){
+	private double evaluate(Evaluator evaluator, double x1, double x2){
 		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
 		arguments.put(new FieldName("x1"), x1);
 		arguments.put(new FieldName("x2"), x2);
@@ -35,8 +35,8 @@ public class VectorInstanceTest extends SupportVectorMachineModelEvaluatorTest {
 
 		FieldName targetField = evaluator.getTargetField();
 
-		ClassificationMap targetValue = (ClassificationMap)result.get(targetField);
+		Number targetValue = (Number)result.get(targetField);
 
-		return targetValue.get(targetValue.getResult());
+		return targetValue.doubleValue();
 	}
 }
