@@ -75,7 +75,7 @@
    <Interval closure="closedClosed" leftMargin="1" rightMargin="99"/>
   </DataField>
  </DataDictionary>
- <SupportVectorMachineModel modelName="SVM_model" functionName="classification" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors" classificationMethod="OneAgainstOne">
+ <SupportVectorMachineModel modelName="SVM_model" functionName="classification" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors">
   <MiningSchema>
    <MiningField name="Adjusted" usageType="predicted"/>
    <MiningField name="Employment" usageType="active"/>

@@ -91,7 +91,7 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 
 		ClassificationMap result;
 
-		SvmClassificationMethodType svmClassificationMethod = supportVectorMachineModel.getClassificationMethod();
+		SvmClassificationMethodType svmClassificationMethod = getClassificationMethod();
 		switch(svmClassificationMethod){
 			case ONE_AGAINST_ALL:
 				result = new ClassificationMap(ClassificationMap.Type.DISTANCE);
@@ -114,7 +114,7 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 			switch(svmClassificationMethod){
 				case ONE_AGAINST_ALL:
 					{
-						if(category == null){
+						if(category == null || alternateCategory != null){
 							throw new InvalidFeatureException(supportVectorMachine);
 						}
 
@@ -193,6 +193,34 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 		result += coefficientInfo.getAbsoluteValue();
 
 		return result;
+	}
+
+	private SvmClassificationMethodType getClassificationMethod(){
+		SupportVectorMachineModel supportVectorMachineModel = getModel();
+
+		SvmClassificationMethodType svmClassificationMethod = PMMLObjectUtil.getField(supportVectorMachineModel, "classificationMethod");
+		if(svmClassificationMethod != null){
+			return svmClassificationMethod;
+		}
+
+		List<SupportVectorMachine> supportVectorMachines = getSupportVectorMachines();
+		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
+			String category = supportVectorMachine.getTargetCategory();
+			String alternateCategory = supportVectorMachine.getAlternateTargetCategory();
+
+			if(category != null){
+
+				if(alternateCategory != null){
+					return SvmClassificationMethodType.ONE_AGAINST_ONE;
+				}
+
+				return SvmClassificationMethodType.ONE_AGAINST_ALL;
+			}
+
+			throw new InvalidFeatureException(supportVectorMachine);
+		}
+
+		throw new InvalidFeatureException(supportVectorMachineModel);
 	}
 
 	private double[] createInput(EvaluationContext context){

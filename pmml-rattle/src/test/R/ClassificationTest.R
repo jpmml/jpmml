@@ -71,9 +71,7 @@ generateRegressionIris = function(){
 
 generateSupportVectorMachineIris = function(){
 	ksvm = ksvm(irisFormula, irisData)
-	pmml = pmml(ksvm, dataset = irisData)
-	xmlAttrs(pmml$children$SupportVectorMachineModel)["classificationMethod"] = "OneAgainstOne"
-	saveXML(pmml, "pmml/SupportVectorMachineIris.pmml")
+	saveXML(pmml(ksvm, dataset = irisData), "pmml/SupportVectorMachineIris.pmml")
 
 	writeIris(predict(ksvm, newdata = irisData), NULL, "csv/SupportVectorMachineIris.csv")
 }
@@ -179,9 +177,7 @@ generateRandomForestAudit = function(){
 
 generateSupportVectorMachineAudit = function(){
 	ksvm = ksvm(auditFormula, auditData)
-	pmml = pmml(ksvm, dataset = auditData)
-	xmlAttrs(pmml$children$SupportVectorMachineModel)["classificationMethod"] = "OneAgainstOne"
-	saveXML(pmml, "pmml/SupportVectorMachineAudit.pmml")
+	saveXML(pmml(ksvm, dataset = auditData), "pmml/SupportVectorMachineAudit.pmml")
 
 	writeAudit(predict(ksvm, newdata = auditData), NULL, "csv/SupportVectorMachineAudit.csv")
 }

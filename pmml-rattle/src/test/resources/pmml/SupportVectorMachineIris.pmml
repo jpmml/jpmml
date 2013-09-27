@@ -24,7 +24,7 @@
    <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
   </DataField>
  </DataDictionary>
- <SupportVectorMachineModel modelName="SVM_model" functionName="classification" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors" classificationMethod="OneAgainstOne">
+ <SupportVectorMachineModel modelName="SVM_model" functionName="classification" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors">
   <MiningSchema>
    <MiningField name="Species" usageType="predicted"/>
    <MiningField name="Sepal.Length" usageType="active"/>
