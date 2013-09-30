@@ -17,8 +17,27 @@ Copyright (c) 2009 University of Tartu
 		</xsl:copy>
 	</xsl:template>
 
+	<xsl:template name="extension">
+		<xsd:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/> 
+	</xsl:template>
+
+	<xsl:template name="extension-comment">
+		<xsl:comment> &lt;xs:element ref=&quot;Extension&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt; </xsl:comment>
+	</xsl:template>
+
+	<!-- 
+	Model types have one Extension list in the beginning and another Extension list in the end, which is too complex for the XJC to handle.
+	-->
+	<xsl:template match="xsd:element[@ref='Extension'][position() &gt; 1 and position() = last()]">
+		<xsl:call-template name="extension-comment"/>
+	</xsl:template>
+
+	<xsl:template match="xsd:group[@name='EmbeddedModel']/xsd:sequence/xsd:element[@ref='Extension']">
+		<xsl:call-template name="extension-comment"/>
+	</xsl:template>
+
 	<!--
-	Simplified Array type definition
+	Simplify Array type definition
 	-->
 	<xsl:template match="xsd:element[@name='Array']">
 	</xsl:template>
@@ -44,25 +63,36 @@ Copyright (c) 2009 University of Tartu
 		<xsl:attribute name="type">FIELD-NAME</xsl:attribute>
 	</xsl:template>
 
-	<!-- 
-	Model types have one Extension list in the beginning and another Extension list in the end, which is too complex for the XJC to handle.
+	<!--
+	Simplify CONTINUOUS-DISTRIBUTION-TYPE group definition from XSD sequence to XSD choice by relocating the Extension element.
 	-->
-	<xsl:template match="xsd:element[@ref='Extension'][position() &gt; 1 and position() = last()]">
-		<xsl:call-template name="extension-comment"/>
+	<xsl:template match="xsd:group[@name='CONTINUOUS-DISTRIBUTION-TYPES']">
+		<xsl:copy>
+			<xsl:apply-templates select="@*|xsd:sequence/xsd:choice"/>
+		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="xsd:group[@name='EmbeddedModel']/xsd:sequence/xsd:element[@ref='Extension']">
-		<xsl:call-template name="extension-comment"/>
+	<xsl:template match="xsd:element[@name='Alternate']/xsd:complexType">
+		<xsl:copy>
+			<xsd:sequence>
+				<xsl:call-template name="extension"/>
+				<xsl:apply-templates select="@*|node()"/>
+			</xsd:sequence>
+		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template name="extension-comment">
-		<xsl:comment> &lt;xs:element ref=&quot;Extension&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt; </xsl:comment>
+	<xsl:template match="xsd:element[@name='Baseline']/xsd:complexType">
+		<xsl:copy>
+			<xsd:sequence>
+				<xsl:call-template name="extension"/>
+				<xsl:apply-templates select="@*|node()"/>
+			</xsd:sequence>
+		</xsl:copy>
 	</xsl:template>
 
 	<!--
 	Extending the Naive Bayes Model Element in PMML: Adding Support for Continuous Input Variables (http://kdd13pmml.files.wordpress.com/2013/07/guazzelli_et_al.pdf)
 	-->
-
 	<xsl:template match="xsd:element[@name='BayesInput']/xsd:complexType/xsd:sequence">
 		<xsl:copy>
 			<xsl:apply-templates select="xsd:element[@ref='Extension' or @ref='DerivedField']"/>

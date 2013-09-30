@@ -140,12 +140,7 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 		for(TargetValueStat targetValueStat : targetValueStats){
 			String targetValue = targetValueStat.getValue();
 
-			List<ContinuousDistribution> content = targetValueStat.getContent();
-			if(content.size() != 1){
-				throw new InvalidFeatureException(targetValueStat);
-			}
-
-			ContinuousDistribution distribution = content.get(0);
+			ContinuousDistribution distribution = targetValueStat.getContinuousDistribution();
 			if(!(distribution instanceof GaussianDistribution)){
 				throw new InvalidFeatureException(targetValueStat);
 			}

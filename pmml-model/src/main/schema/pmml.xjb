@@ -1179,6 +1179,12 @@ Copyright (c) 2009 University of Tartu
 			</annox:annotate>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:group[@name='CONTINUOUS-DISTRIBUTION-TYPES']">
+			<jaxb:property
+				name="continuousDistribution"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:group[@name='EmbeddedModel']">
 			<jaxb:property
 				name="embeddedModel"
