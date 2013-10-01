@@ -13,6 +13,7 @@ Supported model types:
 	<tr><td>Regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
 	<tr><td>Rule set</td><td>http://www.dmg.org/v4-1/RuleSet.html</td></tr>
 	<tr><td>Scorecard</td><td>http://www.dmg.org/v4-1/Scorecard.html</td></tr>
+	<tr><td>Support Vector Machine</td><td>http://www.dmg.org/v4-1/SupportVectorMachine.html</td></tr>
 	<tr><td>Tree models</td><td>http://www.dmg.org/v4-1/TreeModel.html</td></tr>
 	<tr><td>Ensemble models (all of the above)</td><td>http://www.dmg.org/v4-1/MultipleModels.html</td></tr>
 </table>
@@ -27,26 +28,26 @@ JPMML library JAR files (together with accompanying Java source and Javadocs JAR
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-model</artifactId>
-	<version>1.0.17</version>
+	<version>1.0.18</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
-	<version>1.0.17</version>
+	<version>1.0.18</version>
 </dependency>
 
 <!-- medium-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-manager</artifactId>
-	<version>1.0.17</version>
+	<version>1.0.18</version>
 </dependency>
 
 <!-- high-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.0.17</version>
+	<version>1.0.18</version>
 </dependency>
 ```
 Please note that higher API levels depend on lower API levels.
