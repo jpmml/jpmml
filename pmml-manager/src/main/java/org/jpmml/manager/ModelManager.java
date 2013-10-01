@@ -133,9 +133,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public Target getTarget(FieldName name){
-		Targets targetDictionary = getOrCreateTargets();
+		Targets targets = getOrCreateTargets();
 
-		List<Target> targets = targetDictionary.getTargets();
 		for(Target target : targets){
 
 			if((target.getField()).equals(name)){

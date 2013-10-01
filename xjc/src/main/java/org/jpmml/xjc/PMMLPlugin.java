@@ -36,6 +36,7 @@ public class PMMLPlugin extends Plugin {
 				String publicName = propertyInfo.getName(true);
 				String privateName = propertyInfo.getName(false);
 
+				// Collection of values
 				if(propertyInfo.isCollection()){
 
 					if((privateName).contains("And") || (privateName).contains("Or") || (privateName).equalsIgnoreCase("content")){
@@ -66,6 +67,7 @@ public class PMMLPlugin extends Plugin {
 					}
 				} else
 
+				// Simple value
 				{
 					// This attribute is common to all Model subclasses. Here, programmatic customization is better than manual customization
 					if((privateName).equals("isScorable")){
@@ -79,6 +81,53 @@ public class PMMLPlugin extends Plugin {
 
 	@Override
 	public boolean run(Outline outline, Options options, ErrorHandler errorHandler){
+		Model model = outline.getModel();
+
+		JClass iterableInterface = model.codeModel.ref("java.lang.Iterable");
+		JClass iteratorInterface = model.codeModel.ref("java.util.Iterator");
+
+		Collection<? extends ClassOutline> clazzes = outline.getClasses();
+		for(ClassOutline clazz : clazzes){
+			FieldOutline field = getField(clazz);
+
+			if(field != null){
+				CPropertyInfo propertyInfo = field.getPropertyInfo();
+
+				JFieldVar fieldVar = CodeModelUtil.getFieldVar(field);
+
+				JType elementType = CodeModelUtil.getElementType(fieldVar.type());
+
+				clazz.implClass._implements(iterableInterface.narrow(elementType));
+
+				JMethod iteratorMethod = clazz.implClass.method(JMod.PUBLIC, iteratorInterface.narrow(elementType), "iterator");
+				iteratorMethod.body()._return(JExpr.invoke("get" + propertyInfo.getName(true)).invoke("iterator"));
+			}
+		}
+
 		return true;
+	}
+
+	static
+	private FieldOutline getField(ClassOutline clazz){
+		String name = clazz.implClass.name();
+
+		FieldOutline[] fields = clazz.getDeclaredFields();
+		for(FieldOutline field : fields){
+			CPropertyInfo propertyInfo = field.getPropertyInfo();
+
+			JType fieldType = field.getRawType();
+
+			if(propertyInfo.isCollection()){
+				JType elementType = CodeModelUtil.getElementType(fieldType);
+
+				String elementName = elementType.name();
+
+				if((name).equals(elementName + "s") || (name).equals(JJavaName.getPluralForm(elementName))){
+					return field;
+				}
+			}
+		}
+
+		return null;
 	}
 }

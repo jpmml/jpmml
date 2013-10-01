@@ -133,10 +133,9 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueInfo, Map<String, Double> probabilities){
+	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueStats, Map<String, Double> probabilities){
 		double x = (value.asNumber()).doubleValue();
 
-		List<TargetValueStat> targetValueStats = targetValueInfo.getTargetValueStats();
 		for(TargetValueStat targetValueStat : targetValueStats){
 			String targetValue = targetValueStat.getValue();
 
@@ -156,8 +155,8 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 		}
 	}
 
-	private void calculateDiscreteProbabilities(Map<String, Double> counts, TargetValueCounts targetValueInfo, double threshold, Map<String, Double> probabilities){
-		List<TargetValueCount> targetValueCounts = targetValueInfo.getTargetValueCounts();
+	private void calculateDiscreteProbabilities(Map<String, Double> counts, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> probabilities){
+
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			String targetValue = targetValueCount.getValue();
 
@@ -174,8 +173,8 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 		}
 	}
 
-	private void calculatePriorProbabilities(TargetValueCounts targetValueInfo, Map<String, Double> probabilities){
-		List<TargetValueCount> targetValueCounts = targetValueInfo.getTargetValueCounts();
+	private void calculatePriorProbabilities(TargetValueCounts targetValueCounts, Map<String, Double> probabilities){
+
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			String targetValue = targetValueCount.getValue();
 
@@ -209,7 +208,7 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 
 			List<PairCounts> pairCounts = bayesInput.getPairCounts();
 			for(PairCounts pairCount : pairCounts){
-				List<TargetValueCount> targetValueCounts = (pairCount.getTargetValueCounts()).getTargetValueCounts();
+				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 
 				for(TargetValueCount targetValueCount : targetValueCounts){
 					updateSum(targetValueCount.getValue(), targetValueCount.getCount(), counts);

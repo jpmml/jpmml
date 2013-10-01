@@ -41,27 +41,29 @@ public class ValueConstructorPlugin extends AbstractParameterizablePlugin {
 		Collection<? extends ClassOutline> clazzes = outline.getClasses();
 
 		for(ClassOutline clazz : clazzes){
-			List<JFieldVar> superClassFields = getSuperClassFields(clazz);
-			List<JFieldVar> classFields = getClassFields(clazz);
+			List<FieldOutline> superClassFields = getSuperClassFields(clazz);
+			List<FieldOutline> classFields = getClassFields(clazz);
 
 			if(superClassFields.size() > 0 || classFields.size() > 0){
 				JMethod defaultConstructor = (clazz.implClass).constructor(JMod.PUBLIC);
-				JInvocation defaultSuperInvocation = defaultConstructor.body().invoke("super");
-
-				// XXX
 				defaultConstructor.annotate(Deprecated.class);
+				JInvocation defaultSuperInvocation = defaultConstructor.body().invoke("super");
 
 				JMethod valueConstructor = (clazz.implClass).constructor(JMod.PUBLIC);
 				JInvocation valueSuperInvocation = valueConstructor.body().invoke("super");
 
-				for(JFieldVar superClassField : superClassFields){
-					JVar param = valueConstructor.param(JMod.FINAL, superClassField.type(), superClassField.name());
+				for(FieldOutline superClassField : superClassFields){
+					JFieldVar superClassFieldVar = CodeModelUtil.getFieldVar(superClassField);
+
+					JVar param = valueConstructor.param(JMod.FINAL, superClassFieldVar.type(), superClassFieldVar.name());
 
 					valueSuperInvocation.arg(param);
 				}
 
-				for(JFieldVar classField : classFields){
-					JVar param = valueConstructor.param(JMod.FINAL, classField.type(), classField.name());
+				for(FieldOutline classField : classFields){
+					JFieldVar classFieldVar = CodeModelUtil.getFieldVar(classField);
+
+					JVar param = valueConstructor.param(JMod.FINAL, classFieldVar.type(), classFieldVar.name());
 
 					valueConstructor.body().assign(JExpr.refthis(param.name()), param);
 				}
@@ -71,8 +73,8 @@ public class ValueConstructorPlugin extends AbstractParameterizablePlugin {
 		return true;
 	}
 
-	private List<JFieldVar> getSuperClassFields(ClassOutline clazz){
-		List<JFieldVar> result = new ArrayList<JFieldVar>();
+	private List<FieldOutline> getSuperClassFields(ClassOutline clazz){
+		List<FieldOutline> result = new ArrayList<FieldOutline>();
 
 		for(ClassOutline superClazz = clazz.getSuperClass(); superClazz != null; superClazz = superClazz.getSuperClass()){
 			result.addAll(0, getValueFields(superClazz));
@@ -81,12 +83,12 @@ public class ValueConstructorPlugin extends AbstractParameterizablePlugin {
 		return result;
 	}
 
-	private List<JFieldVar> getClassFields(ClassOutline clazz){
+	private List<FieldOutline> getClassFields(ClassOutline clazz){
 		return getValueFields(clazz);
 	}
 
-	private List<JFieldVar> getValueFields(ClassOutline clazz){
-		List<JFieldVar> result = new ArrayList<JFieldVar>();
+	private List<FieldOutline> getValueFields(ClassOutline clazz){
+		List<FieldOutline> result = new ArrayList<FieldOutline>();
 
 		FieldOutline[] fields = clazz.getDeclaredFields();
 		for(FieldOutline field : fields){
@@ -96,9 +98,10 @@ public class ValueConstructorPlugin extends AbstractParameterizablePlugin {
 				continue;
 			}
 
-			JFieldVar fieldVar = (clazz.implClass.fields()).get(propertyInfo.getName(false));
+			JFieldVar fieldVar = CodeModelUtil.getFieldVar(field);
 
-			if((fieldVar.mods().getValue() & JMod.STATIC) == JMod.STATIC){
+			int modifiers = (fieldVar.mods()).getValue();
+			if((modifiers & JMod.STATIC) == JMod.STATIC){
 				continue;
 			} // End if
 
@@ -106,7 +109,7 @@ public class ValueConstructorPlugin extends AbstractParameterizablePlugin {
 				CAttributePropertyInfo attributePropertyInfo = (CAttributePropertyInfo)propertyInfo;
 
 				if(attributePropertyInfo.isRequired()){
-					result.add(fieldVar);
+					result.add(field);
 				}
 			} // End if
 
@@ -114,15 +117,12 @@ public class ValueConstructorPlugin extends AbstractParameterizablePlugin {
 				CElementPropertyInfo elementPropertyInfo = (CElementPropertyInfo)propertyInfo;
 
 				if(elementPropertyInfo.isRequired()){
-					result.add(fieldVar);
+					result.add(field);
 				}
 			} // End if
 
 			if(propertyInfo instanceof CValuePropertyInfo && !getIgnoreValues()){
-
-				{
-					result.add(fieldVar);
-				}
+				result.add(field);
 			}
 		}
 

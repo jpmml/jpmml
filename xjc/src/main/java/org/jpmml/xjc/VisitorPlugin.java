@@ -96,23 +96,20 @@ public class VisitorPlugin extends Plugin {
 
 			JVar status = body.decl(visitorActionClazz, "status", JExpr.invoke(visitorParameter, "visit").arg(JExpr._this()));
 
-			List<FieldOutline> beanFields = Arrays.asList(clazz.getDeclaredFields());
-			for(FieldOutline beanField : beanFields){
-				CPropertyInfo propertyInfo = beanField.getPropertyInfo();
+			FieldOutline[] fields = clazz.getDeclaredFields();
+			for(FieldOutline field : fields){
+				CPropertyInfo propertyInfo = field.getPropertyInfo();
 
 				String fieldName = propertyInfo.getName(false);
 
 				JFieldRef fieldRef = JExpr.refthis(fieldName);
 
-				JType fieldType = beanField.getRawType();
+				JType fieldType = field.getRawType();
 
 				// Collection of values
 				if(propertyInfo.isCollection()){
-					JClass classFieldType = (JClass)fieldType;
+					JType fieldElementType = CodeModelUtil.getElementType(fieldType);
 
-					List<JClass> elementTypes = classFieldType.getTypeParameters();
-
-					JType fieldElementType = elementTypes.get(0);
 					if(traversableTypes.contains(fieldElementType) || objectClazz.equals(fieldElementType)){
 						JForLoop forLoop = body._for();
 						JVar var = forLoop.init(codeModel.INT, "i", JExpr.lit(0));

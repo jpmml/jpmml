@@ -164,21 +164,17 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 
 		KernelType kernelType = getKernelType();
 
-		Coefficients coefficientInfo = supportVectorMachine.getCoefficients();
-		List<Coefficient> coefficients = coefficientInfo.getCoefficients();
+		Coefficients coefficients = supportVectorMachine.getCoefficients();
+		Iterator<Coefficient> coefficientIterator = coefficients.iterator();
 
-		SupportVectors supportVectorInfo = supportVectorMachine.getSupportVectors();
-		List<SupportVector> supportVectors = supportVectorInfo.getSupportVectors();
-
-		if(coefficients.size() != supportVectors.size()){
-			throw new InvalidFeatureException(supportVectorMachine);
-		}
+		SupportVectors supportVectors = supportVectorMachine.getSupportVectors();
+		Iterator<SupportVector> supportVectorIterator = supportVectors.iterator();
 
 		Map<String, double[]> vectorMap = getVectorMap();
 
-		for(int i = 0; i < coefficients.size(); i++){
-			Coefficient coefficient = coefficients.get(i);
-			SupportVector supportVector = supportVectors.get(i);
+		while(coefficientIterator.hasNext() && supportVectorIterator.hasNext()){
+			Coefficient coefficient = coefficientIterator.next();
+			SupportVector supportVector = supportVectorIterator.next();
 
 			double[] vector = vectorMap.get(supportVector.getVectorId());
 			if(vector == null){
@@ -190,7 +186,11 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 			result += (coefficient.getValue() * value);
 		}
 
-		result += coefficientInfo.getAbsoluteValue();
+		if(coefficientIterator.hasNext() || supportVectorIterator.hasNext()){
+			throw new InvalidFeatureException(supportVectorMachine);
+		}
+
+		result += coefficients.getAbsoluteValue();
 
 		return result;
 	}

@@ -33,7 +33,7 @@ public class TargetUtil {
 		ModelManager<?> modelManager = context.getModelManager();
 
 		Targets targets = modelManager.getOrCreateTargets();
-		if(Iterables.isEmpty(targets.getTargets())){
+		if(Iterables.isEmpty(targets)){
 			return predictions;
 		}
 
@@ -79,7 +79,7 @@ public class TargetUtil {
 		ModelManager<?> modelManager = context.getModelManager();
 
 		Targets targets = modelManager.getOrCreateTargets();
-		if(Iterables.isEmpty(targets.getTargets())){
+		if(Iterables.isEmpty(targets)){
 			return predictions;
 		}
 
