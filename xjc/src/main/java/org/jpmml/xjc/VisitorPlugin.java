@@ -32,22 +32,25 @@ public class VisitorPlugin extends Plugin {
 
 		CodeModelClassFactory clazzFactory = outline.getClassFactory();
 
-		JClass objectClazz = codeModel.ref("org.dmg.pmml.PMMLObject");
+		JClass objectClazz = codeModel.ref(Object.class);
 
-		JPackage modelPackage = objectClazz._package();
+		JClass pmmlObjectClazz = codeModel.ref("org.dmg.pmml.PMMLObject");
+		JClass visitableInterface = codeModel.ref("org.dmg.pmml.Visitable");
 
-		JDefinedClass visitorAction = clazzFactory.createClass(modelPackage, JMod.PUBLIC, "VisitorAction", null, ClassType.ENUM);
-		JEnumConstant continueAction = visitorAction.enumConstant("CONTINUE");
-		JEnumConstant skipAction = visitorAction.enumConstant("SKIP");
-		JEnumConstant terminateAction = visitorAction.enumConstant("TERMINATE");
+		JPackage modelPackage = pmmlObjectClazz._package();
 
-		JDefinedClass visitor = clazzFactory.createClass(modelPackage, JMod.PUBLIC, "Visitor", null, ClassType.INTERFACE);
+		JDefinedClass visitorActionClazz = clazzFactory.createClass(modelPackage, JMod.PUBLIC, "VisitorAction", null, ClassType.ENUM);
+		JEnumConstant continueAction = visitorActionClazz.enumConstant("CONTINUE");
+		JEnumConstant skipAction = visitorActionClazz.enumConstant("SKIP");
+		JEnumConstant terminateAction = visitorActionClazz.enumConstant("TERMINATE");
 
-		JDefinedClass abstractVisitor = clazzFactory.createClass(modelPackage, JMod.ABSTRACT | JMod.PUBLIC, "AbstractVisitor", null, ClassType.CLASS)._implements(visitor);
-		JDefinedClass abstractSimpleVisitor = clazzFactory.createClass(modelPackage, JMod.ABSTRACT | JMod.PUBLIC, "AbstractSimpleVisitor", null, ClassType.CLASS)._implements(visitor);
+		JDefinedClass visitorInterface = clazzFactory.createClass(modelPackage, JMod.PUBLIC, "Visitor", null, ClassType.INTERFACE);
 
-		JMethod defaultMethod = abstractSimpleVisitor.method(JMod.PUBLIC, visitorAction, "visit");
-		defaultMethod.param(objectClazz, "object");
+		JDefinedClass abstractVisitorClazz = clazzFactory.createClass(modelPackage, JMod.ABSTRACT | JMod.PUBLIC, "AbstractVisitor", null, ClassType.CLASS)._implements(visitorInterface);
+		JDefinedClass abstractSimpleVisitorClazz = clazzFactory.createClass(modelPackage, JMod.ABSTRACT | JMod.PUBLIC, "AbstractSimpleVisitor", null, ClassType.CLASS)._implements(visitorInterface);
+
+		JMethod defaultMethod = abstractSimpleVisitorClazz.method(JMod.PUBLIC, visitorActionClazz, "visit");
+		defaultMethod.param(pmmlObjectClazz, "object");
 		defaultMethod.body()._return(continueAction);
 
 		Set<JType> traversableTypes = new LinkedHashSet<JType>();
@@ -69,29 +72,29 @@ public class VisitorPlugin extends Plugin {
 				parameterName = ("_" + parameterName);
 			}
 
-			JMethod visitorVisit = visitor.method(JMod.PUBLIC, visitorAction, "visit");
+			JMethod visitorVisit = visitorInterface.method(JMod.PUBLIC, visitorActionClazz, "visit");
 			visitorVisit.param(beanClazz, parameterName);
 
-			JMethod abstractVisitorVisit = abstractVisitor.method(JMod.PUBLIC, visitorAction, "visit");
+			JMethod abstractVisitorVisit = abstractVisitorClazz.method(JMod.PUBLIC, visitorActionClazz, "visit");
 			abstractVisitorVisit.annotate(Override.class);
 			abstractVisitorVisit.param(beanClazz, parameterName);
 			abstractVisitorVisit.body()._return(continueAction);
 
 			JClass beanSuperClass = beanClazz._extends();
 
-			JMethod abstractSimpleVisitorVisit = abstractSimpleVisitor.method(JMod.PUBLIC, visitorAction, "visit");
+			JMethod abstractSimpleVisitorVisit = abstractSimpleVisitorClazz.method(JMod.PUBLIC, visitorActionClazz, "visit");
 			abstractSimpleVisitorVisit.annotate(Override.class);
 			abstractSimpleVisitorVisit.param(beanClazz, parameterName);
 			abstractSimpleVisitorVisit.body()._return(JExpr.invoke(defaultMethod).arg(JExpr.cast(beanSuperClass, JExpr.ref(parameterName))));
 
-			JMethod beanAccept = beanClazz.method(JMod.PUBLIC, visitorAction, "accept");
+			JMethod beanAccept = beanClazz.method(JMod.PUBLIC, visitorActionClazz, "accept");
 			beanAccept.annotate(Override.class);
 
-			JVar visitorParameter = beanAccept.param(visitor, "visitor");
+			JVar visitorParameter = beanAccept.param(visitorInterface, "visitor");
 
 			JBlock body = beanAccept.body();
 
-			JVar status = body.decl(visitorAction, "status", JExpr.invoke(visitorParameter, "visit").arg(JExpr._this()));
+			JVar status = body.decl(visitorActionClazz, "status", JExpr.invoke(visitorParameter, "visit").arg(JExpr._this()));
 
 			List<FieldOutline> beanFields = Arrays.asList(clazz.getDeclaredFields());
 			for(FieldOutline beanField : beanFields){
@@ -99,7 +102,7 @@ public class VisitorPlugin extends Plugin {
 
 				String fieldName = propertyInfo.getName(false);
 
-				JFieldRef fieldRef = (JExpr._this()).ref(fieldName);
+				JFieldRef fieldRef = JExpr.refthis(fieldName);
 
 				JType fieldType = beanField.getRawType();
 
@@ -110,12 +113,21 @@ public class VisitorPlugin extends Plugin {
 					List<JClass> elementTypes = classFieldType.getTypeParameters();
 
 					JType fieldElementType = elementTypes.get(0);
-					if(traversableTypes.contains(fieldElementType)){
+					if(traversableTypes.contains(fieldElementType) || objectClazz.equals(fieldElementType)){
 						JForLoop forLoop = body._for();
 						JVar var = forLoop.init(codeModel.INT, "i", JExpr.lit(0));
 						forLoop.test((status.eq(continueAction)).cand(fieldRef.ne(JExpr._null())).cand(var.lt(fieldRef.invoke("size"))));
 						forLoop.update(var.incr());
-						forLoop.body().assign(status, (JExpr.invoke(fieldRef, "get").arg(var)).invoke("accept").arg(visitorParameter));
+
+						JExpression getElement = (JExpr.invoke(fieldRef, "get")).arg(var);
+
+						if(traversableTypes.contains(fieldElementType)){
+							forLoop.body().assign(status, getElement.invoke("accept").arg(visitorParameter));
+						} else
+
+						if(objectClazz.equals(fieldElementType)){
+							forLoop.body()._if(getElement._instanceof(visitableInterface))._then().assign(status, ((JExpression)JExpr.cast(visitableInterface, getElement)).invoke("accept").arg(visitorParameter));
+						}
 					}
 				} else
 

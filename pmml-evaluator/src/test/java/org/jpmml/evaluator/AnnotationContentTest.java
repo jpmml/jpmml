@@ -32,5 +32,9 @@ public class AnnotationContentTest extends PMMLTest {
 		assertEquals("Second text value", content.get(2));
 		assertEquals(Arrays.asList("Second extension"), ((Extension)content.get(3)).getContent());
 		assertEquals("Third text value", content.get(4));
+
+		pmml.accept(new SourceLocationTransformer());
+
+		SerializationUtil.clone(pmml);
 	}
 }
