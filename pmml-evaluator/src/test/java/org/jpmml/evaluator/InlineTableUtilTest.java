@@ -11,7 +11,7 @@ import com.google.common.collect.*;
 
 import static org.junit.Assert.*;
 
-public class TableUtilTest {
+public class InlineTableUtilTest {
 
 	@Test
 	public void matchSingleColumn(){
@@ -21,11 +21,11 @@ public class TableUtilTest {
 
 		Table<Integer, String, String> table = createTable(first, second, third);
 
-		assertEquals(first, TableUtil.match(table, createValues(new Object[][]{{"value", "1"}})));
-		assertEquals(second, TableUtil.match(table, createValues(new Object[][]{{"value", 2}})));
-		assertEquals(third, TableUtil.match(table, createValues(new Object[][]{{"value", 3d}})));
+		assertEquals(first, InlineTableUtil.match(table, createValues(new Object[][]{{"value", "1"}})));
+		assertEquals(second, InlineTableUtil.match(table, createValues(new Object[][]{{"value", 2}})));
+		assertEquals(third, InlineTableUtil.match(table, createValues(new Object[][]{{"value", 3d}})));
 
-		assertEquals(null, TableUtil.match(table, createValues(new Object[][]{{"value", "false"}})));
+		assertEquals(null, InlineTableUtil.match(table, createValues(new Object[][]{{"value", "false"}})));
 	}
 
 	@Test
@@ -39,16 +39,16 @@ public class TableUtilTest {
 
 		Table<Integer, String, String> table = createTable(firstTrue, firstFalse, secondTrue, secondFalse, thirdTrue, thirdFalse);
 
-		assertEquals(null, TableUtil.match(table, createValues(new Object[][]{{"value", "1"}})));
+		assertEquals(null, InlineTableUtil.match(table, createValues(new Object[][]{{"value", "1"}})));
 
-		assertEquals(firstTrue, TableUtil.match(table, createValues(new Object[][]{{"value", "1"}, {"flag", "true"}})));
-		assertEquals(firstFalse, TableUtil.match(table, createValues(new Object[][]{{"value", "1"}, {"flag", false}})));
+		assertEquals(firstTrue, InlineTableUtil.match(table, createValues(new Object[][]{{"value", "1"}, {"flag", "true"}})));
+		assertEquals(firstFalse, InlineTableUtil.match(table, createValues(new Object[][]{{"value", "1"}, {"flag", false}})));
 
-		assertEquals(secondTrue, TableUtil.match(table, createValues(new Object[][]{{"value", 2}, {"flag", "true"}})));
-		assertEquals(secondFalse, TableUtil.match(table, createValues(new Object[][]{{"value", 2}, {"flag", false}})));
+		assertEquals(secondTrue, InlineTableUtil.match(table, createValues(new Object[][]{{"value", 2}, {"flag", "true"}})));
+		assertEquals(secondFalse, InlineTableUtil.match(table, createValues(new Object[][]{{"value", 2}, {"flag", false}})));
 
-		assertEquals(thirdTrue, TableUtil.match(table, createValues(new Object[][]{{"value", 3d}, {"flag", "true"}})));
-		assertEquals(thirdFalse, TableUtil.match(table, createValues(new Object[][]{{"value", 3d}, {"flag", false}})));
+		assertEquals(thirdTrue, InlineTableUtil.match(table, createValues(new Object[][]{{"value", 3d}, {"flag", "true"}})));
+		assertEquals(thirdFalse, InlineTableUtil.match(table, createValues(new Object[][]{{"value", 3d}, {"flag", false}})));
 	}
 
 	static

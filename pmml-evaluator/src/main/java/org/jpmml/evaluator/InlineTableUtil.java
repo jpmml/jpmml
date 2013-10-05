@@ -4,25 +4,39 @@
 package org.jpmml.evaluator;
 
 import java.util.*;
+import java.util.concurrent.*;
+
+import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 import org.w3c.dom.*;
 
-public class TableUtil {
+public class InlineTableUtil {
 
-	private TableUtil(){
+	private InlineTableUtil(){
 	}
 
 	static
-	public Table<Integer, String, String> parse(InlineTable table){
+	public Table<Integer, String, String> getContent(InlineTable inlineTable){
+
+		try {
+			return InlineTableUtil.cache.get(inlineTable);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(inlineTable);
+		}
+	}
+
+	static
+	public Table<Integer, String, String> parse(InlineTable inlineTable){
 		Table<Integer, String, String> result = TreeBasedTable.create();
 
 		Integer rowKey = 1;
 
-		List<Row> rows = table.getRows();
+		List<Row> rows = inlineTable.getRows();
 		for(Row row : rows){
 			List<Object> cells = row.getContent();
 
@@ -75,4 +89,14 @@ public class TableUtil {
 
 		return null;
 	}
+
+	private static final LoadingCache<InlineTable, Table<Integer, String, String>> cache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<InlineTable, Table<Integer, String, String>>(){
+
+			@Override
+			public Table<Integer, String, String> load(InlineTable inlineTable){
+				return parse(inlineTable);
+			}
+		});
 }

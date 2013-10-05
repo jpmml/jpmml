@@ -4,12 +4,14 @@
 package org.jpmml.evaluator;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
 import com.google.common.base.*;
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 public class ArrayUtil {
@@ -31,15 +33,12 @@ public class ArrayUtil {
 
 	static
 	public List<String> getContent(Array array){
-		List<String> content = array.getContent();
 
-		if(content == null){
-			content = parse(array);
-
-			array.setContent(content);
+		try {
+			return ArrayUtil.cache.get(array);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(array);
 		}
-
-		return content;
 	}
 
 	static
@@ -212,4 +211,14 @@ public class ArrayUtil {
 
 		return result;
 	}
+
+	private static final LoadingCache<Array, List<String>> cache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<Array, List<String>>(){
+
+			@Override
+			public List<String> load(Array array){
+				return parse(array);
+			}
+		});
 }

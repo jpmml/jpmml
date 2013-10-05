@@ -84,9 +84,9 @@ public class DiscretizationUtil {
 
 		InlineTable inlineTable = mapValues.getInlineTable();
 		if(inlineTable != null){
-			Table<Integer, String, String> table = TableUtil.parse(inlineTable);
+			Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
 
-			Map<String, String> row = TableUtil.match(table, values);
+			Map<String, String> row = InlineTableUtil.match(table, values);
 			if(row != null){
 				String result = row.get(mapValues.getOutputColumn());
 				if(result == null){

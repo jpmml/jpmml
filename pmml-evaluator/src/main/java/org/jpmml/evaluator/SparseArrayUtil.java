@@ -4,11 +4,13 @@
 package org.jpmml.evaluator;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 public class SparseArrayUtil {
@@ -28,17 +30,17 @@ public class SparseArrayUtil {
 		return content.size();
 	}
 
+	@SuppressWarnings (
+		value = {"unchecked"}
+	)
 	static
 	public <E extends Number> SortedMap<Integer, E> getContent(SparseArray<E> sparseArray){
-		SortedMap<Integer, E> content = sparseArray.getContent();
 
-		if(content == null){
-			content = parse(sparseArray);
-
-			sparseArray.setContent(content);
+		try {
+			return (SortedMap<Integer, E>)SparseArrayUtil.cache.get(sparseArray);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(sparseArray);
 		}
-
-		return content;
 	}
 
 	static
@@ -135,4 +137,15 @@ public class SparseArrayUtil {
 			throw new EvaluationException();
 		}
 	}
+
+	private static final LoadingCache<SparseArray<?>, SortedMap<Integer, ? extends Number>> cache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<SparseArray<?>, SortedMap<Integer, ? extends Number>>(){
+
+			@Override
+			public SortedMap<Integer, ? extends Number> load(SparseArray<?> sparseArray){
+				return parse(sparseArray);
+			}
+
+		});
 }

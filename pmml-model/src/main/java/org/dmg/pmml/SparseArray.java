@@ -11,10 +11,6 @@ import javax.xml.bind.annotation.*;
 abstract
 public class SparseArray<E extends Number> extends PMMLObject {
 
-	@XmlTransient
-	private SortedMap<Integer, E> content = null;
-
-
 	abstract
 	public Integer getN();
 
@@ -26,12 +22,4 @@ public class SparseArray<E extends Number> extends PMMLObject {
 
 	abstract
 	public List<E> getEntries();
-
-	public SortedMap<Integer, E> getContent(){
-		return this.content;
-	}
-
-	public void setContent(SortedMap<Integer, E> content){
-		this.content = content;
-	}
 }
