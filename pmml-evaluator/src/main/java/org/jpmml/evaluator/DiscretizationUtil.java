@@ -9,6 +9,8 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.collect.*;
+
 public class DiscretizationUtil {
 
 	private DiscretizationUtil(){
@@ -80,11 +82,11 @@ public class DiscretizationUtil {
 	public FieldValue mapValue(MapValues mapValues, Map<String, FieldValue> values){
 		DataType dataType = mapValues.getDataType();
 
-		InlineTable table = mapValues.getInlineTable();
-		if(table != null){
-			List<Map<String, String>> rows = TableUtil.parse(table);
+		InlineTable inlineTable = mapValues.getInlineTable();
+		if(inlineTable != null){
+			Table<Integer, String, String> table = TableUtil.parse(inlineTable);
 
-			Map<String, String> row = TableUtil.match(rows, values);
+			Map<String, String> row = TableUtil.match(table, values);
 			if(row != null){
 				String result = row.get(mapValues.getOutputColumn());
 				if(result == null){

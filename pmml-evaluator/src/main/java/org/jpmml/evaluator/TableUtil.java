@@ -17,34 +17,37 @@ public class TableUtil {
 	}
 
 	static
-	public List<Map<String, String>> parse(InlineTable table){
-		List<Map<String, String>> result = Lists.newArrayList();
+	public Table<Integer, String, String> parse(InlineTable table){
+		Table<Integer, String, String> result = TreeBasedTable.create();
+
+		Integer rowKey = 1;
 
 		List<Row> rows = table.getRows();
 		for(Row row : rows){
-			Map<String, String> map = Maps.newLinkedHashMap();
-
 			List<Object> cells = row.getContent();
+
 			for(Object cell : cells){
 
 				if(cell instanceof Element){
 					Element element = (Element)cell;
 
-					map.put(element.getTagName(), element.getTextContent());
+					result.put(rowKey, element.getTagName(), element.getTextContent());
 				}
 			}
 
-			result.add(map);
+			rowKey += 1;
 		}
 
-		return Collections.unmodifiableList(result);
+		return Tables.unmodifiableTable(result);
 	}
 
 	static
-	public Map<String, String> match(List<Map<String, String>> rows, Map<String, FieldValue> values){
+	public Map<String, String> match(Table<Integer, String, String> table, Map<String, FieldValue> values){
+		Set<Integer> rowKeys = table.rowKeySet();
 
 		rows:
-		for(Map<String, String> row : rows){
+		for(Integer rowKey : rowKeys){
+			Map<String, String> row = table.row(rowKey);
 
 			// A table row contains a certain number of input columns, plus an output column
 			if(values.size() < (row.size() - 1)){
