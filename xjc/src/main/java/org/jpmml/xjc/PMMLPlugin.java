@@ -83,10 +83,13 @@ public class PMMLPlugin extends Plugin {
 	public boolean run(Outline outline, Options options, ErrorHandler errorHandler){
 		Model model = outline.getModel();
 
-		JClass hasIdInterface = model.codeModel.ref("org.dmg.pmml.HasId");
+		JCodeModel codeModel = model.codeModel;
 
-		JClass iterableInterface = model.codeModel.ref("java.lang.Iterable");
-		JClass iteratorInterface = model.codeModel.ref("java.util.Iterator");
+		JClass hasIdInterface = codeModel.ref("org.dmg.pmml.HasId");
+		JClass hasExtensionsInterface = codeModel.ref("org.dmg.pmml.HasExtensions");
+
+		JClass iterableInterface = codeModel.ref("java.lang.Iterable");
+		JClass iteratorInterface = codeModel.ref("java.util.Iterator");
 
 		Collection<? extends ClassOutline> clazzes = outline.getClasses();
 		for(ClassOutline clazz : clazzes){
@@ -95,6 +98,11 @@ public class PMMLPlugin extends Plugin {
 			FieldOutline idField = getIdField(clazz);
 			if(idField != null){
 				definedClazz._implements(hasIdInterface);
+			}
+
+			FieldOutline extensionsField = getExtensionsField(clazz);
+			if(extensionsField != null){
+				definedClazz._implements(hasExtensionsInterface);
 			}
 
 			FieldOutline contentField = getContentField(clazz);
@@ -123,17 +131,36 @@ public class PMMLPlugin extends Plugin {
 		for(FieldOutline field : fields){
 			CPropertyInfo propertyInfo = field.getPropertyInfo();
 
-			String publicName = propertyInfo.getName(true);
 			String privateName = propertyInfo.getName(false);
-
-			if(propertyInfo.isCollection()){
-				continue;
-			}
 
 			JType fieldType = field.getRawType();
 
 			if((name).equals(privateName) && ("java.lang.String").equals(fieldType.fullName())){
 				return field;
+			}
+		}
+
+		return null;
+	}
+
+	static
+	private FieldOutline getExtensionsField(ClassOutline clazz){
+		String name = "extensions";
+
+		FieldOutline[] fields = clazz.getDeclaredFields();
+		for(FieldOutline field : fields){
+			CPropertyInfo propertyInfo = field.getPropertyInfo();
+
+			String privateName = propertyInfo.getName(false);
+
+			JType fieldType = field.getRawType();
+
+			if((name).equals(privateName) && propertyInfo.isCollection()){
+				JType elementType = CodeModelUtil.getElementType(fieldType);
+
+				if(("org.dmg.pmml.Extension").equals(elementType.fullName())){
+					return field;
+				}
 			}
 		}
 
