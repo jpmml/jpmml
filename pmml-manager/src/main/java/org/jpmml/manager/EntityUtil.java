@@ -15,7 +15,7 @@ public class EntityUtil {
 	}
 
 	static
-	public <E extends Entity> void put(E entity, BiMap<String, E> map){
+	public <E extends PMMLObject & HasId> void put(E entity, BiMap<String, E> map){
 		String id = entity.getId();
 		if(id == null || map.containsKey(id)){
 			throw new InvalidFeatureException(entity);
@@ -25,7 +25,7 @@ public class EntityUtil {
 	}
 
 	static
-	public <E extends Entity> void putAll(List<E> entities, BiMap<String, E> map){
+	public <E extends PMMLObject & HasId> void putAll(List<E> entities, BiMap<String, E> map){
 
 		for(int i = 0, j = 1; i < entities.size(); i++, j++){
 			E entity = entities.get(i);

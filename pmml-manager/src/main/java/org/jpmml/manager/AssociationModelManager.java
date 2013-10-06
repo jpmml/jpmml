@@ -82,28 +82,26 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 	 * @return A bidirectional map between {@link Item#getId Item identifiers} and {@link Item instances}.
 	 */
 	public BiMap<String, Item> getItemRegistry(){
-		BiMap<String, Item> result = HashBiMap.create();
+		AssociationModel associationModel = getModel();
 
-		List<Item> items = getItems();
-		for(Item item : items){
-			result.put(item.getId(), item);
+		try {
+			return AssociationModelManager.itemCache.get(associationModel);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(associationModel);
 		}
-
-		return result;
 	}
 
 	/**
 	 * @return A bidirectional map between {@link Itemset#getId() Itemset identifiers} and {@link Itemset instances}.
 	 */
 	public BiMap<String, Itemset> getItemsetRegistry(){
-		BiMap<String, Itemset> result = HashBiMap.create();
+		AssociationModel associationModel = getModel();
 
-		List<Itemset> itemsets = getItemsets();
-		for(Itemset itemset : itemsets){
-			result.put(itemset.getId(), itemset);
+		try {
+			return AssociationModelManager.itemsetCache.get(associationModel);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(associationModel);
 		}
-
-		return result;
 	}
 
 	@Override
@@ -144,6 +142,34 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 				BiMap<String, AssociationRule> result = HashBiMap.create();
 
 				EntityUtil.putAll(associationModel.getAssociationRules(), result);
+
+				return result;
+			}
+		});
+
+	private static final LoadingCache<AssociationModel, BiMap<String, Item>> itemCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<AssociationModel, BiMap<String, Item>>(){
+
+			@Override
+			public BiMap<String, Item> load(AssociationModel associationModel){
+				BiMap<String, Item> result = HashBiMap.create();
+
+				EntityUtil.putAll(associationModel.getItems(), result);
+
+				return result;
+			}
+		});
+
+	private static final LoadingCache<AssociationModel, BiMap<String, Itemset>> itemsetCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<AssociationModel, BiMap<String, Itemset>>(){
+
+			@Override
+			public BiMap<String, Itemset> load(AssociationModel associationModel){
+				BiMap<String, Itemset> result = HashBiMap.create();
+
+				EntityUtil.putAll(associationModel.getItemsets(), result);
 
 				return result;
 			}

@@ -7,11 +7,13 @@ import javax.xml.bind.annotation.*;
 
 @XmlTransient
 abstract
-public class Entity extends PMMLObject {
+public class Entity extends PMMLObject implements HasId {
 
+	@Override
 	abstract
 	public String getId();
 
+	@Override
 	abstract
 	public void setId(String id);
 }

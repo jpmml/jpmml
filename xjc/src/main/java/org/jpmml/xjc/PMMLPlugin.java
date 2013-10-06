@@ -83,23 +83,31 @@ public class PMMLPlugin extends Plugin {
 	public boolean run(Outline outline, Options options, ErrorHandler errorHandler){
 		Model model = outline.getModel();
 
+		JClass hasIdInterface = model.codeModel.ref("org.dmg.pmml.HasId");
+
 		JClass iterableInterface = model.codeModel.ref("java.lang.Iterable");
 		JClass iteratorInterface = model.codeModel.ref("java.util.Iterator");
 
 		Collection<? extends ClassOutline> clazzes = outline.getClasses();
 		for(ClassOutline clazz : clazzes){
-			FieldOutline field = getField(clazz);
+			JDefinedClass definedClazz = clazz.implClass;
 
-			if(field != null){
-				CPropertyInfo propertyInfo = field.getPropertyInfo();
+			FieldOutline idField = getIdField(clazz);
+			if(idField != null){
+				definedClazz._implements(hasIdInterface);
+			}
 
-				JFieldVar fieldVar = CodeModelUtil.getFieldVar(field);
+			FieldOutline contentField = getContentField(clazz);
+			if(contentField != null){
+				CPropertyInfo propertyInfo = contentField.getPropertyInfo();
+
+				JFieldVar fieldVar = CodeModelUtil.getFieldVar(contentField);
 
 				JType elementType = CodeModelUtil.getElementType(fieldVar.type());
 
-				clazz.implClass._implements(iterableInterface.narrow(elementType));
+				definedClazz._implements(iterableInterface.narrow(elementType));
 
-				JMethod iteratorMethod = clazz.implClass.method(JMod.PUBLIC, iteratorInterface.narrow(elementType), "iterator");
+				JMethod iteratorMethod = definedClazz.method(JMod.PUBLIC, iteratorInterface.narrow(elementType), "iterator");
 				iteratorMethod.body()._return(JExpr.invoke("get" + propertyInfo.getName(true)).invoke("iterator"));
 			}
 		}
@@ -108,7 +116,32 @@ public class PMMLPlugin extends Plugin {
 	}
 
 	static
-	private FieldOutline getField(ClassOutline clazz){
+	private FieldOutline getIdField(ClassOutline clazz){
+		String name = "id";
+
+		FieldOutline[] fields = clazz.getDeclaredFields();
+		for(FieldOutline field : fields){
+			CPropertyInfo propertyInfo = field.getPropertyInfo();
+
+			String publicName = propertyInfo.getName(true);
+			String privateName = propertyInfo.getName(false);
+
+			if(propertyInfo.isCollection()){
+				continue;
+			}
+
+			JType fieldType = field.getRawType();
+
+			if((name).equals(privateName) && ("java.lang.String").equals(fieldType.fullName())){
+				return field;
+			}
+		}
+
+		return null;
+	}
+
+	static
+	private FieldOutline getContentField(ClassOutline clazz){
 		String name = clazz.implClass.name();
 
 		FieldOutline[] fields = clazz.getDeclaredFields();
