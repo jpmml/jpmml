@@ -4,7 +4,6 @@
 package org.jpmml.evaluator;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.jpmml.manager.*;
 
@@ -33,12 +32,7 @@ public class ArrayUtil {
 
 	static
 	public List<String> getContent(Array array){
-
-		try {
-			return ArrayUtil.cache.get(array);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(array);
-		}
+		return CacheUtil.getValue(array, ArrayUtil.cache);
 	}
 
 	static

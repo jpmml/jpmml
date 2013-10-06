@@ -4,7 +4,6 @@
 package org.jpmml.manager;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.dmg.pmml.*;
 
@@ -66,13 +65,7 @@ public class ClusteringModelManager extends ModelManager<ClusteringModel> implem
 
 	@Override
 	public BiMap<String, Cluster> getEntityRegistry(){
-		ClusteringModel clusteringModel = getModel();
-
-		try {
-			return ClusteringModelManager.cache.get(clusteringModel);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(clusteringModel);
-		}
+		return getValue(ClusteringModelManager.entityCache);
 	}
 
 	public List<ClusteringField> getClusteringFields(){
@@ -87,7 +80,7 @@ public class ClusteringModelManager extends ModelManager<ClusteringModel> implem
 		return clusteringModel.getClusters();
 	}
 
-	private static final LoadingCache<ClusteringModel, BiMap<String, Cluster>> cache = CacheBuilder.newBuilder()
+	private static final LoadingCache<ClusteringModel, BiMap<String, Cluster>> entityCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<ClusteringModel, BiMap<String, Cluster>>(){
 

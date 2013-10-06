@@ -4,7 +4,6 @@
 package org.jpmml.evaluator;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.jpmml.manager.*;
 
@@ -22,12 +21,7 @@ public class InlineTableUtil {
 
 	static
 	public Table<Integer, String, String> getContent(InlineTable inlineTable){
-
-		try {
-			return InlineTableUtil.cache.get(inlineTable);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(inlineTable);
-		}
+		return CacheUtil.getValue(inlineTable, InlineTableUtil.cache);
 	}
 
 	static

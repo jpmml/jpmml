@@ -4,7 +4,6 @@
 package org.jpmml.manager;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.dmg.pmml.*;
 
@@ -78,41 +77,23 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 		return this.associationModel;
 	}
 
+	@Override
+	public BiMap<String, AssociationRule> getEntityRegistry(){
+		return getValue(AssociationModelManager.entityCache);
+	}
+
 	/**
 	 * @return A bidirectional map between {@link Item#getId Item identifiers} and {@link Item instances}.
 	 */
 	public BiMap<String, Item> getItemRegistry(){
-		AssociationModel associationModel = getModel();
-
-		try {
-			return AssociationModelManager.itemCache.get(associationModel);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(associationModel);
-		}
+		return getValue(AssociationModelManager.itemCache);
 	}
 
 	/**
 	 * @return A bidirectional map between {@link Itemset#getId() Itemset identifiers} and {@link Itemset instances}.
 	 */
 	public BiMap<String, Itemset> getItemsetRegistry(){
-		AssociationModel associationModel = getModel();
-
-		try {
-			return AssociationModelManager.itemsetCache.get(associationModel);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(associationModel);
-		}
-	}
-
-	@Override
-	public BiMap<String, AssociationRule> getEntityRegistry(){
-		AssociationModel associationModel = getModel();
-
-		try {
-			return AssociationModelManager.cache.get(associationModel);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(associationModel);
-		}
+		return getValue(AssociationModelManager.itemsetCache);
 	}
 
 	public List<Item> getItems(){
@@ -133,7 +114,7 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 		return associationModel.getAssociationRules();
 	}
 
-	private static final LoadingCache<AssociationModel, BiMap<String, AssociationRule>> cache = CacheBuilder.newBuilder()
+	private static final LoadingCache<AssociationModel, BiMap<String, AssociationRule>> entityCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<AssociationModel, BiMap<String, AssociationRule>>(){
 

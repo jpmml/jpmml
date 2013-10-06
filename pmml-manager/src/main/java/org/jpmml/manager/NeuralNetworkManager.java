@@ -4,7 +4,6 @@
 package org.jpmml.manager;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.dmg.pmml.*;
 
@@ -94,13 +93,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 
 	@Override
 	public BiMap<String, Entity> getEntityRegistry(){
-		NeuralNetwork neuralNetwork = getModel();
-
-		try {
-			return NeuralNetworkManager.cache.get(neuralNetwork);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(neuralNetwork);
-		}
+		return getValue(NeuralNetworkManager.entityCache);
 	}
 
 	/**
@@ -156,7 +149,7 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 		return output;
 	}
 
-	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> cache = CacheBuilder.newBuilder()
+	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> entityCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<NeuralNetwork, BiMap<String, Entity>>(){
 

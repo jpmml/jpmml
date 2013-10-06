@@ -4,7 +4,6 @@
 package org.jpmml.manager;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.dmg.pmml.*;
 
@@ -70,13 +69,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 
 	@Override
 	public BiMap<String, Node> getEntityRegistry(){
-		TreeModel treeModel = getModel();
-
-		try {
-			return TreeModelManager.cache.get(treeModel);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(treeModel);
-		}
+		return getValue(TreeModelManager.entityCache);
 	}
 
 	/**
@@ -127,7 +120,7 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 		return scoreDistribution;
 	}
 
-	private static final LoadingCache<TreeModel, BiMap<String, Node>> cache = CacheBuilder.newBuilder()
+	private static final LoadingCache<TreeModel, BiMap<String, Node>> entityCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<TreeModel, BiMap<String, Node>>(){
 

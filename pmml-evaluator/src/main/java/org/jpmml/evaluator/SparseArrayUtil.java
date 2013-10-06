@@ -4,7 +4,6 @@
 package org.jpmml.evaluator;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.jpmml.manager.*;
 
@@ -35,12 +34,7 @@ public class SparseArrayUtil {
 	)
 	static
 	public <E extends Number> SortedMap<Integer, E> getContent(SparseArray<E> sparseArray){
-
-		try {
-			return (SortedMap<Integer, E>)SparseArrayUtil.cache.get(sparseArray);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(sparseArray);
-		}
+		return (SortedMap<Integer, E>)CacheUtil.getValue(sparseArray, SparseArrayUtil.cache);
 	}
 
 	static

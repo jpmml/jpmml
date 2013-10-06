@@ -7,6 +7,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 abstract
@@ -188,5 +189,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		}
 
 		return targets;
+	}
+
+	public <V> V getValue(LoadingCache<M, V> cache){
+		M model = getModel();
+
+		return CacheUtil.getValue(model, cache);
 	}
 }
