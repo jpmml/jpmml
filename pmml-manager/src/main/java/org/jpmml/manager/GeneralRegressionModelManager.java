@@ -7,6 +7,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 import static com.google.common.base.Preconditions.*;
@@ -42,19 +43,11 @@ public class GeneralRegressionModelManager extends ModelManager<GeneralRegressio
 	}
 
 	public BiMap<FieldName, Predictor> getFactorRegistry(){
-		GeneralRegressionModel generalRegressionModel = getModel();
-
-		PredictorList predictorList = generalRegressionModel.getFactorList();
-
-		return toPredictorRegistry(predictorList);
+		return getValue(GeneralRegressionModelManager.factorCache);
 	}
 
 	public BiMap<FieldName, Predictor> getCovariateRegistry(){
-		GeneralRegressionModel generalRegressionModel = getModel();
-
-		PredictorList predictorList = generalRegressionModel.getCovariateList();
-
-		return toPredictorRegistry(predictorList);
+		return getValue(GeneralRegressionModelManager.covariateCache);
 	}
 
 	public PPMatrix getPPMatrix(){
@@ -70,7 +63,7 @@ public class GeneralRegressionModelManager extends ModelManager<GeneralRegressio
 	}
 
 	static
-	private BiMap<FieldName, Predictor> toPredictorRegistry(PredictorList predictorList){
+	private BiMap<FieldName, Predictor> parsePredictorRegistry(PredictorList predictorList){
 		BiMap<FieldName, Predictor> result = HashBiMap.create();
 
 		List<Predictor> predictors = predictorList.getPredictors();
@@ -80,4 +73,24 @@ public class GeneralRegressionModelManager extends ModelManager<GeneralRegressio
 
 		return result;
 	}
+
+	protected static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> factorCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
+
+			@Override
+			public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
+				return parsePredictorRegistry(generalRegressionModel.getFactorList());
+			}
+		});
+
+	protected static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> covariateCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
+
+			@Override
+			public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
+				return parsePredictorRegistry(generalRegressionModel.getCovariateList());
+			}
+		});
 }

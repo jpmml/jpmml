@@ -11,18 +11,10 @@ import org.dmg.pmml.*;
 
 import com.google.common.base.*;
 import com.google.common.base.Predicate;
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManager implements Evaluator {
-
-	private BiMap<FieldName, Predictor> factors = null;
-
-	private BiMap<FieldName, Predictor> covariates = null;
-
-	private Map<String, Map<String, Row>> ppMatrixMap = null;
-
-	private Map<String, List<PCell>> paramMatrixMap = null;
-
 
 	public GeneralRegressionModelEvaluator(PMML pmml){
 		super(pmml);
@@ -30,26 +22,6 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){
 		super(pmml, generalRegressionModel);
-	}
-
-	@Override
-	public BiMap<FieldName, Predictor> getFactorRegistry(){
-
-		if(this.factors == null){
-			this.factors = super.getFactorRegistry();
-		}
-
-		return this.factors;
-	}
-
-	@Override
-	public BiMap<FieldName, Predictor> getCovariateRegistry(){
-
-		if(this.covariates == null){
-			this.covariates = super.getCovariateRegistry();
-		}
-
-		return this.covariates;
 	}
 
 	@Override
@@ -449,20 +421,20 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 	}
 
 	private Map<String, Map<String, Row>> getPPMatrixMap(){
-
-		if(this.ppMatrixMap == null){
-			this.ppMatrixMap = parsePPMatrix();
-		}
-
-		return this.ppMatrixMap;
+		return getValue(GeneralRegressionModelEvaluator.ppMatrixCache);
 	}
 
-	private Map<String, Map<String, Row>> parsePPMatrix(){
+	private Map<String, List<PCell>> getParamMatrixMap(){
+		return getValue(GeneralRegressionModelEvaluator.paramMatrixCache);
+	}
+
+	static
+	private Map<String, Map<String, Row>> parsePPMatrix(final GeneralRegressionModel generalRegressionModel){
 		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
 
-			private BiMap<FieldName, Predictor> factors = getFactorRegistry();
+			private BiMap<FieldName, Predictor> factors = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelManager.factorCache);
 
-			private BiMap<FieldName, Predictor> covariates = getCovariateRegistry();
+			private BiMap<FieldName, Predictor> covariates = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelManager.covariateCache);
 
 
 			@Override
@@ -494,7 +466,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 		};
 
-		PPMatrix ppMatrix = getPPMatrix();
+		PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
 
 		ListMultimap<String, PPCell> targetCategoryMap = groupByTargetCategory(ppMatrix.getPPCells());
 
@@ -517,17 +489,9 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		return result;
 	}
 
-	private Map<String, List<PCell>> getParamMatrixMap(){
-
-		if(this.paramMatrixMap == null){
-			this.paramMatrixMap = parseParamMatrix();
-		}
-
-		return this.paramMatrixMap;
-	}
-
-	private Map<String, List<PCell>> parseParamMatrix(){
-		ParamMatrix paramMatrix = getParamMatrix();
+	static
+	private Map<String, List<PCell>> parseParamMatrix(GeneralRegressionModel generalRegressionModel){
+		ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
 
 		ListMultimap<String, PCell> targetCategoryCells = groupByTargetCategory(paramMatrix.getPCells());
 
@@ -830,4 +794,25 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 		}
 	}
+
+	private static final LoadingCache<GeneralRegressionModel, Map<String, Map<String, Row>>> ppMatrixCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<GeneralRegressionModel, Map<String, Map<String, Row>>>(){
+
+			@Override
+			public Map<String, Map<String, Row>> load(GeneralRegressionModel generalRegressionModel){
+				return parsePPMatrix(generalRegressionModel);
+			}
+		});
+
+	private static final LoadingCache<GeneralRegressionModel, Map<String, List<PCell>>> paramMatrixCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<GeneralRegressionModel, Map<String, List<PCell>>>(){
+
+			@Override
+			public Map<String, List<PCell>> load(GeneralRegressionModel generalRegressionModel){
+				return parseParamMatrix(generalRegressionModel);
+			}
+		});
+
 }

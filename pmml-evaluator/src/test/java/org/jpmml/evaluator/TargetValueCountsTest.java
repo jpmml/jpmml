@@ -30,7 +30,9 @@ public class TargetValueCountsTest extends NaiveBayesModelEvaluatorTest {
 		arguments.put(domicile, null);
 		arguments.put(ageOfCar, 1d);
 
-		Map<String, Double> genderCounts = evaluator.getCounts(gender);
+		Map<FieldName, Map<String, Double>> countsMap = evaluator.getCountsMap();
+
+		Map<String, Double> genderCounts = countsMap.get(gender);
 
 		assertEquals(Double.valueOf(8598d), genderCounts.get("100"));
 		assertEquals(Double.valueOf(2533d), genderCounts.get("500"));

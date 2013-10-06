@@ -9,12 +9,10 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 public class SupportVectorMachineModelEvaluator extends SupportVectorMachineModelManager implements Evaluator {
-
-	private Map<String, double[]> vectorMap = null;
-
 
 	public SupportVectorMachineModelEvaluator(PMML pmml){
 		super(pmml);
@@ -252,16 +250,12 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 	}
 
 	private Map<String, double[]> getVectorMap(){
-
-		if(this.vectorMap == null){
-			this.vectorMap = parseVectorMap();
-		}
-
-		return this.vectorMap;
+		return getValue(SupportVectorMachineModelEvaluator.vectorCache);
 	}
 
-	private Map<String, double[]> parseVectorMap(){
-		VectorDictionary vectorDictionary = getVectorDictionary();
+	static
+	private Map<String, double[]> parseVectorDictionary(SupportVectorMachineModel supportVectorMachineModel){
+		VectorDictionary vectorDictionary = supportVectorMachineModel.getVectorDictionary();
 
 		VectorFields vectorFields = vectorDictionary.getVectorFields();
 
@@ -301,4 +295,14 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 
 		return result;
 	}
+
+	private static final LoadingCache<SupportVectorMachineModel, Map<String, double[]>> vectorCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<SupportVectorMachineModel, Map<String, double[]>>(){
+
+			@Override
+			public Map<String, double[]> load(SupportVectorMachineModel supportVectorMachineModel){
+				return parseVectorDictionary(supportVectorMachineModel);
+			}
+		});
 }

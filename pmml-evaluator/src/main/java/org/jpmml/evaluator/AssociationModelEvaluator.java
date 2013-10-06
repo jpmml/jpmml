@@ -9,12 +9,10 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 public class AssociationModelEvaluator extends AssociationModelManager implements Evaluator {
-
-	private BiMap<String, String> itemValues = null;
-
 
 	public AssociationModelEvaluator(PMML pmml){
 		super(pmml);
@@ -149,29 +147,6 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 		return result;
 	}
 
-	/**
-	 * @return A bidirectional map between {@link Item#getId() Item identifiers} and {@link Item#getValue() Item values}.
-	 */
-	private BiMap<String, String> getItemValues(){
-
-		if(this.itemValues == null){
-			this.itemValues = createItemValues();
-		}
-
-		return this.itemValues;
-	}
-
-	private BiMap<String, String> createItemValues(){
-		BiMap<String, String> result = HashBiMap.create();
-
-		List<Item> items = getItems();
-		for(Item item : items){
-			result.put(item.getId(), item.getValue());
-		}
-
-		return result;
-	}
-
 	static
 	private boolean isSubset(Set<String> input, Itemset itemset){
 		boolean result = true;
@@ -187,4 +162,33 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 		return result;
 	}
+
+	/**
+	 * @return A bidirectional map between {@link Item#getId() Item identifiers} and {@link Item#getValue() Item values}.
+	 */
+	private BiMap<String, String> getItemValues(){
+		return getValue(AssociationModelEvaluator.itemValueCache);
+	}
+
+	static
+	private BiMap<String, String> parseItemValues(AssociationModel associationModel){
+		BiMap<String, String> result = HashBiMap.create();
+
+		List<Item> items = associationModel.getItems();
+		for(Item item : items){
+			result.put(item.getId(), item.getValue());
+		}
+
+		return result;
+	}
+
+	private static final LoadingCache<AssociationModel, BiMap<String, String>> itemValueCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<AssociationModel, BiMap<String, String>>(){
+
+			@Override
+			public BiMap<String, String> load(AssociationModel associationModel){
+				return parseItemValues(associationModel);
+			}
+		});
 }

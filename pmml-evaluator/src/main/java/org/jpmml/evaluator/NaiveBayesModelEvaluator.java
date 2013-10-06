@@ -11,14 +11,10 @@ import org.apache.commons.math3.util.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements Evaluator {
-
-	private List<BayesInput> bayesInputs = null;
-
-	private Map<FieldName, Map<String, Double>> counts = null;
-
 
 	public NaiveBayesModelEvaluator(PMML pmml){
 		super(pmml);
@@ -26,16 +22,6 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 
 	public NaiveBayesModelEvaluator(PMML pmml, NaiveBayesModel naiveBayesModel){
 		super(pmml, naiveBayesModel);
-	}
-
-	@Override
-	public List<BayesInput> getBayesInputs(){
-
-		if(this.bayesInputs == null){
-			this.bayesInputs = super.getBayesInputs();
-		}
-
-		return this.bayesInputs;
 	}
 
 	@Override
@@ -73,6 +59,8 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 		// Probability calculations use logarithmic scale for greater numerical stability
 		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
 
+		Map<FieldName, Map<String, Double>> countsMap = getCountsMap();
+
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = FieldName.create(bayesInput.getFieldName());
@@ -91,7 +79,7 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 				continue;
 			}
 
-			Map<String, Double> counts = getCounts(name);
+			Map<String, Double> counts = countsMap.get(name);
 
 			DerivedField derivedField = bayesInput.getDerivedField();
 			if(derivedField != null){
@@ -182,27 +170,17 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 		}
 	}
 
-	public Map<String, Double> getCounts(FieldName name){
-		Map<FieldName, Map<String, Double>> counts = getCounts();
-
-		return counts.get(name);
+	protected Map<FieldName, Map<String, Double>> getCountsMap(){
+		return getValue(NaiveBayesModelEvaluator.countCache);
 	}
 
-	private Map<FieldName, Map<String, Double>> getCounts(){
-
-		if(this.counts == null){
-			this.counts = parseCounts();
-		}
-
-		return this.counts;
-	}
-
-	private Map<FieldName, Map<String, Double>> parseCounts(){
+	static
+	private Map<FieldName, Map<String, Double>> calculateCounts(NaiveBayesModel naiveBayesModel){
 		Map<FieldName, Map<String, Double>> result = Maps.newLinkedHashMap();
 
-		List<BayesInput> bayesInputs = getBayesInputs();
+		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelManager.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
-			FieldName name = new FieldName(bayesInput.getFieldName());
+			FieldName name = FieldName.create(bayesInput.getFieldName());
 
 			Map<String, Double> counts = Maps.newLinkedHashMap();
 
@@ -248,4 +226,14 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 
 		return null;
 	}
+
+	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> countCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<NaiveBayesModel, Map<FieldName, Map<String, Double>>>(){
+
+			@Override
+			public Map<FieldName, Map<String, Double>> load(NaiveBayesModel naiveBayesModel){
+				return calculateCounts(naiveBayesModel);
+			}
+		});
 }
