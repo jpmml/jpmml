@@ -13,25 +13,12 @@ import com.google.common.collect.*;
 
 public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 
-	private BiMap<String, Node> entities = null;
-
-
 	public TreeModelEvaluator(PMML pmml){
 		super(pmml);
 	}
 
 	public TreeModelEvaluator(PMML pmml, TreeModel treeModel){
 		super(pmml, treeModel);
-	}
-
-	@Override
-	public BiMap<String, Node> getEntityRegistry(){
-
-		if(this.entities == null){
-			this.entities = super.getEntityRegistry();
-		}
-
-		return this.entities;
 	}
 
 	@Override

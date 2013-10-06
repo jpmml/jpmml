@@ -17,8 +17,6 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 	private BiMap<String, Itemset> itemsets = null;
 
-	private BiMap<String, AssociationRule> entities = null;
-
 	private BiMap<String, String> itemValues = null;
 
 
@@ -48,16 +46,6 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 		}
 
 		return this.itemsets;
-	}
-
-	@Override
-	public BiMap<String, AssociationRule> getEntityRegistry(){
-
-		if(this.entities == null){
-			this.entities = super.getEntityRegistry();
-		}
-
-		return this.entities;
 	}
 
 	@Override

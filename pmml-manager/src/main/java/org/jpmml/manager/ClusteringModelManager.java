@@ -4,9 +4,11 @@
 package org.jpmml.manager;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 import static com.google.common.base.Preconditions.*;
@@ -64,13 +66,13 @@ public class ClusteringModelManager extends ModelManager<ClusteringModel> implem
 
 	@Override
 	public BiMap<String, Cluster> getEntityRegistry(){
-		BiMap<String, Cluster> result = HashBiMap.create();
+		ClusteringModel clusteringModel = getModel();
 
-		List<Cluster> clusters = getClusters();
-
-		EntityUtil.putAll(clusters, result);
-
-		return result;
+		try {
+			return ClusteringModelManager.cache.get(clusteringModel);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(clusteringModel);
+		}
 	}
 
 	public List<ClusteringField> getClusteringFields(){
@@ -84,4 +86,18 @@ public class ClusteringModelManager extends ModelManager<ClusteringModel> implem
 
 		return clusteringModel.getClusters();
 	}
+
+	private static final LoadingCache<ClusteringModel, BiMap<String, Cluster>> cache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<ClusteringModel, BiMap<String, Cluster>>(){
+
+			@Override
+			public BiMap<String, Cluster> load(ClusteringModel clusteringModel){
+				BiMap<String, Cluster> result = HashBiMap.create();
+
+				EntityUtil.putAll(clusteringModel.getClusters(), result);
+
+				return result;
+			}
+		});
 }

@@ -4,9 +4,11 @@
 package org.jpmml.manager;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 import static com.google.common.base.Preconditions.*;
@@ -68,11 +70,13 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 
 	@Override
 	public BiMap<String, Node> getEntityRegistry(){
-		BiMap<String, Node> result = HashBiMap.create();
+		TreeModel treeModel = getModel();
 
-		collectNodes(getRoot(), result);
-
-		return result;
+		try {
+			return TreeModelManager.cache.get(treeModel);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(treeModel);
+		}
 	}
 
 	/**
@@ -123,13 +127,26 @@ public class TreeModelManager extends ModelManager<TreeModel> implements HasEnti
 		return scoreDistribution;
 	}
 
-	static
-	private void collectNodes(Node node, BiMap<String, Node> map){
-		EntityUtil.put(node, map);
+	private static final LoadingCache<TreeModel, BiMap<String, Node>> cache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<TreeModel, BiMap<String, Node>>(){
 
-		List<Node> children = node.getNodes();
-		for(Node child : children){
-			collectNodes(child, map);
-		}
-	}
+			@Override
+			public BiMap<String, Node> load(TreeModel treeModel){
+				BiMap<String, Node> result = HashBiMap.create();
+
+				collectNodes(treeModel.getNode(), result);
+
+				return result;
+			}
+
+			private void collectNodes(Node node, BiMap<String, Node> result){
+				EntityUtil.put(node, result);
+
+				List<Node> children = node.getNodes();
+				for(Node child : children){
+					collectNodes(child, result);
+				}
+			}
+		});
 }

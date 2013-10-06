@@ -4,9 +4,11 @@
 package org.jpmml.manager;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 import static com.google.common.base.Preconditions.*;
@@ -106,13 +108,13 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 
 	@Override
 	public BiMap<String, AssociationRule> getEntityRegistry(){
-		BiMap<String, AssociationRule> result = HashBiMap.create();
+		AssociationModel associationModel = getModel();
 
-		List<AssociationRule> associationRules = getAssociationRules();
-
-		EntityUtil.putAll(associationRules, result);
-
-		return result;
+		try {
+			return AssociationModelManager.cache.get(associationModel);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(associationModel);
+		}
 	}
 
 	public List<Item> getItems(){
@@ -132,4 +134,18 @@ public class AssociationModelManager extends ModelManager<AssociationModel> impl
 
 		return associationModel.getAssociationRules();
 	}
+
+	private static final LoadingCache<AssociationModel, BiMap<String, AssociationRule>> cache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<AssociationModel, BiMap<String, AssociationRule>>(){
+
+			@Override
+			public BiMap<String, AssociationRule> load(AssociationModel associationModel){
+				BiMap<String, AssociationRule> result = HashBiMap.create();
+
+				EntityUtil.putAll(associationModel.getAssociationRules(), result);
+
+				return result;
+			}
+		});
 }

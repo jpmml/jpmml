@@ -13,25 +13,12 @@ import com.google.common.collect.*;
 
 public class ClusteringModelEvaluator extends ClusteringModelManager implements Evaluator {
 
-	private BiMap<String, Cluster> entities = null;
-
-
 	public ClusteringModelEvaluator(PMML pmml){
 		super(pmml);
 	}
 
 	public ClusteringModelEvaluator(PMML pmml, ClusteringModel clusteringModel){
 		super(pmml, clusteringModel);
-	}
-
-	@Override
-	public BiMap<String, Cluster> getEntityRegistry(){
-
-		if(this.entities == null){
-			this.entities = super.getEntityRegistry();
-		}
-
-		return this.entities;
 	}
 
 	@Override

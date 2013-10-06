@@ -4,9 +4,11 @@
 package org.jpmml.manager;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
 import static com.google.common.base.Preconditions.*;
@@ -92,23 +94,13 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 
 	@Override
 	public BiMap<String, Entity> getEntityRegistry(){
-		BiMap<String, Entity> result = HashBiMap.create();
+		NeuralNetwork neuralNetwork = getModel();
 
-		List<NeuralInput> neuralInputs = getNeuralInputs();
-		for(NeuralInput neuralInput : neuralInputs){
-			EntityUtil.put(neuralInput, result);
+		try {
+			return NeuralNetworkManager.cache.get(neuralNetwork);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(neuralNetwork);
 		}
-
-		List<NeuralLayer> neuralLayers = getNeuralLayers();
-		for(NeuralLayer neuralLayer : neuralLayers){
-			List<Neuron> neurons = neuralLayer.getNeurons();
-
-			for(Neuron neuron : neurons){
-				EntityUtil.put(neuron, result);
-			}
-		}
-
-		return result;
 	}
 
 	/**
@@ -163,4 +155,30 @@ public class NeuralNetworkManager extends ModelManager<NeuralNetwork> implements
 
 		return output;
 	}
+
+	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> cache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<NeuralNetwork, BiMap<String, Entity>>(){
+
+			@Override
+			public BiMap<String, Entity> load(NeuralNetwork neuralNetwork){
+				BiMap<String, Entity> result = HashBiMap.create();
+
+				NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
+				for(NeuralInput neuralInput : neuralInputs){
+					EntityUtil.put(neuralInput, result);
+				}
+
+				List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
+				for(NeuralLayer neuralLayer : neuralLayers){
+					List<Neuron> neurons = neuralLayer.getNeurons();
+
+					for(Neuron neuron : neurons){
+						EntityUtil.put(neuron, result);
+					}
+				}
+
+				return result;
+			}
+		});
 }

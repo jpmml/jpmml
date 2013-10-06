@@ -13,25 +13,12 @@ import com.google.common.collect.*;
 
 public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Evaluator {
 
-	private BiMap<String, Entity> entities = null;
-
-
 	public NeuralNetworkEvaluator(PMML pmml){
 		super(pmml);
 	}
 
 	public NeuralNetworkEvaluator(PMML pmml, NeuralNetwork neuralNetwork){
 		super(pmml, neuralNetwork);
-	}
-
-	@Override
-	public BiMap<String, Entity> getEntityRegistry(){
-
-		if(this.entities == null){
-			this.entities = super.getEntityRegistry();
-		}
-
-		return this.entities;
 	}
 
 	@Override
