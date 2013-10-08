@@ -14,10 +14,10 @@ import org.dmg.pmml.*;
 import com.google.common.cache.*;
 import com.google.common.collect.*;
 
-public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements Evaluator {
+public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	public NaiveBayesModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), NaiveBayesModel.class));
 	}
 
 	public NaiveBayesModelEvaluator(PMML pmml, NaiveBayesModel naiveBayesModel){
@@ -25,8 +25,8 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Naive Bayes model";
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 
 		Map<FieldName, Map<String, Double>> countsMap = getCountsMap();
 
-		List<BayesInput> bayesInputs = getBayesInputs();
+		List<BayesInput> bayesInputs = getValue(NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = FieldName.create(bayesInput.getFieldName());
 
@@ -104,7 +104,7 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 			}
 		}
 
-		BayesOutput bayesOutput = getBayesOutput();
+		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
 
 		calculatePriorProbabilities(bayesOutput.getTargetValueCounts(), result);
 
@@ -178,7 +178,7 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 	private Map<FieldName, Map<String, Double>> calculateCounts(NaiveBayesModel naiveBayesModel){
 		Map<FieldName, Map<String, Double>> result = Maps.newLinkedHashMap();
 
-		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelManager.bayesInputCache);
+		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = FieldName.create(bayesInput.getFieldName());
 
@@ -195,6 +195,30 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 
 			result.put(name, counts);
 		}
+
+		return result;
+	}
+
+	static
+	private List<BayesInput> parseBayesInputs(NaiveBayesModel naiveBayesModel){
+		List<BayesInput> result = Lists.newArrayList();
+
+		BayesInputs bayesInputs = naiveBayesModel.getBayesInputs();
+
+		// The TargetValueStats element is not part of the PMML standard (as of PMML 4.1).
+		// Therefore, every BayesInput element that deals with TargetValueStats element has to be surrounded by an Extension element.
+		// Once the TargetValueStats element is incorporated into the PMML standard then it will be no longer necessary.
+		List<Extension> extensions = bayesInputs.getExtensions();
+		for(Extension extension : extensions){
+			BayesInput bayesInput = ExtensionUtil.getExtension(extension, BayesInput.class);
+			if(bayesInput == null){
+				continue;
+			}
+
+			result.add(bayesInput);
+		}
+
+		result.addAll(bayesInputs.getBayesInputs());
 
 		return result;
 	}
@@ -226,6 +250,16 @@ public class NaiveBayesModelEvaluator extends NaiveBayesModelManager implements 
 
 		return null;
 	}
+
+	private static final LoadingCache<NaiveBayesModel, List<BayesInput>> bayesInputCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<NaiveBayesModel, List<BayesInput>>(){
+
+			@Override
+			public List<BayesInput> load(NaiveBayesModel naiveBayesModel){
+				return parseBayesInputs(naiveBayesModel);
+			}
+		});
 
 	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> countCache = CacheBuilder.newBuilder()
 		.weakKeys()

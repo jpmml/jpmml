@@ -9,12 +9,13 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
-public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Evaluator {
+public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
 	public NeuralNetworkEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), NeuralNetwork.class));
 	}
 
 	public NeuralNetworkEvaluator(PMML pmml, NeuralNetwork neuralNetwork){
@@ -22,8 +23,13 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Neural network";
+	}
+
+	@Override
+	public BiMap<String, Entity> getEntityRegistry(){
+		return getValue(NeuralNetworkEvaluator.entityCache);
 	}
 
 	@Override
@@ -155,10 +161,12 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 	 * @see NeuralInput#getId()
 	 * @see Neuron#getId()
 	 */
-	public Map<String, Double> evaluateRaw(EvaluationContext context) {
+	public Map<String, Double> evaluateRaw(EvaluationContext context){
+		NeuralNetwork neuralNetwork = getModel();
+
 		Map<String, Double> result = Maps.newLinkedHashMap();
 
-		List<NeuralInput> neuralInputs = getNeuralInputs();
+		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 		for (NeuralInput neuralInput: neuralInputs) {
 			DerivedField derivedField = neuralInput.getDerivedField();
 
@@ -170,7 +178,7 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			result.put(neuralInput.getId(), (value.asNumber()).doubleValue());
 		}
 
-		List<NeuralLayer> neuralLayers = getNeuralLayers();
+		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
 		for (NeuralLayer neuralLayer : neuralLayers) {
 			List<Neuron> neurons = neuralLayer.getNeurons();
 
@@ -287,6 +295,19 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 		}
 	}
 
+	public List<NeuralOutput> getOrCreateNeuralOutputs() {
+		NeuralNetwork neuralNetwork = getModel();
+
+		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
+		if(neuralOutputs == null){
+			neuralOutputs = new NeuralOutputs();
+
+			neuralNetwork.setNeuralOutputs(neuralOutputs);
+		}
+
+		return neuralOutputs.getNeuralOutputs();
+	}
+
 	private interface Normalizer {
 
 		double apply(double value);
@@ -307,4 +328,30 @@ public class NeuralNetworkEvaluator extends NeuralNetworkManager implements Eval
 			return Math.exp(value);
 		}
 	};
+
+	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> entityCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<NeuralNetwork, BiMap<String, Entity>>(){
+
+			@Override
+			public BiMap<String, Entity> load(NeuralNetwork neuralNetwork){
+				BiMap<String, Entity> result = HashBiMap.create();
+
+				NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
+				for(NeuralInput neuralInput : neuralInputs){
+					EntityUtil.put(neuralInput, result);
+				}
+
+				List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
+				for(NeuralLayer neuralLayer : neuralLayers){
+					List<Neuron> neurons = neuralLayer.getNeurons();
+
+					for(Neuron neuron : neurons){
+						EntityUtil.put(neuron, result);
+					}
+				}
+
+				return result;
+			}
+		});
 }

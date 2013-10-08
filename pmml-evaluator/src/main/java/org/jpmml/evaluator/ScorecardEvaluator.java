@@ -11,10 +11,10 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
-public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
+public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 	public ScorecardEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), Scorecard.class));
 	}
 
 	public ScorecardEvaluator(PMML pmml, Scorecard scorecard){
@@ -22,8 +22,8 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Scorecard";
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class ScorecardEvaluator extends ScorecardManager implements Evaluator {
 
 		Map<String, Double> reasonCodePoints = Maps.newLinkedHashMap();
 
-		List<Characteristic> characteristics = getCharacteristics();
+		Characteristics characteristics = scorecard.getCharacteristics();
 		for(Characteristic characteristic : characteristics){
 			Double baselineScore = characteristic.getBaselineScore();
 			if(baselineScore == null){

@@ -7,31 +7,30 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-import com.google.common.cache.*;
 import com.google.common.collect.*;
+
+import static com.google.common.base.Preconditions.*;
 
 abstract
 public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 
-	public ModelManager(){
-	}
+	private M model = null;
 
-	public ModelManager(PMML pmml){
+
+	public ModelManager(PMML pmml, M model){
 		super(pmml);
+
+		setModel(model);
 	}
 
-	abstract
-	public M getModel();
+	public M getModel(){
+		return this.model;
+	}
 
-	/**
-	 * Convenience method for adding a field declaration to {@link DataDictionary} and {@link MiningSchema}.
-	 *
-	 * @see #addDataField(FieldName, String, OpType, DataType)
-	 * @see #addMiningField(FieldName, FieldUsageType)
-	 */
-	public void addField(FieldName name, String displayName, OpType opType, DataType dataType, FieldUsageType fieldUsageType){
-		addDataField(name, displayName, opType, dataType);
-		addMiningField(name, fieldUsageType);
+	private void setModel(M model){
+		checkNotNull(model);
+
+		this.model = model;
 	}
 
 	@Override
@@ -65,10 +64,21 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return getMiningFields(FieldUsageType.PREDICTED);
 	}
 
+	@Override
+	public MiningField getMiningField(FieldName name){
+		MiningSchema miningSchema = getMiningSchema();
+
+		List<MiningField> miningFields = miningSchema.getMiningFields();
+
+		return find(miningFields, name);
+	}
+
 	public List<FieldName> getMiningFields(FieldUsageType fieldUsageType){
 		List<FieldName> result = Lists.newArrayList();
 
-		List<MiningField> miningFields = getMiningSchema().getMiningFields();
+		MiningSchema miningSchema = getMiningSchema();
+
+		List<MiningField> miningFields = miningSchema.getMiningFields();
 		for(MiningField miningField : miningFields){
 
 			if((miningField.getUsageType()).equals(fieldUsageType)){
@@ -80,20 +90,12 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	@Override
-	public MiningField getMiningField(FieldName name){
-		List<MiningField> miningFields = getMiningSchema().getMiningFields();
+	public OutputField getOutputField(FieldName name){
+		Output output = getOrCreateOutput();
 
-		return find(miningFields, name);
-	}
+		List<OutputField> outputFields = output.getOutputFields();
 
-	public MiningField addMiningField(FieldName name, FieldUsageType usageType){
-		MiningField miningField = new MiningField(name);
-		miningField.setUsageType(usageType);
-
-		List<MiningField> miningFields = getMiningSchema().getMiningFields();
-		miningFields.add(miningField);
-
-		return miningField;
+		return find(outputFields, name);
 	}
 
 	@Override
@@ -108,15 +110,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		}
 
 		return result;
-	}
-
-	@Override
-	public OutputField getOutputField(FieldName name){
-		Output output = getOrCreateOutput();
-
-		List<OutputField> outputFields = output.getOutputFields();
-
-		return find(outputFields, name);
 	}
 
 	@Override
@@ -189,11 +182,5 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		}
 
 		return targets;
-	}
-
-	public <V> V getValue(LoadingCache<M, V> cache){
-		M model = getModel();
-
-		return CacheUtil.getValue(model, cache);
 	}
 }

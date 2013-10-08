@@ -15,7 +15,9 @@ public class RuleSelectionMethodTest extends RuleSetModelEvaluatorTest {
 	public String getRuleId(RuleSelectionMethod.Criterion criterion) throws Exception {
 		RuleSetModelEvaluator evaluator = createEvaluator();
 
-		RuleSet ruleSet = evaluator.getRuleSet();
+		RuleSetModel ruleSetModel = evaluator.getModel();
+
+		RuleSet ruleSet = ruleSetModel.getRuleSet();
 
 		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();
 

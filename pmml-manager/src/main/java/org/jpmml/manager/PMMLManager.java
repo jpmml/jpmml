@@ -24,28 +24,16 @@ public class PMMLManager implements Serializable {
 	private PMML pmml = null;
 
 
-	public PMMLManager(){
-		this(new PMML(new Header(), new DataDictionary(), "4.1"));
-	}
-
 	public PMMLManager(PMML pmml){
-		this.pmml = pmml;
+		setPMML(pmml);
 	}
 
 	public DataField getDataField(FieldName name){
-		List<DataField> dataFields = getDataDictionary().getDataFields();
+		DataDictionary dataDictionary = getDataDictionary();
+
+		List<DataField> dataFields = dataDictionary.getDataFields();
 
 		return find(dataFields, name);
-	}
-
-	public DataField addDataField(FieldName name, String displayName, OpType opType, DataType dataType){
-		DataField dataField = new DataField(name, opType, dataType);
-		dataField.setDisplayName(displayName);
-
-		List<DataField> dataFields = getDataDictionary().getDataFields();
-		dataFields.add(dataField);
-
-		return dataField;
 	}
 
 	public DerivedField resolveField(FieldName name){
@@ -70,26 +58,30 @@ public class PMMLManager implements Serializable {
 		return null;
 	}
 
-	public PMML getPmml(){
-		checkState(this.pmml != null);
-
+	public PMML getPMML(){
 		return this.pmml;
 	}
 
+	private void setPMML(PMML pmml){
+		checkNotNull(pmml);
+
+		this.pmml = pmml;
+	}
+
 	public Header getHeader(){
-		PMML pmml = getPmml();
+		PMML pmml = getPMML();
 
 		return pmml.getHeader();
 	}
 
 	public DataDictionary getDataDictionary(){
-		PMML pmml = getPmml();
+		PMML pmml = getPMML();
 
 		return pmml.getDataDictionary();
 	}
 
 	public TransformationDictionary getOrCreateTransformationDictionary(){
-		PMML pmml = getPmml();
+		PMML pmml = getPMML();
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
 		if(transformationDictionary == null){
@@ -102,7 +94,7 @@ public class PMMLManager implements Serializable {
 	}
 
 	public List<Model> getModels(){
-		PMML pmml = getPmml();
+		PMML pmml = getPMML();
 
 		return pmml.getModels();
 	}
@@ -134,14 +126,10 @@ public class PMMLManager implements Serializable {
 		return null;
 	}
 
-	public ModelManager<? extends Model> getModelManager(String modelName){
-		return getModelManager(modelName, ModelManagerFactory.getInstance());
-	}
-
 	public ModelManager<? extends Model> getModelManager(String modelName, ModelManagerFactory modelManagerFactory){
 		Model model = getModel(modelName);
 
-		return modelManagerFactory.getModelManager(getPmml(), model);
+		return modelManagerFactory.getModelManager(getPMML(), model);
 	}
 
 	@SuppressWarnings (

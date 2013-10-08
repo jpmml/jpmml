@@ -9,12 +9,13 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
-public class ClusteringModelEvaluator extends ClusteringModelManager implements Evaluator {
+public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 
 	public ClusteringModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), ClusteringModel.class));
 	}
 
 	public ClusteringModelEvaluator(PMML pmml, ClusteringModel clusteringModel){
@@ -22,8 +23,21 @@ public class ClusteringModelEvaluator extends ClusteringModelManager implements 
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Clustering model";
+	}
+
+	/**
+	 * @return <code>null</code> Always.
+	 */
+	@Override
+	public Target getTarget(FieldName name){
+		return null;
+	}
+
+	@Override
+	public BiMap<String, Cluster> getEntityRegistry(){
+		return getValue(ClusteringModelEvaluator.entityCache);
 	}
 
 	@Override
@@ -138,7 +152,7 @@ public class ClusteringModelEvaluator extends ClusteringModelManager implements 
 
 		BiMap<Cluster, String> inverseEntities = (getEntityRegistry().inverse());
 
-		List<Cluster> clusters = getClusters();
+		List<Cluster> clusters = clusteringModel.getClusters();
 		for(Cluster cluster : clusters){
 			Array array = cluster.getArray();
 
@@ -164,9 +178,11 @@ public class ClusteringModelEvaluator extends ClusteringModelManager implements 
 	}
 
 	private List<ClusteringField> getCenterClusteringFields(){
+		ClusteringModel clusteringModel = getModel();
+
 		List<ClusteringField> result = Lists.newArrayList();
 
-		List<ClusteringField> clusteringFields = getClusteringFields();
+		List<ClusteringField> clusteringFields = clusteringModel.getClusteringFields();
 		for(ClusteringField clusteringField : clusteringFields){
 			ClusteringField.CenterField centerField = clusteringField.getCenterField();
 
@@ -183,4 +199,18 @@ public class ClusteringModelEvaluator extends ClusteringModelManager implements 
 
 		return result;
 	}
+
+	private static final LoadingCache<ClusteringModel, BiMap<String, Cluster>> entityCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<ClusteringModel, BiMap<String, Cluster>>(){
+
+			@Override
+			public BiMap<String, Cluster> load(ClusteringModel clusteringModel){
+				BiMap<String, Cluster> result = HashBiMap.create();
+
+				EntityUtil.putAll(clusteringModel.getClusters(), result);
+
+				return result;
+			}
+		});
 }

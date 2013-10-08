@@ -9,12 +9,13 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
-public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
+public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
 
 	public TreeModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), TreeModel.class));
 	}
 
 	public TreeModelEvaluator(PMML pmml, TreeModel treeModel){
@@ -22,8 +23,13 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Tree model";
+	}
+
+	@Override
+	public BiMap<String, Node> getEntityRegistry(){
+		return getValue(TreeModelEvaluator.entityCache);
 	}
 
 	@Override
@@ -62,7 +68,7 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 	private Node evaluateTree(ModelManagerEvaluationContext context){
 		TreeModel treeModel = getModel();
 
-		Node root = getRoot();
+		Node root = treeModel.getNode();
 		if(root == null){
 			throw new InvalidFeatureException(treeModel);
 		}
@@ -231,4 +237,27 @@ public class TreeModelEvaluator extends TreeModelManager implements Evaluator {
 			return true;
 		}
 	}
+
+	private static final LoadingCache<TreeModel, BiMap<String, Node>> entityCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<TreeModel, BiMap<String, Node>>(){
+
+			@Override
+			public BiMap<String, Node> load(TreeModel treeModel){
+				BiMap<String, Node> result = HashBiMap.create();
+
+				collectNodes(treeModel.getNode(), result);
+
+				return result;
+			}
+
+			private void collectNodes(Node node, BiMap<String, Node> result){
+				EntityUtil.put(node, result);
+
+				List<Node> children = node.getNodes();
+				for(Node child : children){
+					collectNodes(child, result);
+				}
+			}
+		});
 }

@@ -12,10 +12,10 @@ import org.dmg.pmml.*;
 import com.google.common.cache.*;
 import com.google.common.collect.*;
 
-public class SupportVectorMachineModelEvaluator extends SupportVectorMachineModelManager implements Evaluator {
+public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
 	public SupportVectorMachineModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), SupportVectorMachineModel.class));
 	}
 
 	public SupportVectorMachineModelEvaluator(PMML pmml, SupportVectorMachineModel supportVectorMachineModel){
@@ -23,8 +23,8 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Support vector machine";
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 	private Map<FieldName, ? extends Number> evaluateRegression(ModelManagerEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
-		List<SupportVectorMachine> supportVectorMachines = getSupportVectorMachines();
+		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 		if(supportVectorMachines.size() != 1){
 			throw new InvalidFeatureException(supportVectorMachineModel);
 		}
@@ -82,7 +82,7 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelManagerEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
-		List<SupportVectorMachine> supportVectorMachines = getSupportVectorMachines();
+		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 		if(supportVectorMachines.size() < 1){
 			throw new InvalidFeatureException(supportVectorMachineModel);
 		}
@@ -158,9 +158,11 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 	}
 
 	private Double evaluateSupportVectorMachine(SupportVectorMachine supportVectorMachine, double[] input){
+		SupportVectorMachineModel supportVectorMachineModel = getModel();
+
 		double result = 0d;
 
-		KernelType kernelType = getKernelType();
+		KernelType kernelType = supportVectorMachineModel.getKernelType();
 
 		Coefficients coefficients = supportVectorMachine.getCoefficients();
 		Iterator<Coefficient> coefficientIterator = coefficients.iterator();
@@ -201,7 +203,7 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 			return svmClassificationMethod;
 		}
 
-		List<SupportVectorMachine> supportVectorMachines = getSupportVectorMachines();
+		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
 			String category = supportVectorMachine.getTargetCategory();
 			String alternateCategory = supportVectorMachine.getAlternateTargetCategory();
@@ -222,7 +224,9 @@ public class SupportVectorMachineModelEvaluator extends SupportVectorMachineMode
 	}
 
 	private double[] createInput(EvaluationContext context){
-		VectorDictionary vectorDictionary = getVectorDictionary();
+		SupportVectorMachineModel supportVectorMachineModel = getModel();
+
+		VectorDictionary vectorDictionary = supportVectorMachineModel.getVectorDictionary();
 
 		VectorFields vectorFields = vectorDictionary.getVectorFields();
 

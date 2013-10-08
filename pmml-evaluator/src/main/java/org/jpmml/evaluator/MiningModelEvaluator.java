@@ -11,10 +11,10 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
-public class MiningModelEvaluator extends MiningModelManager implements Evaluator {
+public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 
 	public MiningModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), MiningModel.class));
 	}
 
 	public MiningModelEvaluator(PMML pmml, MiningModel miningModel){
@@ -22,8 +22,14 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		MiningModel miningModel = getModel();
+
+		if(isRandomForest(miningModel)){
+			return "Random forest";
+		}
+
+		return "Ensemble model";
 	}
 
 	@Override
@@ -63,9 +69,11 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	}
 
 	private Map<FieldName, ?> evaluateRegression(ModelManagerEvaluationContext context){
+		MiningModel miningModel = getModel();
+
 		List<SegmentResult> segmentResults = evaluate(context);
 
-		Segmentation segmentation = getSegmentation();
+		Segmentation segmentation = miningModel.getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -110,9 +118,11 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	}
 
 	private Map<FieldName, ?> evaluateClassification(ModelManagerEvaluationContext context){
+		MiningModel miningModel = getModel();
+
 		List<SegmentResult> segmentResults = evaluate(context);
 
-		Segmentation segmentation = getSegmentation();
+		Segmentation segmentation = miningModel.getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -135,9 +145,11 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	}
 
 	private Map<FieldName, ?> evaluateClustering(ModelManagerEvaluationContext context){
+		MiningModel miningModel = getModel();
+
 		List<SegmentResult> segmentResults = evaluate(context);
 
-		Segmentation segmentation = getSegmentation();
+		Segmentation segmentation = miningModel.getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -157,9 +169,11 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	}
 
 	private Map<FieldName, ?> evaluateAny(ModelManagerEvaluationContext context){
+		MiningModel miningModel = getModel();
+
 		List<SegmentResult> segmentResults = evaluate(context);
 
-		Segmentation segmentation = getSegmentation();
+		Segmentation segmentation = miningModel.getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -227,7 +241,7 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 
 		List<SegmentResult> results = Lists.newArrayList();
 
-		Segmentation segmentation = getSegmentation();
+		Segmentation segmentation = miningModel.getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
@@ -317,9 +331,31 @@ public class MiningModelEvaluator extends MiningModelManager implements Evaluato
 	}
 
 	private Evaluator createEvaluator(Model model){
-		ModelManager<?> modelManager = MiningModelEvaluator.evaluatorFactory.getModelManager(getPmml(), model);
+		ModelManager<?> modelManager = MiningModelEvaluator.evaluatorFactory.getModelManager(getPMML(), model);
 
 		return (Evaluator)modelManager;
+	}
+
+	static
+	private boolean isRandomForest(MiningModel miningModel){
+		Segmentation segmentation = miningModel.getSegmentation();
+
+		if(segmentation == null){
+			return false;
+		}
+
+		List<Segment> segments = segmentation.getSegments();
+
+		// How many trees does it take to make a forest?
+		boolean result = (segments.size() > 3);
+
+		for(Segment segment : segments){
+			Model model = segment.getModel();
+
+			result &= (model instanceof TreeModel);
+		}
+
+		return result;
 	}
 
 	private static final ModelEvaluatorFactory evaluatorFactory = ModelEvaluatorFactory.getInstance();

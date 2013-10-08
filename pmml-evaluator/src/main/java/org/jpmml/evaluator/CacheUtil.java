@@ -1,7 +1,9 @@
 /*
  * Copyright, KNIME.com AG, Zurich, Switzerland
  */
-package org.jpmml.manager;
+package org.jpmml.evaluator;
+
+import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 

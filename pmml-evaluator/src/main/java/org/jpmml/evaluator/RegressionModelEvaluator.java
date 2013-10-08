@@ -9,10 +9,10 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-public class RegressionModelEvaluator extends RegressionModelManager implements Evaluator {
+public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 	public RegressionModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), RegressionModel.class));
 	}
 
 	public RegressionModelEvaluator(PMML pmml, RegressionModel regressionModel){
@@ -20,8 +20,8 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Regression";
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	private Map<FieldName, ? extends Number> evaluateRegression(ModelManagerEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
-		List<RegressionTable> regressionTables = getRegressionTables();
+		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
 		if(regressionTables.size() != 1){
 			throw new InvalidFeatureException(regressionModel);
 		}
@@ -72,7 +72,7 @@ public class RegressionModelEvaluator extends RegressionModelManager implements 
 	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelManagerEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
-		List<RegressionTable> regressionTables = getRegressionTables();
+		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
 		if(regressionTables.size() < 1){
 			throw new InvalidFeatureException(regressionModel);
 		}

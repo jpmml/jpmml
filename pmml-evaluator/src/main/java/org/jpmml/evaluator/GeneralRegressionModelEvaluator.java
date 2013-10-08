@@ -14,10 +14,10 @@ import com.google.common.base.Predicate;
 import com.google.common.cache.*;
 import com.google.common.collect.*;
 
-public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManager implements Evaluator {
+public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
 	public GeneralRegressionModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), GeneralRegressionModel.class));
 	}
 
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){
@@ -25,8 +25,8 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "General regression";
 	}
 
 	@Override
@@ -63,14 +63,14 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 
 		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
 		if(ppMatrixMap.size() != 1 || !ppMatrixMap.containsKey(null)){
-			throw new InvalidFeatureException(getPPMatrix());
+			throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
 		}
 
 		Map<String, Row> parameterPredictorRows = ppMatrixMap.get(null);
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
-			throw new InvalidFeatureException(getParamMatrix());
+			throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
 		}
 
 		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
@@ -140,7 +140,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 					// "The reference category is the one from DataDictionary that does not appear in the ParamMatrix"
 					Set<String> targetReferenceCategories = Sets.newLinkedHashSet(Iterables.filter(targetCategories, filter));
 					if(targetReferenceCategories.size() != 1){
-						throw new InvalidFeatureException(getParamMatrix());
+						throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
 					}
 
 					targetReferenceCategory = Iterables.getOnlyElement(targetReferenceCategories);
@@ -177,7 +177,7 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 				} // End if
 
 				if(parameterPredictorRow == null){
-					throw new InvalidFeatureException(getPPMatrix());
+					throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
 				}
 
 				Iterable<PCell> parameterCells;
@@ -193,20 +193,20 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 						} // End if
 
 						if(parameterCells == null){
-							throw new InvalidFeatureException(getParamMatrix());
+							throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
 						}
 						break;
 					case ORDINAL_MULTINOMIAL:
 						// "ParamMatrix specifies different values for the intercept parameter: one for each target category except one"
 						List<PCell> interceptCells = paramMatrixMap.get(targetCategory);
 						if(interceptCells == null || interceptCells.size() != 1){
-							throw new InvalidFeatureException(getParamMatrix());
+							throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
 						}
 
 						// "Values for all other parameters are constant across all target variable values"
 						parameterCells = paramMatrixMap.get(null);
 						if(parameterCells == null){
-							throw new InvalidFeatureException(getParamMatrix());
+							throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
 						}
 
 						parameterCells = Iterables.concat(interceptCells, parameterCells);
@@ -420,6 +420,14 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 		return result;
 	}
 
+	public BiMap<FieldName, Predictor> getFactorRegistry(){
+		return getValue(GeneralRegressionModelEvaluator.factorCache);
+	}
+
+	public BiMap<FieldName, Predictor> getCovariateRegistry(){
+		return getValue(GeneralRegressionModelEvaluator.covariateCache);
+	}
+
 	private Map<String, Map<String, Row>> getPPMatrixMap(){
 		return getValue(GeneralRegressionModelEvaluator.ppMatrixCache);
 	}
@@ -429,12 +437,24 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 	}
 
 	static
+	private BiMap<FieldName, Predictor> parsePredictorRegistry(PredictorList predictorList){
+		BiMap<FieldName, Predictor> result = HashBiMap.create();
+
+		List<Predictor> predictors = predictorList.getPredictors();
+		for(Predictor predictor : predictors){
+			result.put(predictor.getName(), predictor);
+		}
+
+		return result;
+	}
+
+	static
 	private Map<String, Map<String, Row>> parsePPMatrix(final GeneralRegressionModel generalRegressionModel){
 		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
 
-			private BiMap<FieldName, Predictor> factors = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelManager.factorCache);
+			private BiMap<FieldName, Predictor> factors = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelEvaluator.factorCache);
 
-			private BiMap<FieldName, Predictor> covariates = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelManager.covariateCache);
+			private BiMap<FieldName, Predictor> covariates = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelEvaluator.covariateCache);
 
 
 			@Override
@@ -794,6 +814,26 @@ public class GeneralRegressionModelEvaluator extends GeneralRegressionModelManag
 			}
 		}
 	}
+
+	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> factorCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
+
+			@Override
+			public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
+				return parsePredictorRegistry(generalRegressionModel.getFactorList());
+			}
+		});
+
+	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> covariateCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
+
+			@Override
+			public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
+				return parsePredictorRegistry(generalRegressionModel.getCovariateList());
+			}
+		});
 
 	private static final LoadingCache<GeneralRegressionModel, Map<String, Map<String, Row>>> ppMatrixCache = CacheBuilder.newBuilder()
 		.weakKeys()

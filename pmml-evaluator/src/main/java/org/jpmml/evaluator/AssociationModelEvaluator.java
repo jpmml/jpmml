@@ -12,10 +12,10 @@ import org.dmg.pmml.*;
 import com.google.common.cache.*;
 import com.google.common.collect.*;
 
-public class AssociationModelEvaluator extends AssociationModelManager implements Evaluator {
+public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasEntityRegistry<AssociationRule> {
 
 	public AssociationModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), AssociationModel.class));
 	}
 
 	public AssociationModelEvaluator(PMML pmml, AssociationModel associationModel){
@@ -23,8 +23,35 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Association rules";
+	}
+
+	public FieldName getActiveField(){
+		List<FieldName> activeFields = getActiveFields();
+
+		if(activeFields.size() < 1){
+			throw new InvalidFeatureException("No active fields", getMiningSchema());
+		} else
+
+		if(activeFields.size() > 1){
+			throw new InvalidFeatureException("Too many active fields", getMiningSchema());
+		}
+
+		return activeFields.get(0);
+	}
+
+	/**
+	 * @return <code>null</code> Always.
+	 */
+	@Override
+	public Target getTarget(FieldName name){
+		return null;
+	}
+
+	@Override
+	public BiMap<String, AssociationRule> getEntityRegistry(){
+		return getValue(AssociationModelEvaluator.entityCache);
 	}
 
 	@Override
@@ -73,12 +100,12 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 		Map<String, Boolean> flags = Maps.newLinkedHashMap();
 
-		List<Itemset> itemsets = getItemsets();
+		List<Itemset> itemsets = associationModel.getItemsets();
 		for(Itemset itemset : itemsets){
 			flags.put(itemset.getId(), isSubset(input, itemset));
 		}
 
-		List<AssociationRule> associationRules = getAssociationRules();
+		List<AssociationRule> associationRules = associationModel.getAssociationRules();
 
 		BitSet antecedentFlags = new BitSet(associationRules.size());
 		BitSet consequentFlags = new BitSet(associationRules.size());
@@ -164,6 +191,20 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 	}
 
 	/**
+	 * @return A bidirectional map between {@link Item#getId Item identifiers} and {@link Item instances}.
+	 */
+	private BiMap<String, Item> getItemRegistry(){
+		return getValue(AssociationModelEvaluator.itemCache);
+	}
+
+	/**
+	 * @return A bidirectional map between {@link Itemset#getId() Itemset identifiers} and {@link Itemset instances}.
+	 */
+	private BiMap<String, Itemset> getItemsetRegistry(){
+		return getValue(AssociationModelEvaluator.itemsetCache);
+	}
+
+	/**
 	 * @return A bidirectional map between {@link Item#getId() Item identifiers} and {@link Item#getValue() Item values}.
 	 */
 	private BiMap<String, String> getItemValues(){
@@ -181,6 +222,48 @@ public class AssociationModelEvaluator extends AssociationModelManager implement
 
 		return result;
 	}
+
+	private static final LoadingCache<AssociationModel, BiMap<String, AssociationRule>> entityCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<AssociationModel, BiMap<String, AssociationRule>>(){
+
+			@Override
+			public BiMap<String, AssociationRule> load(AssociationModel associationModel){
+				BiMap<String, AssociationRule> result = HashBiMap.create();
+
+				EntityUtil.putAll(associationModel.getAssociationRules(), result);
+
+				return result;
+			}
+		});
+
+	private static final LoadingCache<AssociationModel, BiMap<String, Item>> itemCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<AssociationModel, BiMap<String, Item>>(){
+
+			@Override
+			public BiMap<String, Item> load(AssociationModel associationModel){
+				BiMap<String, Item> result = HashBiMap.create();
+
+				EntityUtil.putAll(associationModel.getItems(), result);
+
+				return result;
+			}
+		});
+
+	private static final LoadingCache<AssociationModel, BiMap<String, Itemset>> itemsetCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<AssociationModel, BiMap<String, Itemset>>(){
+
+			@Override
+			public BiMap<String, Itemset> load(AssociationModel associationModel){
+				BiMap<String, Itemset> result = HashBiMap.create();
+
+				EntityUtil.putAll(associationModel.getItemsets(), result);
+
+				return result;
+			}
+		});
 
 	private static final LoadingCache<AssociationModel, BiMap<String, String>> itemValueCache = CacheBuilder.newBuilder()
 		.weakKeys()

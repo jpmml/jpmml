@@ -11,10 +11,10 @@ import org.dmg.pmml.*;
 
 import com.google.common.collect.*;
 
-public class RuleSetModelEvaluator extends RuleSetModelManager implements Evaluator {
+public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 
 	public RuleSetModelEvaluator(PMML pmml){
-		super(pmml);
+		this(pmml, find(pmml.getModels(), RuleSetModel.class));
 	}
 
 	public RuleSetModelEvaluator(PMML pmml, RuleSetModel ruleSetModel){
@@ -22,8 +22,8 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+	public String getSummary(){
+		return "Ruleset model";
 	}
 
 	@Override
@@ -51,7 +51,9 @@ public class RuleSetModelEvaluator extends RuleSetModelManager implements Evalua
 	}
 
 	private Map<FieldName, ? extends ClassificationMap> evaluateRuleSet(ModelManagerEvaluationContext context){
-		RuleSet ruleSet = getRuleSet();
+		RuleSetModel ruleSetModel = getModel();
+
+		RuleSet ruleSet = ruleSetModel.getRuleSet();
 
 		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();
 

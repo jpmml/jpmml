@@ -1,7 +1,7 @@
 /*
  * Copyright, KNIME.com AG, Zurich, Switzerland
  */
-package org.jpmml.manager;
+package org.jpmml.evaluator;
 
 import java.util.*;
 
@@ -9,6 +9,8 @@ import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
+
+import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
