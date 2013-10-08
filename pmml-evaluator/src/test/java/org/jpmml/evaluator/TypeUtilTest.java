@@ -14,6 +14,13 @@ import static org.junit.Assert.*;
 public class TypeUtilTest {
 
 	@Test
+	public void parse(){
+		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1"));
+		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1.0"));
+		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1e+0"));
+	}
+
+	@Test
 	public void cast(){
 		assertEquals("1", TypeUtil.cast(DataType.STRING, "1"));
 
@@ -32,7 +39,6 @@ public class TypeUtilTest {
 		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1f));
 		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1d));
 	}
-
 
 	@Test
 	public void compareDateTime(){

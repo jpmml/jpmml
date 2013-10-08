@@ -5,6 +5,8 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
+import com.google.common.math.*;
+
 import org.joda.time.*;
 import org.joda.time.format.*;
 
@@ -45,13 +47,13 @@ public class TypeUtil {
 			case STRING:
 				return value;
 			case INTEGER:
-				return Integer.valueOf(value);
+				return parseInteger(value);
 			case FLOAT:
-				return Float.valueOf(value);
+				return parseFloat(value);
 			case DOUBLE:
-				return Double.valueOf(value);
+				return parseDouble(value);
 			case BOOLEAN:
-				return Boolean.valueOf(value);
+				return parseBoolean(value);
 			case DATE:
 				return parseDate(value);
 			case TIME:
@@ -77,6 +79,42 @@ public class TypeUtil {
 		}
 
 		throw new EvaluationException();
+	}
+
+	static
+	private Integer parseInteger(String value){
+
+		try {
+			return Integer.valueOf(value);
+		} catch(NumberFormatException nfeInteger){
+
+			try {
+				Double result = parseDouble(value);
+
+				if(DoubleMath.isMathematicalInteger(result)){
+					return result.intValue();
+				}
+			} catch(NumberFormatException nfeDouble){
+				// Ignored
+			}
+
+			throw nfeInteger;
+		}
+	}
+
+	static
+	private Float parseFloat(String value){
+		return Float.valueOf(value);
+	}
+
+	static
+	private Double parseDouble(String value){
+		return Double.valueOf(value);
+	}
+
+	static
+	private Boolean parseBoolean(String value){
+		return Boolean.valueOf(value);
 	}
 
 	static
