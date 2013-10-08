@@ -28,26 +28,26 @@ JPMML library JAR files (together with accompanying Java source and Javadocs JAR
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-model</artifactId>
-	<version>1.0.18</version>
+	<version>1.0.19</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
-	<version>1.0.18</version>
+	<version>1.0.19</version>
 </dependency>
 
 <!-- medium-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-manager</artifactId>
-	<version>1.0.18</version>
+	<version>1.0.19</version>
 </dependency>
 
 <!-- high-level API -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.0.18</version>
+	<version>1.0.19</version>
 </dependency>
 ```
 Please note that higher API levels depend on lower API levels.
