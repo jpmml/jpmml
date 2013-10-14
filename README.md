@@ -4,13 +4,13 @@ Java API for producing and scoring models in Predictive Model Markup Language (P
 
 ### Class model ###
 
-* Full support for PMML 3.0, 3.1, 3.2, 4.0 and 4.1 schemas.
+* Full support for PMML 3.0, 3.1, 3.2, 4.0 and 4.1 schemas:
   * Class hierarchy.
   * Schema version annotations.
-* Fluent API
+* Fluent API:
   * Value constructors.
 * SAX Locator information
-* [Visitor pattern] (http://en.wikipedia.org/wiki/Visitor_pattern).
+* [Visitor pattern] (http://en.wikipedia.org/wiki/Visitor_pattern):
   * Validation agents.
   * Optimization and transformation agents.
 
