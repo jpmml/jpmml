@@ -2,225 +2,181 @@ Java API for producing and scoring models in Predictive Model Markup Language (P
 
 # Features #
 
-Supported model types:
-<table>
-	<tr><th>Description</th><th>PMML element</th></tr>
-	<tr><td>Association rules</td><td>http://www.dmg.org/v4-1/AssociationRules.html</td></tr>
-	<tr><td>Cluster models</td><td>http://www.dmg.org/v4-1/ClusteringModel.html</td></tr>
-	<tr><td>General regression</td><td>http://www.dmg.org/v4-1/GeneralRegression.html</td></tr>
-	<tr><td>Naive Bayes</td><td>http://www.dmg.org/v4-1/NaiveBayes.html</td></tr>
-	<tr><td>Neural network</td><td>http://www.dmg.org/v4-1/NeuralNetwork.html</td></tr>
-	<tr><td>Regression</td><td>http://www.dmg.org/v4-1/Regression.html</td></tr>
-	<tr><td>Rule set</td><td>http://www.dmg.org/v4-1/RuleSet.html</td></tr>
-	<tr><td>Scorecard</td><td>http://www.dmg.org/v4-1/Scorecard.html</td></tr>
-	<tr><td>Support Vector Machine</td><td>http://www.dmg.org/v4-1/SupportVectorMachine.html</td></tr>
-	<tr><td>Tree models</td><td>http://www.dmg.org/v4-1/TreeModel.html</td></tr>
-	<tr><td>Ensemble models (all of the above)</td><td>http://www.dmg.org/v4-1/MultipleModels.html</td></tr>
-</table>
+### Class model ###
 
-# Usage #
+* Full support for PMML 3.0, 3.1, 3.2, 4.0 and 4.1 schemas.
+  * Class hierarchy.
+  * Schema version annotations.
+* Fluent API
+  * Value constructors.
+* SAX Locator information
+* [Visitor pattern] (http://en.wikipedia.org/wiki/Visitor_pattern).
+  * Validation agents.
+  * Optimization and transformation agents.
 
-Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
+### Evaluation engine ###
 
-JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). The latest versions of public API modules can be incorporated using the following dependency declarations:
-```
-<!-- low-level API -->
+* Full support for [DataDictionary] (http://www.dmg.org/v4-1/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-1/MiningSchema.html) elements:
+  * Complete data type system.
+  * Complete operational type system. For example, continuous integers, categorical integers and ordinal integers are handled differently in equality check and comparison operations.
+  * Detection and treatment of outlier, missing and invalid values.
+* Full support for [transformations] (http://www.dmg.org/v4-1/Transformations.html) and [functions] (http://www.dmg.org/v4-1/Functions.html):
+  * Built-in functions.
+  * User defined functions (PMML, Java).
+* Full support for [Targets] (http://www.dmg.org/v4-1/Targets.html) and [Output] (http://www.dmg.org/v4-1/Output.html) elements.
+* Fully supported model elements:
+  * [Association rules] (http://www.dmg.org/v4-1/AssociationRules.html)
+  * [Cluster model] (http://www.dmg.org/v4-1/ClusteringModel.html)
+  * [General regression] (http://www.dmg.org/v4-1/GeneralRegression.html)
+  * [Naive Bayes] (http://www.dmg.org/v4-1/NaiveBayes.html)
+  * [Neural network] (http://www.dmg.org/v4-1/NeuralNetwork.html)
+  * [Regression] (http://www.dmg.org/v4-1/Regression.html)
+  * [Rule set] (http://www.dmg.org/v4-1/RuleSet.html)
+  * [Scorecard] (http://www.dmg.org/v4-1/Scorecard.html)
+  * [Support Vector Machine] (http://www.dmg.org/v4-1/SupportVectorMachine.html)
+  * [Tree model] (http://www.dmg.org/v4-1/TreeModel.html)
+  * [Ensemble model] (http://www.dmg.org/v4-1/MultipleModels.html)
+* Fully interoperable with popular open source software:
+  * [R] (http://www.r-project.org/) and [Rattle] (http://rattle.togaware.com/)
+  * [KNIME] (http://www.knime.org/)
+  * [RapidMiner] (http://rapid-i.com/content/view/181/190/)
+
+# Installation #
+
+JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
+
+The current version is **1.0.19** (08 October, 2013).
+
+### Class model ###
+
+```xml
+<!-- Class model classes -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-model</artifactId>
-	<version>1.0.19</version>
+	<version>${jpmml.version}</version>
 </dependency>
+<!-- Class model annotations -->
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-schema</artifactId>
-	<version>1.0.19</version>
+	<version>${jpmml.version}</version>
 </dependency>
+```
 
-<!-- medium-level API -->
-<dependency>
-	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-manager</artifactId>
-	<version>1.0.19</version>
-</dependency>
+### Evaluation engine ###
 
-<!-- high-level API -->
+```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.0.19</version>
+	<version>${jpmml.version}</version>
 </dependency>
 ```
-Please note that higher API levels depend on lower API levels.
 
-# Modules #
+# Usage #
 
-## Class model (1/3) ##
+### Class model ###
 
-Low-level API module. Provides JAXB-driven class model, which corresponds to the latest [PMML XML Schema version 4.1] (http://www.dmg.org/v4-1/pmml-4-1.xsd).
+The class model consists of two types of classes. There is a small number of manually crafted classes that are used for structuring the class hierarchy. They are permanently stored in the Java sources directory `/pmml-model/src/main/java`. Additionally, there is a much greater number of automatically generated classes that represent actual PMML elements. They can be found in the generated Java sources directory `/pmml-model/target/generated-sources/xjc` after a successful build operation.
 
-Different PMML XML Schema versions are compatible with one another. Older PMML version 3.X and 4.X documents can be converted to the latest PMML version 4.1 documents simply by performing XML namespace substitution. The `org.dmg.pmml.IOUtil` utility class performs this conversion automatically when unmarshalling.
+All class model classes descend from class `org.dmg.pmml.PMMLObject`. Additional class hierarchy levels, if any, represent common behaviour and/or features. For example, all model classes descend from class `org.dmg.pmml.Model`.
 
-Conversely, the latest PMML version 4.1 documents can be converted to older PMML version documents by similar means. The minimum supported version is determined by `org.dmg.pmml.Schema` class model annotations.
+There is not much documentation accompanying class model classes. The application developer should consult with the [PMML specification] (http://www.dmg.org/v4-1/GeneralStructure.html) about individual PMML elements and attributes.
 
-### Components
+##### Example applications #####
 
-##### pmml-model (public)
+* Copying an existing `org.dmg.pmml.PMML` instance from one file to another file: [CopyExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/CopyExample.java)
+* Building a new `org.dmg.pmml.PMML` instance for the "golfing" decision tree model: [TreeModelBuilderExample.java] (https://github.com/jpmml/jpmml-example/blob/master/src/main/java/org/jpmml/example/TreeModelBuilderExample.java)
 
-Class models classes.
+### Evaluation engine ###
 
-The class model consists of two types of classes. There is a small number of manually crafted classes that are used for structuring the class hierarchy. They are permanently stored in the Java sources directory of the module `src/main/java`. Additionally, there is a much greater number of automatically generated classes that represent actual PMML elements. They can be found in the generated Java sources directory of the module `target/generated-sources/xjc` after a successful build operation.
+A model evaluator class can be instantiated directly when the contents of the PMML document is known:
+```java
+PMML pmml = ...;
 
-All class model classes descend from class `org.dmg.pmml.PMMLObject`. Additional class hierarchy levels, if any, represent common behaviour and/or features. For example, model classes descend from class `org.dmg.pmml.Model`.
-
-There is not much documentation accompanying class model classes. The application developer should consult with the PMML specification about individual PMML elements and attributes.
-
-##### pmml-schema (public)
-
-Class model annotations.
-
-##### xjc (internal)
-
-JAXB compiler (XJC) plugins.
-
-### Example applications
-
-* Copying a live `org.dmg.pmml.PMML` instance from one file to another file: [CopyExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/CopyExample.java)
-
-
-## PMML document and model manipulation (2/3) ##
-
-Medium-level API module. Provides manager classes for dealing with class model classes.
-
-### Components
-
-##### pmml-manager (public)
-
-Provides class `org.jpmml.manager.PMMLManager`. Additionally, provides a subclass of `org.jpmml.manager.ModelManager` for every supported model type.
-
-PMML model producers must work with the specific model manager class. PMML model consumers may choose to work with interface `org.jpmml.manager.Consumer` instead.
-
-### Example code
-
-Constructing an instance of `org.jpmml.manager.TreeModelManager` for a PMML document that **is known to contain** a decision tree model:
-```
-PMML pmml = ...
-
-TreeModelManager treeModelManager = new TreeModelManager(pmml);
+ModelEvaluator<TreeModel> modelEvaluator = new TreeModelEvaluator(pmml);
 ```
 
-Obtaining an instance of `org.jpmml.manager.ModelManager` for a PMML document whose contents is unknown:
-```
-PMML pmml = ...
+Otherwise, a PMML manager class should be instantiated first, which will inspect the contents of the PMML document and instantiate the right model evaluator class later:
+```java
+PMML pmml = ...;
 
 PMMLManager pmmlManager = new PMMLManager(pmml);
-
-// A single PMML document may contain multiple models in which case it will be necessary to provide the name of the model (instead of null)
-ModelManager modelManager = pmmlManager.getModelManager(null, ModelManagerFactory.getInstance());
+ 
+ModelEvaluator<?> modelEvaluator = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 ```
 
-### Example applications
+Model evaluator classes follow functional programming principles. Model evaluator instances are cheap enough to be created and discarded as needed (ie. not worth the pooling effort).
 
-* Printing the control structure of a TreeModel in a Java-like pseudocode: [TreeModelTranslationExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/TreeModelTranslationExample.java)
-
-
-## PMML model evaluation (3/3) ##
-
-High-level API module. Provides evaluator classes for scoring models in "interpreted mode".
-
-### Components
-
-##### pmml-evaluator (public)
-
-Provides a subclass of `org.jpmml.manager.ModelManager` for every supported model type.
-
-PMML model consumers may choose to work with interface `org.jpmml.evaluator.Evaluator` instead. 
-
-##### pmml-knime (internal)
-
-Functional tests for [KNIME] (http://www.knime.org/) open source software.
-
-Tested model types:
-<table>
-	<tr><th>Description</th></tr>
-	<tr><td>Cluster models</td></tr>
-	<tr><td>General regression</td></tr>
-	<tr><td>Neural network</td></tr>
-	<tr><td>Regression</td></tr>
-	<tr><td>Tree models</td></tr>
-</table>
-
-##### pmml-rapidminer (internal)
-
-Functional tests for [RapidMiner] (http://rapid-i.com/content/view/181/190/) open source software.
-
-Tested model types:
-<table>
-	<tr><th>Description</th></tr>
-	<tr><td>Cluster models</td></tr>
-	<tr><td>Neural network</td></tr>
-	<tr><td>Regression</td></tr>
-	<tr><td>Rule set</td></tr>
-	<tr><td>Tree models</td></tr>
-</table>
-
-##### pmml-rattle (internal)
-
-Functional tests for R (http://www.r-project.org/) and Rattle (http://rattle.togaware.com/) open source software.
-
-Tested model types:
-<table>
-	<tr><th>Description</th><th>R function(s)</th></tr>
-	<tr><td>Association rules</td><td><code>apriori()</code> (package <code>arules</code>)</td></tr>
-	<tr><td>Cluster models</td><td><code>hcluster()</code> and <code>kmeans()</code></td></tr>
-	<tr><td>General regression</td><td><code>glm()</code></td></tr>
-	<tr><td>Neural network</td><td><code>nnet()</code> (package <code>nnet</code>)</td></tr>
-	<tr><td>Random forest</td><td><code>randomForest()</code> (package <code>randomForest</code>)</td></tr>
-	<tr><td>Regression</td><td><code>lm()</code> and <code>multinom()</code></td></tr>
-	<tr><td>Tree models</td><td><code>rpart()</code> (package <code>rpart</code>)</td></tr>
-</table>
-
-### Example code
-
-Constructing an instance of `org.jpmml.evaluator.TreeModelEvaluator` for a PMML document that is known to contain a decision tree model:
+It is advisable for application code to work against the `org.jpmml.evaluator.Evaluator` interface:
+```java
+Evaluator evaluator = (Evaluator)modelEvaluator;
 ```
-PMML pmml = ...
 
-TreeModelEvaluator treeModelEvaluator = new TreeModelEvaluator(pmml);
+An evaluator instance can be queried for the definition of active (ie. independent), predicted (ie. primary dependent) and output (ie. secondary dependent) fields:
+```java
+List<FieldName> activeFields = evaluator.getActiveFields();
+List<FieldName> predictedFields = evaluator.getPredictedFields();
+List<FieldName> outputFields = evaluator.getOutputFields();
 ``` 
 
-Obtaining an instance of `org.jpmml.manager.ModelManager`, which is then immediately cast to an instance of `org.jpmml.evaluator.Evaluator`, for a PMML document whose contents is unknown:
-```
-PMML pmml = ...
+The PMML scoring operation must be invoked with valid arguments. Otherwise, the behaviour of the model evaluator class is unspecified.
 
-PMMLManager pmmlManager = new PMMLManager(pmml);
-
-ModelManager modelManager = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
-
-// This cast is sound, because the ModelManager was obtained from ModelEvaluatorFactory (not ModelManagerFactory as in the previous section)
-Evaluator evaluator = (Evaluator)modelManager;
-```
-
-Using the instance of `org.jpmml.evaluator.Evaluator` for the preparation of input values and scoring:
-```
-Evaluator evaluator = ...
-
-Map<FieldName, Object> arguments = new LinkedHashMap<FieldName, Object>();
+The preparation of field values:
+```java
+Map<FieldName, FieldValue> arguments = new LinkedHashMap<FieldName, FieldValue>();
 
 List<FieldName> activeFields = evaluator.getActiveFields();
 for(FieldName activeField : activeFields){
 	// The raw (ie. user-supplied) value could be any Java primitive value
-	Object rawValue = ...
+	Object rawValue = ...;
 
 	// The raw value is passed through: 1) outlier treatment, 2) missing value treatment, 3) invalid value treatment and 4) type conversion
-	Object activeValue = evaluator.prepare(activeField, rawValue);
+	FieldValue activeValue = evaluator.prepare(activeField, rawValue);
 
 	arguments.put(activeField, activeValue);
 }
-
-Map<FieldName, ?> result = evaluator.evaluate(arguments);
 ```
 
-### Example applications
+The scoring:
+```java
+Map<FieldName, ?> results = evaluator.evaluate(arguments);
+```
+
+Typically, a model has exactly one predicted field, which is called the target field:
+```java
+FieldName targetName = evaluator.getTargetField();
+Object targetValue = results.get(targetName);
+```
+
+The target value is either a Java primitive value (as a wrapper object) or an instance of `org.jpmml.evaluator.Computable`:
+```java
+if(targetValue instanceof Computable){
+	Computable computable = (Computable)targetValue;
+
+	Object primitiveValue = computable.getResult();
+}
+```
+
+The target value may implement interfaces that descend from interface `org.jpmml.evaluator.ResultFeature`:
+```java
+// Test for "entityId" result feature
+if(targetValue instanceof HasEntityId){
+	HasEntityId hasEntityId = (HasEntityId)targetValue;
+	EntityRegistry<?> entityRegistry = (EntityRegistry<?>)evaluator;
+	Map<String, Entity> entities = entityRegistry.getEntities();
+	Entity winner = entitites.get(hasEntityId.getEntityId());
+
+	// Test for "probability" result feature
+	if(target instanceof HasProbability){
+		HasProbability hasProbability = (HasProbability)targetValue;
+		Double winnerProbability = hasProbability.getProbability(winner.getId());
+	}
+}
+```
+
+##### Example applications #####
 
 * Evaluating a PMML file interactively: [EvaluationExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/EvaluationExample.java)
 * Evaluating a PMML file non-interactively with CSV file input: [CsvEvaluationExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/CsvEvaluationExample.java)
