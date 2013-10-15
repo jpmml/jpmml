@@ -116,36 +116,14 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			List<Double> adjustmentValues = ArrayUtil.getRealContent(array);
 			if(values.size() != adjustmentValues.size()){
-				throw new EvaluationException();
+				throw new InvalidFeatureException(array);
 			}
 
-			double sum = 0d;
-			double nonmissingSum = 0d;
-
-			for(int i = 0; i < values.size(); i++){
-				FieldValue value = values.get(i);
-
-				Double adjustmentValue = adjustmentValues.get(i);
-
-				sum += adjustmentValue.doubleValue();
-				nonmissingSum += (value != null ? adjustmentValue.doubleValue() : 0d);
-			}
-
-			adjustment = (sum / nonmissingSum);
+			adjustment = MeasureUtil.calculateAdjustment(values, adjustmentValues);
 		} else
 
 		{
-			double sum = 0d;
-			double nonmissingSum = 0d;
-
-			for(int i = 0; i < values.size(); i++){
-				FieldValue value = values.get(i);
-
-				sum += 1d;
-				nonmissingSum += (value != null ? 1d : 0d);
-			}
-
-			adjustment = (sum / nonmissingSum);
+			adjustment = MeasureUtil.calculateAdjustment(values);
 		}
 
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
@@ -158,7 +136,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			List<? extends Number> clusterValues = ArrayUtil.getNumberContent(array);
 			if(values.size() != clusterValues.size()){
-				throw new EvaluationException();
+				throw new InvalidFeatureException(array);
 			}
 
 			String id = inverseEntities.get(cluster);

@@ -161,4 +161,36 @@ public class MeasureUtil {
 	public boolean isSimilarity(Measure measure){
 		return (measure instanceof SimpleMatching || measure instanceof Jaccard || measure instanceof Tanimoto || measure instanceof BinarySimilarity);
 	}
+
+	static
+	public Double calculateAdjustment(List<FieldValue> values, List<Double> adjustmentValues){
+		double sum = 0d;
+		double nonmissingSum = 0d;
+
+		for(int i = 0; i < values.size(); i++){
+			FieldValue value = values.get(i);
+
+			Double adjustmentValue = adjustmentValues.get(i);
+
+			sum += adjustmentValue.doubleValue();
+			nonmissingSum += (value != null ? adjustmentValue.doubleValue() : 0d);
+		}
+
+		return (sum / nonmissingSum);
+	}
+
+	static
+	public Double calculateAdjustment(List<FieldValue> values){
+		double sum = 0d;
+		double nonmissingSum = 0d;
+
+		for(int i = 0; i < values.size(); i++){
+			FieldValue value = values.get(i);
+
+			sum += 1d;
+			nonmissingSum += (value != null ? 1d : 0d);
+		}
+
+		return (sum / nonmissingSum);
+	}
 }
