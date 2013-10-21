@@ -141,7 +141,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				break;
 		}
 
-		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.PROBABILITY);
+		ClassificationMap<Object> result = new ClassificationMap<Object>(ClassificationMap.Type.PROBABILITY);
 		result.putAll(countVotes(segmentation, segmentResults));
 
 		// Convert from votes to probabilities
@@ -168,7 +168,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				break;
 		}
 
-		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
+		ClassificationMap<Object> result = new ClassificationMap<Object>(ClassificationMap.Type.VOTE);
 		result.putAll(countVotes(segmentation, segmentResults));
 
 		return Collections.singletonMap(getTargetField(), result);
@@ -207,22 +207,20 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	}
 
 	static
-	private Map<String, Double> countVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
-		VoteCounter<String> counter = new VoteCounter<String>();
+	private Map<Object, Double> countVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
+		VoteCounter<Object> counter = new VoteCounter<Object>();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			String string = TypeUtil.format(targetValue);
-
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
-					counter.increment(string);
+					counter.increment(targetValue);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					counter.increment(string, segmentResult.getWeight());
+					counter.increment(targetValue, segmentResult.getWeight());
 					break;
 				default:
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
