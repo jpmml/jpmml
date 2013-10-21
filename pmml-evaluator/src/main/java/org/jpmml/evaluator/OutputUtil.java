@@ -193,7 +193,7 @@ public class OutputUtil {
 	private Object getPredictedDisplayValue(Object object, Target target){
 
 		if(object instanceof HasDisplayValue){
-			HasDisplayValue hasDisplayValue = (HasDisplayValue)object;
+			HasDisplayValue hasDisplayValue = asResultFeature(HasDisplayValue.class, object);
 
 			return hasDisplayValue.getDisplayValue();
 		}
@@ -213,12 +213,7 @@ public class OutputUtil {
 
 	static
 	private Double getProbability(Object object, final OutputField outputField){
-
-		if(!(object instanceof HasProbability)){
-			throw new TypeCheckException(HasProbability.class, object);
-		}
-
-		HasProbability hasProbability = (HasProbability)object;
+		HasProbability hasProbability = asResultFeature(HasProbability.class, object);
 
 		return hasProbability.getProbability(outputField.getValue());
 	}
@@ -235,12 +230,7 @@ public class OutputUtil {
 
 	static
 	public Double getCategoricalResidual(Object object, FieldValue expectedObject){
-
-		if(!(object instanceof HasProbability)){
-			throw new TypeCheckException(HasProbability.class, object);
-		}
-
-		HasProbability hasProbability = (HasProbability)object;
+		HasProbability hasProbability = asResultFeature(HasProbability.class, object);
 
 		object = getPredictedValue(object);
 
@@ -254,12 +244,7 @@ public class OutputUtil {
 
 	static
 	private String getEntityId(Object object, final OutputField outputField){
-
-		if(!(object instanceof HasEntityId)){
-			throw new TypeCheckException(HasEntityId.class, object);
-		}
-
-		HasEntityId hasEntityId = (HasEntityId)object;
+		HasEntityId hasEntityId = asResultFeature(HasEntityId.class, object);
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
@@ -267,12 +252,7 @@ public class OutputUtil {
 		}
 
 		if(rank > 1){
-
-			if(!(object instanceof HasEntityIdRanking)){
-				throw new TypeCheckException(HasEntityIdRanking.class, object);
-			}
-
-			HasEntityIdRanking hasEntityIdRanking = (HasEntityIdRanking)object;
+			HasEntityIdRanking hasEntityIdRanking = asResultFeature(HasEntityIdRanking.class, object);
 
 			return getElement(hasEntityIdRanking.getEntityIdRanking(), rank);
 		}
@@ -282,24 +262,14 @@ public class OutputUtil {
 
 	static
 	private String getClusterId(Object object){
-
-		if(!(object instanceof HasClusterId)){
-			throw new TypeCheckException(HasClusterId.class, object);
-		}
-
-		HasClusterId hasClusterId = (HasClusterId)object;
+		HasClusterId hasClusterId = asResultFeature(HasClusterId.class, object);
 
 		return hasClusterId.getClusterId();
 	}
 
 	static
 	public Double getAffinity(Object object, final OutputField outputField){
-
-		if(!(object instanceof HasAffinity)){
-			throw new TypeCheckException(HasAffinity.class, object);
-		}
-
-		HasAffinity hasAffinity = (HasAffinity)object;
+		HasAffinity hasAffinity = asResultFeature(HasAffinity.class, object);
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
@@ -307,12 +277,7 @@ public class OutputUtil {
 		}
 
 		if(rank > 1){
-
-			if(!(object instanceof HasAffinityRanking)){
-				throw new TypeCheckException(HasAffinityRanking.class, object);
-			}
-
-			HasAffinityRanking hasAffinityRanking = (HasAffinityRanking)object;
+			HasAffinityRanking hasAffinityRanking = asResultFeature(HasAffinityRanking.class, object);
 
 			return getElement(hasAffinityRanking.getAffinityRanking(), rank);
 		}
@@ -322,24 +287,14 @@ public class OutputUtil {
 
 	static
 	public Double getClusterAffinity(Object object){
-
-		if(!(object instanceof HasClusterAffinity)){
-			throw new TypeCheckException(HasClusterAffinity.class, object);
-		}
-
-		HasClusterAffinity hasClusterAffinity = (HasClusterAffinity)object;
+		HasClusterAffinity hasClusterAffinity = asResultFeature(HasClusterAffinity.class, object);
 
 		return hasClusterAffinity.getClusterAffinity();
 	}
 
 	static
 	public String getReasonCode(Object object, final OutputField outputField){
-
-		if(!(object instanceof HasReasonCodeRanking)){
-			throw new TypeCheckException(HasReasonCodeRanking.class, object);
-		}
-
-		HasReasonCodeRanking hasReasonCodeRanking = (HasReasonCodeRanking)object;
+		HasReasonCodeRanking hasReasonCodeRanking = asResultFeature(HasReasonCodeRanking.class, object);
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
@@ -351,12 +306,7 @@ public class OutputUtil {
 
 	static
 	public Object getRuleValue(Object object, final OutputField outputField){
-
-		if(!(object instanceof HasRuleValues)){
-			throw new TypeCheckException(HasRuleValues.class, object);
-		}
-
-		HasRuleValues hasRuleValues = (HasRuleValues)object;
+		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
 
 		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
 
@@ -529,6 +479,16 @@ public class OutputUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private <E extends ResultFeature> E asResultFeature(Class<? extends E> clazz, Object object){
+
+		if(!clazz.isInstance(object)){
+			throw new TypeCheckException(clazz, object);
+		}
+
+		return clazz.cast(object);
 	}
 
 	static
