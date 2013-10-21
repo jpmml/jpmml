@@ -29,6 +29,7 @@ Java API for producing and scoring models in Predictive Model Markup Language (P
   * [Cluster model] (http://www.dmg.org/v4-1/ClusteringModel.html)
   * [General regression] (http://www.dmg.org/v4-1/GeneralRegression.html)
   * [Naive Bayes] (http://www.dmg.org/v4-1/NaiveBayes.html)
+  * [k-Nearest neighbors] (http://www.dmg.org/v4-1/KNN.html)
   * [Neural network] (http://www.dmg.org/v4-1/NeuralNetwork.html)
   * [Regression] (http://www.dmg.org/v4-1/Regression.html)
   * [Rule set] (http://www.dmg.org/v4-1/RuleSet.html)
@@ -45,7 +46,7 @@ Java API for producing and scoring models in Predictive Model Markup Language (P
 
 JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
 
-The current version is **1.0.19** (08 October, 2013).
+The current version is **1.0.20** (21 October, 2013).
 
 ### Class model ###
 
