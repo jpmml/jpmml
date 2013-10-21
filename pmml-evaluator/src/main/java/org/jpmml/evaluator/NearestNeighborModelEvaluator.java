@@ -311,13 +311,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			throw new UnsupportedFeatureException(tableLocator);
 		}
 
-		ModelManager<NearestNeighborModel> modelManager = new ModelManager<NearestNeighborModel>(pmml, nearestNeighborModel){
-
-			@Override
-			public String getSummary(){
-				throw new EvaluationException();
-			}
-		};
+		ModelManager<NearestNeighborModel> modelManager = new ModelManager<NearestNeighborModel>(pmml, nearestNeighborModel);
 
 		String idField = nearestNeighborModel.getInstanceIdVariable();
 

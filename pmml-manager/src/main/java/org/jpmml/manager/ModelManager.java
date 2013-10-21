@@ -11,7 +11,6 @@ import com.google.common.collect.*;
 
 import static com.google.common.base.Preconditions.*;
 
-abstract
 public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 
 	private M model = null;
@@ -31,6 +30,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		checkNotNull(model);
 
 		this.model = model;
+	}
+
+	@Override
+	public String getSummary(){
+		return null;
 	}
 
 	@Override
