@@ -167,14 +167,14 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			}
 
 			for(FieldRef fieldRef : fieldRefs){
-				Object value = ExpressionUtil.evaluateFieldRef(fieldRef, context);
+				FieldValue value = ExpressionUtil.evaluateFieldRef(fieldRef, context);
 
 				// "if the input value is missing, then the result evaluates to a missing value"
 				if(value == null){
 					return null;
 				}
 
-				product *= ((Number)value).doubleValue();
+				product *= (value.asNumber()).doubleValue();
 			}
 
 			result += product;
