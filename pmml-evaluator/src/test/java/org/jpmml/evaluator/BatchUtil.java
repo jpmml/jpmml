@@ -110,6 +110,7 @@ public class BatchUtil {
 					success &= (outputCell != null ? acceptable(outputCell, computedValue) : acceptable(computedValue));
 				}
 			}
+
 			return success;
 		}
 	}

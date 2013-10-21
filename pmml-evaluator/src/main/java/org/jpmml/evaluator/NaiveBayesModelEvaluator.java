@@ -53,11 +53,11 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelManagerEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelManagerEvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		// Probability calculations use logarithmic scale for greater numerical stability
-		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
+		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.PROBABILITY);
 
 		Map<FieldName, Map<String, Double>> countsMap = getCountsMap();
 

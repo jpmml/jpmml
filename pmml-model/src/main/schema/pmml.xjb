@@ -229,6 +229,12 @@ Copyright (c) 2009 University of Tartu
 			/>
 		</jaxb:bindings>
 
+		<jaxb:bindings node="//xsd:element[@name='ClusteringField']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.ComparisonField"
+			/>
+		</jaxb:bindings>
+
 		<jaxb:bindings node="//xsd:element[@name='ClusteringField']/xsd:complexType/xsd:attribute[@name='isCenterField']">
 			<jaxb:property
 				name="centerField"
@@ -535,6 +541,13 @@ Copyright (c) 2009 University of Tartu
 		</jaxb:bindings>
 
 		<jaxb:bindings node="//xsd:element[@name='KNNInput']/xsd:complexType">
+			<java:superClass
+				name="org.dmg.pmml.ComparisonField"
+			/>
+			<java:unsupportedProperty
+				property="similarityScale"
+				name="java.lang.Double"
+			/>
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_1"/>
 			</annox:annotate>
@@ -1226,7 +1239,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:simpleType[@name='CAT-SCORING-METHOD']">
 			<jaxb:typesafeEnumClass
-				name="CatScoringMethodType"
+				name="CategoricalScoringMethodType"
 			/>
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_1"/>
@@ -1241,7 +1254,7 @@ Copyright (c) 2009 University of Tartu
 
 		<jaxb:bindings node="//xsd:simpleType[@name='CONT-SCORING-METHOD']">
 			<jaxb:typesafeEnumClass
-				name="ContScoringMethodType"
+				name="ContinuousScoringMethodType"
 			/>
 			<annox:annotate>
 				<annox:annotate annox:class="org.dmg.pmml.Schema" min="PMML_4_1"/>

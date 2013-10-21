@@ -12,7 +12,7 @@ import org.dmg.pmml.*;
 import com.google.common.collect.*;
 
 abstract
-class Association implements Computable<Object>, HasRuleValues {
+class Association implements Computable, HasRuleValues {
 
 	private List<AssociationRule> associationRules = null;
 

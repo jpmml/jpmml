@@ -5,7 +5,7 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
-class RuleClassificationMap extends EntityClassificationMap<SimpleRule> {
+class RuleClassificationMap extends EntityClassificationMap<SimpleRule> implements HasConfidence {
 
 	RuleClassificationMap(){
 		super(Type.CONFIDENCE);
@@ -24,5 +24,16 @@ class RuleClassificationMap extends EntityClassificationMap<SimpleRule> {
 		}
 
 		return super.getResult();
+	}
+
+	@Override
+	public Double getConfidence(String value){
+		Type type = getType();
+
+		if(!(Type.CONFIDENCE).equals(type)){
+			throw new EvaluationException();
+		}
+
+		return getFeature(value);
 	}
 }

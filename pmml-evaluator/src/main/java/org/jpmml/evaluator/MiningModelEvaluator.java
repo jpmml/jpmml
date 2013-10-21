@@ -87,15 +87,23 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		}
 
 		double sum = 0d;
-		double weightedSum = 0d;
 
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			Double value = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, targetValue);
+			Number number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, targetValue);
 
-			sum += value.doubleValue();
-			weightedSum += ((segmentResult.getSegment()).getWeight() * value.doubleValue());
+			switch(multipleModelMethod){
+				case SUM:
+				case AVERAGE:
+					sum += number.doubleValue();
+					break;
+				case WEIGHTED_AVERAGE:
+					sum += segmentResult.getWeight() * number.doubleValue();
+					break;
+				default:
+					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+			}
 		}
 
 		Double result;
@@ -105,10 +113,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				result = sum;
 				break;
 			case AVERAGE:
-				result = (sum / segmentResults.size());
-				break;
 			case WEIGHTED_AVERAGE:
-				result = (weightedSum / segmentResults.size());
+				result = (sum / segmentResults.size());
 				break;
 			default:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
@@ -135,7 +141,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				break;
 		}
 
-		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
+		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.PROBABILITY);
 		result.putAll(countVotes(segmentation, segmentResults));
 
 		// Convert from votes to probabilities
@@ -162,7 +168,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				break;
 		}
 
-		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.VOTE);
+		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
 		result.putAll(countVotes(segmentation, segmentResults));
 
 		return Collections.singletonMap(getTargetField(), result);
@@ -202,35 +208,28 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 
 	static
 	private Map<String, Double> countVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
-		Map<String, Double> result = Maps.newLinkedHashMap();
+		VoteCounter<String> counter = new VoteCounter<String>();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResult segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
-			String category = TypeUtil.format(targetValue);
-
-			Double vote = result.get(category);
-			if(vote == null){
-				vote = 0d;
-			}
+			String string = TypeUtil.format(targetValue);
 
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
-					vote += 1d;
+					counter.increment(string);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					vote += ((segmentResult.getSegment()).getWeight() * 1d);
+					counter.increment(string, segmentResult.getWeight());
 					break;
 				default:
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			}
-
-			result.put(category, vote);
 		}
 
-		return result;
+		return counter;
 	}
 
 	@SuppressWarnings (
@@ -376,8 +375,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 			setResult(result);
 		}
 
+		public double getWeight(){
+			Segment segment = getSegment();
+
+			return segment.getWeight();
+		}
+
 		public Object getTargetValue(){
-			return getResult().get(getTargetField());
+			Map<FieldName, ?> result = getResult();
+
+			return result.get(getTargetField());
 		}
 
 		public Segment getSegment(){

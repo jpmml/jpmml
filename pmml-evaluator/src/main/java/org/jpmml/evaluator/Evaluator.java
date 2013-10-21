@@ -50,7 +50,7 @@ import org.dmg.pmml.*;
  * <pre>
  * Object value = ...;
  * if(value instanceof Computable){
- *   Computable&lt;?&gt; computable = (Computable&lt;?&gt;)value;
+ *   Computable computable = (Computable)value;
  *
  *   value = computable.getResult();
  * }

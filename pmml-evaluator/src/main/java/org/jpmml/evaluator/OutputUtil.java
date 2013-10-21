@@ -130,7 +130,7 @@ public class OutputUtil {
 					break;
 				case ENTITY_ID:
 					{
-						value = getEntityId(value);
+						value = getEntityId(value, outputField);
 					}
 					break;
 				case CLUSTER_ID:
@@ -253,13 +253,29 @@ public class OutputUtil {
 	}
 
 	static
-	private String getEntityId(Object object){
+	private String getEntityId(Object object, final OutputField outputField){
 
 		if(!(object instanceof HasEntityId)){
 			throw new TypeCheckException(HasEntityId.class, object);
 		}
 
 		HasEntityId hasEntityId = (HasEntityId)object;
+
+		int rank = outputField.getRank();
+		if(rank <= 0){
+			throw new InvalidFeatureException(outputField);
+		}
+
+		if(rank > 1){
+
+			if(!(object instanceof HasEntityIdRanking)){
+				throw new TypeCheckException(HasEntityIdRanking.class, object);
+			}
+
+			HasEntityIdRanking hasEntityIdRanking = (HasEntityIdRanking)object;
+
+			return getElement(hasEntityIdRanking.getEntityIdRanking(), rank);
+		}
 
 		return hasEntityId.getEntityId();
 	}
@@ -284,6 +300,22 @@ public class OutputUtil {
 		}
 
 		HasAffinity hasAffinity = (HasAffinity)object;
+
+		int rank = outputField.getRank();
+		if(rank <= 0){
+			throw new InvalidFeatureException(outputField);
+		}
+
+		if(rank > 1){
+
+			if(!(object instanceof HasAffinityRanking)){
+				throw new TypeCheckException(HasAffinityRanking.class, object);
+			}
+
+			HasAffinityRanking hasAffinityRanking = (HasAffinityRanking)object;
+
+			return getElement(hasAffinityRanking.getAffinityRanking(), rank);
+		}
 
 		return hasAffinity.getAffinity(outputField.getValue());
 	}
@@ -314,14 +346,7 @@ public class OutputUtil {
 			throw new InvalidFeatureException(outputField);
 		}
 
-		int index = (rank - 1);
-
-		List<String> reasonCodes = hasReasonCodes.getReasonCodes();
-		if(index < reasonCodes.size()){
-			return reasonCodes.get(index);
-		}
-
-		return null;
+		return getElement(hasReasonCodes.getReasonCodes(), rank);
 	}
 
 	static
@@ -504,5 +529,16 @@ public class OutputUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private <E> E getElement(List<E> elements, int rank){
+		int index = (rank - 1);
+
+		if(index < elements.size()){
+			return elements.get(index);
+		}
+
+		return null;
 	}
 }

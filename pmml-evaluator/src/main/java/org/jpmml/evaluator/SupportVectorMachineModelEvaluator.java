@@ -79,7 +79,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return TargetUtil.evaluateRegression(value, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelManagerEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelManagerEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -87,15 +87,15 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			throw new InvalidFeatureException(supportVectorMachineModel);
 		}
 
-		ClassificationMap result;
+		ClassificationMap<String> result;
 
 		SvmClassificationMethodType svmClassificationMethod = getClassificationMethod();
 		switch(svmClassificationMethod){
 			case ONE_AGAINST_ALL:
-				result = new ClassificationMap(ClassificationMap.Type.DISTANCE);
+				result = new ClassificationMap<String>(ClassificationMap.Type.DISTANCE);
 				break;
 			case ONE_AGAINST_ONE:
-				result = new ClassificationMap(ClassificationMap.Type.VOTE);
+				result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
 				break;
 			default:
 				throw new UnsupportedFeatureException(supportVectorMachineModel, svmClassificationMethod);
@@ -146,7 +146,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							vote = 0d;
 						}
 
-						result.put(label, vote + 1d);
+						result.put(label, (vote + 1d));
 					}
 					break;
 				default:

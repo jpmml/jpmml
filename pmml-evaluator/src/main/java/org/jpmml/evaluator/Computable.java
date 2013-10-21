@@ -3,7 +3,7 @@
  */
 package org.jpmml.evaluator;
 
-public interface Computable<V> {
+public interface Computable {
 
-	V getResult();
+	Object getResult();
 }

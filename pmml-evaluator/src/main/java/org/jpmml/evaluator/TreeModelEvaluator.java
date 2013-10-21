@@ -60,7 +60,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			values = createNodeClassificationMap(node);
 		}
 
-		Map<FieldName, ? extends ClassificationMap> predictions = TargetUtil.evaluateClassification(values, context);
+		Map<FieldName, ? extends ClassificationMap<?>> predictions = TargetUtil.evaluateClassification(values, context);
 
 		return OutputUtil.evaluate(predictions, context);
 	}

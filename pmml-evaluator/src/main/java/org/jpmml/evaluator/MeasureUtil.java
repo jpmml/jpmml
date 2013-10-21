@@ -22,7 +22,7 @@ public class MeasureUtil {
 	}
 
 	static
-	public Double evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values, List<? extends Number> centerValues, List<Double> fieldWeights, Double adjustment){
+	public Double evaluateDistance(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues, Double adjustment){
 		double innerPower;
 		double outerPower;
 
@@ -57,14 +57,18 @@ public class MeasureUtil {
 
 		List<Double> distances = Lists.newArrayList();
 
-		clusteringFields:
-		for(int i = 0; i < clusteringFields.size(); i++){
+		comparisonFields:
+		for(int i = 0; i < comparisonFields.size(); i++){
+			ComparisonField comparisonField = comparisonFields.get(i);
+
 			FieldValue value = values.get(i);
 			if(value == null){
-				continue clusteringFields;
+				continue comparisonFields;
 			}
 
-			Double distance = evaluateInnerFunction(comparisonMeasure, clusteringFields.get(i), value.asNumber(), centerValues.get(i), fieldWeights.get(i), innerPower);
+			FieldValue referenceValue = referenceValues.get(i);
+
+			Double distance = evaluateInnerFunction(comparisonMeasure, comparisonField, value, referenceValue, innerPower);
 
 			distances.add(distance);
 		}
@@ -91,8 +95,13 @@ public class MeasureUtil {
 	}
 
 	static
-	private double evaluateInnerFunction(ComparisonMeasure comparisonMeasure, ClusteringField clusteringField, Number x, Number y, Double weight, Double power){
-		CompareFunctionType compareFunction = clusteringField.getCompareFunction();
+	public boolean isSimilarity(Measure measure){
+		return (measure instanceof SimpleMatching || measure instanceof Jaccard || measure instanceof Tanimoto || measure instanceof BinarySimilarity);
+	}
+
+	static
+	private double evaluateInnerFunction(ComparisonMeasure comparisonMeasure, ComparisonField comparisonField, FieldValue value, FieldValue referenceValue, Double power){
+		CompareFunctionType compareFunction = comparisonField.getCompareFunction();
 
 		if(compareFunction == null){
 			compareFunction = comparisonMeasure.getCompareFunction();
@@ -116,50 +125,54 @@ public class MeasureUtil {
 		switch(compareFunction){
 			case ABS_DIFF:
 				{
-					distance = Math.abs(x.doubleValue() - y.doubleValue());
+					double z = difference(value, referenceValue);
+
+					distance = Math.abs(z);
 				}
 				break;
 			case GAUSS_SIM:
 				{
-					Double similarityScale = clusteringField.getSimilarityScale();
+					Double similarityScale = comparisonField.getSimilarityScale();
 					if(similarityScale == null){
-						throw new InvalidFeatureException(clusteringField);
+						throw new InvalidFeatureException(comparisonField);
 					}
 
-					double z = (x.doubleValue() - y.doubleValue());
+					double z = difference(value, referenceValue);
 					double s = similarityScale.doubleValue();
 
 					distance = Math.exp(-Math.log(2d) * Math.pow(z, 2d) / Math.pow(s, 2d));
 				}
 				break;
 			case DELTA:
+				{
+					boolean equals = equals(value, referenceValue);
+
+					distance = (equals ? 0d : 1d);
+				}
 			case EQUAL:
 				{
-					DataType dataType = TypeUtil.getResultDataType(TypeUtil.getDataType(x), TypeUtil.getDataType(y));
+					boolean equals = equals(value, referenceValue);
 
-					boolean equals = TypeUtil.equals(dataType, x, y);
-
-					if((CompareFunctionType.DELTA).equals(compareFunction)){
-						distance = (equals ? 0 : 1);
-					} else
-
-					{
-						distance = (equals ? 1 : 0);
-					} // End if
+					distance = (equals ? 1d : 0d);
 				}
 				break;
 			case TABLE:
-				throw new UnsupportedFeatureException(clusteringField, compareFunction);
+				throw new UnsupportedFeatureException(comparisonField, compareFunction);
 			default:
-				throw new UnsupportedFeatureException(clusteringField, compareFunction);
+				throw new UnsupportedFeatureException(comparisonField, compareFunction);
 		}
 
-		return weight.doubleValue() * Math.pow(distance, power.doubleValue());
+		return comparisonField.getFieldWeight() * Math.pow(distance, power.doubleValue());
 	}
 
 	static
-	public boolean isSimilarity(Measure measure){
-		return (measure instanceof SimpleMatching || measure instanceof Jaccard || measure instanceof Tanimoto || measure instanceof BinarySimilarity);
+	private double difference(FieldValue x, FieldValue y){
+		return ((x.asNumber()).doubleValue() - (y.asNumber()).doubleValue());
+	}
+
+	static
+	private boolean equals(FieldValue x, FieldValue y){
+		return (x).equalsValue(y);
 	}
 
 	static

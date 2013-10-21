@@ -17,7 +17,7 @@ public class EvaluatorUtilTest {
 
 	@Test
 	public void decode(){
-		Computable<String> value = new Computable<String>(){
+		Computable value = new Computable(){
 
 			@Override
 			public String getResult(){

@@ -5,7 +5,7 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-class Score implements Computable<Number>, HasReasonCodes {
+class Score implements Computable, HasReasonCodes {
 
 	private Number value = null;
 

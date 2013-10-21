@@ -6,7 +6,7 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.*;
 
 abstract
-class EntityClassificationMap<E extends Entity> extends ClassificationMap implements HasEntityId {
+class EntityClassificationMap<E extends Entity> extends ClassificationMap<String> implements HasEntityId {
 
 	private E entity = null;
 
@@ -21,6 +21,11 @@ class EntityClassificationMap<E extends Entity> extends ClassificationMap implem
 		super(type);
 
 		setEntity(entity);
+	}
+
+	@Override
+	public String getResult(){
+		return (String)super.getResult();
 	}
 
 	@Override

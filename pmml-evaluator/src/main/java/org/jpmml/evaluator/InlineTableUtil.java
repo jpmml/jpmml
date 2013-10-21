@@ -24,7 +24,7 @@ public class InlineTableUtil {
 
 	static
 	public Table<Integer, String, String> parse(InlineTable inlineTable){
-		Table<Integer, String, String> result = TreeBasedTable.create();
+		Table<Integer, String, String> result = HashBasedTable.create();
 
 		Integer rowKey = 1;
 

@@ -5,7 +5,10 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-class ClassificationMap extends LinkedHashMap<String, Double> implements Computable<String>, HasConfidence, HasProbability {
+import com.google.common.base.*;
+import com.google.common.collect.*;
+
+class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable, HasProbability {
 
 	private Type type = null;
 
@@ -15,35 +18,13 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 	}
 
 	@Override
-	public String getResult(){
-		Map.Entry<String, Double> result = null;
-
-		Type type = getType();
-
-		Collection<Map.Entry<String, Double>> entries = entrySet();
-		for(Map.Entry<String, Double> entry : entries){
-
-			if(result == null || type.isMoreOptimal(entry.getValue(), result.getValue())){
-				result = entry;
-			}
-		}
-
-		if(result == null){
+	public Object getResult(){
+		Map.Entry<K, Double> entry = getWinner();
+		if(entry == null){
 			throw new MissingResultException(null);
 		}
 
-		return result.getKey();
-	}
-
-	@Override
-	public Double getConfidence(String value){
-		Type type = getType();
-
-		if(!(Type.CONFIDENCE).equals(type)){
-			throw new EvaluationException();
-		}
-
-		return getFeature(value);
+		return entry.getKey();
 	}
 
 	@Override
@@ -68,6 +49,82 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 		return result;
 	}
 
+	Map.Entry<K, Double> getWinner(){
+		Type type = getType();
+
+		Map.Entry<K, Double> result = null;
+
+		Collection<Map.Entry<K, Double>> entries = entrySet();
+		for(Map.Entry<K, Double> entry : entries){
+
+			if(result == null || type.isMoreOptimal(entry.getValue(), result.getValue())){
+				result = entry;
+			}
+		}
+
+		return result;
+	}
+
+	List<Map.Entry<K, Double>> getWinnerList(){
+		List<Map.Entry<K, Double>> result = Lists.newArrayList(entrySet());
+
+		Comparator<Map.Entry<K, Double>> comparator = new Comparator<Map.Entry<K, Double>>(){
+
+			private Type type = getType();
+
+
+			@Override
+			public int compare(Map.Entry<K, Double> left, Map.Entry<K, Double> right){
+				// Calculate the order relative to the right value
+				int order = (right.getValue()).compareTo(left.getValue());
+				if(order == 0){
+					return order;
+				}
+
+				Type.Ordering ordering = this.type.getOrdering();
+				switch(ordering){
+					case INCREASING:
+						return order;
+					case DECREASING:
+						return -1 * order;
+					default:
+						throw new IllegalStateException();
+				}
+			}
+		};
+		Collections.sort(result, comparator);
+
+		return result;
+	}
+
+	List<K> getWinnerKeys(){
+		List<Map.Entry<K, Double>> winners = getWinnerList();
+
+		Function<Map.Entry<K, Double>, K> function = new Function<Map.Entry<K, Double>, K>(){
+
+			@Override
+			public K apply(Map.Entry<K, Double> entry){
+				return entry.getKey();
+			}
+		};
+
+		return Lists.transform(winners, function);
+	}
+
+	List<Double> getWinnerValues(){
+		List<Map.Entry<K, Double>> winners = getWinnerList();
+
+		Function<Map.Entry<K, Double>, Double> function = new Function<Map.Entry<K, Double>, Double>(){
+
+			@Override
+			public Double apply(Map.Entry<K, Double> entry){
+				return entry.getValue();
+			}
+		};
+
+		return Lists.transform(winners, function);
+	}
+
 	void normalizeValues(){
 		double sum = 0;
 
@@ -76,8 +133,8 @@ class ClassificationMap extends LinkedHashMap<String, Double> implements Computa
 			sum += value.doubleValue();
 		}
 
-		Collection<Map.Entry<String, Double>> entries = entrySet();
-		for(Map.Entry<String, Double> entry : entries){
+		Collection<Map.Entry<K, Double>> entries = entrySet();
+		for(Map.Entry<K, Double> entry : entries){
 			entry.setValue(entry.getValue() / sum);
 		}
 	}

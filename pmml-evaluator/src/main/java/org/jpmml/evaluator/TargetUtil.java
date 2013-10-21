@@ -63,7 +63,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends ClassificationMap> evaluateClassification(ClassificationMap value, ModelManagerEvaluationContext context){
+	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ClassificationMap<?> value, ModelManagerEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
 		FieldName targetField = modelManager.getTargetField();
@@ -75,7 +75,7 @@ public class TargetUtil {
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#CLASSIFICATION classification} models.
 	 */
 	static
-	public Map<FieldName, ? extends ClassificationMap> evaluateClassification(Map<FieldName, ? extends ClassificationMap> predictions, ModelManagerEvaluationContext context){
+	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelManagerEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
 		Targets targets = modelManager.getOrCreateTargets();
@@ -83,12 +83,12 @@ public class TargetUtil {
 			return predictions;
 		}
 
-		Map<FieldName, ClassificationMap> result = Maps.newLinkedHashMap();
+		Map<FieldName, ClassificationMap<?>> result = Maps.newLinkedHashMap();
 
-		Collection<? extends Map.Entry<FieldName, ? extends ClassificationMap>> entries = predictions.entrySet();
-		for(Map.Entry<FieldName, ? extends ClassificationMap> entry : entries){
+		Collection<? extends Map.Entry<FieldName, ? extends ClassificationMap<?>>> entries = predictions.entrySet();
+		for(Map.Entry<FieldName, ? extends ClassificationMap<?>> entry : entries){
 			FieldName key = entry.getKey();
-			ClassificationMap value = entry.getValue();
+			ClassificationMap<?> value = entry.getValue();
 
 			Target target = modelManager.getTarget(key);
 			if(target != null){
@@ -168,8 +168,8 @@ public class TargetUtil {
 	}
 
 	static
-	private ClassificationMap getPriorProbabilities(Target target){
-		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.PROBABILITY);
+	private ClassificationMap<String> getPriorProbabilities(Target target){
+		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.PROBABILITY);
 
 		List<TargetValue> values = target.getTargetValues();
 		for(TargetValue value : values){

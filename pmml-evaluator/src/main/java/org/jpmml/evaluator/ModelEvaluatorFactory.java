@@ -35,6 +35,10 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 			return new NaiveBayesModelEvaluator(pmml, (NaiveBayesModel)model);
 		} else
 
+		if(model instanceof NearestNeighborModel){
+			return new NearestNeighborModelEvaluator(pmml, (NearestNeighborModel)model);
+		} else
+
 		if(model instanceof NeuralNetwork){
 			return new NeuralNetworkEvaluator(pmml, (NeuralNetwork)model);
 		} else

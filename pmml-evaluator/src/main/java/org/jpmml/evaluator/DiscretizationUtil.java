@@ -82,6 +82,11 @@ public class DiscretizationUtil {
 	public FieldValue mapValue(MapValues mapValues, Map<String, FieldValue> values){
 		DataType dataType = mapValues.getDataType();
 
+		TableLocator tableLocator = mapValues.getTableLocator();
+		if(tableLocator != null){
+			throw new UnsupportedFeatureException(tableLocator);
+		}
+
 		InlineTable inlineTable = mapValues.getInlineTable();
 		if(inlineTable != null){
 			Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
@@ -95,11 +100,6 @@ public class DiscretizationUtil {
 
 				return FieldValueUtil.create(dataType, null, result);
 			}
-		}
-
-		TableLocator tableLocator = mapValues.getTableLocator();
-		if(tableLocator != null){
-			throw new UnsupportedFeatureException(tableLocator);
 		}
 
 		return FieldValueUtil.create(dataType, null, mapValues.getDefaultValue());

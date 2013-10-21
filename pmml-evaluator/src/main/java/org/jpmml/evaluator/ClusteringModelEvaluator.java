@@ -78,34 +78,19 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
 
 		Measure measure = comparisonMeasure.getMeasure();
-
-		if(MeasureUtil.isDistance(measure)){
-			return evaluateDistanceClustering(context);
-		} else
-
-		if(MeasureUtil.isSimilarity(measure)){
-			return evaluateSimilarityClustering(context);
+		if(!MeasureUtil.isDistance(measure)){
+			throw new UnsupportedFeatureException(measure);
 		}
-
-		throw new UnsupportedFeatureException(clusteringModel);
-	}
-
-	private Map<FieldName, ClusterClassificationMap> evaluateDistanceClustering(EvaluationContext context){
-		ClusteringModel clusteringModel = getModel();
 
 		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.DISTANCE);
 
 		List<FieldValue> values = Lists.newArrayList();
 
-		List<Double> fieldWeights = Lists.newArrayList();
-
 		List<ClusteringField> clusteringFields = getCenterClusteringFields();
 		for(ClusteringField clusteringField : clusteringFields){
 			FieldValue value = ExpressionUtil.evaluate(clusteringField.getField(), context);
-			values.add(value);
 
-			Double fieldWeight = clusteringField.getFieldWeight();
-			fieldWeights.add(fieldWeight);
+			values.add(value);
 		}
 
 		Double adjustment;
@@ -116,7 +101,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			List<Double> adjustmentValues = ArrayUtil.getRealContent(array);
 			if(values.size() != adjustmentValues.size()){
-				throw new InvalidFeatureException(array);
+				throw new InvalidFeatureException(missingValueWeights);
 			}
 
 			adjustment = MeasureUtil.calculateAdjustment(values, adjustmentValues);
@@ -126,33 +111,24 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			adjustment = MeasureUtil.calculateAdjustment(values);
 		}
 
-		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
-
 		BiMap<Cluster, String> inverseEntities = (getEntityRegistry().inverse());
 
 		List<Cluster> clusters = clusteringModel.getClusters();
 		for(Cluster cluster : clusters){
-			Array array = cluster.getArray();
+			List<FieldValue> clusterValues = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
 
-			List<? extends Number> clusterValues = ArrayUtil.getNumberContent(array);
 			if(values.size() != clusterValues.size()){
-				throw new InvalidFeatureException(array);
+				throw new InvalidFeatureException(cluster);
 			}
 
 			String id = inverseEntities.get(cluster);
 
-			Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, clusteringFields, values, clusterValues, fieldWeights, adjustment);
+			Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, clusteringFields, values, clusterValues, adjustment);
 
 			result.put(cluster, id, distance);
 		}
 
 		return Collections.singletonMap(getTargetField(), result);
-	}
-
-	private Map<FieldName, ClusterClassificationMap> evaluateSimilarityClustering(EvaluationContext context){
-		ClusteringModel clusteringModel = getModel();
-
-		throw new UnsupportedFeatureException(clusteringModel);
 	}
 
 	private List<ClusteringField> getCenterClusteringFields(){
@@ -177,6 +153,25 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		return result;
 	}
+
+	private static final LoadingCache<Cluster, List<FieldValue>> clusterValueCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<Cluster, List<FieldValue>>(){
+
+			@Override
+			public List<FieldValue> load(Cluster cluster){
+				Array array = cluster.getArray();
+
+				List<FieldValue> result = Lists.newArrayList();
+
+				List<? extends Number> values = ArrayUtil.getNumberContent(array);
+				for(Number value : values){
+					result.add(FieldValueUtil.create(value));
+				}
+
+				return result;
+			}
+		});
 
 	private static final LoadingCache<ClusteringModel, BiMap<String, Cluster>> entityCache = CacheBuilder.newBuilder()
 		.weakKeys()
