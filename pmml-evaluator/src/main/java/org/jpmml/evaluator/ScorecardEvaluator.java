@@ -57,7 +57,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
-		Map<String, Double> reasonCodePoints = Maps.newLinkedHashMap();
+		VoteCounter<String> reasonCodePoints = new VoteCounter<String>();
 
 		Characteristics characteristics = scorecard.getCharacteristics();
 		for(Characteristic characteristic : characteristics){
@@ -117,12 +117,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 							throw new UnsupportedFeatureException(scorecard, reasonCodeAlgorithm);
 					}
 
-					Double points = reasonCodePoints.get(reasonCode);
-					if(points == null){
-						points = 0d;
-					}
-
-					reasonCodePoints.put(reasonCode, (points + difference));
+					reasonCodePoints.increment(reasonCode, difference);
 				}
 
 				break;
@@ -132,34 +127,27 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		Map<FieldName, ? extends Number> result = TargetUtil.evaluateRegression(value, context);
 
 		if(useReasonCodes){
-			List<Map.Entry<String, Double>> entries = Lists.newArrayList(reasonCodePoints.entrySet());
-
-			// Sort highest score entries first, lowest score entries last
-			Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>(){
-
-				@Override
-				public int compare(Map.Entry<String, Double> left, Map.Entry<String, Double> right){
-					return -(left.getValue()).compareTo(right.getValue());
-				}
-			};
-			Collections.sort(entries, comparator);
-
-			List<String> reasonCodes = Lists.newArrayList();
-
-			for(Map.Entry<String, Double> entry : entries){
-
-				// Ignore meaningless explanations
-				if(entry.getValue() < 0){
-					break;
-				}
-
-				reasonCodes.add(entry.getKey());
-			}
-
 			Map.Entry<FieldName, ? extends Number> resultEntry = Iterables.getOnlyElement(result.entrySet());
 
-			return Collections.singletonMap(resultEntry.getKey(), new Score(resultEntry.getValue(), reasonCodes));
+			return Collections.singletonMap(resultEntry.getKey(), createScoreMap(resultEntry.getValue(), reasonCodePoints));
 		}
+
+		return result;
+	}
+
+	static
+	private ScoreClassificationMap createScoreMap(Number value, Map<String, Double> reasonCodePoints){
+		ScoreClassificationMap result = new ScoreClassificationMap(value);
+
+		// Filter out meaningless (ie. negative values) explanations
+		com.google.common.base.Predicate<Map.Entry<String, Double>> predicate = new com.google.common.base.Predicate<Map.Entry<String, Double>>(){
+
+			@Override
+			public boolean apply(Map.Entry<String, Double> entry){
+				return Double.compare(entry.getValue(), 0) >= 0;
+			}
+		};
+		result.putAll(Maps.filterEntries(reasonCodePoints, predicate));
 
 		return result;
 	}

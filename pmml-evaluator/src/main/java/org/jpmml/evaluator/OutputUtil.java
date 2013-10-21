@@ -335,18 +335,18 @@ public class OutputUtil {
 	static
 	public String getReasonCode(Object object, final OutputField outputField){
 
-		if(!(object instanceof HasReasonCodes)){
-			throw new TypeCheckException(HasReasonCodes.class, object);
+		if(!(object instanceof HasReasonCodeRanking)){
+			throw new TypeCheckException(HasReasonCodeRanking.class, object);
 		}
 
-		HasReasonCodes hasReasonCodes = (HasReasonCodes)object;
+		HasReasonCodeRanking hasReasonCodeRanking = (HasReasonCodeRanking)object;
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
 			throw new InvalidFeatureException(outputField);
 		}
 
-		return getElement(hasReasonCodes.getReasonCodes(), rank);
+		return getElement(hasReasonCodeRanking.getReasonCodeRanking(), rank);
 	}
 
 	static
