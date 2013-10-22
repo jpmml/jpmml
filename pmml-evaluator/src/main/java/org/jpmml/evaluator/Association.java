@@ -28,6 +28,9 @@ class Association implements Computable, HasRuleValues {
 		setConsequentFlags(consequentFlags);
 	}
 
+	/**
+	 * @throws MissingResultException Always.
+	 */
 	@Override
 	public Object getResult(){
 		throw new MissingResultException(null);

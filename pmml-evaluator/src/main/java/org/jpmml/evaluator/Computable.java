@@ -5,5 +5,8 @@ package org.jpmml.evaluator;
 
 public interface Computable {
 
+	/**
+	 * @throws EvaluationException If the computation fails.
+	 */
 	Object getResult();
 }

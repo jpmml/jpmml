@@ -23,10 +23,11 @@ import org.dmg.pmml.*;
  *
  * Preparing {@link Evaluator#getActiveFields() active fields}:
  * <pre>
- * Map&lt;FieldName, Object&gt; arguments = new LinkedHashMap&lt;FieldName, Object&gt;();
+ * Map&lt;FieldName, FieldValue&gt; arguments = new LinkedHashMap&lt;FieldName, FieldValue&gt;();
  * List&lt;FieldName&gt; activeFields = evaluator.getActiveFields();
  * for(FieldName activeField : activeFields){
- *   arguments.put(activeField, evaluator.prepare(activeField, ...));
+ *   FieldValue activeValue = evaluator.prepare(activeField, ...);
+ *   arguments.put(activeField, activeValue);
  * }
  * </pre>
  *
@@ -35,7 +36,7 @@ import org.dmg.pmml.*;
  * Map&lt;FieldName, ?&gt; result = evaluator.evaluate(arguments);
  * </pre>
  *
- * Retrieving the value of the {@link Evaluator#getTargetField() predicted field} and {@link Evaluator#getOutputFields() output fields}:
+ * Retrieving the value of the {@link Evaluator#getTargetField() target field} and {@link Evaluator#getOutputFields() output fields}:
  * <pre>
  * FieldName targetField = evaluator.getTargetField();
  * Object targetValue = result.get(targetField);
@@ -67,9 +68,9 @@ public interface Evaluator extends Consumer {
 	 * Later on, the value is subjected to missing value treatment, invalid value treatment and outlier treatment.
 	 *
 	 * @param name The name of the field
-	 * @param string The input value in user-supplied representation. Use <code>null</code> to represent missing input value.
+	 * @param string The input value in user-supplied representation. Use <code>null</code> to represent a missing input value.
 	 *
-	 * @throws EvaluationException If the input value preparation fails
+	 * @throws PMMLException If the input value preparation fails.
 	 *
 	 * @see #getDataField(FieldName)
 	 * @see #getMiningField(FieldName)
@@ -82,8 +83,11 @@ public interface Evaluator extends Consumer {
 	 * @return Map of {@link #getPredictedFields() predicted field} and {@link #getOutputFields() output field} values.
 	 * Simple values are represented using the Java equivalents of PMML data types (eg. String, Integer, Float, Double etc.).
 	 * Complex values are represented as instances of {@link Computable} that return simple values.
+	 * A missing result is represented by <code>null</code>.
 	 *
-	 * @throws EvaluationException If the evaluation fails
+	 * @throws PMMLException If the evaluation fails.
+	 * This is either {@link InvalidFeatureException} or {@link UnsupportedFeatureException} if there is a persistent structural problem with the PMML class model.
+	 * This is {@link EvaluationException} (or one of its subclasses) if there is a problem with the evaluation request (eg. badly prepared arguments).
 	 *
 	 * @see Computable
 	 */
