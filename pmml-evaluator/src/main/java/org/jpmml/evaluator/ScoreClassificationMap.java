@@ -5,12 +5,15 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import com.google.common.annotations.*;
+
+@Beta
 public class ScoreClassificationMap extends ClassificationMap<String> implements HasReasonCodeRanking {
 
 	private Number result = null;
 
 
-	ScoreClassificationMap(Number result){
+	protected ScoreClassificationMap(Number result){
 		super(Type.VOTE);
 
 		setResult(result);

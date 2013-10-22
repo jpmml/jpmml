@@ -5,13 +5,16 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
-class NeuronClassificationMap extends EntityClassificationMap<Entity> {
+import com.google.common.annotations.*;
 
-	NeuronClassificationMap(){
+@Beta
+public class NeuronClassificationMap extends EntityClassificationMap<Entity> {
+
+	protected NeuronClassificationMap(){
 		super(Type.PROBABILITY);
 	}
 
-	NeuronClassificationMap(Entity entity){
+	protected NeuronClassificationMap(Entity entity){
 		super(Type.PROBABILITY, entity);
 	}
 }

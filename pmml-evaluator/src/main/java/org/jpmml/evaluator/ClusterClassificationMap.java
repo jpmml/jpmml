@@ -5,13 +5,16 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
+import com.google.common.annotations.*;
+
+@Beta
 public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasDisplayValue, HasClusterId, HasAffinity, HasClusterAffinity {
 
-	ClusterClassificationMap(Type type){
+	protected ClusterClassificationMap(Type type){
 		super(type);
 	}
 
-	ClusterClassificationMap(Type type, Cluster cluster){
+	protected ClusterClassificationMap(Type type, Cluster cluster){
 		super(type, cluster);
 	}
 

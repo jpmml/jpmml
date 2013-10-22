@@ -9,10 +9,12 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.annotations.*;
 import com.google.common.collect.*;
 
+@Beta
 abstract
-class Association implements Computable, HasRuleValues {
+public class Association implements Computable, HasRuleValues {
 
 	private List<AssociationRule> associationRules = null;
 
@@ -21,7 +23,7 @@ class Association implements Computable, HasRuleValues {
 	private BitSet consequentFlags = null;
 
 
-	Association(List<AssociationRule> associationRules, BitSet antecedentFlags, BitSet consequentFlags){
+	protected Association(List<AssociationRule> associationRules, BitSet antecedentFlags, BitSet consequentFlags){
 		setAssociationRules(associationRules);
 
 		setAntecedentFlags(antecedentFlags);

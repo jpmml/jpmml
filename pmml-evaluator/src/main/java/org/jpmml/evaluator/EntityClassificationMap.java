@@ -5,19 +5,22 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
+import com.google.common.annotations.*;
+
+@Beta
 abstract
-class EntityClassificationMap<E extends Entity> extends ClassificationMap<String> implements HasEntityId {
+public class EntityClassificationMap<E extends Entity> extends ClassificationMap<String> implements HasEntityId {
 
 	private E entity = null;
 
 	private Double maxValue = null;
 
 
-	EntityClassificationMap(Type type){
+	protected EntityClassificationMap(Type type){
 		super(type);
 	}
 
-	EntityClassificationMap(Type type, E entity){
+	protected EntityClassificationMap(Type type, E entity){
 		super(type);
 
 		setEntity(entity);

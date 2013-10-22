@@ -5,13 +5,16 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
-class RuleClassificationMap extends EntityClassificationMap<SimpleRule> implements HasConfidence {
+import com.google.common.annotations.*;
 
-	RuleClassificationMap(){
+@Beta
+public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> implements HasConfidence {
+
+	protected RuleClassificationMap(){
 		super(Type.CONFIDENCE);
 	}
 
-	RuleClassificationMap(SimpleRule rule){
+	protected RuleClassificationMap(SimpleRule rule){
 		super(Type.CONFIDENCE, rule);
 	}
 

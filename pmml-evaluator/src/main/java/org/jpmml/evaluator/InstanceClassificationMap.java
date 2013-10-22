@@ -5,12 +5,15 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-class InstanceClassificationMap extends ClassificationMap<String> implements HasEntityIdRanking, HasClusterId, HasAffinityRanking, HasClusterAffinity {
+import com.google.common.annotations.*;
+
+@Beta
+public class InstanceClassificationMap extends ClassificationMap<String> implements HasEntityIdRanking, HasClusterId, HasAffinityRanking, HasClusterAffinity {
 
 	private Object result = null;
 
 
-	InstanceClassificationMap(Object result){
+	protected InstanceClassificationMap(Object result){
 		super(Type.DISTANCE);
 
 		setResult(result);

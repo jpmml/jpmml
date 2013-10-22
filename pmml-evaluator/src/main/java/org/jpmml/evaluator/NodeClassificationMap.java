@@ -5,13 +5,16 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
-class NodeClassificationMap extends EntityClassificationMap<Node> {
+import com.google.common.annotations.*;
 
-	NodeClassificationMap(){
+@Beta
+public class NodeClassificationMap extends EntityClassificationMap<Node> {
+
+	protected NodeClassificationMap(){
 		super(Type.PROBABILITY);
 	}
 
-	NodeClassificationMap(Node node){
+	protected NodeClassificationMap(Node node){
 		super(Type.PROBABILITY, node);
 	}
 

@@ -5,15 +5,17 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import com.google.common.annotations.*;
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
-class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable, HasProbability {
+@Beta
+public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable, HasProbability {
 
 	private Type type = null;
 
 
-	ClassificationMap(Type type){
+	protected ClassificationMap(Type type){
 		setType(type);
 	}
 
