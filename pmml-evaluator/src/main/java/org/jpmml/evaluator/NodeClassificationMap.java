@@ -8,7 +8,7 @@ import org.dmg.pmml.*;
 import com.google.common.annotations.*;
 
 @Beta
-public class NodeClassificationMap extends EntityClassificationMap<Node> {
+public class NodeClassificationMap extends EntityClassificationMap<Node> implements HasProbability {
 
 	protected NodeClassificationMap(){
 		super(Type.PROBABILITY);
@@ -28,5 +28,10 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> {
 		}
 
 		return super.getResult();
+	}
+
+	@Override
+	public Double getProbability(String value){
+		return getFeature(value);
 	}
 }

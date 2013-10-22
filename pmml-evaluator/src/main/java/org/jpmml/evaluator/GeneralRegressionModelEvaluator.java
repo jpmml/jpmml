@@ -160,7 +160,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
-		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.PROBABILITY);
+		DefaultClassificationMap<String> result = new DefaultClassificationMap<String>();
 
 		Double previousValue = null;
 

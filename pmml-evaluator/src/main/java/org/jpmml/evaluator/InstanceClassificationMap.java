@@ -7,14 +7,18 @@ import java.util.*;
 
 import com.google.common.annotations.*;
 
+import static com.google.common.base.Preconditions.*;
+
 @Beta
 public class InstanceClassificationMap extends ClassificationMap<String> implements HasEntityIdRanking, HasClusterId, HasAffinityRanking, HasClusterAffinity {
 
 	private Object result = null;
 
 
-	protected InstanceClassificationMap(Object result){
-		super(Type.DISTANCE);
+	protected InstanceClassificationMap(Type type, Object result){
+		super(type);
+
+		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
 
 		setResult(result);
 	}
@@ -55,23 +59,11 @@ public class InstanceClassificationMap extends ClassificationMap<String> impleme
 
 	@Override
 	public Double getAffinity(String id){
-		Type type = getType();
-
-		if(!(Type.DISTANCE).equals(type)){
-			throw new EvaluationException();
-		}
-
 		return getFeature(id);
 	}
 
 	@Override
 	public List<Double> getAffinityRanking(){
-		Type type = getType();
-
-		if(!(Type.DISTANCE).equals(type)){
-			throw new EvaluationException();
-		}
-
 		return getWinnerValues();
 	}
 

@@ -31,12 +31,6 @@ public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> i
 
 	@Override
 	public Double getConfidence(String value){
-		Type type = getType();
-
-		if(!(Type.CONFIDENCE).equals(type)){
-			throw new EvaluationException();
-		}
-
 		return getFeature(value);
 	}
 }

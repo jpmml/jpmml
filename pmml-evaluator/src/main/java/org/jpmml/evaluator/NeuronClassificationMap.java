@@ -8,7 +8,7 @@ import org.dmg.pmml.*;
 import com.google.common.annotations.*;
 
 @Beta
-public class NeuronClassificationMap extends EntityClassificationMap<Entity> {
+public class NeuronClassificationMap extends EntityClassificationMap<Entity> implements HasProbability {
 
 	protected NeuronClassificationMap(){
 		super(Type.PROBABILITY);
@@ -16,5 +16,10 @@ public class NeuronClassificationMap extends EntityClassificationMap<Entity> {
 
 	protected NeuronClassificationMap(Entity entity){
 		super(Type.PROBABILITY, entity);
+	}
+
+	@Override
+	public Double getProbability(String value){
+		return getFeature(value);
 	}
 }

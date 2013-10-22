@@ -141,7 +141,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				break;
 		}
 
-		ClassificationMap<Object> result = new ClassificationMap<Object>(ClassificationMap.Type.PROBABILITY);
+		DefaultClassificationMap<Object> result = new DefaultClassificationMap<Object>();
 		result.putAll(countVotes(segmentation, segmentResults));
 
 		// Convert from votes to probabilities

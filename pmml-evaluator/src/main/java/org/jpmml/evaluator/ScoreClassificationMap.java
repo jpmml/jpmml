@@ -30,12 +30,6 @@ public class ScoreClassificationMap extends ClassificationMap<String> implements
 
 	@Override
 	public List<String> getReasonCodeRanking(){
-		Type type = getType();
-
-		if(!(Type.VOTE).equals(type)){
-			throw new EvaluationException();
-		}
-
 		return getWinnerKeys();
 	}
 }

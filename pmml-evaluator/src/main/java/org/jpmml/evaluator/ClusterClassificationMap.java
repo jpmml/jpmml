@@ -7,15 +7,21 @@ import org.dmg.pmml.*;
 
 import com.google.common.annotations.*;
 
+import static com.google.common.base.Preconditions.*;
+
 @Beta
 public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasDisplayValue, HasClusterId, HasAffinity, HasClusterAffinity {
 
 	protected ClusterClassificationMap(Type type){
 		super(type);
+
+		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
 	}
 
 	protected ClusterClassificationMap(Type type, Cluster cluster){
 		super(type, cluster);
+
+		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
 	}
 
 	@Override
@@ -32,12 +38,6 @@ public class ClusterClassificationMap extends EntityClassificationMap<Cluster> i
 
 	@Override
 	public Double getAffinity(String value){
-		Type type = getType();
-
-		if(!((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type))){
-			throw new EvaluationException();
-		}
-
 		return getFeature(value);
 	}
 

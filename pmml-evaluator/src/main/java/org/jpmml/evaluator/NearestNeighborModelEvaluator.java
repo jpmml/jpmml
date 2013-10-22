@@ -273,7 +273,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private InstanceClassificationMap createDistanceMap(Object value, List<InstanceResult> instanceResults, Function<Integer, String> function){
-		InstanceClassificationMap result = new InstanceClassificationMap(value);
+		InstanceClassificationMap result = new InstanceClassificationMap(ClassificationMap.Type.DISTANCE, value);
 
 		for(InstanceResult instanceResult : instanceResults){
 			result.put(function.apply(instanceResult.getId()), instanceResult.getDistance());

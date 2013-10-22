@@ -57,7 +57,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		// Probability calculations use logarithmic scale for greater numerical stability
-		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.PROBABILITY);
+		DefaultClassificationMap<String> result = new DefaultClassificationMap<String>();
 
 		Map<FieldName, Map<String, Double>> countsMap = getCountsMap();
 

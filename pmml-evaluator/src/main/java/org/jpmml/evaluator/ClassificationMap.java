@@ -10,7 +10,7 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 @Beta
-public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable, HasProbability {
+public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable {
 
 	private Type type = null;
 
@@ -29,23 +29,12 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 		return entry.getKey();
 	}
 
-	@Override
-	public Double getProbability(String value){
-		Type type = getType();
-
-		if(!(Type.PROBABILITY).equals(type)){
-			throw new EvaluationException();
-		}
-
-		return getFeature(value);
-	}
-
 	Double getFeature(String value){
 		Double result = get(value);
 
 		// The specified value was not encountered during scoring
 		if(result == null){
-			result = 0d;
+			return 0d;
 		}
 
 		return result;
