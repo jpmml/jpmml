@@ -205,7 +205,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	@SuppressWarnings (
 		value = {"rawtypes", "unchecked"}
 	)
-    private Object calculateCategoricalTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private Object calculateCategoricalTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		VoteCounter<Object> counter = new VoteCounter<Object>();

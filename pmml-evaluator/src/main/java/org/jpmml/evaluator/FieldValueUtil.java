@@ -16,12 +16,12 @@ public class FieldValueUtil {
 	}
 
 	static
-    public FieldValue create(Object value){
-    	return create(null, null, value);
-    }
+	public FieldValue create(Object value){
+		return create(null, null, value);
+	}
 
 	static
-    public FieldValue create(Field field, Object value){
+	public FieldValue create(Field field, Object value){
 		FieldValue result = create(field.getDataType(), field.getOptype(), value);
 
 		if(field instanceof TypeDefinitionField){
