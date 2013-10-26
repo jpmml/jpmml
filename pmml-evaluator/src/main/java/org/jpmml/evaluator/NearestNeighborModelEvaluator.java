@@ -233,10 +233,18 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		// "In case of a tie, the category with the largest number of cases in the training data is the winner"
 		if(winners.size() > 1){
+			Multiset<Object> multiset = LinkedHashMultiset.create();
+
 			Map<Integer, FieldValue> column = table.column(name);
 
-			Multiset<Object> multiset = LinkedHashMultiset.create();
-			multiset.addAll(column.values());
+			Function<FieldValue, Object> function = new Function<FieldValue, Object>(){
+
+				@Override
+				public Object apply(FieldValue value){
+					return value.getValue();
+				}
+			};
+			multiset.addAll(Collections2.transform(column.values(), function));
 
 			counter.clear();
 
