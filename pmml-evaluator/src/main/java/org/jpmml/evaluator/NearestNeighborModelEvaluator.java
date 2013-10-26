@@ -202,7 +202,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return (sum / instanceResults.size());
 	}
 
-	private Object calculateCategoricalTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	@SuppressWarnings (
+		value = {"rawtypes", "unchecked"}
+	)
+    private Object calculateCategoricalTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		VoteCounter<Object> counter = new VoteCounter<Object>();
@@ -256,7 +259,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			// "If multiple categories are tied on the largest number of cases in the training data, then the category with the smallest data value (in lexical order) among the tied categories is the winner."
 			if(winners.size() > 1){
-				throw new EvaluationException();
+				return Collections.min((Collection)winners);
 			}
 		}
 
