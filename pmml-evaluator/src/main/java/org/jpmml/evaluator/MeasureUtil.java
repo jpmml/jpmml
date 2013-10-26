@@ -149,6 +149,7 @@ public class MeasureUtil {
 
 					distance = (equals ? 0d : 1d);
 				}
+				break;
 			case EQUAL:
 				{
 					boolean equals = equals(value, referenceValue);
