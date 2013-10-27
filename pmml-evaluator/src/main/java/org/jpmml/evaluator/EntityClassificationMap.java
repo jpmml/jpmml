@@ -13,7 +13,7 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 
 	private E entity = null;
 
-	private Double maxValue = null;
+	private Double entityValue = null;
 
 
 	protected EntityClassificationMap(Type type){
@@ -45,8 +45,8 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 	Double put(E entity, String key, Double value){
 		Type type = getType();
 
-		if(this.maxValue == null || type.isMoreOptimal(value, this.maxValue)){
-			this.maxValue = value;
+		if(this.entityValue == null || type.compare(value, this.entityValue) > 0){
+			this.entityValue = value;
 
 			setEntity(entity);
 		}

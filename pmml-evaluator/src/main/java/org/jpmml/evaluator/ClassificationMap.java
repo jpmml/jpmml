@@ -41,14 +41,14 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	}
 
 	Map.Entry<K, Double> getWinner(){
-		Type type = getType();
-
 		Map.Entry<K, Double> result = null;
+
+		Type type = getType();
 
 		Collection<Map.Entry<K, Double>> entries = entrySet();
 		for(Map.Entry<K, Double> entry : entries){
 
-			if(result == null || type.isMoreOptimal(entry.getValue(), result.getValue())){
+			if(result == null || type.compare(entry.getValue(), result.getValue()) > 0){
 				result = entry;
 			}
 		}
@@ -59,28 +59,14 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	List<Map.Entry<K, Double>> getWinnerList(){
 		List<Map.Entry<K, Double>> result = Lists.newArrayList(entrySet());
 
+		final
+		Type type = getType();
+
 		Comparator<Map.Entry<K, Double>> comparator = new Comparator<Map.Entry<K, Double>>(){
-
-			private Type type = getType();
-
 
 			@Override
 			public int compare(Map.Entry<K, Double> left, Map.Entry<K, Double> right){
-				// Calculate the order relative to the right value
-				int order = (right.getValue()).compareTo(left.getValue());
-				if(order == 0){
-					return order;
-				}
-
-				Type.Ordering ordering = this.type.getOrdering();
-				switch(ordering){
-					case INCREASING:
-						return order;
-					case DECREASING:
-						return -1 * order;
-					default:
-						throw new IllegalStateException();
-				}
+				return -1 * type.compare(left.getValue(), right.getValue());
 			}
 		};
 		Collections.sort(result, comparator);
@@ -139,7 +125,7 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	}
 
 	static
-	public enum Type {
+	public enum Type implements Comparator<Double> {
 		PROBABILITY(Ordering.INCREASING),
 		CONFIDENCE(Ordering.INCREASING),
 		DISTANCE(Ordering.DECREASING),
@@ -155,22 +141,21 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 		}
 
 		/**
-		 * Indicates if the first argument is more optimal than the second argument.
+		 * Calculates the order between arguments.
 		 *
 		 * @param left A value
 		 * @param right The reference value
-		 *
-		 * @see Comparable
 		 */
-		public <C extends Comparable<C>> boolean isMoreOptimal(C left, C right){
+		@Override
+		public int compare(Double left, Double right){
 			int order = (left).compareTo(right);
 
 			Ordering ordering = getOrdering();
 			switch(ordering){
 				case INCREASING:
-					return (order > 0);
+					return order;
 				case DECREASING:
-					return (order < 0);
+					return -1 * order;
 				default:
 					throw new IllegalStateException();
 			}
