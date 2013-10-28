@@ -40,9 +40,13 @@ public class PMMLException extends RuntimeException {
 
 		Locatable locatable = getContext();
 		if(locatable != null){
-			Locator locator = locatable.sourceLocation();
+			int lineNumber = -1;
 
-			int lineNumber = locator.getLineNumber();
+			Locator locator = locatable.sourceLocation();
+			if(locator != null){
+				lineNumber = locator.getLineNumber();
+			}
+
 			if(lineNumber != -1){
 				sb.append(" ").append("(at or around line ").append(lineNumber).append(")");
 			}
