@@ -86,41 +86,76 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		ClusterClassificationMap result;
 
-		Double adjustment = null;
-
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
 
 		Measure measure = comparisonMeasure.getMeasure();
 
 		if(MeasureUtil.isSimilarity(measure)){
-			result = new ClusterClassificationMap(ClassificationMap.Type.SIMILARITY);
+			result = evaluateSimilarity(comparisonMeasure, clusteringFields, values);
 		} else
 
 		if(MeasureUtil.isDistance(measure)){
-			result = new ClusterClassificationMap(ClassificationMap.Type.DISTANCE);
-
-			MissingValueWeights missingValueWeights = clusteringModel.getMissingValueWeights();
-			if(missingValueWeights != null){
-				Array array = missingValueWeights.getArray();
-
-				List<Double> adjustmentValues = ArrayUtil.getRealContent(array);
-				if(values.size() != adjustmentValues.size()){
-					throw new InvalidFeatureException(missingValueWeights);
-				}
-
-				adjustment = MeasureUtil.calculateAdjustment(values, adjustmentValues);
-			} else
-
-			{
-				adjustment = MeasureUtil.calculateAdjustment(values);
-			}
+			result = evaluateDistance(comparisonMeasure, clusteringFields, values);
 		} else
 
 		{
 			throw new UnsupportedFeatureException(measure);
 		}
 
-		BiMap<Cluster, String> inverseEntities = (getEntityRegistry().inverse());
+		return Collections.singletonMap(getTargetField(), result);
+	}
+
+	private ClusterClassificationMap evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
+		ClusteringModel clusteringModel = getModel();
+
+		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.SIMILARITY);
+
+		BitSet flags = MeasureUtil.toBitSet(values);
+
+		BiMap<Cluster, String> inverseEntities = (getEntityRegistry()).inverse();
+
+		List<Cluster> clusters = clusteringModel.getClusters();
+		for(Cluster cluster : clusters){
+			BitSet clusterFlags = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterFlagCache);
+
+			if(flags.size() != clusterFlags.size()){
+				throw new InvalidFeatureException(cluster);
+			}
+
+			String id = inverseEntities.get(cluster);
+
+			Double similarity = MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, clusterFlags);
+
+			result.put(cluster, id, similarity);
+		}
+
+		return result;
+	}
+
+	private ClusterClassificationMap evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
+		ClusteringModel clusteringModel = getModel();
+
+		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.DISTANCE);
+
+		Double adjustment;
+
+		MissingValueWeights missingValueWeights = clusteringModel.getMissingValueWeights();
+		if(missingValueWeights != null){
+			Array array = missingValueWeights.getArray();
+
+			List<Double> adjustmentValues = ArrayUtil.getRealContent(array);
+			if(values.size() != adjustmentValues.size()){
+				throw new InvalidFeatureException(missingValueWeights);
+			}
+
+			adjustment = MeasureUtil.calculateAdjustment(values, adjustmentValues);
+		} else
+
+		{
+			adjustment = MeasureUtil.calculateAdjustment(values);
+		}
+
+		BiMap<Cluster, String> inverseEntities = (getEntityRegistry()).inverse();
 
 		List<Cluster> clusters = clusteringModel.getClusters();
 		for(Cluster cluster : clusters){
@@ -132,24 +167,12 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			String id = inverseEntities.get(cluster);
 
-			if(MeasureUtil.isSimilarity(measure)){
-				Double similarity = MeasureUtil.evaluareSimilarity(comparisonMeasure, clusteringFields, values, clusterValues);
+			Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, clusteringFields, values, clusterValues, adjustment);
 
-				result.put(cluster, id, similarity);
-			} else
-
-			if(MeasureUtil.isDistance(measure)){
-				Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, clusteringFields, values, clusterValues, adjustment);
-
-				result.put(cluster, id, distance);
-			} else
-
-			{
-				throw new UnsupportedFeatureException(measure);
-			}
+			result.put(cluster, id, distance);
 		}
 
-		return Collections.singletonMap(getTargetField(), result);
+		return result;
 	}
 
 	private List<ClusteringField> getCenterClusteringFields(){
@@ -191,6 +214,18 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				}
 
 				return result;
+			}
+		});
+
+	private static final LoadingCache<Cluster, BitSet> clusterFlagCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<Cluster, BitSet>(){
+
+			@Override
+			public BitSet load(Cluster cluster){
+				List<FieldValue> values = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
+
+				return MeasureUtil.toBitSet(values);
 			}
 		});
 

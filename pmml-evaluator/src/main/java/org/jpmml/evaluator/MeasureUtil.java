@@ -22,7 +22,7 @@ public class MeasureUtil {
 	}
 
 	static
-	public Double evaluareSimilarity(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues){
+	public Double evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, BitSet flags, BitSet referenceFlags){
 		Measure measure = comparisonMeasure.getMeasure();
 
 		double a11 = 0d;
@@ -30,48 +30,27 @@ public class MeasureUtil {
 		double a01 = 0d;
 		double a00 = 0d;
 
-		comparisonFields:
 		for(int i = 0; i < comparisonFields.size(); i++){
 
-			FieldValue value = values.get(i);
-			if(value == null){
-				continue comparisonFields;
-			}
+			if(flags.get(i)){
 
-			FieldValue referenceValue = referenceValues.get(i);
-
-			if((MeasureUtil.ZERO).equalsValue(value)){
-
-				if((MeasureUtil.ZERO).equalsValue(referenceValue)){
-					a00 += 1d;
-				} else
-
-				if((MeasureUtil.ONE).equalsValue(referenceValue)){
-					a01 += 1d;
-				} else
-
-				{
-					throw new EvaluationException();
-				}
-			} else
-
-			if((MeasureUtil.ONE).equalsValue(value)){
-
-				if((MeasureUtil.ZERO).equalsValue(referenceValue)){
-					a10 += 1d;
-				} else
-
-				if((MeasureUtil.ONE).equalsValue(referenceValue)){
+				if(referenceFlags.get(i)){
 					a11 += 1d;
 				} else
 
 				{
-					throw new EvaluationException();
+					a10 += 1d;
 				}
 			} else
 
 			{
-				throw new EvaluationException();
+				if(referenceFlags.get(i)){
+					a01 += 1d;
+				} else
+
+				{
+					a00 += 1d;
+				}
 			}
 		}
 
@@ -109,6 +88,29 @@ public class MeasureUtil {
 		} catch(ArithmeticException ae){
 			throw new InvalidResultException(null);
 		}
+	}
+
+	static
+	public BitSet toBitSet(List<FieldValue> values){
+		BitSet result = new BitSet(values.size());
+
+		for(int i = 0; i < values.size(); i++){
+			FieldValue value = values.get(i);
+
+			if((MeasureUtil.ZERO).equalsValue(value)){
+				result.set(i, false);
+			} else
+
+			if((MeasureUtil.ONE).equalsValue(value)){
+				result.set(i, true);
+			} else
+
+			{
+				throw new EvaluationException();
+			}
+		}
+
+		return result;
 	}
 
 	static

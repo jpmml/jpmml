@@ -63,6 +63,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Map<FieldName, InstanceClassificationMap> evaluateMixed(ModelManagerEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
+		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
+
 		List<InstanceResult> instanceResults = evaluate(context);
 
 		List<InstanceResult> nearestInstanceResults = Lists.newArrayList(instanceResults);
@@ -77,8 +79,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		Collections.sort(nearestInstanceResults, comparator);
 
 		nearestInstanceResults = nearestInstanceResults.subList(0, nearestNeighborModel.getNumberOfNeighbors());
-
-		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
 
 		Function<Integer, String> function = new Function<Integer, String>(){
 
@@ -122,9 +122,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Map<FieldName, InstanceClassificationMap> evaluateClustering(ModelManagerEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		List<InstanceResult> instanceResults = evaluate(context);
-
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
+
+		List<InstanceResult> instanceResults = evaluate(context);
 
 		String idField = nearestNeighborModel.getInstanceIdVariable();
 		if(idField == null){
@@ -148,55 +148,56 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			values.add(value);
 		}
 
-		List<InstanceResult> result = Lists.newArrayList();
-
-		Double adjustment = null;
-
 		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
 
 		Measure measure = comparisonMeasure.getMeasure();
 
 		if(MeasureUtil.isSimilarity(measure)){
-			// Do nothing
+			return evaluateSimilarity(comparisonMeasure, knnInputs.getKNNInputs(), values);
 		} else
 
 		if(MeasureUtil.isDistance(measure)){
-			adjustment = MeasureUtil.calculateAdjustment(values);
+			return evaluateDistance(comparisonMeasure, knnInputs.getKNNInputs(), values);
 		} else
 
 		{
 			throw new UnsupportedFeatureException(measure);
 		}
+	}
 
-		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
+	private List<InstanceResult> evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
+		List<InstanceResult> result = Lists.newArrayList();
 
-		Set<Integer> rowKeys = ImmutableSortedSet.copyOf(table.rowKeySet());
+		BitSet flags = MeasureUtil.toBitSet(values);
+
+		Map<Integer, BitSet> flagMap = getValue(NearestNeighborModelEvaluator.instanceFlagCache);
+
+		Set<Integer> rowKeys = flagMap.keySet();
 		for(Integer rowKey : rowKeys){
-			Map<FieldName, FieldValue> rowValues = table.row(rowKey);
+			BitSet instanceFlags = flagMap.get(rowKey);
 
-			List<FieldValue> instanceValues = Lists.newArrayList();
+			Double similarity = MeasureUtil.evaluateSimilarity(comparisonMeasure, knnInputs, flags, instanceFlags);
 
-			for(KNNInput knnInput : knnInputs){
-				FieldValue instanceValue = rowValues.get(knnInput.getField());
+			result.add(new InstanceResult.Similarity(rowKey, similarity));
+		}
 
-				instanceValues.add(instanceValue);
-			}
+		return result;
+	}
 
-			if(MeasureUtil.isSimilarity(measure)){
-				Double similarity = MeasureUtil.evaluareSimilarity(comparisonMeasure, knnInputs.getKNNInputs(), values, instanceValues);
+	private List<InstanceResult> evaluateDistance(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
+		List<InstanceResult> result = Lists.newArrayList();
 
-				result.add(new InstanceResult.Similarity(rowKey, similarity));
-			} else
+		Double adjustment = MeasureUtil.calculateAdjustment(values);
 
-			if(MeasureUtil.isDistance(measure)){
-				Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, knnInputs.getKNNInputs(), values, instanceValues, adjustment);
+		Map<Integer, List<FieldValue>> valueMap = getValue(NearestNeighborModelEvaluator.instanceValueCache);
 
-				result.add(new InstanceResult.Distance(rowKey, distance));
-			} else
+		Set<Integer> rowKeys = valueMap.keySet();
+		for(Integer rowKey : rowKeys){
+			List<FieldValue> instanceValues = valueMap.get(rowKey);
 
-			{
-				throw new UnsupportedFeatureException(measure);
-			}
+			Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, knnInputs, values, instanceValues, adjustment);
+
+			result.add(new InstanceResult.Distance(rowKey, distance));
 		}
 
 		return result;
@@ -669,6 +670,60 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				}
 
 				return parseTrainingInstances(pmml, nearestNeighborModel);
+			}
+		});
+
+	private static final LoadingCache<NearestNeighborModel, Map<Integer, List<FieldValue>>> instanceValueCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<NearestNeighborModel, Map<Integer, List<FieldValue>>>(){
+
+			@Override
+			public Map<Integer, List<FieldValue>> load(NearestNeighborModel nearestNeighborModel){
+				Map<Integer, List<FieldValue>> result = Maps.newLinkedHashMap();
+
+				Table<Integer, FieldName, FieldValue> table = CacheUtil.getValue(nearestNeighborModel, NearestNeighborModelEvaluator.trainingInstanceCache);
+
+				KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
+
+				Set<Integer> rowKeys = ImmutableSortedSet.copyOf(table.rowKeySet());
+				for(Integer rowKey : rowKeys){
+					List<FieldValue> values = Lists.newArrayList();
+
+					Map<FieldName, FieldValue> rowValues = table.row(rowKey);
+
+					for(KNNInput knnInput : knnInputs){
+						FieldValue value = rowValues.get(knnInput.getField());
+
+						values.add(value);
+					}
+
+					result.put(rowKey, values);
+				}
+
+				return result;
+			}
+		});
+
+	private static final LoadingCache<NearestNeighborModel, Map<Integer, BitSet>> instanceFlagCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<NearestNeighborModel, Map<Integer, BitSet>>(){
+
+			@Override
+			public Map<Integer, BitSet> load(NearestNeighborModel nearestNeighborModel){
+				Map<Integer, BitSet> result = Maps.newLinkedHashMap();
+
+				Map<Integer, List<FieldValue>> valueMap = CacheUtil.getValue(nearestNeighborModel, NearestNeighborModelEvaluator.instanceValueCache);
+
+				Maps.EntryTransformer<Integer, List<FieldValue>, BitSet> transformer = new Maps.EntryTransformer<Integer, List<FieldValue>, BitSet>(){
+
+					@Override
+					public BitSet transformEntry(Integer key, List<FieldValue> value){
+						return MeasureUtil.toBitSet(value);
+					}
+				};
+				result.putAll(Maps.transformEntries(valueMap, transformer));
+
+				return result;
 			}
 		});
 }

@@ -19,22 +19,22 @@ public class MeasureUtilTest {
 	public void evaluateSimilarity(){
 		List<ClusteringField> clusteringFields = createClusteringFields("one", "two", "three", "four");
 
-		List<FieldValue> values = createValues(0, 0, 1, 1);
-		List<FieldValue> referenceValues = createValues(0, 1, 0, 1);
+		BitSet flags = createFlags(0, 0, 1, 1);
+		BitSet referenceFlags = createFlags(0, 1, 0, 1);
 
 		ComparisonMeasure comparisonMeasure = new ComparisonMeasure(ComparisonMeasure.Kind.SIMILARITY);
 
 		comparisonMeasure = comparisonMeasure.withMeasure(new SimpleMatching());
-		assertEquals(Double.valueOf(2d / 4d), MeasureUtil.evaluareSimilarity(comparisonMeasure, clusteringFields, values, referenceValues));
+		assertEquals(Double.valueOf(2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags));
 
 		comparisonMeasure = comparisonMeasure.withMeasure(new Jaccard());
-		assertEquals(Double.valueOf(1d / 3d), MeasureUtil.evaluareSimilarity(comparisonMeasure, clusteringFields, values, referenceValues));
+		assertEquals(Double.valueOf(1d / 3d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags));
 
 		comparisonMeasure = comparisonMeasure.withMeasure(new Tanimoto());
-		assertEquals(Double.valueOf(2d / (1d + 2 * 2d + 1d)), MeasureUtil.evaluareSimilarity(comparisonMeasure, clusteringFields, values, referenceValues));
+		assertEquals(Double.valueOf(2d / (1d + 2 * 2d + 1d)), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags));
 
 		comparisonMeasure = comparisonMeasure.withMeasure(new BinarySimilarity(0.5d, 0.5d, 0.5d, 0.5d, 1d, 1d, 1d, 1d));
-		assertEquals(Double.valueOf(2d / 4d), MeasureUtil.evaluareSimilarity(comparisonMeasure, clusteringFields, values, referenceValues));
+		assertEquals(Double.valueOf(2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags));
 	}
 
 	static
@@ -49,13 +49,13 @@ public class MeasureUtilTest {
 	}
 
 	static
-	private List<FieldValue> createValues(Number... numbers){
+	private BitSet createFlags(Number... numbers){
 		List<FieldValue> result = Lists.newArrayList();
 
 		for(Number number : numbers){
 			result.add(FieldValueUtil.create(number));
 		}
 
-		return result;
+		return MeasureUtil.toBitSet(result);
 	}
 }
