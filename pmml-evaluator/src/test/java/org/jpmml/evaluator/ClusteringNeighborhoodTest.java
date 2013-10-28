@@ -19,16 +19,12 @@ public class ClusteringNeighborhoodTest extends NearestNeighborModelEvaluatorTes
 	public void evaluate() throws Exception {
 		NearestNeighborModelEvaluator evaluator = createEvaluator();
 
-		NearestNeighborModel nearestNeighborModel = evaluator.getModel();
-
-		FieldName maritialStatus = new FieldName("maritial status");
-		FieldName age = new FieldName("age");
+		FieldName maritalStatus = new FieldName("marital status");
 		FieldName dependents = new FieldName("dependents");
 
 		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(maritialStatus, "m");
-		arguments.put(age, 40d);
-		arguments.put(dependents, 2);
+		arguments.put(maritalStatus, "d");
+		arguments.put(dependents, 0);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
@@ -41,10 +37,10 @@ public class ClusteringNeighborhoodTest extends NearestNeighborModelEvaluatorTes
 		} catch(MissingResultException mre){
 		}
 
-		assertEquals(Arrays.asList("4", "3", "2"), (target.getEntityIdRanking()).subList(0, 3));
+		assertEquals(Arrays.asList("3", "1", "4"), (target.getEntityIdRanking()).subList(0, 3));
 
-		assertEquals("4", result.get(new FieldName("neighbor1")));
-		assertEquals("3", result.get(new FieldName("neighbor2")));
-		assertEquals("2", result.get(new FieldName("neighbor3")));
+		assertEquals("3", result.get(new FieldName("neighbor1")));
+		assertEquals("1", result.get(new FieldName("neighbor2")));
+		assertEquals("4", result.get(new FieldName("neighbor3")));
 	}
 }

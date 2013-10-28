@@ -17,16 +17,112 @@ public class MeasureUtil {
 	}
 
 	static
+	public boolean isSimilarity(Measure measure){
+		return (measure instanceof SimpleMatching || measure instanceof Jaccard || measure instanceof Tanimoto || measure instanceof BinarySimilarity);
+	}
+
+	static
+	public Double evaluareSimilarity(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues){
+		Measure measure = comparisonMeasure.getMeasure();
+
+		double a11 = 0d;
+		double a10 = 0d;
+		double a01 = 0d;
+		double a00 = 0d;
+
+		comparisonFields:
+		for(int i = 0; i < comparisonFields.size(); i++){
+
+			FieldValue value = values.get(i);
+			if(value == null){
+				continue comparisonFields;
+			}
+
+			FieldValue referenceValue = referenceValues.get(i);
+
+			if((MeasureUtil.ZERO).equalsValue(value)){
+
+				if((MeasureUtil.ZERO).equalsValue(referenceValue)){
+					a00 += 1d;
+				} else
+
+				if((MeasureUtil.ONE).equalsValue(referenceValue)){
+					a01 += 1d;
+				} else
+
+				{
+					throw new EvaluationException();
+				}
+			} else
+
+			if((MeasureUtil.ONE).equalsValue(value)){
+
+				if((MeasureUtil.ZERO).equalsValue(referenceValue)){
+					a10 += 1d;
+				} else
+
+				if((MeasureUtil.ONE).equalsValue(referenceValue)){
+					a11 += 1d;
+				} else
+
+				{
+					throw new EvaluationException();
+				}
+			} else
+
+			{
+				throw new EvaluationException();
+			}
+		}
+
+		double numerator;
+		double denominator;
+
+		if(measure instanceof SimpleMatching){
+			numerator = (a11 + a00);
+			denominator = (a11 + a10 + a01 + a00);
+		} else
+
+		if(measure instanceof Jaccard){
+			numerator = (a11);
+			denominator = (a11 + a10 + a01);
+		} else
+
+		if(measure instanceof Tanimoto){
+			numerator = (a11 + a00);
+			denominator = (a11 + 2d * (a10 + a01) + a00);
+		} else
+
+		if(measure instanceof BinarySimilarity){
+			BinarySimilarity binarySimilarity = (BinarySimilarity)measure;
+
+			numerator = (binarySimilarity.getC11Parameter() * a11 + binarySimilarity.getC10Parameter() * a10 + binarySimilarity.getC01Parameter() * a01 + binarySimilarity.getC00Parameter() * a00);
+			denominator = (binarySimilarity.getD11Parameter() * a11 + binarySimilarity.getD10Parameter() * a10 + binarySimilarity.getD01Parameter() * a01 + binarySimilarity.getD00Parameter() * a00);
+		} else
+
+		{
+			throw new UnsupportedFeatureException(measure);
+		}
+
+		try {
+			return (numerator / denominator);
+		} catch(ArithmeticException ae){
+			throw new InvalidResultException(null);
+		}
+	}
+
+	static
 	public boolean isDistance(Measure measure){
 		return (measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof Chebychev || measure instanceof CityBlock || measure instanceof Minkowski);
 	}
 
 	static
 	public Double evaluateDistance(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues, Double adjustment){
+		Measure measure = comparisonMeasure.getMeasure();
+
 		double innerPower;
 		double outerPower;
 
-		Measure measure = comparisonMeasure.getMeasure();
 		if(measure instanceof Euclidean){
 			innerPower = outerPower = 2;
 		} else
@@ -92,11 +188,6 @@ public class MeasureUtil {
 		{
 			throw new UnsupportedFeatureException(measure);
 		}
-	}
-
-	static
-	public boolean isSimilarity(Measure measure){
-		return (measure instanceof SimpleMatching || measure instanceof Jaccard || measure instanceof Tanimoto || measure instanceof BinarySimilarity);
 	}
 
 	static
@@ -207,4 +298,7 @@ public class MeasureUtil {
 
 		return (sum / nonmissingSum);
 	}
+
+	private static final FieldValue ZERO = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, 0d);
+	private static final FieldValue ONE = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, 1d);
 }

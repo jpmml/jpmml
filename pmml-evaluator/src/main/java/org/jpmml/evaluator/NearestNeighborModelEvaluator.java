@@ -66,7 +66,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		List<InstanceResult> instanceResults = evaluate(context);
 
 		List<InstanceResult> nearestInstanceResults = Lists.newArrayList(instanceResults);
-		Collections.sort(nearestInstanceResults);
+
+		Comparator<InstanceResult> comparator = new Comparator<InstanceResult>(){
+
+			@Override
+			public int compare(InstanceResult left, InstanceResult right){
+				return -1 * (left).compareTo(right);
+			}
+		};
+		Collections.sort(nearestInstanceResults, comparator);
+
 		nearestInstanceResults = nearestInstanceResults.subList(0, nearestNeighborModel.getNumberOfNeighbors());
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -104,7 +113,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					throw new UnsupportedFeatureException(dataField, opType);
 			}
 
-			result.put(predictedField, createDistanceMap(value, instanceResults, function));
+			result.put(predictedField, createMeasureMap(value, instanceResults, function));
 		}
 
 		return result;
@@ -124,20 +133,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Function<Integer, String> function = createIdentifierResolver(FieldName.create(idField), table);
 
-		return Collections.singletonMap(getTargetField(), createDistanceMap(null, instanceResults, function));
+		return Collections.singletonMap(getTargetField(), createMeasureMap(null, instanceResults, function));
 	}
 
 	private List<InstanceResult> evaluate(ModelManagerEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
-
-		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
-
-		Measure measure = comparisonMeasure.getMeasure();
-		if(!MeasureUtil.isDistance(measure)){
-			throw new UnsupportedFeatureException(measure);
-		}
-
-		List<InstanceResult> result = Lists.newArrayList();
 
 		List<FieldValue> values = Lists.newArrayList();
 
@@ -148,7 +148,25 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			values.add(value);
 		}
 
-		Double adjustment = MeasureUtil.calculateAdjustment(values);
+		List<InstanceResult> result = Lists.newArrayList();
+
+		Double adjustment = null;
+
+		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
+
+		Measure measure = comparisonMeasure.getMeasure();
+
+		if(MeasureUtil.isSimilarity(measure)){
+			// Do nothing
+		} else
+
+		if(MeasureUtil.isDistance(measure)){
+			adjustment = MeasureUtil.calculateAdjustment(values);
+		} else
+
+		{
+			throw new UnsupportedFeatureException(measure);
+		}
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
 
@@ -164,9 +182,21 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				instanceValues.add(instanceValue);
 			}
 
-			Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, knnInputs.getKNNInputs(), values, instanceValues, adjustment);
+			if(MeasureUtil.isSimilarity(measure)){
+				Double similarity = MeasureUtil.evaluareSimilarity(comparisonMeasure, knnInputs.getKNNInputs(), values, instanceValues);
 
-			result.add(new InstanceResult(rowKey, distance));
+				result.add(new InstanceResult.Similarity(rowKey, similarity));
+			} else
+
+			if(MeasureUtil.isDistance(measure)){
+				Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, knnInputs.getKNNInputs(), values, instanceValues, adjustment);
+
+				result.add(new InstanceResult.Distance(rowKey, distance));
+			} else
+
+			{
+				throw new UnsupportedFeatureException(measure);
+			}
 		}
 
 		return result;
@@ -283,11 +313,29 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return function;
 	}
 
-	private InstanceClassificationMap createDistanceMap(Object value, List<InstanceResult> instanceResults, Function<Integer, String> function){
-		InstanceClassificationMap result = new InstanceClassificationMap(ClassificationMap.Type.DISTANCE, value);
+	private InstanceClassificationMap createMeasureMap(Object value, List<InstanceResult> instanceResults, Function<Integer, String> function){
+		NearestNeighborModel nearestNeighborModel = getModel();
+
+		InstanceClassificationMap result;
+
+		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
+
+		Measure measure = comparisonMeasure.getMeasure();
+
+		if(MeasureUtil.isSimilarity(measure)){
+			result = new InstanceClassificationMap(ClassificationMap.Type.SIMILARITY, value);
+		} else
+
+		if(MeasureUtil.isDistance(measure)){
+			result = new InstanceClassificationMap(ClassificationMap.Type.DISTANCE, value);
+		} else
+
+		{
+			throw new UnsupportedFeatureException(measure);
+		}
 
 		for(InstanceResult instanceResult : instanceResults){
-			result.put(function.apply(instanceResult.getId()), instanceResult.getDistance());
+			result.put(function.apply(instanceResult.getId()), instanceResult.getValue());
 		}
 
 		return result;
@@ -504,7 +552,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		private DerivedField derivedField = null;
 
 
-		public DerivedFieldLoader(FieldName name, String column, DerivedField derivedField){
+		private DerivedFieldLoader(FieldName name, String column, DerivedField derivedField){
 			super(name, column);
 
 			setDerivedField(derivedField);
@@ -525,28 +573,21 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
+	abstract
 	private class InstanceResult implements Comparable<InstanceResult> {
 
 		private Integer id = null;
 
-		private Double distance = null;
+		private Double value = null;
 
 
-		public InstanceResult(Integer id, Double distance){
+		private InstanceResult(Integer id, Double value){
 			setId(id);
-			setDistance(distance);
+			setValue(value);
 		}
 
-		@Override
-		public int compareTo(InstanceResult that){
-			return (this.getDistance()).compareTo(that.getDistance());
-		}
-
-		public double getWeight(double threshold){
-			Double distance = getDistance();
-
-			return 1d / (distance + threshold);
-		}
+		abstract
+		public double getWeight(double threshold);
 
 		public Integer getId(){
 			return this.id;
@@ -556,12 +597,58 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			this.id = id;
 		}
 
-		public Double getDistance(){
-			return this.distance;
+		public Double getValue(){
+			return this.value;
 		}
 
-		private void setDistance(Double distance){
-			this.distance = distance;
+		private void setValue(Double value){
+			this.value = value;
+		}
+
+		static
+		private class Similarity extends InstanceResult {
+
+			private Similarity(Integer id, Double value){
+				super(id, value);
+			}
+
+			@Override
+			public int compareTo(InstanceResult that){
+
+				if(that instanceof Similarity){
+					return ClassificationMap.Type.SIMILARITY.compare(this.getValue(), that.getValue());
+				}
+
+				throw new ClassCastException();
+			}
+
+			@Override
+			public double getWeight(double threshold){
+				throw new EvaluationException();
+			}
+		}
+
+		static
+		private class Distance extends InstanceResult {
+
+			private Distance(Integer id, Double value){
+				super(id, value);
+			}
+
+			@Override
+			public int compareTo(InstanceResult that){
+
+				if(that instanceof Distance){
+					return ClassificationMap.Type.DISTANCE.compare(this.getValue(), that.getValue());
+				}
+
+				throw new ClassCastException();
+			}
+
+			@Override
+			public double getWeight(double threshold){
+				return 1d / (getValue() + threshold);
+			}
 		}
 	}
 
