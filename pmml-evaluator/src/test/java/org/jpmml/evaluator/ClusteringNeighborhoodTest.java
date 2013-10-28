@@ -9,8 +9,6 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
-import com.google.common.collect.*;
-
 import static org.junit.Assert.*;
 
 public class ClusteringNeighborhoodTest extends NearestNeighborModelEvaluatorTest {
@@ -19,12 +17,7 @@ public class ClusteringNeighborhoodTest extends NearestNeighborModelEvaluatorTes
 	public void evaluate() throws Exception {
 		NearestNeighborModelEvaluator evaluator = createEvaluator();
 
-		FieldName maritalStatus = new FieldName("marital status");
-		FieldName dependents = new FieldName("dependents");
-
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(maritalStatus, "d");
-		arguments.put(dependents, 0);
+		Map<FieldName, ?> arguments = createArguments("marital status", "d", "dependents", 0);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

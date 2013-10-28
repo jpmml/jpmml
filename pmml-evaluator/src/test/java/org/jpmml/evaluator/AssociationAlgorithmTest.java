@@ -25,7 +25,7 @@ public class AssociationAlgorithmTest extends AssociationModelEvaluatorTest {
 	private void evaluate(Collection<String> items, List<String> recommendations, List<String> exclusiveRecommendations, List<String> ruleAssociations) throws Exception {
 		AssociationModelEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, Collection<String>> arguments = Collections.singletonMap(new FieldName("item"), items);
+		Map<FieldName, ?> arguments = createArguments("item", items);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

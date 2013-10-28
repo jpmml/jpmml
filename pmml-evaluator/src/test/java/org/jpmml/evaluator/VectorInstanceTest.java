@@ -9,8 +9,6 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
-import com.google.common.collect.*;
-
 import static org.junit.Assert.*;
 
 public class VectorInstanceTest extends SupportVectorMachineModelEvaluatorTest {
@@ -27,9 +25,7 @@ public class VectorInstanceTest extends SupportVectorMachineModelEvaluatorTest {
 
 	static
 	private double evaluate(Evaluator evaluator, double x1, double x2){
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(new FieldName("x1"), x1);
-		arguments.put(new FieldName("x2"), x2);
+		Map<FieldName, ?> arguments = createArguments("x1", x1, "x2", x2);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

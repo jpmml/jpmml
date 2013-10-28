@@ -17,7 +17,7 @@ public class TieBreakTest extends NearestNeighborModelEvaluatorTest {
 	public void firstLevel() throws Exception {
 		NearestNeighborModelEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, ?> arguments = Collections.singletonMap(new FieldName("input"), 1.5d);
+		Map<FieldName, ?> arguments = createArguments("input", 1.5d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
@@ -30,7 +30,7 @@ public class TieBreakTest extends NearestNeighborModelEvaluatorTest {
 	public void secondLevel() throws Exception {
 		NearestNeighborModelEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, ?> arguments = Collections.singletonMap(new FieldName("input"), 3.5d);
+		Map<FieldName, ?> arguments = createArguments("input", 3.5d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

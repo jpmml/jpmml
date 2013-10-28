@@ -9,8 +9,6 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
-import com.google.common.collect.*;
-
 import static org.junit.Assert.*;
 
 public class ContrastMatrixTest extends GeneralRegressionModelEvaluatorTest {
@@ -19,11 +17,7 @@ public class ContrastMatrixTest extends GeneralRegressionModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		GeneralRegressionModelEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(new FieldName("gender"), "f");
-		arguments.put(new FieldName("educ"), 19d);
-		arguments.put(new FieldName("jobcat"), "3");
-		arguments.put(new FieldName("salbegin"), 45000d);
+		Map<FieldName, ?> arguments = createArguments("gender", "f", "educ", 19d, "jobcat", "3", "salbegin", 45000d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

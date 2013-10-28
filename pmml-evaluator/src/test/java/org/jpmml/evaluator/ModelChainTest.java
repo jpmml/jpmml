@@ -7,8 +7,6 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-import com.google.common.collect.*;
-
 abstract
 public class ModelChainTest extends SegmentationTest {
 
@@ -16,11 +14,7 @@ public class ModelChainTest extends SegmentationTest {
 	public Map<FieldName, ?> evaluateExample(double petalLength, double petalWidth) throws Exception {
 		MiningModelEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(new FieldName("petal_length"), petalLength);
-		arguments.put(new FieldName("petal_width"), petalWidth);
-		arguments.put(new FieldName("temperature"), 0d);
-		arguments.put(new FieldName("cloudiness"), 0d);
+		Map<FieldName, ?> arguments = createArguments("petal_length", petalLength, "petal_width", petalWidth, "temperature", 0d, "cloudiness", 0d);
 
 		return evaluator.evaluate(arguments);
 	}

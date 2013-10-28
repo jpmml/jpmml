@@ -31,7 +31,7 @@ public class NoTrueChildStrategyTest extends TreeModelEvaluatorTest {
 		TreeModel treeModel = evaluator.getModel();
 		treeModel.setNoTrueChildStrategy(noTrueChildStrategy);
 
-		Map<FieldName, Double> arguments = Collections.singletonMap(new FieldName("probability"), value);
+		Map<FieldName, ?> arguments = createArguments("probability", value);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

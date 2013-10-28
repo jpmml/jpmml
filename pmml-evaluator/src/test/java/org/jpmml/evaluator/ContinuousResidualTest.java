@@ -17,12 +17,12 @@ public class ContinuousResidualTest extends RegressionModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		RegressionModelEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, ?> arguments = Collections.singletonMap(evaluator.getTargetField(), 3.0);
+		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), 3.0d);
 
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(evaluator);
 		context.pushFrame(arguments);
 
-		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), 1.0);
+		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), 1.0d);
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
 

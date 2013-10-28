@@ -17,7 +17,7 @@ public class OutputTest extends RegressionModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		RegressionModelEvaluator regressionModelEvaluator = createEvaluator();
 
-		Map<FieldName, ?> predictions = Collections.singletonMap(new FieldName("result"), 8d);
+		Map<FieldName, ?> predictions = createArguments("result", 8d);
 
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(regressionModelEvaluator);
 		context.pushFrame(Collections.<FieldName, Object>emptyMap());

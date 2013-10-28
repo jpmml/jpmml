@@ -9,8 +9,6 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
-import com.google.common.collect.*;
-
 import static org.junit.Assert.*;
 
 public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
@@ -31,10 +29,7 @@ public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
 		TreeModel treeModel = evaluator.getModel();
 		treeModel.setMissingValueStrategy(missingValueStrategy);
 
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(new FieldName("outlook"), "sunny");
-		arguments.put(new FieldName("temperature"), null);
-		arguments.put(new FieldName("humidity"), null);
+		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

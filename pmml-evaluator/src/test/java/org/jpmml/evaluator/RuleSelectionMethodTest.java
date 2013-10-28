@@ -7,8 +7,6 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-import com.google.common.collect.*;
-
 abstract
 public class RuleSelectionMethodTest extends RuleSetModelEvaluatorTest {
 
@@ -32,11 +30,7 @@ public class RuleSelectionMethodTest extends RuleSetModelEvaluatorTest {
 			it.remove();
 		}
 
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(new FieldName("BP"), "HIGH");
-		arguments.put(new FieldName("K"), 0.0621);
-		arguments.put(new FieldName("Age"), 36);
-		arguments.put(new FieldName("Na"), 0.5023);
+		Map<FieldName, ?> arguments = createArguments("BP", "HIGH", "K", 0.0621d, "Age", 36, "Na", 0.5023);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

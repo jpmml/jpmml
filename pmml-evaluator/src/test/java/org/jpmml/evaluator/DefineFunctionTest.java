@@ -23,7 +23,7 @@ public class DefineFunctionTest extends PMMLManagerTest {
 
 		assertValueEquals("AM", evaluateAmPm(34742, context));
 
-		Map<FieldName, ?> arguments = Collections.singletonMap(new FieldName("StartTime"), 34742);
+		Map<FieldName, ?> arguments = createArguments("StartTime", 34742);
 
 		assertValueEquals("AM", evaluateField(new FieldName("Shift"), arguments, context));
 	}
@@ -38,7 +38,7 @@ public class DefineFunctionTest extends PMMLManagerTest {
 		assertValueEquals("West", evaluateStategroup("OR", context));
 		assertValueEquals("East", evaluateStategroup("NC", context));
 
-		Map<FieldName, ?> arguments = Collections.singletonMap(new FieldName("State"), "CA");
+		Map<FieldName, ?> arguments = createArguments("State", "CA");
 
 		assertValueEquals("West", evaluateField(new FieldName("Group"), arguments, context));
 	}

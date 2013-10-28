@@ -9,8 +9,6 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
-import com.google.common.collect.*;
-
 import static org.junit.Assert.*;
 
 public class TargetValueCountsTest extends NaiveBayesModelEvaluatorTest {
@@ -19,20 +17,11 @@ public class TargetValueCountsTest extends NaiveBayesModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		NaiveBayesModelEvaluator evaluator = createEvaluator();
 
-		FieldName gender = new FieldName("gender");
-		FieldName numberOfClaims = new FieldName("no of claims");
-		FieldName domicile = new FieldName("domicile");
-		FieldName ageOfCar = new FieldName("age of car");
-
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(gender, "male");
-		arguments.put(numberOfClaims, "2");
-		arguments.put(domicile, null);
-		arguments.put(ageOfCar, 1d);
+		Map<FieldName, ?> arguments = createArguments("gender", "male", "no of claims", "2", "domicile", null, "age of car", 1d);
 
 		Map<FieldName, Map<String, Double>> countsMap = evaluator.getCountsMap();
 
-		Map<String, Double> genderCounts = countsMap.get(gender);
+		Map<String, Double> genderCounts = countsMap.get(new FieldName("gender"));
 
 		assertEquals(Double.valueOf(8598d), genderCounts.get("100"));
 		assertEquals(Double.valueOf(2533d), genderCounts.get("500"));

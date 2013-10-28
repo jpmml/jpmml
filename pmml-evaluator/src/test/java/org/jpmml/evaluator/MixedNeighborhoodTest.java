@@ -9,8 +9,6 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
-import com.google.common.collect.*;
-
 import static org.junit.Assert.*;
 
 public class MixedNeighborhoodTest extends NearestNeighborModelEvaluatorTest {
@@ -24,16 +22,7 @@ public class MixedNeighborhoodTest extends NearestNeighborModelEvaluatorTest {
 		// XXX
 		nearestNeighborModel.setNumberOfNeighbors(1);
 
-		FieldName petalLength = new FieldName("petal length");
-		FieldName petalWidth = new FieldName("petal width");
-		FieldName sepalLength = new FieldName("sepal length");
-		FieldName sepalWidth = new FieldName("sepal width");
-
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(petalLength, 4.7d);
-		arguments.put(petalWidth, 1.4d);
-		arguments.put(sepalLength, 7d);
-		arguments.put(sepalWidth, 3.2d);
+		Map<FieldName, ?> arguments = createArguments("petal length", 4.7d, "petal width", 1.4d, "sepal length", 7d, "sepal width", 3.2d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

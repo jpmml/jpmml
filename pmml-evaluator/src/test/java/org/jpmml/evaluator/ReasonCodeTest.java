@@ -7,18 +7,13 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-import com.google.common.collect.*;
-
 abstract
 public class ReasonCodeTest extends ScorecardEvaluatorTest {
 
 	public Map<FieldName, ?> evaluateExample() throws Exception {
 		ScorecardEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-		arguments.put(new FieldName("department"), "engineering");
-		arguments.put(new FieldName("age"), 25);
-		arguments.put(new FieldName("income"), 500d);
+		Map<FieldName, ?> arguments = createArguments("department", "engineering", "age", 25, "income", 500d);
 
 		return evaluator.evaluate(arguments);
 	}

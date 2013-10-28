@@ -18,7 +18,7 @@ public class CategoricalResidualTest extends RegressionModelEvaluatorTest {
 		RegressionModelEvaluator evaluator = createEvaluator();
 
 		// "For some row in the test data the expected value may be Y"
-		Map<FieldName, ?> arguments = Collections.singletonMap(evaluator.getTargetField(), "Y");
+		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), "Y");
 
 		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(evaluator);
 		context.pushFrame(arguments);
@@ -34,7 +34,7 @@ public class CategoricalResidualTest extends RegressionModelEvaluatorTest {
 		assertTrue(VerificationUtil.acceptable(0.2d, (Number)result.get(new FieldName("Residual"))));
 
 		// "For some other row the expected value may be N"
-		arguments = Collections.singletonMap(evaluator.getTargetField(), "N");
+		arguments = createArguments(evaluator.getTargetField(), "N");
 
 		context = new ModelManagerEvaluationContext(evaluator);
 		context.pushFrame(arguments);
