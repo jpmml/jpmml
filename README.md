@@ -165,12 +165,12 @@ The target value may implement interfaces that descend from interface `org.jpmml
 // Test for "entityId" result feature
 if(targetValue instanceof HasEntityId){
 	HasEntityId hasEntityId = (HasEntityId)targetValue;
-	HasEntityRegistry<?> entityRegistry = (HasEntityRegistry<?>)evaluator;
-	Map<String, Entity> entities = entityRegistry.getEntities();
+	HasEntityRegistry<?> hasEntityRegistry = (HasEntityRegistry<?>)evaluator;
+	BiMap<String, ? extends Entity> entities = hasEntityRegistry.getEntityRegistry();
 	Entity winner = entities.get(hasEntityId.getEntityId());
 
 	// Test for "probability" result feature
-	if(target instanceof HasProbability){
+	if(targetValue instanceof HasProbability){
 		HasProbability hasProbability = (HasProbability)targetValue;
 		Double winnerProbability = hasProbability.getProbability(winner.getId());
 	}
