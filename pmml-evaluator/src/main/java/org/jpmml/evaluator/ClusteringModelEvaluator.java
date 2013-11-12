@@ -49,8 +49,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
-		context.pushFrame(arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
 
 		MiningFunctionType miningFunction = clusteringModel.getFunctionName();
 		switch(miningFunction){

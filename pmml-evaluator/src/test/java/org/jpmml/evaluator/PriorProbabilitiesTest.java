@@ -17,7 +17,7 @@ public class PriorProbabilitiesTest extends RegressionModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		RegressionModelEvaluator evaluator = createEvaluator();
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(evaluator);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(evaluator, Collections.<FieldName, Object>emptyMap());
 
 		Map<FieldName, ? extends ClassificationMap<?>> predictions = TargetUtil.evaluateClassification((ClassificationMap<?>)null, context);
 

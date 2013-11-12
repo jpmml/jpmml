@@ -38,8 +38,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
-		context.pushFrame(arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
 
 		MiningFunctionType miningFunction = nearestNeighborModel.getFunctionName();
 		switch(miningFunction){
@@ -425,7 +424,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(modelManager);
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
@@ -444,7 +442,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					continue;
 				}
 
-				context.pushFrame(rowValues);
+				ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(modelManager, rowValues);
 
 				try {
 					result.put(rowKey, name, ExpressionUtil.evaluate(derivedField, context));
