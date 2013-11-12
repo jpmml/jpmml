@@ -90,9 +90,7 @@ public class EvaluationContext {
 		Map<FieldName, FieldValue> frame = Maps.newLinkedHashMap();
 
 		frame.putAll(Maps.transformEntries(arguments, transformer));
-
 		getStack().push(frame);
-
 		return frame;
 	}
 

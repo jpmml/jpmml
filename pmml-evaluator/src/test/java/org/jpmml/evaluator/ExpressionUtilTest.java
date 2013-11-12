@@ -126,15 +126,14 @@ public class ExpressionUtilTest {
 
 	static
 	private EvaluationContext createContext(){
-		EvaluationContext context = new LocalEvaluationContext();
+		EvaluationContext context = new LocalEvaluationContext(Collections.<FieldName, Object>emptyMap());
 
 		return context;
 	}
 
 	static
 	private EvaluationContext createContext(FieldName name, Object value){
-		EvaluationContext context = new LocalEvaluationContext();
-		context.pushFrame(Collections.<FieldName, Object>singletonMap(name, value));
+		EvaluationContext context = new LocalEvaluationContext(Collections.<FieldName, Object>singletonMap(name, value));
 
 		return context;
 	}

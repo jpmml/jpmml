@@ -3,6 +3,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
+
 import org.dmg.pmml.*;
 
 public class FunctionEvaluationContext extends EvaluationContext {
@@ -10,8 +12,9 @@ public class FunctionEvaluationContext extends EvaluationContext {
 	private EvaluationContext parent = null;
 
 
-	public FunctionEvaluationContext(EvaluationContext parent){
+	public FunctionEvaluationContext(EvaluationContext parent, Map<FieldName, FieldValue> arguments){
 		setParent(parent);
+		pushFrame(arguments);
 	}
 
 	@Override

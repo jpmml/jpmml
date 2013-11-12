@@ -67,8 +67,7 @@ public class FunctionUtil {
 			throw new InvalidFeatureException(defineFunction);
 		}
 
-		FunctionEvaluationContext functionContext = new FunctionEvaluationContext(context);
-		functionContext.pushFrame(arguments);
+		FunctionEvaluationContext functionContext = new FunctionEvaluationContext(context, arguments);
 
 		FieldValue result = ExpressionUtil.evaluate(expression, functionContext);
 

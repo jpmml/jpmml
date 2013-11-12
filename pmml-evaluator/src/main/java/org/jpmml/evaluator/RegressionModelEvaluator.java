@@ -33,8 +33,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
-		context.pushFrame(arguments);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this, arguments);
 
 		MiningFunctionType miningFunction = regressionModel.getFunctionName();
 		switch(miningFunction){

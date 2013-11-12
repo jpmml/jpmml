@@ -246,7 +246,7 @@ public class FunctionUtilTest {
 			}
 		};
 
-		FieldValue result = apply(function, Lists.newArrayList(Iterables.transform(values, transformer)), new LocalEvaluationContext());
+		FieldValue result = apply(function, Lists.newArrayList(Iterables.transform(values, transformer)), new LocalEvaluationContext(Collections.<FieldName, Object>emptyMap()));
 
 		return FieldValueUtil.getValue(result);
 	}

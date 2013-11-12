@@ -17,7 +17,7 @@ public class DefaultValueTest extends RegressionModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		RegressionModelEvaluator evaluator = createEvaluator();
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(evaluator);
+		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(evaluator, Collections.<FieldName, Object>emptyMap());
 
 		Map<FieldName, ? extends Number> predictions = TargetUtil.evaluateRegression((Double)null, context);
 
