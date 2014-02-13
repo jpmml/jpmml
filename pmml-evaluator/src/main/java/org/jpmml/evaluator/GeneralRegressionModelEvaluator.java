@@ -80,8 +80,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
 		switch(modelType){
 			case REGRESSION:
-				break;
 			case GENERAL_LINEAR:
+				break;
 			case GENERALIZED_LINEAR:
 				result = computeLink(result, context);
 				break;
@@ -125,7 +125,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		String targetReferenceCategory = generalRegressionModel.getTargetReferenceCategory();
 
 		switch(modelType){
-			case GENERAL_LINEAR:
 			case GENERALIZED_LINEAR:
 			case MULTINOMIAL_LOGISTIC:
 				if(targetReferenceCategory == null){
@@ -183,7 +182,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				Iterable<PCell> parameterCells;
 
 				switch(modelType){
-					case GENERAL_LINEAR:
 					case GENERALIZED_LINEAR:
 					case MULTINOMIAL_LOGISTIC:
 						// PCell elements must have non-null targetCategory attribute in case of multinomial categories, but can do without in case of binomial categories
@@ -218,7 +216,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				value = computeDotProduct(parameterCells, parameterPredictorRow, arguments);
 
 				switch(modelType){
-					case GENERAL_LINEAR:
 					case GENERALIZED_LINEAR:
 						value = computeLink(value, context);
 						break;
@@ -238,7 +235,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				value = 0d;
 
 				switch(modelType){
-					case GENERAL_LINEAR:
 					case GENERALIZED_LINEAR:
 						value = computeLink(value, context);
 						break;
@@ -254,7 +250,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 
 			switch(modelType){
-				case GENERAL_LINEAR:
 				case GENERALIZED_LINEAR:
 				case MULTINOMIAL_LOGISTIC:
 					{
@@ -278,7 +273,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		switch(modelType){
-			case GENERAL_LINEAR:
 			case GENERALIZED_LINEAR:
 			case MULTINOMIAL_LOGISTIC:
 				result.normalizeValues();
