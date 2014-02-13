@@ -275,7 +275,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 					break;
 			}
 
-			Evaluator evaluator = createEvaluator(model);
+			Evaluator evaluator = MiningModelEvaluator.evaluatorFactory.getModelManager(getPMML(), model);
 
 			FieldName targetField = evaluator.getTargetField();
 
@@ -325,12 +325,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		}
 
 		return results;
-	}
-
-	private Evaluator createEvaluator(Model model){
-		ModelManager<?> modelManager = MiningModelEvaluator.evaluatorFactory.getModelManager(getPMML(), model);
-
-		return (Evaluator)modelManager;
 	}
 
 	static

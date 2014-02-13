@@ -13,7 +13,7 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 	}
 
 	@Override
-	public ModelManager<? extends Model> getModelManager(PMML pmml, Model model){
+	public ModelEvaluator<? extends Model> getModelManager(PMML pmml, Model model){
 
 		if(model instanceof AssociationModel){
 			return new AssociationModelEvaluator(pmml, (AssociationModel)model);
