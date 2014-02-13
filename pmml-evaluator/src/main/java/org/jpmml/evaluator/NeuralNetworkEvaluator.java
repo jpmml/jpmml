@@ -41,7 +41,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
@@ -59,7 +59,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateRegression(ModelManagerEvaluationContext context) {
+	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context) {
 		Map<FieldName, Double> result = Maps.newLinkedHashMap();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
@@ -97,7 +97,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelManagerEvaluationContext context) {
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context) {
 		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
 
 		Map<String, Entity> entities = getEntityRegistry();

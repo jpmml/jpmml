@@ -7,12 +7,12 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-public class ModelManagerEvaluationContext extends EvaluationContext {
+public class ModelEvaluationContext extends EvaluationContext {
 
 	private ModelManager<?> modelManager = null;
 
 
-	public ModelManagerEvaluationContext(ModelManager<?> modelManager){
+	public ModelEvaluationContext(ModelManager<?> modelManager){
 		setModelManager(modelManager);
 	}
 

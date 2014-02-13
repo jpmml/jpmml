@@ -25,7 +25,7 @@ public class OutputUtil {
 	 * @return Map of {@link Evaluator#getPredictedFields() predicted field} values together with {@link Evaluator#getOutputFields() output field} values.
 	 */
 	static
-	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelManagerEvaluationContext context){
+	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
 		Map<FieldName, FieldValue> frame = context.pushFrame(Collections.<FieldName, Object>emptyMap());

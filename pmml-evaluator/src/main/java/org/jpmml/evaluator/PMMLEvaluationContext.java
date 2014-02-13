@@ -7,12 +7,12 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-public class PMMLManagerEvaluationContext extends EvaluationContext {
+public class PMMLEvaluationContext extends EvaluationContext {
 
 	private PMMLManager pmmlManager = null;
 
 
-	public PMMLManagerEvaluationContext(PMMLManager pmmlManager){
+	public PMMLEvaluationContext(PMMLManager pmmlManager){
 		setPmmlManager(pmmlManager);
 	}
 

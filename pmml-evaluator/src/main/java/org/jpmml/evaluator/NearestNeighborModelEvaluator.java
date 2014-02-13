@@ -38,7 +38,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = nearestNeighborModel.getFunctionName();
@@ -60,7 +60,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, InstanceClassificationMap> evaluateMixed(ModelManagerEvaluationContext context){
+	private Map<FieldName, InstanceClassificationMap> evaluateMixed(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -119,7 +119,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private Map<FieldName, InstanceClassificationMap> evaluateClustering(ModelManagerEvaluationContext context){
+	private Map<FieldName, InstanceClassificationMap> evaluateClustering(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -136,7 +136,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return Collections.singletonMap(getTargetField(), createMeasureMap(null, instanceResults, function));
 	}
 
-	private List<InstanceResult> evaluate(ModelManagerEvaluationContext context){
+	private List<InstanceResult> evaluate(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		List<FieldValue> values = Lists.newArrayList();
@@ -425,7 +425,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(modelManager);
+		ModelEvaluationContext context = new ModelEvaluationContext(modelManager);
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){

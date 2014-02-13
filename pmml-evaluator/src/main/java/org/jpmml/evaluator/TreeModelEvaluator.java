@@ -41,7 +41,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Node node;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = treeModel.getFunctionName();
@@ -65,7 +65,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Node evaluateTree(ModelManagerEvaluationContext context){
+	private Node evaluateTree(ModelEvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		Node root = treeModel.getNode();

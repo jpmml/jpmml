@@ -46,7 +46,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
@@ -68,7 +68,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelManagerEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluate(context);
@@ -123,7 +123,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ?> evaluateClassification(ModelManagerEvaluationContext context){
+	private Map<FieldName, ?> evaluateClassification(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluate(context);
@@ -150,7 +150,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private Map<FieldName, ?> evaluateClustering(ModelManagerEvaluationContext context){
+	private Map<FieldName, ?> evaluateClustering(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluate(context);
@@ -174,7 +174,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		return Collections.singletonMap(getTargetField(), result);
 	}
 
-	private Map<FieldName, ?> evaluateAny(ModelManagerEvaluationContext context){
+	private Map<FieldName, ?> evaluateAny(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluate(context);

@@ -44,7 +44,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = supportVectorMachineModel.getFunctionName();
@@ -62,7 +62,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateRegression(ModelManagerEvaluationContext context){
+	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -79,7 +79,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return TargetUtil.evaluateRegression(value, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelManagerEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();

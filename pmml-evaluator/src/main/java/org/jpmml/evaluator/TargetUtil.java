@@ -17,7 +17,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends Number> evaluateRegression(Double value, ModelManagerEvaluationContext context){
+	public Map<FieldName, ? extends Number> evaluateRegression(Double value, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
 		FieldName targetField = modelManager.getTargetField();
@@ -29,7 +29,7 @@ public class TargetUtil {
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#REGRESSION regression} models.
 	 */
 	static
-	public Map<FieldName, ? extends Number> evaluateRegression(Map<FieldName, Double> predictions, ModelManagerEvaluationContext context){
+	public Map<FieldName, ? extends Number> evaluateRegression(Map<FieldName, Double> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
 		Targets targets = modelManager.getOrCreateTargets();
@@ -63,7 +63,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ClassificationMap<?> value, ModelManagerEvaluationContext context){
+	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ClassificationMap<?> value, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
 		FieldName targetField = modelManager.getTargetField();
@@ -75,7 +75,7 @@ public class TargetUtil {
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#CLASSIFICATION classification} models.
 	 */
 	static
-	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelManagerEvaluationContext context){
+	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
 		Targets targets = modelManager.getOrCreateTargets();

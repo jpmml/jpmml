@@ -33,7 +33,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = regressionModel.getFunctionName();
@@ -51,7 +51,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateRegression(ModelManagerEvaluationContext context){
+	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
@@ -69,7 +69,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return TargetUtil.evaluateRegression(value, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelManagerEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();

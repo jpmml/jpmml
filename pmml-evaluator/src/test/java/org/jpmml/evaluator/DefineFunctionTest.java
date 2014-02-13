@@ -19,7 +19,7 @@ public class DefineFunctionTest extends PMMLManagerTest {
 	public void evaluateAmPm() throws Exception {
 		PMMLManager pmmlManager = createManager();
 
-		PMMLManagerEvaluationContext context = new PMMLManagerEvaluationContext(pmmlManager);
+		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
 
 		assertValueEquals("AM", evaluateAmPm(34742, context));
 
@@ -32,7 +32,7 @@ public class DefineFunctionTest extends PMMLManagerTest {
 	public void evaluateStategroup() throws Exception {
 		PMMLManager pmmlManager = createManager();
 
-		PMMLManagerEvaluationContext context = new PMMLManagerEvaluationContext(pmmlManager);
+		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
 
 		assertValueEquals("West", evaluateStategroup("CA", context));
 		assertValueEquals("West", evaluateStategroup("OR", context));

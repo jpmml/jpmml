@@ -38,7 +38,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = generalRegressionModel.getFunctionName();
@@ -56,7 +56,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelManagerEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		Map<FieldName, FieldValue> arguments = getArguments(context);
@@ -92,7 +92,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelManagerEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		FieldName targetField = getTargetField();

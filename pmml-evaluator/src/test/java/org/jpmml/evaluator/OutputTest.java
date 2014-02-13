@@ -19,7 +19,7 @@ public class OutputTest extends RegressionModelEvaluatorTest {
 
 		Map<FieldName, ?> predictions = createArguments("result", 8d);
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(regressionModelEvaluator);
+		ModelEvaluationContext context = new ModelEvaluationContext(regressionModelEvaluator);
 		context.pushFrame(Collections.<FieldName, Object>emptyMap());
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);

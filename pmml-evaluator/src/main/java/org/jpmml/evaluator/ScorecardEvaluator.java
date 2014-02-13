@@ -35,7 +35,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = scorecard.getFunctionName();
@@ -50,7 +50,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelManagerEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		Scorecard scorecard = getModel();
 
 		double value = 0;

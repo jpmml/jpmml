@@ -35,7 +35,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 
 		Map<FieldName, ?> predictions;
 
-		ModelManagerEvaluationContext context = new ModelManagerEvaluationContext(this);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = ruleSetModel.getFunctionName();
@@ -50,7 +50,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateRuleSet(ModelManagerEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateRuleSet(ModelEvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
