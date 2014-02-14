@@ -30,16 +30,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 		if(!naiveBayesModel.isScorable()){
 			throw new InvalidResultException(naiveBayesModel);
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = naiveBayesModel.getFunctionName();
 		switch(miningFunction){

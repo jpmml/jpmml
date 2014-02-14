@@ -33,7 +33,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 		if(!miningModel.isScorable()){
 			throw new InvalidResultException(miningModel);
@@ -45,9 +45,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
 		switch(miningFunction){
@@ -71,7 +68,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluate(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -126,7 +123,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	private Map<FieldName, ?> evaluateClassification(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluate(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -153,7 +150,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	private Map<FieldName, ?> evaluateClustering(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluate(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -177,7 +174,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	private Map<FieldName, ?> evaluateAny(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluate(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -233,7 +230,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	@SuppressWarnings (
 		value = "fallthrough"
 	)
-	private List<SegmentResult> evaluate(EvaluationContext context){
+	private List<SegmentResult> evaluateSegmentation(EvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> results = Lists.newArrayList();

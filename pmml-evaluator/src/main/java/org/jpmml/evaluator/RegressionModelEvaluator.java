@@ -25,16 +25,13 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 		if(!regressionModel.isScorable()){
 			throw new InvalidResultException(regressionModel);
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = regressionModel.getFunctionName();
 		switch(miningFunction){

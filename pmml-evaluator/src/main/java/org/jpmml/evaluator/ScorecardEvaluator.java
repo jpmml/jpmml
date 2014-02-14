@@ -27,16 +27,13 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		Scorecard scorecard = getModel();
 		if(!scorecard.isScorable()){
 			throw new InvalidResultException(scorecard);
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = scorecard.getFunctionName();
 		switch(miningFunction){

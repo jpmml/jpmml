@@ -30,16 +30,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 		if(!generalRegressionModel.isScorable()){
 			throw new InvalidResultException(generalRegressionModel);
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = generalRegressionModel.getFunctionName();
 		switch(miningFunction){

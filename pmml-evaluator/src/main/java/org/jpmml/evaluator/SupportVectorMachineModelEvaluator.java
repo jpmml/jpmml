@@ -28,7 +28,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 		if(!supportVectorMachineModel.isScorable()){
 			throw new InvalidResultException(supportVectorMachineModel);
@@ -43,9 +43,6 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = supportVectorMachineModel.getFunctionName();
 		switch(miningFunction){

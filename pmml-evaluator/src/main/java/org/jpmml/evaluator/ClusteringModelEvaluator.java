@@ -41,16 +41,13 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		ClusteringModel clusteringModel = getModel();
 		if(!clusteringModel.isScorable()){
 			throw new InvalidResultException(clusteringModel);
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = clusteringModel.getFunctionName();
 		switch(miningFunction){

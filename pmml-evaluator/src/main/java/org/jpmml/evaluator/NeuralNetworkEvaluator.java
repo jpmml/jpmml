@@ -33,16 +33,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments) {
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context) {
 		NeuralNetwork neuralNetwork = getModel();
 		if(!neuralNetwork.isScorable()){
 			throw new InvalidResultException(neuralNetwork);
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
 		switch(miningFunction){

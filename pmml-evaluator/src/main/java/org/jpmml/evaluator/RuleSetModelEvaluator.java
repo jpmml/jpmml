@@ -27,7 +27,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 		if(!ruleSetModel.isScorable()){
 			throw new InvalidResultException(ruleSetModel);
@@ -35,13 +35,10 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 
 		Map<FieldName, ?> predictions;
 
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
-
 		MiningFunctionType miningFunction = ruleSetModel.getFunctionName();
 		switch(miningFunction){
 			case CLASSIFICATION:
-				predictions = evaluateRuleSet(context);
+				predictions = evaluateClassification(context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(ruleSetModel, miningFunction);
@@ -50,7 +47,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateRuleSet(ModelEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();

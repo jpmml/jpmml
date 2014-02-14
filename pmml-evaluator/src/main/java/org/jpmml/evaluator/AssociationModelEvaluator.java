@@ -55,7 +55,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		AssociationModel associationModel = getModel();
 		if(!associationModel.isScorable()){
 			throw new InvalidResultException(associationModel);
@@ -63,13 +63,10 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		Map<FieldName, ?> predictions;
 
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
-
 		MiningFunctionType miningFunction = associationModel.getFunctionName();
 		switch(miningFunction){
 			case ASSOCIATION_RULES:
-				predictions = evaluate(context);
+				predictions = evaluateAssociationRules(context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(associationModel, miningFunction);
@@ -78,7 +75,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluate(EvaluationContext context){
+	private Map<FieldName, ?> evaluateAssociationRules(EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
 		FieldName activeField = getActiveField();

@@ -30,16 +30,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 		if(!nearestNeighborModel.isScorable()){
 			throw new InvalidResultException(nearestNeighborModel);
 		}
 
 		Map<FieldName, ?> predictions;
-
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
 
 		MiningFunctionType miningFunction = nearestNeighborModel.getFunctionName();
 		switch(miningFunction){
@@ -65,7 +62,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
 
-		List<InstanceResult> instanceResults = evaluate(context);
+		List<InstanceResult> instanceResults = evaluateInstanceRows(context);
 
 		List<InstanceResult> nearestInstanceResults = Lists.newArrayList(instanceResults);
 
@@ -124,7 +121,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
 
-		List<InstanceResult> instanceResults = evaluate(context);
+		List<InstanceResult> instanceResults = evaluateInstanceRows(context);
 
 		String idField = nearestNeighborModel.getInstanceIdVariable();
 		if(idField == null){
@@ -136,7 +133,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return Collections.singletonMap(getTargetField(), createMeasureMap(null, instanceResults, function));
 	}
 
-	private List<InstanceResult> evaluate(ModelEvaluationContext context){
+	private List<InstanceResult> evaluateInstanceRows(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		List<FieldValue> values = Lists.newArrayList();
