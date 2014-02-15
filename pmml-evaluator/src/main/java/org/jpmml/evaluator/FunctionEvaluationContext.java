@@ -15,7 +15,7 @@ public class FunctionEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DerivedField resolveField(FieldName name){
+	public DerivedField resolveDerivedField(FieldName name){
 		// "The function body must not refer to fields other than the parameter fields"
 		return null;
 	}

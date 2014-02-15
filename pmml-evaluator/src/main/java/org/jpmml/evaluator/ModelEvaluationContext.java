@@ -46,14 +46,14 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DerivedField resolveField(FieldName name){
+	public DerivedField resolveDerivedField(FieldName name){
 		ModelManager<?> modelManager = getModelManager();
 
 		DerivedField derivedField = modelManager.getLocalDerivedField(name);
 		if(derivedField == null){
 			ModelEvaluationContext parent = getParent();
 			if(parent != null){
-				return parent.resolveField(name);
+				return parent.resolveDerivedField(name);
 			}
 
 			return modelManager.getDerivedField(name);

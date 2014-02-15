@@ -18,7 +18,7 @@ public class EvaluationContext {
 
 
 	abstract
-	public DerivedField resolveField(FieldName name);
+	public DerivedField resolveDerivedField(FieldName name);
 
 	abstract
 	public DefineFunction resolveFunction(String name);

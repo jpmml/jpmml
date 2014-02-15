@@ -8,7 +8,7 @@ import org.dmg.pmml.*;
 public class LocalEvaluationContext extends EvaluationContext {
 
 	@Override
-	public DerivedField resolveField(FieldName name){
+	public DerivedField resolveDerivedField(FieldName name){
 		return null;
 	}
 

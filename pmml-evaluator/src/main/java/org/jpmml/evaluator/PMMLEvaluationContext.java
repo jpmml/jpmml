@@ -17,7 +17,7 @@ public class PMMLEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DerivedField resolveField(FieldName name){
+	public DerivedField resolveDerivedField(FieldName name){
 		PMMLManager pmmlManager = getPmmlManager();
 
 		return pmmlManager.getDerivedField(name);
