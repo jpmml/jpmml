@@ -230,7 +230,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	@SuppressWarnings (
 		value = "fallthrough"
 	)
-	private List<SegmentResult> evaluateSegmentation(EvaluationContext context){
+	private List<SegmentResult> evaluateSegmentation(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> results = Lists.newArrayList();
@@ -272,11 +272,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 					break;
 			}
 
-			Evaluator evaluator = MiningModelEvaluator.evaluatorFactory.getModelManager(getPMML(), model);
+			ModelEvaluator<?> evaluator = MiningModelEvaluator.evaluatorFactory.getModelManager(getPMML(), model);
+
+			ModelEvaluationContext segmentContext = new ModelEvaluationContext(evaluator, context);
+
+			Map<FieldName, ?> result = evaluator.evaluate(segmentContext);
+
+			List<String> warnings = segmentContext.getWarnings();
+			for(String warning : warnings){
+				context.addWarning(warning);
+			}
 
 			FieldName targetField = evaluator.getTargetField();
-
-			Map<FieldName, ?> result = evaluator.evaluate(context.getArguments());
 
 			switch(multipleModelMethod){
 				case SELECT_FIRST:

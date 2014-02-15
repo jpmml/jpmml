@@ -65,7 +65,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		for (NeuralOutput neuralOutput : neuralOutputs) {
 			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = getExpression(neuralOutput.getDerivedField());
+			Expression expression = getExpression(context, neuralOutput.getDerivedField());
 			if(expression instanceof FieldRef){
 				FieldRef fieldRef = (FieldRef)expression;
 
@@ -105,7 +105,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		for (NeuralOutput neuralOutput : neuralOutputs) {
 			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = getExpression(neuralOutput.getDerivedField());
+			Expression expression = getExpression(context, neuralOutput.getDerivedField());
 			if(expression instanceof NormDiscrete){
 				NormDiscrete normDiscrete = (NormDiscrete)expression;
 
@@ -133,15 +133,15 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private Expression getExpression(DerivedField derivedField){
+	private Expression getExpression(EvaluationContext context, DerivedField derivedField){
 		Expression expression = derivedField.getExpression();
 
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			derivedField = resolveField(fieldRef.getField());
+			derivedField = context.resolveField(fieldRef.getField());
 			if(derivedField != null){
-				return getExpression(derivedField);
+				return getExpression(context, derivedField);
 			}
 
 			return fieldRef;

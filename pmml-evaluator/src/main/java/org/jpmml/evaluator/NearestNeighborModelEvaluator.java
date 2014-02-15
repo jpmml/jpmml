@@ -396,7 +396,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				continue;
 			}
 
-			DerivedField derivedField = modelManager.resolveField(name);
+			DerivedField derivedField = modelManager.resolveDerivedField(name);
 			if(derivedField != null){
 				fieldLoaders.add(new DerivedFieldLoader(name, column, derivedField));
 
@@ -428,7 +428,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(KNNInput knnInput : knnInputs){
 			FieldName name = knnInput.getField();
 
-			DerivedField derivedField = modelManager.resolveField(name);
+			DerivedField derivedField = modelManager.resolveDerivedField(name);
 			if(derivedField == null){
 				continue;
 			}

@@ -20,14 +20,14 @@ public class PMMLEvaluationContext extends EvaluationContext {
 	public DerivedField resolveField(FieldName name){
 		PMMLManager pmmlManager = getPmmlManager();
 
-		return pmmlManager.resolveField(name);
+		return pmmlManager.getDerivedField(name);
 	}
 
 	@Override
 	public DefineFunction resolveFunction(String name){
 		PMMLManager pmmlManager = getPmmlManager();
 
-		return pmmlManager.resolveFunction(name);
+		return pmmlManager.getFunction(name);
 	}
 
 	@Override

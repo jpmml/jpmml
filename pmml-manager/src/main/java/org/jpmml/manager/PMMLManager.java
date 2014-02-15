@@ -36,7 +36,7 @@ public class PMMLManager implements Serializable {
 		return find(dataFields, name);
 	}
 
-	public DerivedField resolveField(FieldName name){
+	public DerivedField getDerivedField(FieldName name){
 		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
 
 		List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
@@ -44,7 +44,7 @@ public class PMMLManager implements Serializable {
 		return find(derivedFields, name);
 	}
 
-	public DefineFunction resolveFunction(String name){
+	public DefineFunction getFunction(String name){
 		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
 
 		List<DefineFunction> defineFunctions = transformationDictionary.getDefineFunctions();

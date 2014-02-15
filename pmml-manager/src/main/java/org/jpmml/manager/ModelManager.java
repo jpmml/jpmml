@@ -93,6 +93,23 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return result;
 	}
 
+	public DerivedField getLocalDerivedField(FieldName name){
+		LocalTransformations localTransformations = getOrCreateLocalTransformations();
+
+		List<DerivedField> derivedFields = localTransformations.getDerivedFields();
+
+		return find(derivedFields, name);
+	}
+
+	public DerivedField resolveDerivedField(FieldName name){
+		DerivedField derivedField = getLocalDerivedField(name);
+		if(derivedField == null){
+			return getDerivedField(name);
+		}
+
+		return derivedField;
+	}
+
 	@Override
 	public OutputField getOutputField(FieldName name){
 		Output output = getOrCreateOutput();
@@ -114,20 +131,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		}
 
 		return result;
-	}
-
-	@Override
-	public DerivedField resolveField(FieldName name){
-		LocalTransformations localTransformations = getOrCreateLocalTransformations();
-
-		List<DerivedField> derivedFields = localTransformations.getDerivedFields();
-
-		DerivedField derivedField = find(derivedFields, name);
-		if(derivedField == null){
-			derivedField = super.resolveField(name);
-		}
-
-		return derivedField;
 	}
 
 	public Target getTarget(FieldName name){

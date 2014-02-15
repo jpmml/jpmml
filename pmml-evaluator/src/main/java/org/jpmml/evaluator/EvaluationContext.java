@@ -23,22 +23,6 @@ public class EvaluationContext {
 	abstract
 	public DefineFunction resolveFunction(String name);
 
-	public Map<FieldName, FieldValue> getArguments(){
-		Deque<Map<FieldName, FieldValue>> stack = getStack();
-
-		Map<FieldName, FieldValue> result = Maps.newLinkedHashMap();
-
-		// Iterate from last (ie. oldest) to first (ie. newest)
-		Iterator<Map<FieldName, FieldValue>> it = stack.descendingIterator();
-		while(it.hasNext()){
-			Map<FieldName, FieldValue> frame = it.next();
-
-			result.putAll(frame);
-		}
-
-		return result;
-	}
-
 	/**
 	 * @see #getArgumentEntry(FieldName)
 	 */
