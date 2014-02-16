@@ -19,7 +19,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluate(FieldName name, EvaluationContext context){
-		Map.Entry<FieldName, FieldValue> entry = context.getArgumentEntry(name);
+		Map.Entry<FieldName, FieldValue> entry = context.getFieldEntry(name);
 		if(entry == null){
 			DerivedField derivedField = context.resolveDerivedField(name);
 			if(derivedField == null){

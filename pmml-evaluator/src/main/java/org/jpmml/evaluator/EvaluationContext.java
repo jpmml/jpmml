@@ -12,7 +12,7 @@ import com.google.common.collect.*;
 abstract
 public class EvaluationContext {
 
-	private Deque<Map<FieldName, FieldValue>> stack = Queues.newArrayDeque();
+	private Map<FieldName, FieldValue> fields = Maps.newLinkedHashMap();
 
 	private List<String> warnings = Lists.newArrayList();
 
@@ -24,10 +24,10 @@ public class EvaluationContext {
 	public DefineFunction resolveFunction(String name);
 
 	/**
-	 * @see #getArgumentEntry(FieldName)
+	 * @see #getFieldEntry(FieldName)
 	 */
-	public FieldValue getArgument(FieldName name){
-		Map.Entry<FieldName, FieldValue> entry = getArgumentEntry(name);
+	public FieldValue getField(FieldName name){
+		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
 		if(entry != null){
 			return entry.getValue();
 		}
@@ -35,53 +35,53 @@ public class EvaluationContext {
 		return null;
 	}
 
-	public Map.Entry<FieldName, FieldValue> getArgumentEntry(FieldName name){
-		Deque<Map<FieldName, FieldValue>> stack = getStack();
+	public Map.Entry<FieldName, FieldValue> getFieldEntry(FieldName name){
+		Map<FieldName, FieldValue> fields = getFields();
 
-		// Iterate from first to last
-		Iterator<Map<FieldName, FieldValue>> it = stack.iterator();
-		while(it.hasNext()){
-			Map<FieldName, FieldValue> frame = it.next();
+		if(fields.containsKey(name)){
+			Map.Entry<FieldName, FieldValue> entry = new AbstractMap.SimpleEntry<FieldName, FieldValue>(name, fields.get(name));
 
-			if(frame.containsKey(name)){
-				Map.Entry<FieldName, FieldValue> entry = new AbstractMap.SimpleEntry<FieldName, FieldValue>(name, frame.get(name));
-
-				return entry;
-			}
+			return entry;
 		}
 
 		return null;
 	}
 
+	public boolean declare(FieldName name, Object value){
+
+		if(value instanceof FieldValue){
+			return declare(name, (FieldValue)value);
+		}
+
+		return declare(name, createFieldValue(name, value));
+	}
+
+	/**
+	 * @return <code>true</code> If the field was already declared, <code>false</code> otherwise.
+	 */
+	public boolean declare(FieldName name, FieldValue value){
+		Map<FieldName, FieldValue> fields = getFields();
+
+		boolean duplicate = fields.containsKey(name);
+
+		fields.put(name, value);
+
+		return duplicate;
+	}
+
+	public boolean declareAll(Map<FieldName, ?> fields){
+		boolean result = false;
+
+		Collection<? extends Map.Entry<FieldName, ?>> entries = fields.entrySet();
+		for(Map.Entry<FieldName, ?> entry : entries){
+			result |= declare(entry.getKey(), entry.getValue());
+		}
+
+		return result;
+	}
+
 	public FieldValue createFieldValue(FieldName name, Object value){
 		return FieldValueUtil.create(value);
-	}
-
-	public Map<FieldName, FieldValue> pushFrame(Map<FieldName, ?> arguments){
-		Maps.EntryTransformer<FieldName, Object, FieldValue> transformer = new Maps.EntryTransformer<FieldName, Object, FieldValue>(){
-
-			@Override
-			public FieldValue transformEntry(FieldName name, Object value){
-
-				if(value instanceof FieldValue){
-					return (FieldValue)value;
-				}
-
-				return createFieldValue(name, value);
-			}
-		};
-
-		Map<FieldName, FieldValue> frame = Maps.newLinkedHashMap();
-
-		frame.putAll(Maps.transformEntries(arguments, transformer));
-
-		getStack().push(frame);
-
-		return frame;
-	}
-
-	public Map<FieldName, FieldValue> popFrame(){
-		return getStack().pop();
 	}
 
 	public void addWarning(String warning){
@@ -90,8 +90,8 @@ public class EvaluationContext {
 		warnings.add(warning);
 	}
 
-	Deque<Map<FieldName, FieldValue>> getStack(){
-		return this.stack;
+	public Map<FieldName, FieldValue> getFields(){
+		return this.fields;
 	}
 
 	public List<String> getWarnings(){

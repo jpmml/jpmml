@@ -26,23 +26,18 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public FieldValue getArgument(FieldName name){
-		ModelEvaluationContext parent = getParent();
-		if(parent != null){
-			return parent.getArgument(name);
+	public Map.Entry<FieldName, FieldValue> getFieldEntry(FieldName name){
+		Map.Entry<FieldName, FieldValue> entry = super.getFieldEntry(name);
+		if(entry == null){
+			ModelEvaluationContext parent = getParent();
+			if(parent != null){
+				return parent.getFieldEntry(name);
+			}
+
+			return null;
 		}
 
-		return super.getArgument(name);
-	}
-
-	@Override
-	public Map.Entry<FieldName, FieldValue> getArgumentEntry(FieldName name){
-		ModelEvaluationContext parent = getParent();
-		if(parent != null){
-			return parent.getArgumentEntry(name);
-		}
-
-		return super.getArgumentEntry(name);
+		return entry;
 	}
 
 	@Override

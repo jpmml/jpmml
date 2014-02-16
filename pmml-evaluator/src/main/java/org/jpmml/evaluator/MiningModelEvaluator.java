@@ -278,38 +278,29 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 
 			Map<FieldName, ?> result = evaluator.evaluate(segmentContext);
 
+			FieldName targetField = evaluator.getTargetField();
+
+			List<FieldName> outputFields = evaluator.getOutputFields();
+			for(FieldName outputField : outputFields){
+				FieldValue outputValue = segmentContext.getField(outputField);
+				if(outputValue == null){
+					throw new MissingFieldException(outputField, segment);
+				}
+
+				// "The OutputFields from one model element can be passed as input to the MiningSchema of subsequent models"
+				context.declare(outputField, outputValue);
+			}
+
 			List<String> warnings = segmentContext.getWarnings();
 			for(String warning : warnings){
 				context.addWarning(warning);
 			}
 
-			FieldName targetField = evaluator.getTargetField();
-
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
 					return Collections.singletonList(new SegmentResult(segment, targetField, result));
 				case MODEL_CHAIN:
-					{
-						Map<FieldName, Object> frame = Maps.newLinkedHashMap();
-
-						List<FieldName> outputFields = evaluator.getOutputFields();
-
-						for(FieldName outputField : outputFields){
-							Object outputValue = result.get(outputField);
-							if(outputValue == null){
-								throw new MissingFieldException(outputField, segment);
-							}
-
-							outputValue = EvaluatorUtil.decode(outputValue);
-
-							frame.put(outputField, outputValue);
-						}
-
-						// "The OutputFields from one model element can be passed as input to the MiningSchema of subsequent models"
-						context.pushFrame(frame);
-
-						results.clear();
-					}
+					results.clear();
 					// Falls through
 				default:
 					results.add(new SegmentResult(segment, targetField, result));

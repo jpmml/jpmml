@@ -23,9 +23,9 @@ public class DefineFunctionTest extends PMMLManagerTest {
 
 		assertValueEquals("AM", evaluateAmPm(34742, context));
 
-		Map<FieldName, ?> arguments = createArguments("StartTime", 34742);
+		context.declareAll(createArguments("StartTime", 34742));
 
-		assertValueEquals("AM", evaluateField(new FieldName("Shift"), arguments, context));
+		assertValueEquals("AM", evaluateField(new FieldName("Shift"), context));
 	}
 
 	@Test
@@ -38,9 +38,9 @@ public class DefineFunctionTest extends PMMLManagerTest {
 		assertValueEquals("West", evaluateStategroup("OR", context));
 		assertValueEquals("East", evaluateStategroup("NC", context));
 
-		Map<FieldName, ?> arguments = createArguments("State", "CA");
+		context.declareAll(createArguments("State", "CA"));
 
-		assertValueEquals("West", evaluateField(new FieldName("Group"), arguments, context));
+		assertValueEquals("West", evaluateField(new FieldName("Group"), context));
 	}
 
 	static
@@ -63,14 +63,8 @@ public class DefineFunctionTest extends PMMLManagerTest {
 	}
 
 	static
-	private FieldValue evaluateField(FieldName name, Map<FieldName, ?> arguments, EvaluationContext context){
-		context.pushFrame(arguments);
-
-		try {
-			return ExpressionUtil.evaluate(name, context);
-		} finally {
-			context.popFrame();
-		}
+	private FieldValue evaluateField(FieldName name, EvaluationContext context){
+		return ExpressionUtil.evaluate(name, context);
 	}
 
 	static

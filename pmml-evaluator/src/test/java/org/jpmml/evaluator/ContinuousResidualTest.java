@@ -20,7 +20,7 @@ public class ContinuousResidualTest extends RegressionModelEvaluatorTest {
 		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), 3.0d);
 
 		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
-		context.pushFrame(arguments);
+		context.declareAll(arguments);
 
 		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), 1.0d);
 

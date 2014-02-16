@@ -422,8 +422,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 
-		ModelEvaluationContext context = new ModelEvaluationContext(modelManager);
-
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
 			FieldName name = knnInput.getField();
@@ -441,13 +439,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					continue;
 				}
 
-				context.pushFrame(rowValues);
+				ModelEvaluationContext context = new ModelEvaluationContext(modelManager);
+				context.declareAll(rowValues);
 
-				try {
-					result.put(rowKey, name, ExpressionUtil.evaluate(derivedField, context));
-				} finally {
-					context.popFrame();
-				}
+				result.put(rowKey, name, ExpressionUtil.evaluate(derivedField, context));
 			}
 		}
 

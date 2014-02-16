@@ -312,12 +312,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private Double computeLink(Double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		Double a = getValue(DataType.DOUBLE, context.getArgument(generalRegressionModel.getOffsetVariable()), generalRegressionModel.getOffsetValue());
+		Double a = getValue(DataType.DOUBLE, context.getField(generalRegressionModel.getOffsetVariable()), generalRegressionModel.getOffsetValue());
 		if(a == null){
 			a = 0d;
 		}
 
-		Integer b = getValue(DataType.INTEGER, context.getArgument(generalRegressionModel.getTrialsVariable()), generalRegressionModel.getTrialsValue());
+		Integer b = getValue(DataType.INTEGER, context.getField(generalRegressionModel.getTrialsVariable()), generalRegressionModel.getTrialsValue());
 		if(b == null){
 			b = 1;
 		}
@@ -371,7 +371,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private Double computeCumulativeLink(Double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		Double a = getValue(DataType.DOUBLE, context.getArgument(generalRegressionModel.getOffsetVariable()), generalRegressionModel.getOffsetValue());
+		Double a = getValue(DataType.DOUBLE, context.getField(generalRegressionModel.getOffsetVariable()), generalRegressionModel.getOffsetValue());
 		if(a == null){
 			a = 0d;
 		}

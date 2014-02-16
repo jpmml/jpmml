@@ -28,9 +28,9 @@ public class OutputUtil {
 	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
-		Map<FieldName, FieldValue> frame = context.pushFrame(Collections.<FieldName, Object>emptyMap());
-
 		Output output = modelManager.getOrCreateOutput();
+
+		Map<FieldName, Object> result = Maps.newLinkedHashMap(predictions);
 
 		List<OutputField> outputFields = output.getOutputFields();
 		for(OutputField outputField : outputFields){
@@ -96,9 +96,7 @@ public class OutputUtil {
 							throw new InvalidFeatureException(outputField);
 						}
 
-						FieldValue result = ExpressionUtil.evaluate(expression, context);
-
-						value = FieldValueUtil.getValue(result);
+						value = FieldValueUtil.getValue(ExpressionUtil.evaluate(expression, context));
 					}
 					break;
 				case PROBABILITY:
@@ -108,7 +106,7 @@ public class OutputUtil {
 					break;
 				case RESIDUAL:
 					{
-						FieldValue expectedValue = context.getArgument(targetField);
+						FieldValue expectedValue = context.getField(targetField);
 						if(expectedValue == null){
 							throw new MissingFieldException(targetField, outputField);
 						}
@@ -169,16 +167,9 @@ public class OutputUtil {
 			}
 
 			// The result of one output field becomes available to other other output fields
-			frame.put(outputField.getName(), FieldValueUtil.create(outputField, value));
-		}
+			context.declare(outputField.getName(), FieldValueUtil.create(outputField, value));
 
-		context.popFrame();
-
-		Map<FieldName, Object> result = Maps.newLinkedHashMap(predictions);
-
-		Collection<Map.Entry<FieldName, FieldValue>> entries = frame.entrySet();
-		for(Map.Entry<FieldName, FieldValue> entry : entries){
-			result.put(entry.getKey(), FieldValueUtil.getValue(entry.getValue()));
+			result.put(outputField.getName(), value);
 		}
 
 		return result;

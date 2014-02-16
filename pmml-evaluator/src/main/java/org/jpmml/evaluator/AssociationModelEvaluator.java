@@ -80,7 +80,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		FieldName activeField = getActiveField();
 
-		FieldValue value = context.getArgument(activeField);
+		FieldValue value = context.getField(activeField);
 		if(value == null){
 			throw new MissingFieldException(activeField, associationModel);
 		}

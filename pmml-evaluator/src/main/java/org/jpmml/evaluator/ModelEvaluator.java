@@ -29,7 +29,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		ModelEvaluationContext context = new ModelEvaluationContext(this);
-		context.pushFrame(arguments);
+		context.declareAll(arguments);
 
 		return evaluate(context);
 	}

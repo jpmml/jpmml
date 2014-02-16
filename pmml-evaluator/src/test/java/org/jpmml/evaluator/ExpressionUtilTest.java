@@ -134,7 +134,7 @@ public class ExpressionUtilTest {
 	static
 	private EvaluationContext createContext(FieldName name, Object value){
 		EvaluationContext context = new LocalEvaluationContext();
-		context.pushFrame(Collections.<FieldName, Object>singletonMap(name, value));
+		context.declare(name, value);
 
 		return context;
 	}

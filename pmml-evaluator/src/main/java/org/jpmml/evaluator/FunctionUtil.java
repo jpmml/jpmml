@@ -52,23 +52,20 @@ public class FunctionUtil {
 			throw new EvaluationException();
 		}
 
-		Map<FieldName, FieldValue> arguments = Maps.newLinkedHashMap();
+		FunctionEvaluationContext functionContext = new FunctionEvaluationContext(context);
 
 		for(int i = 0; i < parameterFields.size(); i++){
 			ParameterField parameterField = parameterFields.get(i);
 
-			FieldValue value = values.get(i);
+			FieldValue value = FieldValueUtil.refine(parameterField, values.get(i));
 
-			arguments.put(parameterField.getName(), FieldValueUtil.refine(parameterField, value));
+			functionContext.declare(parameterField.getName(), value);
 		}
 
 		Expression expression = defineFunction.getExpression();
 		if(expression == null){
 			throw new InvalidFeatureException(defineFunction);
 		}
-
-		FunctionEvaluationContext functionContext = new FunctionEvaluationContext(context);
-		functionContext.pushFrame(arguments);
 
 		FieldValue result = ExpressionUtil.evaluate(expression, functionContext);
 

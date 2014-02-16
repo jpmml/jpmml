@@ -21,7 +21,7 @@ public class CategoricalResidualTest extends RegressionModelEvaluatorTest {
 		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), "Y");
 
 		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
-		context.pushFrame(arguments);
+		context.declareAll(arguments);
 
 		DefaultClassificationMap<String> response = new DefaultClassificationMap<String>();
 		response.put("Y", 0.8d);
@@ -37,7 +37,7 @@ public class CategoricalResidualTest extends RegressionModelEvaluatorTest {
 		arguments = createArguments(evaluator.getTargetField(), "N");
 
 		context = new ModelEvaluationContext(evaluator);
-		context.pushFrame(arguments);
+		context.declareAll(arguments);
 
 		result = OutputUtil.evaluate(prediction, context);
 
