@@ -14,7 +14,7 @@ public class NormalizationUtilTest {
 	private NormContinuous norm;
 
 	@Before
-	public void setUp() {
+	public void setUp(){
 		norm = new NormContinuous(new FieldName("x"));
 		norm.getLinearNorms().add(new LinearNorm(0.01, 0.0));
 		norm.getLinearNorms().add(new LinearNorm(3.07897, 0.5));
@@ -22,7 +22,7 @@ public class NormalizationUtilTest {
 	}
 
 	@Test
-	public void testNormalize() {
+	public void testNormalize(){
 		assertEquals(0.00000, NormalizationUtil.normalize(norm, 0.01), 1e-5);
 		assertEquals(0.19583, NormalizationUtil.normalize(norm, 1.212), 1e-5);
 		assertEquals(0.50000, NormalizationUtil.normalize(norm, 3.07897), 1e-5);
@@ -31,7 +31,7 @@ public class NormalizationUtilTest {
 	}
 
 	@Test
-	public void testNormalizeOutliers() {
+	public void testNormalizeOutliers(){
 		// as is method
 		assertEquals(-0.16455, NormalizationUtil.normalize(norm, -1.0), 1e-5);
 		assertEquals( 1.04544, NormalizationUtil.normalize(norm, 12.2), 1e-5);
@@ -49,11 +49,10 @@ public class NormalizationUtilTest {
 	}
 
 	@Test
-	public void testDenormalize() {
+	public void testDenormalize(){
 		assertEquals(0.010, NormalizationUtil.denormalize(norm, 0.0), 1e-5);
 		assertEquals(0.300, NormalizationUtil.denormalize(norm, 0.047247), 1e-5);
 		assertEquals(7.123, NormalizationUtil.denormalize(norm, 0.741838), 1e-5);
 		assertEquals(11.44, NormalizationUtil.denormalize(norm, 1.0), 1e-5);
 	}
-
 }

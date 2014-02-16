@@ -33,7 +33,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context) {
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 		if(!neuralNetwork.isScorable()){
 			throw new InvalidResultException(neuralNetwork);
@@ -56,13 +56,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context) {
+	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
 		Map<FieldName, Double> result = Maps.newLinkedHashMap();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
-		for (NeuralOutput neuralOutput : neuralOutputs) {
+		for(NeuralOutput neuralOutput : neuralOutputs){
 			String id = neuralOutput.getOutputNeuron();
 
 			Expression expression = getExpression(context, neuralOutput.getDerivedField());
@@ -94,7 +94,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context) {
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
 		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
 
 		Map<String, Entity> entities = getEntityRegistry();
@@ -102,7 +102,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 
 		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
-		for (NeuralOutput neuralOutput : neuralOutputs) {
+		for(NeuralOutput neuralOutput : neuralOutputs){
 			String id = neuralOutput.getOutputNeuron();
 
 			Expression expression = getExpression(context, neuralOutput.getDerivedField());
@@ -164,7 +164,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<String, Double> result = Maps.newLinkedHashMap();
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
-		for (NeuralInput neuralInput: neuralInputs) {
+		for(NeuralInput neuralInput: neuralInputs){
 			DerivedField derivedField = neuralInput.getDerivedField();
 
 			FieldValue value = ExpressionUtil.evaluate(derivedField, context);
@@ -176,14 +176,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		}
 
 		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
-		for (NeuralLayer neuralLayer : neuralLayers) {
+		for(NeuralLayer neuralLayer : neuralLayers){
 			List<Neuron> neurons = neuralLayer.getNeurons();
 
-			for (Neuron neuron : neurons) {
+			for(Neuron neuron : neurons){
 				double z = neuron.getBias();
 
 				List<Connection> connections = neuron.getConnections();
-				for (Connection connection : connections) {
+				for(Connection connection : connections){
 					double input = result.get(connection.getFrom());
 
 					z += input * connection.getWeight();
@@ -200,13 +200,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return result;
 	}
 
-	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Map<String, Double> neuronOutputs) {
+	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Map<String, Double> neuronOutputs){
 		NeuralNetwork neuralNetwork = getModel();
 
 		PMMLObject locatable = neuralLayer;
 
 		NnNormalizationMethodType normalizationMethod = neuralLayer.getNormalizationMethod();
-		if (normalizationMethod == null) {
+		if(normalizationMethod == null){
 			locatable = neuralNetwork;
 
 			normalizationMethod = neuralNetwork.getNormalizationMethod();
@@ -246,22 +246,22 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		}
 	}
 
-	private double activation(double z, NeuralLayer neuralLayer) {
+	private double activation(double z, NeuralLayer neuralLayer){
 		NeuralNetwork neuralNetwork = getModel();
 
 		PMMLObject locatable = neuralLayer;
 
 		ActivationFunctionType activationFunction = neuralLayer.getActivationFunction();
-		if (activationFunction == null) {
+		if(activationFunction == null){
 			locatable = neuralLayer;
 
 			activationFunction = neuralNetwork.getActivationFunction();
 		}
 
-		switch (activationFunction) {
+		switch(activationFunction){
 			case THRESHOLD:
 				Double threshold = neuralLayer.getThreshold();
-				if (threshold == null) {
+				if(threshold == null){
 					threshold = Double.valueOf(neuralNetwork.getThreshold());
 				}
 				return z > threshold.doubleValue() ? 1.0 : 0.0;
@@ -292,7 +292,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		}
 	}
 
-	public List<NeuralOutput> getOrCreateNeuralOutputs() {
+	public List<NeuralOutput> getOrCreateNeuralOutputs(){
 		NeuralNetwork neuralNetwork = getModel();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();

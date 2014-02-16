@@ -29,16 +29,16 @@ public class NormalizationUtil {
 		LinearNorm rangeEnd = linearNorms.get(linearNorms.size() - 1);
 
 		// Select proper interval for normalization
-		if (value >= rangeStart.getOrig() && value <= rangeEnd.getOrig()) {
+		if(value >= rangeStart.getOrig() && value <= rangeEnd.getOrig()){
 
-			for (int i = 1; i < linearNorms.size() - 1; i++) {
+			for(int i = 1; i < linearNorms.size() - 1; i++){
 				LinearNorm linearNorm = linearNorms.get(i);
 
-				if (value >= linearNorm.getOrig()) {
+				if(value >= linearNorm.getOrig()){
 					rangeStart = linearNorm;
 				} else
 
-				if (value <= linearNorm.getOrig()) {
+				if(value <= linearNorm.getOrig()){
 					rangeEnd = linearNorm;
 
 					break;
@@ -50,15 +50,15 @@ public class NormalizationUtil {
 		{
 			OutlierTreatmentMethodType outlierTreatmentMethod = normContinuous.getOutliers();
 
-			switch (outlierTreatmentMethod) {
+			switch(outlierTreatmentMethod){
 				case AS_MISSING_VALUES:
 					Double missing = normContinuous.getMapMissingTo();
-					if (missing == null) {
+					if(missing == null){
 						throw new InvalidFeatureException(normContinuous);
 					}
 					return missing;
 				case AS_IS:
-					if (value < rangeStart.getOrig()) {
+					if(value < rangeStart.getOrig()){
 						rangeEnd = linearNorms.get(1);
 					} else
 
@@ -67,7 +67,7 @@ public class NormalizationUtil {
 					}
 					break;
 				case AS_EXTREME_VALUES:
-					if (value < rangeStart.getOrig()) {
+					if(value < rangeStart.getOrig()){
 						return rangeStart.getNorm();
 					} else
 
@@ -95,14 +95,14 @@ public class NormalizationUtil {
 		LinearNorm rangeStart = linearNorms.get(0);
 		LinearNorm rangeEnd = linearNorms.get(linearNorms.size() - 1);
 
-		for (int i = 1; i < linearNorms.size() - 1; i++) {
+		for(int i = 1; i < linearNorms.size() - 1; i++){
 			LinearNorm linearNorm = linearNorms.get(i);
 
-			if (value >= linearNorm.getNorm()) {
+			if(value >= linearNorm.getNorm()){
 				rangeStart = linearNorm;
 			} else
 
-			if (value <= linearNorm.getNorm()) {
+			if(value <= linearNorm.getNorm()){
 				rangeEnd = linearNorm;
 
 				break;
