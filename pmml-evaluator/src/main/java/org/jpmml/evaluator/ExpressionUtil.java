@@ -26,7 +26,12 @@ public class ExpressionUtil {
 				return null;
 			}
 
-			return evaluate(derivedField, context);
+			FieldValue value = evaluate(derivedField, context);
+
+			// Make the calculated value available for re-use
+			context.declare(name, value);
+
+			return value;
 		}
 
 		return entry.getValue();
