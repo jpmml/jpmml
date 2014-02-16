@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 University of Tartu
+ * Copyright (c) 2013 Villu Ruusmann
  */
 package org.jpmml.evaluator;
 
