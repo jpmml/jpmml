@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jpmml</groupId>
 		<artifactId>jpmml</artifactId>
-		<version>1.0.22</version>
+		<version>1.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.jpmml</groupId>
@@ -96,13 +96,13 @@
 					<dependency>
 						<groupId>org.jpmml</groupId>
 						<artifactId>pmml-schema</artifactId>
-						<version>1.0.22</version>
+						<version>1.1-SNAPSHOT</version>
 					</dependency>
 
 					<dependency>
 						<groupId>org.jpmml</groupId>
 						<artifactId>xjc</artifactId>
-						<version>1.0.22</version>
+						<version>1.1-SNAPSHOT</version>
 					</dependency>
 
 					<dependency>
