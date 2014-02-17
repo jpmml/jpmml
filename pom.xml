@@ -41,7 +41,6 @@
 	</developers>
 
 	<modules>
-		<module>bundle</module>
 		<module>pmml-evaluator</module>
 		<module>pmml-knime</module>
 		<module>pmml-manager</module>
