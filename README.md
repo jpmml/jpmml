@@ -46,7 +46,7 @@ Java API for producing and scoring models in Predictive Model Markup Language (P
 
 JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
 
-The current version is **1.0.21** (31 October, 2013).
+The current version is **1.0.22** (17 February, 2014).
 
 ### Class model ###
 
