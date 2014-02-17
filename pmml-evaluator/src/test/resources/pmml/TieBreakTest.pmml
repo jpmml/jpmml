@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
-    <Header copyright="Copyright, KNIME.com AG, Zurich, Switzerland"/>
+    <Header copyright="Copyright (c) 2013 KNIME.com AG, Zurich, Switzerland"/>
     <DataDictionary numberOfFields="6">
         <DataField name="input" optype="continuous" dataType="double"/>
         <DataField name="output" optype="categorical" dataType="string">
