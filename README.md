@@ -1,5 +1,11 @@
 Java API for producing and scoring models in Predictive Model Markup Language (PMML).
 
+# IMPORTANT #
+
+This is a legacy codebase.
+
+Starting from March 2014, this project has been superseded by [JPMML-Model] (https://github.com/jpmml/jpmml-model) and [JPMML-Evaluator] (https://github.com/jpmml/jpmml-evaluator) projects.
+
 # Features #
 
 ### Class model ###
@@ -182,6 +188,6 @@ if(targetValue instanceof HasEntityId){
 * Evaluating a PMML file interactively: [EvaluationExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/EvaluationExample.java)
 * Evaluating a PMML file non-interactively with CSV file input: [CsvEvaluationExample.java] (https://github.com/jpmml/jpmml-example/tree/master/src/main/java/org/jpmml/example/CsvEvaluationExample.java)
 
-# Contact and Support #
+# Additional information #
 
-Please use the e-mail displayed at [GitHub profile page] (https://github.com/jpmml)
+Please contact [info@openscoring.io] (mailto:info@openscoring.io)
