@@ -22,26 +22,34 @@ import static com.google.common.base.Preconditions.*;
 public class PMMLManager implements Serializable {
 
 	private PMML pmml = null;
+    private Map<FieldName, DataField> dataFieldsMap = null;
+    private Map<FieldName, DerivedField> derivedFieldsMap = null;
 
 
 	public PMMLManager(PMML pmml){
 		setPMML(pmml);
+
+        dataFieldsMap = new HashMap<FieldName, DataField>();
+        DataDictionary dataDictionary = getDataDictionary();
+        List<DataField> dataFields = dataDictionary.getDataFields();
+        for (DataField dataField : dataFields) {
+            dataFieldsMap.put(dataField.getName(), dataField);
+        }
+
+        derivedFieldsMap = new HashMap<FieldName, DerivedField>();
+        TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
+        List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
+        for (DerivedField derivedField : derivedFields) {
+            derivedFieldsMap.put(derivedField.getName(), derivedField);
+        }
 	}
 
 	public DataField getDataField(FieldName name){
-		DataDictionary dataDictionary = getDataDictionary();
-
-		List<DataField> dataFields = dataDictionary.getDataFields();
-
-		return find(dataFields, name);
+        return dataFieldsMap.get(name);
 	}
 
 	public DerivedField getDerivedField(FieldName name){
-		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
-
-		List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
-
-		return find(derivedFields, name);
+        return derivedFieldsMap.get(name);
 	}
 
 	public DefineFunction getFunction(String name){

@@ -14,13 +14,30 @@ import static com.google.common.base.Preconditions.*;
 public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 
 	private M model = null;
+    private Map<FieldName, MiningField> miningFieldsMap = null;
+    private Map<FieldName, DerivedField> localDerivedFieldsMap = null;
 
 
 	public ModelManager(PMML pmml, M model){
 		super(pmml);
 
 		setModel(model);
-	}
+
+        miningFieldsMap = new HashMap<FieldName, MiningField>();
+        MiningSchema miningSchema = getMiningSchema();
+        List<MiningField> miningFields = miningSchema.getMiningFields();
+        for (MiningField miningField : miningFields) {
+            miningFieldsMap.put(miningField.getName(), miningField);
+        }
+
+        LocalTransformations localTransformations = getOrCreateLocalTransformations();
+
+        localDerivedFieldsMap = new HashMap<FieldName, DerivedField>();
+        List<DerivedField> derivedFields = localTransformations.getDerivedFields();
+        for (DerivedField derivedField : derivedFields) {
+            localDerivedFieldsMap.put(derivedField.getName(), derivedField);
+        }
+    }
 
 	public M getModel(){
 		return this.model;
@@ -70,11 +87,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public MiningField getMiningField(FieldName name){
-		MiningSchema miningSchema = getMiningSchema();
-
-		List<MiningField> miningFields = miningSchema.getMiningFields();
-
-		return find(miningFields, name);
+        return miningFieldsMap.get(name);
 	}
 
 	public List<FieldName> getMiningFields(FieldUsageType fieldUsageType){
@@ -94,11 +107,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public DerivedField getLocalDerivedField(FieldName name){
-		LocalTransformations localTransformations = getOrCreateLocalTransformations();
-
-		List<DerivedField> derivedFields = localTransformations.getDerivedFields();
-
-		return find(derivedFields, name);
+        return localDerivedFieldsMap.get(name);
 	}
 
 	public DerivedField resolveDerivedField(FieldName name){
