@@ -29,19 +29,8 @@ public class PMMLManager implements Serializable {
 	public PMMLManager(PMML pmml){
 		setPMML(pmml);
 
-        dataFieldsMap = new HashMap<FieldName, DataField>();
-        DataDictionary dataDictionary = getDataDictionary();
-        List<DataField> dataFields = dataDictionary.getDataFields();
-        for (DataField dataField : dataFields) {
-            dataFieldsMap.put(dataField.getName(), dataField);
-        }
-
-        derivedFieldsMap = new HashMap<FieldName, DerivedField>();
-        TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
-        List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
-        for (DerivedField derivedField : derivedFields) {
-            derivedFieldsMap.put(derivedField.getName(), derivedField);
-        }
+        dataFieldsMap = getFieldMapFromList(getDataDictionary().getDataFields());
+        derivedFieldsMap = getFieldMapFromList(getOrCreateTransformationDictionary().getDerivedFields());
 	}
 
 	public DataField getDataField(FieldName name){
@@ -159,6 +148,21 @@ public class PMMLManager implements Serializable {
 	@SuppressWarnings (
 		value = {"unchecked"}
 	)
+
+    static
+    public <T extends Field> Map<FieldName, T> getFieldMapFromList(List<T> list) {
+
+        Map<FieldName, T> map = new HashMap<FieldName, T>();
+
+        for (T field : list) {
+
+            map.put(field.getName(), field);
+
+        }
+
+        return map;
+    }
+
 	static
 	public <E extends PMMLObject> List<E> findAll(List<?> objects, Class<? extends E> clazz){
 		List<E> result = Lists.newArrayList();

@@ -23,20 +23,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		setModel(model);
 
-        miningFieldsMap = new HashMap<FieldName, MiningField>();
-        MiningSchema miningSchema = getMiningSchema();
-        List<MiningField> miningFields = miningSchema.getMiningFields();
-        for (MiningField miningField : miningFields) {
-            miningFieldsMap.put(miningField.getName(), miningField);
-        }
-
-        LocalTransformations localTransformations = getOrCreateLocalTransformations();
-
-        localDerivedFieldsMap = new HashMap<FieldName, DerivedField>();
-        List<DerivedField> derivedFields = localTransformations.getDerivedFields();
-        for (DerivedField derivedField : derivedFields) {
-            localDerivedFieldsMap.put(derivedField.getName(), derivedField);
-        }
+        miningFieldsMap = getFieldMapFromList(getMiningSchema().getMiningFields());
+        localDerivedFieldsMap = getFieldMapFromList(getOrCreateLocalTransformations().getDerivedFields());
     }
 
 	public M getModel(){
