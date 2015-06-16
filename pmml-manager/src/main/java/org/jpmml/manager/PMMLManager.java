@@ -22,26 +22,23 @@ import static com.google.common.base.Preconditions.*;
 public class PMMLManager implements Serializable {
 
 	private PMML pmml = null;
+    private Map<FieldName, DataField> dataFieldsMap = null;
+    private Map<FieldName, DerivedField> derivedFieldsMap = null;
 
 
 	public PMMLManager(PMML pmml){
 		setPMML(pmml);
+
+        dataFieldsMap = getFieldMapFromList(getDataDictionary().getDataFields());
+        derivedFieldsMap = getFieldMapFromList(getOrCreateTransformationDictionary().getDerivedFields());
 	}
 
 	public DataField getDataField(FieldName name){
-		DataDictionary dataDictionary = getDataDictionary();
-
-		List<DataField> dataFields = dataDictionary.getDataFields();
-
-		return find(dataFields, name);
+        return dataFieldsMap.get(name);
 	}
 
 	public DerivedField getDerivedField(FieldName name){
-		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
-
-		List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
-
-		return find(derivedFields, name);
+        return derivedFieldsMap.get(name);
 	}
 
 	public DefineFunction getFunction(String name){
@@ -151,6 +148,21 @@ public class PMMLManager implements Serializable {
 	@SuppressWarnings (
 		value = {"unchecked"}
 	)
+
+    static
+    public <T extends Field> Map<FieldName, T> getFieldMapFromList(List<T> list) {
+
+        Map<FieldName, T> map = new HashMap<FieldName, T>();
+
+        for (T field : list) {
+
+            map.put(field.getName(), field);
+
+        }
+
+        return map;
+    }
+
 	static
 	public <E extends PMMLObject> List<E> findAll(List<?> objects, Class<? extends E> clazz){
 		List<E> result = Lists.newArrayList();
